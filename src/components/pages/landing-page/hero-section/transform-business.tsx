@@ -1,0 +1,81 @@
+import { ChevronRight } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+
+import { Button } from '@/components/ui/button';
+
+import CtaButton from '../cta-button';
+
+import NavBar from './nav-bar';
+
+type Props = {
+  locale: string;
+  isMenuOpen: boolean;
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
+  const intl = useIntl();
+  return (
+    <div className="relative flex size-full flex-col ">
+      <NavBar
+        locale={locale}
+        parentDarkMode={false}
+        isMenuOpen={isMenuOpen}
+        setIsMenuOpen={setIsMenuOpen}
+      />
+      <div className=" flex size-full flex-col lg:flex-row">
+        {' '}
+        <div className="z-10 mx-5 my-auto  flex h-3/5 w-full flex-col items-center gap-4  lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">
+          {/* Section Text */}
+          <div className="flex flex-col gap-3  ">
+            <span className="text-xl text-[#145FF2]">
+              <FormattedMessage id="one-solution-for-all" />
+            </span>
+            {/* Top */}
+
+            <h1 className="p-4 text-center text-5xl text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-7xl">
+              <FormattedMessage id="transform-your" />{' '}
+              <span className="font-extrabold">
+                <FormattedMessage id="business" />
+              </span>{' '}
+              <FormattedMessage id="with-spinet" />
+            </h1>
+
+            {/* Paragraph */}
+            <p className="w-full  p-4 text-xl  font-medium text-[#1A3B8E] dark:text-[#EEF6FF]">
+              <FormattedMessage id="transform-your-with-spinet-text" />
+            </p>
+          </div>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 lg:flex-row">
+            <CtaButton
+              text={intl.formatMessage({ id: 'free-trial' })}
+              icon={<ChevronRight className="ms-2.5 size-6" />}
+              iconPosition="right"
+            />
+
+            <Button
+              icon={<ChevronRight className="ms-2.5 size-6" />}
+              className=" h-12  rounded-2xl bg-white text-xl leading-6 text-[#145FF2] 
+             transition-all  hover:bg-blue-500  hover:text-white hover:brightness-125  dark:bg-[#082356] dark:text-white lg:w-[195px]"
+              iconPosition="right"
+            >
+              <FormattedMessage id="see-features" />
+            </Button>
+          </div>
+        </div>
+        <Image
+          src="/img/transform-business.png"
+          alt="transform business image"
+          width={1075}
+          height={923}
+          priority
+        />
+      </div>
+    </div>
+  );
+}
+
+export default TransformBusiness;
