@@ -6,11 +6,11 @@ import '@/styles/globals.css';
 // getIntl;
 import { getDirection } from '@/lib/intl';
 
+// If you need to generate metadata, you can uncomment and adjust the code below.
 // type RouteProps = {
 //   params: { locale: string };
 //   searchParams: { [key: string]: string | string[] | undefined };
 // };
-
 // export async function generateMetadata(props: RouteProps): Promise<Metadata> {
 //   const intl = await getIntl(props.params.locale);
 //   return {
@@ -28,19 +28,21 @@ import { getDirection } from '@/lib/intl';
 //   };
 // }
 
-const RootLayout = ({
+const RootLayout = async ({
   params,
   children,
 }: {
-  params: { locale: string };
+  // Declare params as either an object or a thenable resolving to that object
+  params: { locale: string } | Promise<{ locale: string }>;
   children: ReactNode;
 }) => {
-  const { locale } = params;
+  // Await params (without calling it as a function)
+  const { locale } = await params;
   const dir = getDirection(locale);
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
-      <body>
-        <AppProvider>{children}</AppProvider>{' '}
+      <body suppressHydrationWarning>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );

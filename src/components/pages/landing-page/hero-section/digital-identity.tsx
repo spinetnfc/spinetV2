@@ -16,7 +16,9 @@ type Props = {
 function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
   return (
-    <div className="relative flex h-full flex-col  overflow-hidden  ">
+    <div className="relative flex h-full flex-col  overflow-hidden 
+     bg-[url('/img/digital-identity-bg.png')] bg-cover bg-no-repeat
+     ">
       <NavBar
         locale={locale}
         parentDarkMode={true}
@@ -24,13 +26,13 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         setIsMenuOpen={setIsMenuOpen}
       />
       <div className="flex size-full flex-col lg:flex-row">
-        <Image
+        {/* <Image
           src="/img/digital-identity-bg.png"
           alt="Background"
           fill
-          className="absolute inset-0 object-cover"
+          className="absolute"
           priority
-        />{' '}
+        />{' '} */}
         <div className="z-10 mx-5 mt-4  flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">
           {/* Section Text */}
           <div className="flex flex-col gap-4  ">
