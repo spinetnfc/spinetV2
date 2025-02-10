@@ -60,6 +60,7 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             src="/img/hand-finger-print.png"
             alt="Hand image"
             fill
+            sizes='100%'
             priority
           />
         </div>

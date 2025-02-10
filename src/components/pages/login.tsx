@@ -142,7 +142,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
           </Button>
 
           {/* Divider */}
-          <div className="flex items-center justify-center space-x-4">
+          <div className="flex items-center justify-center gap-2">
             <div className="h-px grow bg-gray-300"></div>
             <span className="text-sm ">
               <FormattedMessage id="or-continue-with" />

@@ -39,12 +39,14 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
                 : resolvedTheme === 'dark'
                   ? imageUrl
                   : imageUrl.slice(0, imageUrl.lastIndexOf('.')) +
-                    '-light' +
-                    imageUrl.slice(imageUrl.lastIndexOf('.'))
+                  '-light' +
+                  imageUrl.slice(imageUrl.lastIndexOf('.'))
             }
             alt={text}
             fill
+            sizes='w-100%'
             className="object-cover"
+            priority
           />
         </div>
 

@@ -31,7 +31,9 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             alt="Digital Event Organization"
             className="mix-blend-overlay"
             fill
+            sizes='100vw'
             style={{ objectFit: 'cover' }}
+            priority
           />
         </div>
         <div

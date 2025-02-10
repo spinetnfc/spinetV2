@@ -46,6 +46,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
             src="/img/abstract.jpeg"
             alt="auth Background"
             fill
+            sizes="100vw"
             className="absolute inset-0 z-0 hidden object-cover lg:block"
             priority
           />
