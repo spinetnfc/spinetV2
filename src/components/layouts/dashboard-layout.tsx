@@ -10,7 +10,7 @@ import SideBar from '@/components/side-bar';
 import { Spinner } from '@/components/ui/spinner';
 import { AuthLoader } from '@/lib/auth';
 import { ROLES, useAuthorization } from '@/lib/authorization';
-import type { SideNavigationItem } from '@/types/layout-tyes';
+import type { SideNavigationItem } from '@/types/layout-types';
 
 const Layout = ({
   locale,

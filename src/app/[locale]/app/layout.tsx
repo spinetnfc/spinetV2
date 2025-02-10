@@ -7,14 +7,14 @@ export const metadata = {
   description: 'Dashboard',
 };
 
-const AppLayout = ({
+const AppLayout = async ({
   params,
   children,
 }: {
-  params: { locale: string };
+  params: { locale: string } | Promise<{ locale: string }>;
   children: ReactNode;
 }) => {
-  const { locale } = params;
+  const { locale } = await params;
   return <DashboardLayout locale={locale}>{children}</DashboardLayout>;
 };
 

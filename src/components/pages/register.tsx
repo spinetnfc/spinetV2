@@ -37,8 +37,10 @@ const signupSchema = z
     }
   });
 
-type Props = { locale: string; messages: Record<string, string> };
-export default function Register({ locale, messages }: Props) {
+export default function Register({ locale, messages }: {
+  locale: string;
+  messages: Record<string, string>;
+}) {
   return (
     <IntlProvider locale={locale} messages={messages}>
       <RegisterForm locale={locale} />

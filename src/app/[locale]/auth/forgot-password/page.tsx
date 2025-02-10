@@ -1,14 +1,18 @@
 import React from 'react';
-
 import ForgotPassword from '@/components/pages/forgot-password/forgot-password';
 
 async function getMessages(locale: string) {
-  return await import(`../../../../lang/${locale}.json`);
+  return (await import(`../../../../lang/${locale}.json`)).default;
 }
-async function page({ params: { locale } }: { params: { locale: string } }) {
-  const messages = (await getMessages(locale)).default;
+
+const Page = async (
+  { params }: {
+    params: { locale: string } | Promise<{ locale: string }>;
+  }) => {
+  const { locale } = await params;
+  const messages = await getMessages(locale);
 
   return <ForgotPassword locale={locale} messages={messages} />;
-}
+};
 
-export default page;
+export default Page;

@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 import { useLogout } from '@/lib/auth';
-import type { SideNavigationItem } from '@/types/layout-tyes';
+import type { SideNavigationItem } from '@/types/layout-types';
 import { cn } from '@/utils/cn';
 
 function Header({

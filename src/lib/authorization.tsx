@@ -33,10 +33,13 @@ export const useAuthorization = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  if (!user.data && !user.isLoading) {
-    const redirectTo = encodeURIComponent(pathname);
-    router.push(`/auth/login?redirectTo=${redirectTo}`);
-  }
+  //uuncomment after adding auth
+  // React.useEffect(() => {
+  //   if (!user.data && !user.isLoading) {
+  //     const redirectTo = encodeURIComponent(pathname);
+  //     router.push(`/auth/login?redirectTo=${redirectTo}`);
+  //   }
+  // }, [user.data, user.isLoading, pathname, router]);
 
   const checkAccess = React.useCallback(
     ({ allowedRoles }: { allowedRoles: RoleTypes[] }) => {
@@ -56,15 +59,15 @@ type AuthorizationProps = {
   forbiddenFallback?: React.ReactNode;
   children: React.ReactNode;
 } & (
-  | {
+    | {
       allowedRoles: RoleTypes[];
       policyCheck?: never;
     }
-  | {
+    | {
       allowedRoles?: never;
       policyCheck: boolean;
     }
-);
+  );
 
 export const Authorization = ({
   policyCheck,

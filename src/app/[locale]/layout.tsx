@@ -32,7 +32,6 @@ const RootLayout = async ({
   params,
   children,
 }: {
-  // Declare params as either an object or a thenable resolving to that object
   params: { locale: string } | Promise<{ locale: string }>;
   children: ReactNode;
 }) => {

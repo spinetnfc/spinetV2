@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 
 import Logo from '@/components/logo';
-import { SideNavigationItem } from '@/types/layout-tyes';
+import { SideNavigationItem } from '@/types/layout-types';
 import { cn } from '@/utils/cn';
 
 type Props = {
