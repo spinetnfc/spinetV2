@@ -65,7 +65,7 @@ function NavBar({
             >
               <span
                 className={cn(
-                  'font-inter text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white hover:dark:text-gray-400',
+                  'font-inter text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400',
                   { 'text-white': parentDarkMode },
                 )}
               >

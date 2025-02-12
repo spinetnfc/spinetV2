@@ -15,7 +15,7 @@ const Logo = ({
     <NextLink className="flex items-center text-white" href={`/${locale}`}>
       <LogoIcon
         className={cn(
-          'text-blue-600 hover:text-blue-800 dark:text-white hover:dark:text-gray-400',
+          'text-blue-600 hover:text-blue-800 dark:text-white dark:hover:text-gray-400',
           { 'text-white hover:text-gray-400': parentDarkMode },
         )}
       />

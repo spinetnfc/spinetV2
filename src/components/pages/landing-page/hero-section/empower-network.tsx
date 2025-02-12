@@ -56,14 +56,14 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
           {resolvedTheme === 'dark' && (
             <div
               className="absolute left-[384px] top-[-70px] h-[422px] w-[121px] 
-          rotate-[-20deg] bg-gradient-to-b from-[#0A234D] via-[#8FC8FF] 
+          rotate-[-20deg] bg-linear-to-b from-[#0A234D] via-[#8FC8FF] 
           to-[#145FF2] opacity-70 blur-[58px]"
             ></div>
           )}
           {resolvedTheme === 'dark' && (
             <div
               className="absolute left-[710px] top-[-106px] h-[422px] w-[121px] 
-          rotate-[31deg] bg-gradient-to-b from-[#0A234D] via-[#8FC8FF] 
+          rotate-[31deg] bg-linear-to-b from-[#0A234D] via-[#8FC8FF] 
           to-[#145FF2] opacity-70 blur-[58px]"
             ></div>
           )}
@@ -135,7 +135,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
                 <FormattedMessage id="empower-your" />
               </h1>
               <h1
-                className="bg-gradient-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] 
+                className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] 
               bg-clip-text text-6xl  tracking-tighter 
               text-transparent lg:text-8xl"
               >
@@ -148,7 +148,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
                 <FormattedMessage id="with" />
               </h2>
               <h2
-                className="bg-gradient-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] 
+                className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] 
               bg-clip-text text-5xl tracking-tighter 
               text-transparent lg:text-[86px]"
               >

@@ -20,7 +20,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       </div>
 
       <div className="flex flex-col space-y-2 p-6">
-        <div className="bg-gradient-to-r from-[#145FF2] to-[#BDDDFF] bg-clip-text font-inter text-sm font-medium text-transparent dark:from-[#EEF6FF] dark:to-[#2375F3]">
+        <div className="bg-linear-to-r from-[#145FF2] to-[#BDDDFF] bg-clip-text font-inter text-sm font-medium text-transparent dark:from-[#EEF6FF] dark:to-[#2375F3]">
           <FormattedMessage id="Features" />
         </div>
 

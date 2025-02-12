@@ -58,7 +58,7 @@ function ChangeLanguage({ locale }: Props) {
       <DropdownMenuContent align="end">
         <Link
           href={newPathName(pathname, 'en')}
-          className="flex w-full cursor-pointer flex-row items-center justify-between rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:dark:bg-gray-800"
+          className="flex w-full cursor-pointer flex-row items-center justify-between rounded-lg transition-colors duration-200"
         >
           <div className="flex items-center  gap-3">
             <span className="text-sm font-medium text-primary">English</span>
@@ -68,7 +68,7 @@ function ChangeLanguage({ locale }: Props) {
         <DropdownMenuSeparator />
         <Link
           href={newPathName(pathname, 'fr')}
-          className="flex w-full cursor-pointer  flex-row items-center justify-between rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:dark:bg-gray-800"
+          className="flex w-full cursor-pointer  flex-row items-center justify-between rounded-lg transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-primary">Français</span>
@@ -78,15 +78,15 @@ function ChangeLanguage({ locale }: Props) {
         <DropdownMenuSeparator />
         <Link
           href={newPathName(pathname, 'ar')}
-          className="flex w-full cursor-pointer flex-row items-center justify-between rounded-lg transition-colors duration-200 hover:bg-gray-100 hover:dark:bg-gray-800"
+          className="flex w-full cursor-pointer flex-row items-center justify-between rounded-lg transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           <div className="flex items-center  gap-3">
             <span className="text-sm font-medium text-primary">العربية</span>
           </div>
           {locale === 'ar' && <Check />}
         </Link>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenuContent >
+    </DropdownMenu >
   );
 }
 

@@ -40,8 +40,7 @@ export default function ThemeSwitch({ parentDarkMode }: ThemeSwitchProps) {
   return (
     <button
       onClick={toggleTheme}
-      className={`relative inline-flex items-center w-16 h-8 rounded-full focus:outline-none transition-colors duration-300 bg-blue-950
-`}
+      className={`relative inline-flex items-center w-16 h-8 rounded-full focus:outline-hidden transition-colors duration-300 bg-blue-950 cursor-pointer`}
     >
       {/* Sliding disk */}
       <span
@@ -52,13 +51,13 @@ export default function ThemeSwitch({ parentDarkMode }: ThemeSwitchProps) {
       <div className="absolute inset-0 flex items-center justify-between pointer-events-none px-1.5">
         {isDark ? (
           <>
-            <Sun fill="#f9fafb" className="w-5 h-5  text-gray-50" />
-            <Moon className="w-5 h-5 text-blue-bg-blue-950" />
+            <Sun fill="#f9fafb" className="w-5 h-5  text-blue-50" />
+            <Moon className="w-5 h-5 text-gray-950" />
           </>
         ) : (
           <>
             <Sun fill="#1f2937" className="w-5 h-5  text-blue-950" />
-            <Moon className="w-5 h-5 text-gray-50" />
+            <Moon className="w-5 h-5 text-blue-50" />
           </>)}
       </div>
     </button>
