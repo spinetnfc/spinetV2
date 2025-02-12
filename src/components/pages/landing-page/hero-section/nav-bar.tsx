@@ -78,11 +78,12 @@ function NavBar({
         <div className="flex items-center gap-3">
           <ThemeSwitch parentDarkMode={parentDarkMode} />
           <ChangeLanguage locale={locale} />
-
-          <CtaButton
-            text={intl.formatMessage({ id: 'log-in' })}
-            icon={<LogIn className="me-2.5 size-6" />}
-          />
+          <NextLink href={`/${locale}/auth/login`}>
+            <CtaButton
+              text={intl.formatMessage({ id: 'log-in' })}
+              icon={<LogIn className="me-2.5 size-6" />}
+            />
+          </NextLink>
         </div>
       </nav>
 

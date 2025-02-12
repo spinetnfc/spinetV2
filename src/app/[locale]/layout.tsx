@@ -40,6 +40,7 @@ const RootLayout = async ({
   const dir = getDirection(locale);
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
+      <title>Spinet NFC</title>
       <body suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>
       </body>
