@@ -96,7 +96,7 @@ function NavBar({
         </div>
 
         <div className="flex items-center gap-3">
-          <ThemeSwitch parentDarkMode={parentDarkMode} />
+          <ThemeSwitch parentDarkMode={parentDarkMode} locale={locale} />
           <ChangeLanguage locale={locale} />
           <NextLink href={`/${locale}/auth/login`}>
             <CtaButton

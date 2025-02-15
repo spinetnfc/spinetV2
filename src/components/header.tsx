@@ -81,7 +81,7 @@ function Header({
           </nav>
         </DrawerContent>
       </Drawer>
-      <ThemeSwitch />
+      <ThemeSwitch locale={locale} />
       <ChangeLanguage locale={locale} />
 
       <DropdownMenu>

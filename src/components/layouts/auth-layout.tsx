@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useParams } from 'next/navigation';
 import { ReactNode, useEffect, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -22,6 +22,15 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   const user = useUser();
   const router = useRouter();
   const pathname = usePathname();
+  const params = useParams();
+  // params.locale is of type string | string[] | undefined, so we extract a string:
+  const localeParam = params.locale;
+  const locale =
+    typeof localeParam === "string"
+      ? localeParam
+      : Array.isArray(localeParam)
+        ? localeParam[0]
+        : "en"; // default fallback
 
   useEffect(() => {
     if (user.data) {
@@ -40,7 +49,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
       <ErrorBoundary key={pathname} fallback={<div>Something went wrong!</div>}>
         <div className="relative flex w-full flex-col items-center justify-center sm:h-dvh  md:h-screen md:max-h-screen   ">
           <div className="absolute end-2 top-2 z-10">
-            <ThemeSwitch parentDarkMode />
+            <ThemeSwitch parentDarkMode locale={locale} />
           </div>
           <Image
             src="/img/abstract.jpeg"
