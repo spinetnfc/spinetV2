@@ -32,13 +32,21 @@ const Page = async (
     <>
       <NavBarWrapper locale={locale} />
       <div className="flex flex-col gap-3 overflow-x-hidden lg:gap-12">
-        <HeroSection locale={locale} messages={messages} />
+        <section id="hero">
+          <HeroSection locale={locale} messages={messages} />
+        </section>
         <DiscoverMore locale={locale} />
-        <Features locale={locale} messages={messages} />
-        <ChoosePlan locale={locale} messages={messages} />
+        <section id="features">
+          <Features locale={locale} messages={messages} />
+        </section>
+        <section id="pricing">
+          <ChoosePlan locale={locale} messages={messages} />
+        </section>
         <HowItWorks locale={locale} />
         <Products locale={locale} />
-        <Faq locale={locale} messages={messages} />
+        <section id="support">
+          <Faq locale={locale} messages={messages} />
+        </section>
         <Footer locale={locale} />
       </div>
     </>

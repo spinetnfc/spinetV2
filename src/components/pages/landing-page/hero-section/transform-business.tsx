@@ -27,7 +27,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
       /> */}
       <div className=" flex size-full flex-col lg:flex-row">
         {' '}
-        <div className="z-10 mx-5 my-auto  flex h-3/5 w-full flex-col items-center gap-4  lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">
+        <div className="z-10 mx-5 my-auto px-10 flex h-3/5 w-full flex-col items-center gap-4  lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">
           {/* Section Text */}
           <div className="flex flex-col gap-3  ">
             <span className="text-xl text-[#145FF2]">
@@ -35,7 +35,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             </span>
             {/* Top */}
 
-            <h1 className="p-4 text-center text-5xl text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-7xl">
+            <h1 className="text-5xl text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-7xl">
               <FormattedMessage id="transform-your" />{' '}
               <span className="font-extrabold">
                 <FormattedMessage id="business" />
@@ -44,7 +44,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             </h1>
 
             {/* Paragraph */}
-            <p className="w-full  p-4 text-xl  font-medium text-[#1A3B8E] dark:text-[#EEF6FF]">
+            <p className="w-full text-xl  font-medium text-[#1A3B8E] dark:text-[#EEF6FF]">
               <FormattedMessage id="transform-your-with-spinet-text" />
             </p>
           </div>
@@ -58,8 +58,8 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
 
             <Button
               icon={<ChevronRight className="ms-2.5 size-6" />}
-              className=" h-12  rounded-2xl bg-white text-xl leading-6 text-[#145FF2] 
-             transition-all  hover:bg-blue-500  hover:text-white hover:brightness-125  dark:bg-[#082356] dark:text-white lg:w-[195px]"
+              className="cursor-pointer h-12  rounded-2xl bg-white text-xl leading-6 text-[#145FF2] 
+             transition-all  hover:bg-blue-500  hover:text-white hover:brightness-125  dark:bg-[#082356] dark:text-white"
               iconPosition="right"
             >
               <FormattedMessage id="see-features" />

@@ -33,7 +33,7 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
           className="absolute"
           priority
         />{' '} */}
-        <div className="z-10 mx-5 mt-4  flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">
+        <div className="z-10 mx-5 mt-20  flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">
           {/* Section Text */}
           <div className="flex flex-col gap-4  ">
             {/* Top */}
