@@ -18,12 +18,7 @@ export default function ThemeSwitch({ parentDarkMode, locale }: ThemeSwitchProps
 
   if (!mounted) {
     return (
-      <Image
-        src="data:image/svg+xml;base64,..."
-        width={36}
-        height={36}
-        alt="Loading Theme Switch"
-      />
+      <span className='w-16 h-8 rounded-full bg-blue-950'></span>
     );
   }
 
