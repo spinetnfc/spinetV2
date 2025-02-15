@@ -16,15 +16,15 @@ type Props = {
 function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
   return (
-    <div className="relative flex h-full flex-col  overflow-hidden 
+    <div className="relative flex h-full flex-col  overflow-hidden pt-16
      bg-[url('/img/digital-identity-bg.png')] bg-cover bg-no-repeat
      ">
-      <NavBar
+      {/* <NavBar
         locale={locale}
         parentDarkMode={true}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
-      />
+      /> */}
       <div className="flex size-full flex-col lg:flex-row">
         {/* <Image
           src="/img/digital-identity-bg.png"

@@ -18,13 +18,13 @@ type Props = {
 function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
   return (
-    <div className="relative flex size-full flex-col ">
-      <NavBar
+    <div className="relative flex size-full flex-col pt-16">
+      {/* <NavBar
         locale={locale}
         parentDarkMode={false}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
-      />
+      /> */}
       <div className=" flex size-full flex-col lg:flex-row">
         {' '}
         <div className="z-10 mx-5 my-auto  flex h-3/5 w-full flex-col items-center gap-4  lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">

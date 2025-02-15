@@ -30,12 +30,12 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   if (!mounted) {
     return (
       <div className="relative flex h-full flex-col overflow-hidden">
-        <NavBar
+        {/* <NavBar
           locale={locale}
           parentDarkMode={false}
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
-        />
+        /> */}
         {/* Minimal content to prevent layout shift */}
         <h1 className="z-10 mx-auto mt-20 px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-8xl">
           <FormattedMessage id="empower-your-network" />
@@ -44,12 +44,12 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
     );
   }
   return (
-    <div className="relative flex h-full  flex-col  overflow-hidden ">
-      <NavBar
+    <div className="relative flex h-full  flex-col  overflow-hidden pt-16">
+      {/* <NavBar
         locale={locale}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
-      />
+      /> */}
       {/* Background Ellipses */}
       <div className=" flex size-full">
         <div className="pointer-events-none absolute inset-0">

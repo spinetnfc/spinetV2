@@ -9,6 +9,7 @@ import HowItWorks from '@/components/pages/landing-page/how-it-works/how-it-work
 import Products from '@/components/pages/landing-page/products/products';
 
 import { i18n } from '../../../i18n-config';
+import NavBarWrapper from '@/components/NavBarWrapper.client';
 
 type Props = {
   // Again, params may be an object or a thenable resolving to that object.
@@ -28,16 +29,19 @@ const Page = async (
   const messages = await getMessages(locale);
 
   return (
-    <div className="flex flex-col gap-3 overflow-x-hidden lg:gap-12">
-      <HeroSection locale={locale} messages={messages} />
-      <DiscoverMore locale={locale} />
-      <Features locale={locale} messages={messages} />
-      <ChoosePlan locale={locale} messages={messages} />
-      <HowItWorks locale={locale} />
-      <Products locale={locale} />
-      <Faq locale={locale} messages={messages} />
-      <Footer locale={locale} />
-    </div>
+    <>
+      <NavBarWrapper locale={locale} />
+      <div className="flex flex-col gap-3 overflow-x-hidden lg:gap-12">
+        <HeroSection locale={locale} messages={messages} />
+        <DiscoverMore locale={locale} />
+        <Features locale={locale} messages={messages} />
+        <ChoosePlan locale={locale} messages={messages} />
+        <HowItWorks locale={locale} />
+        <Products locale={locale} />
+        <Faq locale={locale} messages={messages} />
+        <Footer locale={locale} />
+      </div>
+    </>
   );
 };
 
