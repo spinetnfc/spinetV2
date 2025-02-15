@@ -1,12 +1,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 'use client';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { FormattedMessage, IntlProvider } from 'react-intl';
 
 import useDrag from '@/hooks/use-horizontal-drag';
-
 import Legend from '../legend';
-
 import FeatureCard from './feature-card';
 
 type Props = { locale: string; messages: Record<string, string> };
@@ -20,80 +18,53 @@ function Features({ locale, messages }: Props) {
     handleMouseMove,
     handleWheel,
   ] = useDrag(featuresContainerRef);
+
+  // Updated wheel handler: if deltaX is 0, fallback to deltaY.
+  const handleWheelWrapper = useCallback((e: WheelEvent) => {
+    if (featuresContainerRef.current) {
+      // Use deltaX if nonzero; otherwise, assume vertical gesture should scroll horizontally.
+      const horizontalDelta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+      e.preventDefault();
+      featuresContainerRef.current.scrollLeft += horizontalDelta;
+    }
+  }, []);
+
   const features = [
-    {
-      title: 'f1',
-      subtitle: 'f1-subtitle',
-      imageUrl: '/img/features/1.digital-identity.png',
-    },
-    {
-      title: 'f2',
-      subtitle: 'f2-subtitle',
-      imageUrl: '/img/features/2.spinet-devices.png',
-    },
-    {
-      title: 'f3',
-      subtitle: 'f3-subtitle',
-      imageUrl: '/img/features/3.contact-management.jpg',
-    },
-    {
-      title: 'f4',
-      subtitle: 'f4-subtitle',
-      imageUrl: '/img/features/4.lead-management.png',
-    },
-    {
-      title: 'f5',
-      subtitle: 'f5-subtitle',
-      imageUrl: '/img/features/5.actions-managemnet.svg',
-    },
-    {
-      title: 'f6',
-      subtitle: 'f6-subtitle',
-      imageUrl: '/img/features/6.multiple-profiles.png',
-    },
-    {
-      title: 'f7',
-      subtitle: 'f7-subtitle',
-      imageUrl: '/img/features/7.offers.svg',
-    },
-    {
-      title: 'f8',
-      subtitle: 'f8-subtitle',
-      imageUrl: '/img/features/8.teams-forms-redirections.png',
-    },
+    { title: 'f1', subtitle: 'f1-subtitle', imageUrl: '/img/features/1.digital-identity.png' },
+    { title: 'f2', subtitle: 'f2-subtitle', imageUrl: '/img/features/2.spinet-devices.png' },
+    { title: 'f3', subtitle: 'f3-subtitle', imageUrl: '/img/features/3.contact-management.jpg' },
+    { title: 'f4', subtitle: 'f4-subtitle', imageUrl: '/img/features/4.lead-management.png' },
+    { title: 'f5', subtitle: 'f5-subtitle', imageUrl: '/img/features/5.actions-managemnet.svg' },
+    { title: 'f6', subtitle: 'f6-subtitle', imageUrl: '/img/features/6.multiple-profiles.png' },
+    { title: 'f7', subtitle: 'f7-subtitle', imageUrl: '/img/features/7.offers.svg' },
+    { title: 'f8', subtitle: 'f8-subtitle', imageUrl: '/img/features/8.teams-forms-redirections.png' },
   ];
 
   useEffect(() => {
-    const Container = featuresContainerRef.current;
-    if (Container) {
-      Container.addEventListener('wheel', handleWheel, {
-        passive: false,
-      });
+    const container = featuresContainerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheelWrapper, { passive: false });
     }
     return () => {
-      if (Container) {
-        Container.removeEventListener('wheel', handleWheel);
+      if (container) {
+        container.removeEventListener('wheel', handleWheelWrapper);
       }
     };
-  }, [handleWheel]);
+  }, [handleWheelWrapper]);
 
   return (
     <IntlProvider locale={locale} messages={messages}>
-      <div className=" flex w-full flex-col items-center justify-center gap-2.5 overflow-x-hidden px-3 py-1.5 lg:gap-4">
-        <Legend
-          text="Maximize Your Enterprise Potential with Our Services"
-          locale={locale}
-        />
-        <div className=" text-center text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
+      <div className="flex w-full flex-col items-center justify-center gap-2.5 overflow-x-hidden px-3 py-1.5 lg:gap-4">
+        <Legend text="Maximize Your Enterprise Potential with Our Services" locale={locale} />
+        <div className="text-center text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
           <FormattedMessage id="Features" />
         </div>
         <span className="text-center text-xl text-[#1A3B8E]/80 dark:text-white">
           <FormattedMessage id="Features-text" />
         </span>
-
         <div
           ref={featuresContainerRef}
-          className="no-scrollbar flex h-fit w-full cursor-grab items-center space-x-4  overflow-x-auto active:cursor-grabbing"
+          className="no-scrollbar flex h-fit w-full cursor-grab items-center space-x-4 overflow-x-auto active:cursor-grabbing"
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}

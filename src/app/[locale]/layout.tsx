@@ -39,7 +39,7 @@ const RootLayout = async ({
   const { locale } = await params;
   const dir = getDirection(locale);
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
+    <html lang={locale} dir={dir} suppressHydrationWarning className='scroll-smooth'>
       <title>Spinet NFC</title>
       <body suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>

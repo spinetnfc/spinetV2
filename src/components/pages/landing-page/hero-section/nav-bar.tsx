@@ -109,7 +109,7 @@ function NavBar({
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#01173A] lg:hidden">
+        <div className="absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden">
           <nav className="flex flex-col space-y-2">
             {navItems.map((item) => (
               <NextLink
@@ -130,7 +130,7 @@ function NavBar({
             <CtaButton
               text={intl.formatMessage({ id: "log-in" })}
               icon={<LogIn className="me-2.5 size-6" />}
-              className="h-fit w-full"
+              className="h-fit w-max mx-auto"
             />
           </nav>
         </div>
