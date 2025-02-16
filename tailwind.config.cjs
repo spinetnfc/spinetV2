@@ -14,6 +14,9 @@ module.exports = {
       },
     },
     extend: {
+      screens:{
+        'xs': '400px',
+      },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],

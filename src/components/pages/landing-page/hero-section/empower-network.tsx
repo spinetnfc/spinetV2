@@ -5,7 +5,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 
 import { Button } from "@/components/ui/button";
 import CtaButton from "../cta-button";
-// import NavBar if needed
 
 type Props = {
   locale: string;
@@ -27,7 +26,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
         {/* Minimal content to prevent layout shift */}
-        <h1 className="z-10 mx-auto px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-8xl">
+        <h1 className="z-10 mx-auto px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-8xl 2xl:text-[120px]">
           <FormattedMessage id="empower-your-network" />
         </h1>
       </div>
@@ -35,7 +34,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
+    <div className="relative flex min-h-screen flex-col items-center justify-center pt-16 overflow-hidden">
       {/* Background Ellipses */}
       <div className="absolute inset-0 pointer-events-none">
         {resolvedTheme === "dark" && (
@@ -79,22 +78,22 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
       </div>
 
       {/* Content Container */}
-      <div className="container z-10 mx-auto px-4 text-center lg:px-0">
+      <div className="container z-10  px-4 text-center lg:px-0">
         {/* Title Container */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
-            <h1 className="text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl">
+          <div className="flex flex-row items-center justify-center gap-2">
+            <h1 className="text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl 2xl:text-[120px]">
               <FormattedMessage id="empower-your" />
             </h1>
-            <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-6xl tracking-tighter text-transparent lg:text-8xl">
+            <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-transparent lg:text-8xl 2xl:text-[120px]">
               <FormattedMessage id="network" />
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <h2 className="text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-[86px]">
+            <h2 className="text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl 2xl:text-[120px]">
               <FormattedMessage id="with" />
             </h2>
-            <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-5xl tracking-tighter text-transparent lg:text-[86px]">
+            <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-transparent lg:text-8xl 2xl:text-[120px]">
               <FormattedMessage id="spinet" />
             </h2>
           </div>

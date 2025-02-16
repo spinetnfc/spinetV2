@@ -67,7 +67,7 @@ export default function HeroSection({
         <HeroCarousel
           slides={slides}
           locale={locale}
-          autoplayInterval={5000}
+          autoplayInterval={500000} //adjust wehn done working
           isMenuOpen={isMenuOpen}
         />
       </div>
