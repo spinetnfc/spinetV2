@@ -32,21 +32,21 @@ async function Products({ locale }: Props) {
   return (
     <div className=" flex w-full flex-col items-center justify-center  gap-2.5   px-3 py-1.5  lg:gap-4">
       <Legend text={t('elevate-your-business')} locale={locale} />
-      <div className=" text-center text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
+      <div className=" text-center text-4xl sm:text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
         {t('most-popular-products')}
       </div>
 
-      <div className="flex  items-center justify-center text-center text-xl  text-[#1A3B8E]/80  dark:text-white">
+      <div className="flex  items-center justify-center text-center text-lg sm:text-xl  text-[#1A3B8E]/80  dark:text-white">
         {t('most-popular-products-text')}
       </div>
 
       <CtaButton
         icon={<Store className="ms-2.5 size-6" />}
         text={t('go-to-store')}
-        className="w-[308px]"
+        className="w-full max-w-[308px]"
         iconPosition="right"
       />
-      <div className="mt-8 flex h-fit w-full flex-col items-center justify-center space-y-2 lg:flex-row">
+      <div className="mt-8 flex h-fit w-full flex-col items-center justify-center gap-2 lg:flex-row">
         {products.map((product, index) => (
           <ProductCard
             key={index}

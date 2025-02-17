@@ -21,7 +21,8 @@ async function ProductCard({ index, product, locale }: Props) {
     <div
       className="group relative m-auto flex h-[433px] w-full flex-col items-center gap-2.5 
       overflow-hidden rounded-[18px] border border-slate-400 px-2 py-4 
-      transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69)] dark:border-white/10 dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69)] lg:w-[382px]"
+      transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69)]
+    dark:border-white/10 dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69)] lg:w-[382px]"
     >
       {/* Hover Gradient Blur Effect */}
       <div
