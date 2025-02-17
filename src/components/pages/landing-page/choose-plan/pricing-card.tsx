@@ -30,7 +30,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
   const intl = useIntl();
   if (widthFull)
     return (
-      <div className="flex w-full flex-col gap-4  rounded-xl border border-[#145FF4]  px-2 py-4  transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69),0px_140px_56px_rgba(0,0,0,0.1)] dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69),0px_140px_56px_rgba(100,100,100,0.1)]">
+      <div className="flex w-full  flex-col gap-4  rounded-xl border border-[#145FF4]  px-2 py-4  transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69),0px_140px_56px_rgba(0,0,0,0.1)] dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69),0px_140px_56px_rgba(100,100,100,0.1)]">
         <div className="flex justify-between ">
           <div className=" flex flex-col gap-2  ">
             <h2 className="text-4xl font-bold leading-[150%]">
@@ -63,7 +63,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
       </div>
     );
   return (
-    <div className="noSelect  flex w-full  flex-col gap-4 rounded-xl border border-[#145FF4] px-2 py-4 transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69)] dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69)]">
+    <div className="noSelect  flex min-w-[300px]  flex-col gap-4 rounded-xl border border-[#145FF4] px-2 py-4 transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69)] dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69)]">
       <div className=" flex flex-col gap-2.5 ">
         <h2 className="text-4xl font-bold  leading-[150%]">
           {' '}
@@ -86,12 +86,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
       <div className="mt-auto">
         {' '}
         {index === 0 ? (
-          <CtaButton
-            text={intl.formatMessage({ id: 'sign-up' })}
-            icon={<LogIn className="me-2.5 size-6" />}
-          />
+          <div className='flex justify-center'>
+            <CtaButton
+              text={intl.formatMessage({ id: 'sign-up' })}
+              icon={<LogIn className="me-2.5 size-6" />}
+            />
+          </div>
         ) : (
-          <div className=" flex flex-row items-center gap-2 ">
+          <div className=" flex flex-row items-center justify-center gap-2 ">
             <CtaButton
               icon={<ShoppingCart className="ms-2.5 size-6" />}
               text={intl.formatMessage({ id: 'buy-now' })}

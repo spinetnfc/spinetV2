@@ -52,13 +52,13 @@ function ComparePlans() {
       <table className="compare-plans-table w-full border-collapse">
         <thead>
           <tr className="compare-plans-header-row bg-gray-100 text-black">
-            <th className="compare-plans-header-cell p-4 text-left font-semibold">
+            <th className="compare-plans-header-cell py-2 pl-2 sm:pl-4 text-left font-semibold">
               Features
             </th>
             {plans.map((plan) => (
               <th
                 key={plan.title}
-                className="compare-plans-header-cell p-4 text-center font-semibold"
+                className="compare-plans-header-cell pl-2 sm:pl-4 text-left font-semibold"
               >
                 {plan.title}
               </th>
@@ -71,13 +71,13 @@ function ComparePlans() {
               key={feature.name}
               className="compare-plans-row hover:cursor-pointer hover:bg-gray-50 hover:text-black"
             >
-              <td className="compare-plans-cell p-4 font-medium">
+              <td className="compare-plans-cell pl-2 sm:pl-4 font-medium">
                 {feature.name}
               </td>
               {plans.map((plan) => (
                 <td
                   key={plan.title}
-                  className="compare-plans-cell p-4 text-center"
+                  className="compare-plans-cell py-3 pl-2 sm:pl-4 flex-row items-center justify-center"
                 >
                   {plan.features[featureIndex].exist ? (
                     <GreenCheckIcon />
