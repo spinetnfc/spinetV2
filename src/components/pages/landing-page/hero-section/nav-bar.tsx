@@ -11,6 +11,9 @@ const navItems = [
   { id: "features", label: "features" },
   { id: "pricing", label: "pricing" },
   { id: "support", label: "support" },
+  { id: "products", label: "products" },
+  { id: "how-it-works", label: "demo" },
+  { id: "discover-more", label: "discover" },
 ];
 
 function scrollToSection(id: string, setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
@@ -53,7 +56,7 @@ function NavBar({
   return (
     <header
       className={cn(
-        "fixed z-50 flex w-full flex-row items-center justify-between px-4 py-2 lg:py-4 transition-transform duration-800 bg-white/90 dark:bg-[#010C32]/90",
+        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-4 transition-transform duration-800 bg-white/90 dark:bg-[#010C32]/90",
         visible ? "translate-y-0" : "-translate-y-full"
       )}
     >
@@ -79,14 +82,14 @@ function NavBar({
 
       {/* Desktop Navigation */}
       <nav className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center ">
           {navItems.map(({ id, label }) => (
             <button
               key={id}
               onClick={() => scrollToSection(id)}
-              className="flex h-12 items-center rounded-[14px] p-3"
+              className="flex h-12 items-center rounded-[14px] p-2 xl:p-3"
             >
-              <span className="font-inter text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400">
+              <span className=" cursor-pointer font-inter text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400">
                 <FormattedMessage id={label} />
               </span>
             </button>

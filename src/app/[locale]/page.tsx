@@ -35,15 +35,21 @@ const Page = async (
         <section id="hero">
           <HeroSection locale={locale} messages={messages} />
         </section>
-        <DiscoverMore locale={locale} />
+        <section id="discover-more">
+          <DiscoverMore locale={locale} />
+        </section>
         <section id="features">
           <Features locale={locale} messages={messages} />
         </section>
         <section id="pricing">
           <ChoosePlan locale={locale} messages={messages} />
         </section>
-        <HowItWorks locale={locale} />
-        <Products locale={locale} />
+        <section id="how-it-works">
+          <HowItWorks locale={locale} />
+        </section>
+        <section id="products">
+          <Products locale={locale} />
+        </section>
         <section id="support">
           <Faq locale={locale} messages={messages} />
         </section>
