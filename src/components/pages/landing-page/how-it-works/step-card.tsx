@@ -45,7 +45,8 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
             alt={text}
             fill
             sizes='w-100%'
-            className="object-cover"
+            // className="object-cover"
+            className={`${(ordinal !== 'Third') ? "object-cover" : "object-contain"}`}
             priority
           />
         </div>
@@ -55,7 +56,7 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
             {ordinal}
           </div>
 
-          <h3 className=" text-center text-2xl leading-8 text-[#1A3B8E]/80 dark:text-white">
+          <h3 className=" text-center text-xl sm:text-2xl leading-8 text-[#1A3B8E]/80 dark:text-white">
             {text}
           </h3>
         </div>
