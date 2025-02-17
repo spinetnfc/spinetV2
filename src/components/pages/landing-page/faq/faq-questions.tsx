@@ -26,10 +26,10 @@ const FaqQuestions = () => {
 
   return (
     <div className="w-[590px] max-w-full text-[#152656] dark:text-[#DEE3F8] lg:self-end">
-      <h1 className="mb-6 text-5xl   font-bold leading-[60px] ">
+      <h1 className="mb-6 text-4xl sm:text-5xl text-center font-bold leading-[60px] ">
         <FormattedMessage id="got-a-question" />
       </h1>
-      <p className="mb-6  text-2xl leading-[38px] ">
+      <p className="mb-6  text-xl sm:text-2xl text-center leading-[38px] ">
         <FormattedMessage id="got-a-question-text" />
       </p>
       <Accordion type="single" collapsible className="space-y-4">

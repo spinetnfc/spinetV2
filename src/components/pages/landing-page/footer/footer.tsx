@@ -34,9 +34,9 @@ async function Footer({ locale }: Props) {
     <div className="flex flex-col gap-5 p-4 text-[#1A3B8E] dark:text-white lg:gap-8 lg:px-16 lg:py-12">
       <div className="flex items-center justify-between border-b-2 border-neutral-200 pb-4 dark:border-neutral-800">
         <SpinetLogo className="hover:cursor-pointer" width={151} height={31} />
-        <div className="flex items-center justify-center gap-5">
-          <span>{t('follow-us')}</span>
-          <div className="flex gap-2">
+        <div className="flex items-center justify-center gap-3 sm:gap-5">
+          <span className='hidden sm:block'>{t('follow-us')}</span>
+          <div className="flex gap-2  ">
             <Linkedin
               size={24}
               className="hover:cursor-pointer hover:text-[#1A3B8E]/80 dark:hover:text-white/80"
