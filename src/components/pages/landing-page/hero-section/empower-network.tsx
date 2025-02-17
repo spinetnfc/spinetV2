@@ -34,7 +34,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center pt-16 overflow-hidden">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       {/* Background Ellipses */}
       <div className="absolute inset-0 pointer-events-none">
         {resolvedTheme === "dark" && (

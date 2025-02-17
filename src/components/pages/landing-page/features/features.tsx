@@ -56,15 +56,15 @@ function Features({ locale, messages }: Props) {
     <IntlProvider locale={locale} messages={messages}>
       <div className="flex w-full flex-col items-center justify-center gap-2.5 overflow-x-hidden px-3 py-1.5 lg:gap-4">
         <Legend text="Maximize Your Enterprise Potential with Our Services" locale={locale} />
-        <div className="text-center text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
+        <div className="text-center text-4xl sm:text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
           <FormattedMessage id="Features" />
         </div>
-        <span className="text-center text-xl text-[#1A3B8E]/80 dark:text-white">
+        <span className="text-center text-lg sm:text-xl text-[#1A3B8E]/80 dark:text-white">
           <FormattedMessage id="Features-text" />
         </span>
         <div
           ref={featuresContainerRef}
-          className="no-scrollbar flex h-fit w-full cursor-grab items-center space-x-4 overflow-x-auto active:cursor-grabbing"
+          className="no-scrollbar mt-4 flex h-fit w-full cursor-grab items-center space-x-4 overflow-x-auto active:cursor-grabbing"
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
