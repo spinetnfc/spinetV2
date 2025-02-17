@@ -37,9 +37,9 @@ module.exports = {
         'plugin:jsx-a11y/recommended',
         'plugin:prettier/recommended',
         // 'plugin:testing-library/react',
-        'plugin:jest-dom/recommended',
+        // 'plugin:jest-dom/recommended',
         'plugin:tailwindcss/recommended',
-        'plugin:vitest/legacy-recommended',
+        // 'plugin:vitest/legacy-recommended',
       ],
       rules: {
         '@next/next/no-img-element': 'off',
