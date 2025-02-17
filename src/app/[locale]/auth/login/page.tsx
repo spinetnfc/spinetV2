@@ -5,10 +5,7 @@ async function getMessages(locale: string) {
   return (await import(`../../../../lang/${locale}.json`)).default;
 }
 
-const LoginPage = async (
-  { params }: {
-    params: { locale: string } | Promise<{ locale: string }>;
-  }) => {
+const LoginPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params;
   const messages = await getMessages(locale);
 
