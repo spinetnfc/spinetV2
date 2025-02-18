@@ -63,7 +63,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
       </div>
     );
   return (
-    <div className="noSelect  flex min-w-[300px]  flex-col gap-4 rounded-xl border border-[#145FF4] px-2 py-4 transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69)] dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69)]">
+    <div className="noSelect  flex min-w-[300px] lg:w-full flex-col gap-4 rounded-xl border border-[#145FF4] px-2 py-4 transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69)] dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69)]">
       <div className=" flex flex-col gap-2.5 ">
         <h2 className="text-4xl font-bold  leading-[150%]">
           {' '}

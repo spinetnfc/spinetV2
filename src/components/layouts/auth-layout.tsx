@@ -2,17 +2,14 @@
 
 import Image from 'next/image';
 import { useRouter, usePathname, useParams } from 'next/navigation';
-import { ReactNode, useEffect, Suspense } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-
-// import { Link } from '@/components/ui/link';
 import AuthenticationImage from '@/components/icons/authentication-image';
 import { Spinner } from '@/components/ui/spinner';
 import { useUser } from '@/lib/auth';
 import { cn } from '@/utils/cn';
-
-import SpinetLogo from '../icons/spinet-logo-1';
 import ThemeSwitch from '../theme-switch';
+import { useTheme } from 'next-themes';
 
 type LayoutProps = {
   children: ReactNode;
@@ -23,14 +20,8 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
-  // params.locale is of type string | string[] | undefined, so we extract a string:
-  const localeParam = params.locale;
-  const locale =
-    typeof localeParam === "string"
-      ? localeParam
-      : Array.isArray(localeParam)
-        ? localeParam[0]
-        : "en"; // default fallback
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     if (user.data) {
@@ -38,54 +29,62 @@ export const AuthLayout = ({ children }: LayoutProps) => {
     }
   }, [user.data, router]);
 
-  return (
-    <Suspense
-      fallback={
-        <div className="flex size-full items-center justify-center">
-          <Spinner size="xl" />
-        </div>
-      }
-    >
-      <ErrorBoundary key={pathname} fallback={<div>Something went wrong!</div>}>
-        <div className="relative flex w-full flex-col items-center justify-center sm:h-dvh  md:h-screen md:max-h-screen   ">
-          <div className="absolute end-2 top-2 z-10">
-            <ThemeSwitch parentDarkMode locale={locale} />
-          </div>
-          <Image
-            src="/img/abstract.jpeg"
-            alt="auth Background"
-            fill
-            sizes="100vw"
-            className="absolute inset-0 z-0 hidden object-cover lg:block"
-            priority
-          />
-          <div className="flex size-full flex-col-reverse items-center justify-center gap-9 rounded-md  lg:mx-48 lg:my-52 lg:flex-row lg:gap-20 lg:px-32 lg:py-20">
-            {children}
+  // Ensure component is mounted before using theme
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-            <div
-              className={cn('z-10 hidden lg:w-1/2 lg:block', {
-                'block ': pathname === '/auth/forgot-password',
-              })}
-            >
-              {pathname !== '/auth/forgot-password' ? (
-                <img src="/img/authentication.png" alt="auth illustration" />
-              ) : (
-                <AuthenticationImage
-                  className={cn('text-white', {
-                    'text-[#082356] dark:text-white lg:text-white':
-                      pathname === '/auth/forgot-password',
-                  })}
+  const localeParam = params.locale;
+  const locale =
+    typeof localeParam === 'string'
+      ? localeParam
+      : Array.isArray(localeParam)
+        ? localeParam[0]
+        : 'en';
+
+  return (
+    <ErrorBoundary key={pathname} fallback={<div>Something went wrong!</div>}>
+      <div className="relative flex w-full flex-col items-center justify-center sm:h-dvh md:h-screen md:max-h-screen">
+        <div className="absolute end-2 top-2 z-10">
+          <ThemeSwitch parentDarkMode locale={locale} />
+        </div>
+        <Image
+          src="/img/abstract.jpeg"
+          alt="auth Background"
+          fill
+          sizes="100vw"
+          className={`absolute inset-0 z-0 hidden object-cover lg:block ${locale === 'ar' ? 'transform scale-x-[-1]' : ''
+            }`}
+          priority
+        />
+        <div className="flex size-full flex-col-reverse items-center justify-center rounded-md pt-12 lg:mx-48 lg:my-52 lg:flex-row lg:gap-20 lg:px-32 lg:py-20">
+          {children}
+          <div className="z-10 lg:w-1/2">
+            {pathname !== '/auth/forgot-password' ? (
+              mounted ? (
+                <img
+                  src={
+                    resolvedTheme === "light"
+                      ? "/img/authentication-light.png"
+                      : "/img/authentication.png"
+                  }
+                  alt="auth illustration"
+                  className="w-60 xs:w-80"
                 />
-              )}
-            </div>
-            <SpinetLogo
-              className={
-                pathname === '/auth/forgot-password' ? 'hidden' : 'block'
-              }
-            />
+              ) : (
+                <div className="w-60 xs:w-80 h-48 bg-gray-200 animate-pulse" />
+              )
+            ) : (
+              <AuthenticationImage
+                className={cn('text-white', {
+                  'text-[#082356] dark:text-white lg:text-white':
+                    pathname === '/auth/forgot-password',
+                })}
+              />
+            )}
           </div>
         </div>
-      </ErrorBoundary>
-    </Suspense>
+      </div>
+    </ErrorBoundary>
   );
 };

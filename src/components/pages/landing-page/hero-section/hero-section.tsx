@@ -1,16 +1,14 @@
 'use client';
-import Image from 'next/image';
-import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { IntlProvider } from 'react-intl';
-
 import HeroCarousel from '@/components/pages/landing-page/hero-section/hero-carousel';
-import { cn } from '@/utils/cn';
-
 import DigitalIdentity from './digital-identity';
 import EmpowerNetwork from './empower-network';
 import Events from './events';
 import TransformBusiness from './transform-business';
+// import Image from 'next/image';
+// import { useTheme } from 'next-themes';
+// import { cn } from '@/utils/cn';
 
 export default function HeroSection({
   locale,
@@ -20,7 +18,7 @@ export default function HeroSection({
   messages: Record<string, string>;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { resolvedTheme } = useTheme();
+  // const { resolvedTheme } = useTheme();
   const slides = [
     <DigitalIdentity
       key="0"

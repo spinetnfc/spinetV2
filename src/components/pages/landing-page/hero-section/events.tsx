@@ -13,8 +13,8 @@ type Props = {
 function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
   return (
-    <div className=" relative flex h-full flex-col  items-center justify-center   overflow-hidden pt-16">
-      <div className="   flex size-full items-center justify-center">
+    <div className="relative flex h-full flex-col  items-center justify-center   overflow-hidden">
+      <div className="flex size-full items-center justify-center">
         {' '}
         <div className="absolute inset-0 bg-[#01173A]/30 object-cover shadow-[0_-1px_4px_rgba(20,95,242,0.2)]">
           <Image
