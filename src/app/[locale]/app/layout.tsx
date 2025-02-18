@@ -11,7 +11,7 @@ const AppLayout = async ({
   params,
   children,
 }: {
-  params: { locale: string } | Promise<{ locale: string }>;
+  params: Promise<{ locale: string }>;
   children: ReactNode;
 }) => {
   const { locale } = await params;

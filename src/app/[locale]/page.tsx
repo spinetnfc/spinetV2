@@ -13,7 +13,7 @@ import NavBarWrapper from '@/components/NavBarWrapper.client';
 
 type Props = {
   // Again, params may be an object or a thenable resolving to that object.
-  params: { locale: string } | Promise<{ locale: string }>;
+  params: Promise<{ locale: string }>;
 };
 
 async function getMessages(locale: string) {
@@ -22,7 +22,7 @@ async function getMessages(locale: string) {
 
 const Page = async (
   { params }: {
-    params: { locale: string } | Promise<{ locale: string }>;
+    params: Promise<{ locale: string }>;
   }) => {
   // Await params before using its properties (do not call params as a function)
   const { locale } = await params;

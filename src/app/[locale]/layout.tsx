@@ -32,7 +32,7 @@ const RootLayout = async ({
   params,
   children,
 }: {
-  params: { locale: string } | Promise<{ locale: string }>;
+  params: Promise<{ locale: string }>;
   children: ReactNode;
 }) => {
   // Await params (without calling it as a function)
