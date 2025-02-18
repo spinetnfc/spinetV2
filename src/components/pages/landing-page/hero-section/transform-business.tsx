@@ -21,7 +21,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
     <div className="relative flex size-full flex-col pt-16">
       <div className=" flex size-full flex-col lg:flex-row">
         {' '}
-        <div className="z-10 px-4 flex h-3/5 w-full flex-col items-center justify-center gap-4  lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start lg:justify-start">
+        <div className="z-10 px-4 flex h-3/5 lg:h-full w-full flex-col items-center justify-center gap-4  lg:me-0 lg:ms-10 lg:w-1/2">
           {/* Section Text */}
           <div className="flex flex-col gap-3">
             <span className="text-lg sm:text-xl text-[#145FF2] text-center lg:text-start">

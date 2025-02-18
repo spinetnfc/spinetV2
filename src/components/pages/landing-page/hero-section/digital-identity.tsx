@@ -2,10 +2,8 @@ import { Search } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-
 import CtaButton from '../cta-button';
 
-import NavBar from './nav-bar';
 
 type Props = {
   locale: string;
@@ -19,20 +17,7 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
     <div className="relative flex h-full flex-col  overflow-hidden pt-16
      bg-[url('/img/digital-identity-bg.png')] bg-cover bg-no-repeat
      ">
-      {/* <NavBar
-        locale={locale}
-        parentDarkMode={true}
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-      /> */}
       <div className="flex size-full flex-col lg:flex-row">
-        {/* <Image
-          src="/img/digital-identity-bg.png"
-          alt="Background"
-          fill
-          className="absolute"
-          priority
-        />{' '} */}
         <div className="z-10 mx-5 mt-20  flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">
           {/* Section Text */}
           <div className="flex flex-col gap-4  ">
@@ -55,7 +40,7 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             className="lg:w-[308px]"
           />
         </div>
-        <div className="relative size-full ">
+        <div className="relative size-full">
           <Image
             src="/img/hand-finger-print.png"
             alt="Hand image"

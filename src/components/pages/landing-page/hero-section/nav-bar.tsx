@@ -56,7 +56,7 @@ function NavBar({
   return (
     <header
       className={cn(
-        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-4 transition-transform duration-800 bg-white/90 dark:bg-[#010C32]/90",
+        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-4 transition-transform duration-800 bg-white dark:bg-[#010C32]",
         visible ? "translate-y-0" : "-translate-y-full"
       )}
     >

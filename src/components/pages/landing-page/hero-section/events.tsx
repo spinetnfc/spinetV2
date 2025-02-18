@@ -2,10 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-
 import CtaButton from '../cta-button';
-
-import NavBar from './nav-bar';
 
 type Props = {
   locale: string;
@@ -17,12 +14,6 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
   return (
     <div className=" relative flex h-full flex-col  items-center justify-center   overflow-hidden pt-16">
-      {/* <NavBar
-        locale={locale}
-        parentDarkMode={true}
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-      /> */}
       <div className="   flex size-full items-center justify-center">
         {' '}
         <div className="absolute inset-0 bg-[#01173A]/30 object-cover shadow-[0_-1px_4px_rgba(20,95,242,0.2)]">
@@ -46,7 +37,11 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
 
             <h1 className="text-center text-5xl font-semibold text-[#EEF6FF] lg:text-7xl">
               {' '}
-              <FormattedMessage id="spinet-events-and-more" />
+              <FormattedMessage id="spinet-events-and" />
+            </h1>
+            <h1 className="text-center text-5xl font-semibold text-[#EEF6FF] lg:text-7xl">
+              {' '}
+              <FormattedMessage id="more" />
             </h1>
 
             {/* Paragraph */}
