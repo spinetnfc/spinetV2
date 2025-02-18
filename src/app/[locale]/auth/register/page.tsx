@@ -5,9 +5,7 @@ import Register from '@/components/pages/register';
 async function getMessages(locale: string) {
   return await import(`../../../../lang/${locale}.json`);
 }
-async function LoginPage({ params }: {
-  params: { locale: string } | Promise<{ locale: string }>;
-}) {
+async function LoginPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const messages = (await getMessages(locale)).default;
 

@@ -23,7 +23,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
   const autoplayOptions = { delay: autoplayInterval, stopOnInteraction: false };
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay(autoplayOptions) as any,
+    Autoplay(autoplayOptions) as any, // Cast to any to avoid TypeScript error, 
   ]);
 
   const scrollPrev = useCallback(() => {
