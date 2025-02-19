@@ -89,7 +89,7 @@ function NavBar({
               onClick={() => scrollToSection(id)}
               className="flex h-12 items-center rounded-[14px] p-2 xl:p-3"
             >
-              <span className=" cursor-pointer font-inter text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400">
+              <span className=" cursor-pointer text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400">
                 <FormattedMessage id={label} />
               </span>
             </button>

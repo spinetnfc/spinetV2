@@ -18,8 +18,9 @@ module.exports = {
         'xs': '400px',
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--font-poppins)', ...defaultTheme.fontFamily.sans],
+        inter: ['var(--font-inter)', 'sans-serif'],
+        // sans: ['Inter var', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',

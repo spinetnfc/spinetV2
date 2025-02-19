@@ -7,7 +7,6 @@ import Footer from '@/components/pages/landing-page/footer/footer';
 import HeroSection from '@/components/pages/landing-page/hero-section/hero-section';
 import HowItWorks from '@/components/pages/landing-page/how-it-works/how-it-works';
 import Products from '@/components/pages/landing-page/products/products';
-
 import { i18n } from '../../../i18n-config';
 import NavBarWrapper from '@/components/NavBarWrapper.client';
 
@@ -19,7 +18,6 @@ type Props = {
 async function getMessages(locale: string) {
   return (await import(`../../lang/${locale}.json`)).default;
 }
-
 const Page = async (
   { params }: {
     params: Promise<{ locale: string }>;

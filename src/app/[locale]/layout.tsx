@@ -1,11 +1,10 @@
 // import { Metadata } from 'next';
 import { ReactNode } from 'react';
-
 import { AppProvider } from '@/app/[locale]/provider';
 import '@/styles/globals.css';
 // getIntl;
 import { getDirection } from '@/lib/intl';
-
+import { Poppins, Inter } from 'next/font/google'
 // If you need to generate metadata, you can uncomment and adjust the code below.
 // type RouteProps = {
 //   params: { locale: string };
@@ -27,6 +26,18 @@ import { getDirection } from '@/lib/intl';
 //     },
 //   };
 // }
+const poppins = Poppins({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins',
+});
+const inter = Inter({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 const RootLayout = async ({
   params,
@@ -38,8 +49,10 @@ const RootLayout = async ({
   // Await params (without calling it as a function)
   const { locale } = await params;
   const dir = getDirection(locale);
+  const fontClass = locale === 'ar' ? inter.variable : poppins.variable;
+
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning className='scroll-smooth'>
+    <html lang={locale} dir={dir} suppressHydrationWarning className={`${fontClass} scroll-smooth`}>
       <title>Spinet NFC</title>
       <body suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>

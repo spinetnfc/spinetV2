@@ -93,7 +93,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                       id: 'enter-your-full-name',
                     })}
                     {...field}
-                    className="border-gray-100 focus:border-blue-500"
+                    className="border-gray-100 dark:border-blue-950 focus:border-blue-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -113,7 +113,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                   <Input
                     placeholder="username@gmail.com"
                     {...field}
-                    className="border-gray-100 focus:border-blue-500"
+                    className="border-gray-100 dark:border-blue-950 focus:border-blue-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -138,7 +138,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                         id: 'password',
                       })}
                       {...field}
-                      className="border-gray-100 pr-10  focus:border-blue-500"
+                      className="border-gray-100 dark:border-blue-950 pr-10  focus:border-blue-500"
                     />
                     <button
                       type="button"
@@ -171,7 +171,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                         id: 'password-confirmation',
                       })}
                       {...field}
-                      className="border-gray-100 pr-10  focus:border-blue-500"
+                      className="border-gray-100 dark:border-blue-950 pr-10  focus:border-blue-500"
                     />
                     <button
                       type="button"
