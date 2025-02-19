@@ -1,9 +1,7 @@
-
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState, useCallback, ReactNode, useEffect } from "react";
-import { cn } from "@/utils/cn";
 
 interface HeroCarouselProps {
   slides: ReactNode[];
@@ -14,29 +12,33 @@ interface HeroCarouselProps {
 
 const HeroCarousel: React.FC<HeroCarouselProps> = ({
   slides,
+  locale,
   autoplayInterval = 5000,
   isMenuOpen,
 }) => {
+  const isRTL = locale === "ar"; // Check if RTL mode is active
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // Define autoplay options with your desired delay
+  // autoplay options
   const autoplayOptions = { delay: autoplayInterval, stopOnInteraction: false };
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay(autoplayOptions) as any, // Cast to any to avoid TypeScript error, 
-  ]);
+  // Initialize Embla with correct direction
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, direction: isRTL ? "rtl" : "ltr" },
+    [Autoplay(autoplayOptions)]
+  );
 
   const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
+    emblaApi?.scrollPrev();
   }, [emblaApi]);
 
   const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
+    emblaApi?.scrollNext();
   }, [emblaApi]);
 
   const scrollTo = useCallback(
     (index: number) => {
-      if (emblaApi) emblaApi.scrollTo(index);
+      emblaApi?.scrollTo(index);
     },
     [emblaApi]
   );
@@ -46,12 +48,12 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
     setSelectedIndex(emblaApi.selectedScrollSnap());
   }, [emblaApi]);
 
+  // Ensure Embla listens for selection changes
   useEffect(() => {
     if (!emblaApi) return;
     emblaApi.on("select", onSelect);
 
-    // Restart autoplay by casting plugins to any
-    if (emblaApi && (emblaApi as any).plugins?.autoplay) {
+    if ((emblaApi as any).plugins?.autoplay) {
       (emblaApi as any).plugins.autoplay.start();
     }
 
@@ -60,8 +62,18 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
     };
   }, [emblaApi, onSelect]);
 
+  // Fix: Reinitialize when switching between LTR/RTL
+  useEffect(() => {
+    if (emblaApi) {
+      emblaApi.reInit();
+    }
+  }, [emblaApi, locale]);
+
   return (
-    <div className="relative h-full overflow-hidden">
+    <div
+      className="relative h-full overflow-hidden"
+      dir={isRTL ? "rtl" : "ltr"} // Ensures correct text & layout direction
+    >
       <div ref={emblaRef} className="h-full overflow-hidden">
         <div className="flex h-full">
           {slides.map((slide, index) => (
@@ -77,18 +89,20 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
           <button
             type="button"
             onClick={scrollPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2"
+            className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? "right-4" : "left-4"
+              }`} // Swap button positions in RTL
             aria-label="Previous slide"
           >
-            <ChevronLeft className="hidden sm:block size-6" />
+            <ChevronLeft className={`hidden sm:block size-6 ${isRTL ? "scale-x-[-1]" : ""}`} />
           </button>
           <button
             type="button"
             onClick={scrollNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2"
+            className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? "left-4" : "right-4"
+              }`} // Swap button positions in RTL
             aria-label="Next slide"
           >
-            <ChevronRight className="hidden sm:block size-6" />
+            <ChevronRight className={`hidden sm:block size-6 ${isRTL ? "scale-x-[-1]" : ""}`} />
           </button>
         </>
       )}
