@@ -6,16 +6,21 @@ import React, { useEffect, useState } from 'react';
 import StepArrowHorizontal from '@/components/icons/step-arrow-horizontal';
 import StepArrowVertical from '@/components/icons/step-arrow-vertical';
 import { cn } from '@/utils/cn';
+import { useParams } from 'next/navigation';
 
 type Props = {
   imageUrl: string;
   text: string;
   ordinal: string;
+
 };
 
 function StepCard({ imageUrl, text, ordinal }: Props) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const params = useParams();
+  const locale = params.locale;
+
 
   // Handle mounting state
   useEffect(() => {
@@ -45,8 +50,8 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
             alt={text}
             fill
             sizes='w-100%'
-            // className="object-cover"
-            className={`${(ordinal !== 'Third') ? "object-cover" : "object-contain"}`}
+            className="object-cover"
+            // className={`${(ordinal !== 'Third') ? "object-cover" : "object-contain"} rounded-lg overflow-hidden`}
             priority
           />
         </div>
@@ -61,9 +66,9 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
           </h3>
         </div>
       </div>
-      {ordinal !== 'Fourth' && (
+      {(ordinal !== 'Fourth' && ordinal !== "رابعًا") && (
         <>
-          <StepArrowHorizontal className="hidden lg:block" />
+          <StepArrowHorizontal className={`hidden lg:block ${locale === "ar" ? "scale-x-[-1]" : ""}`} />
           <StepArrowVertical className="lg:hidden" />
         </>
       )}

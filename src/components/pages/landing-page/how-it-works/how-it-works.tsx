@@ -59,6 +59,7 @@ async function HowItWorks({ locale }: Props) {
             imageUrl={step.imageUrl}
             text={t(step.text)}
             ordinal={t(step.ordinal)}
+            locale={locale}
           />
         ))}
       </div>
