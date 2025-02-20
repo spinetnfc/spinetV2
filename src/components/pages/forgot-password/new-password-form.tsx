@@ -60,8 +60,8 @@ const NewPasswordForm = ({ email }: Props) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <h1 className="text-4xl font-semibold">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <h1 className="text-lg xs:text-xl sm:text-2xl font-semibold">
           <FormattedMessage id="create-new-password" />
         </h1>
         <FormField
@@ -73,9 +73,10 @@ const NewPasswordForm = ({ email }: Props) => {
                 <FormattedMessage id="new-password" />
               </FormLabel>
               <FormControl>
-                <div className="relative">
+                <div className="relative mt-2">
                   <Input
                     type={showPassword ? 'text' : 'password'}
+                    className='border-gray-200 dark:border-blue-950 focus:border-blue-500'
                     placeholder={intl.formatMessage({
                       id: 'enter-new-password',
                     })}
@@ -84,7 +85,7 @@ const NewPasswordForm = ({ email }: Props) => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    className="absolute inset-y-0 end-0 flex items-center pe-3"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -103,9 +104,10 @@ const NewPasswordForm = ({ email }: Props) => {
                 <FormattedMessage id="password-confirmation" />
               </FormLabel>
               <FormControl>
-                <div className="relative">
+                <div className="relative mt-2">
                   <Input
                     type={showPassword ? 'text' : 'password'}
+                    className='border-gray-200 dark:border-blue-950 focus:border-blue-500'
                     placeholder={intl.formatMessage({
                       id: 'confirm-new-password',
                     })}
@@ -114,7 +116,7 @@ const NewPasswordForm = ({ email }: Props) => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    className="absolute inset-y-0 end-0 flex items-center pe-3"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>

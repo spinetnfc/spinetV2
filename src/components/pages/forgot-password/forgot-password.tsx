@@ -15,11 +15,11 @@ const ForgotPassword = ({
   locale: string;
   messages: Record<string, string>;
 }) => {
-  const [step, setStep] = useState<'email' | 'otp' | 'newPassword'>('otp');
+  const [step, setStep] = useState<'email' | 'otp' | 'newPassword'>('email');
   const [email, setEmail] = useState('');
   return (
     <IntlProvider locale={locale} messages={messages}>
-      <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
+      <div className="z-50 w-full space-y-6 rounded-lg p-4 xs:p-8 text-[#0D2C60] lg:shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
         {step === 'email' && (
           <EmailForm setEmail={setEmail} setStep={setStep} locale={locale} />
         )}

@@ -60,8 +60,8 @@ const OtpForm = ({ email, setStep }: Props) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <h2>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 flex-row justify-center items-center">
+        <h2 className='font-semibold text-2xl text-center'>
           <FormattedMessage id="enter-otp" /> {email}
         </h2>
         <FormField
