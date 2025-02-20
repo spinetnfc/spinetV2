@@ -17,6 +17,15 @@ type Props = {
 
 function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
+
+  function scrollToSection(id: string, setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      setIsMenuOpen?.(false); // Close menu in mobile view
+    }
+  }
+
   return (
     <div className="relative flex size-full flex-col pt-16">
       <div className=" flex size-full flex-col lg:flex-row">
@@ -55,6 +64,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
               className="cursor-pointer h-12  rounded-2xl bg-white text-xl leading-6 text-[#145FF2] 
              transition-all  hover:bg-blue-500  hover:text-white hover:brightness-125  dark:bg-[#082356] dark:text-white"
               iconPosition="right"
+              onClick={() => scrollToSection("features")}
             >
               <FormattedMessage id="see-features" />
             </Button>

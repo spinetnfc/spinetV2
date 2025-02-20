@@ -10,9 +10,10 @@ type Props = {
   className?: string;
   iconPosition?: 'left' | 'right';
   link?: string;
+  newTab?: boolean;
 };
 
-function CtaButton({ icon, text, link, className, iconPosition = 'left' }: Props) {
+function CtaButton({ icon, text, link, className, iconPosition = 'left', newTab = false }: Props) {
   return (
     <Button
       icon={icon}
@@ -23,9 +24,7 @@ function CtaButton({ icon, text, link, className, iconPosition = 'left' }: Props
       iconPosition={iconPosition}
     >
       {link ? (
-        <Link href={link}
-          //  target="_blank" 
-          rel="noreferrer">
+        <Link href={link} target={newTab ? "_blank" : "_self"} rel="noreferrer">
           {text}
         </Link>
       ) : (

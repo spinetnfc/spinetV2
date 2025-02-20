@@ -17,6 +17,13 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  function scrollToSection(id: string, setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      setIsMenuOpen?.(false); // Close menu in mobile view
+    }
+  }
   // Handle mounting state
   useEffect(() => {
     setMounted(true);
@@ -26,7 +33,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
         {/* Minimal content to prevent layout shift */}
-        <h1 className="z-10 mx-auto px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-8xl 2xl:text-[120px]">
+        <h1 className="z-10 mx-auto px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-8xl ">
           <FormattedMessage id="empower-your-network" />
         </h1>
       </div>
@@ -82,18 +89,18 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         {/* Title Container */}
         <div className="flex flex-col items-center gap-2 ">
           <div className="flex flex-row items-center justify-center gap-2">
-            <h1 className="text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl 2xl:text-[120px] sm:pb-2">
+            <h1 className="text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl  sm:pb-2">
               <FormattedMessage id="empower-your" />
             </h1>
-            <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-transparent lg:text-8xl 2xl:text-[120px] sm:pb-2">
+            <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-transparent lg:text-8xl  sm:pb-2">
               <FormattedMessage id="network" />
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <h2 className="text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl 2xl:text-[120px]">
+            <h2 className="text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl ">
               <FormattedMessage id="with" />
             </h2>
-            <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-transparent lg:text-8xl 2xl:text-[120px]">
+            <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-transparent lg:text-8xl ">
               <FormattedMessage id="spinet" />
             </h2>
           </div>
@@ -111,11 +118,14 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
           <CtaButton
             text={intl.formatMessage({ id: "sign-up-now" })}
             icon={<LogIn className="size-6" />}
+            link="/auth/register"
           />
           <Button
             icon={<ChevronRight className="size-6" />}
-            className="h-12 rounded-2xl bg-white text-xl leading-6 text-[#145FF2] transition-all hover:bg-blue-500 hover:text-white hover:brightness-125 dark:bg-[#082356] dark:text-white lg:w-[195px]"
+            className="h-12 rounded-2xl bg-white text-xl leading-6 text-[#145FF2] transition-all cursor-pointer
+             hover:bg-blue-500 hover:text-white hover:brightness-125 dark:bg-[#082356] dark:text-white lg:w-[195px]"
             iconPosition="right"
+            onClick={() => scrollToSection("pricing")}
           >
             <FormattedMessage id="see-offers" />
           </Button>

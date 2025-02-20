@@ -53,6 +53,8 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             text={intl.formatMessage({ id: 'checkout-spinet-events' })}
             icon={<ChevronRight className="size-6" />}
             iconPosition="right"
+            link="https://events.spinetnfc.com/login"
+            newTab={true}
           />
         </div>
       </div>
