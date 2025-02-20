@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Register from '@/components/pages/register';
+import Register from '@/components/pages/auth/register';
 
 async function getMessages(locale: string) {
   return await import(`../../../../lang/${locale}.json`);

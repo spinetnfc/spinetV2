@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useIntl, FormattedMessage, IntlProvider } from 'react-intl';
 import * as z from 'zod';
-
 import FacebookIcon from '@/components/icons/facebook-icon';
 import GoogleIcon from '@/components/icons/google-icon';
 import { Button } from '@/components/ui/button';
