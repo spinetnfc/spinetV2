@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FormattedMessage } from 'react-intl';
 import * as z from 'zod';
-
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -71,7 +71,7 @@ const OtpForm = ({ email, setStep }: Props) => {
             <FormItem>
               <FormLabel>OTP</FormLabel>
               <FormControl>
-                <InputOTP maxLength={6} {...field}>
+                <InputOTP maxLength={6} {...field} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
                   <InputOTPGroup>
                     {[...Array(6)].map((_, index) => (
                       <InputOTPSlot key={index} index={index} />

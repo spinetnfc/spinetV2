@@ -82,7 +82,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
                   <Input
                     placeholder="username@gmail.com"
                     {...field}
-                    className="border-gray-100 dark:border-blue-950 focus:border-blue-500"
+                    className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
                   />
                 </FormControl>
                 <FormMessage />
@@ -107,7 +107,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         id: 'password',
                       })}
                       {...field}
-                      className="border-gray-100 dark:border-blue-950 pr-10  focus:border-blue-500"
+                      className="border-gray-200 dark:border-blue-950 pr-10  focus:border-blue-500"
                     />
                     <button
                       type="button"

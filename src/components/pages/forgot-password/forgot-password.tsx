@@ -15,7 +15,7 @@ const ForgotPassword = ({
   locale: string;
   messages: Record<string, string>;
 }) => {
-  const [step, setStep] = useState<'email' | 'otp' | 'newPassword'>('email');
+  const [step, setStep] = useState<'email' | 'otp' | 'newPassword'>('otp');
   const [email, setEmail] = useState('');
   return (
     <IntlProvider locale={locale} messages={messages}>

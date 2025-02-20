@@ -61,7 +61,7 @@ const EmailForm = ({ setEmail, locale, setStep }: Props) => {
                 <Input
                   placeholder="username@gmail.com"
                   {...field}
-                  className="border-gray-100 focus:border-blue-500"
+                  className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
                 />
               </FormControl>
               <FormMessage />
