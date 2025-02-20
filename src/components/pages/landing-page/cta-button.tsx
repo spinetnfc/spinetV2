@@ -2,15 +2,17 @@ import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
+import Link from 'next/link';
 
 type Props = {
   icon: React.ReactNode;
   text: string;
   className?: string;
   iconPosition?: 'left' | 'right';
+  link?: string;
 };
 
-function CtaButton({ icon, text, className, iconPosition = 'left' }: Props) {
+function CtaButton({ icon, text, link, className, iconPosition = 'left' }: Props) {
   return (
     <Button
       icon={icon}
@@ -20,7 +22,15 @@ function CtaButton({ icon, text, className, iconPosition = 'left' }: Props) {
       )}
       iconPosition={iconPosition}
     >
-      {text}
+      {link ? (
+        <Link href={link}
+          //  target="_blank" 
+          rel="noreferrer">
+          {text}
+        </Link>
+      ) : (
+        text
+      )}
     </Button>
   );
 }
