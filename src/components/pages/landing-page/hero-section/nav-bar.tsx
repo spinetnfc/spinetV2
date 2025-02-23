@@ -102,7 +102,7 @@ function NavBar({
           <CtaButton
             text={intl.formatMessage({ id: "log-in" })}
             icon={<LogIn className="me-2.5 size-6" />}
-            link="/auth/login"
+            link={`/${locale}/auth/login`}
 
           />
         </div>
