@@ -15,7 +15,7 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
   return (
     <div className="relative flex h-full flex-col  overflow-hidden pt-16
-     bg-[url('/img/digital-identity-bg.png')] bg-cover bg-no-repeat
+     bg-[url('/img/digital-identity-background.png')] bg-cover bg-no-repeat
      ">
       <div className="flex size-full flex-col lg:flex-row">
         <div className="z-10 lg:mx-5 mt-20 flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:items-start">
