@@ -85,22 +85,22 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
       </div>
 
       {/* Content Container */}
-      <div className="container z-10  px-4 text-center lg:px-0">
+      <div className="container z-10 text-center p-0">
         {/* Title Container */}
         <div className="flex flex-col items-center gap-2 ">
           <div className="flex flex-row items-center justify-center gap-2">
-            <h1 className="text-2xl xs:text-3xl sm:text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-6xl xl:text-8xl  sm:pb-2">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-6xl xl:text-8xl  sm:pb-2">
               <FormattedMessage id="empower-your" />
             </h1>
-            <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-2xl xs:text-3xl sm:text-5xl tracking-tighter text-transparent lg:text-6xl xl:text-8xl  sm:pb-2">
+            <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#a8d0ff] dark:to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-transparent lg:text-6xl xl:text-8xl  sm:pb-2">
               <FormattedMessage id="network" />
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <h2 className="text-2xl xs:text-3xl sm:text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-6xl xl:text-8xl ">
+            <h2 className="text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-6xl xl:text-8xl ">
               <FormattedMessage id="with" />
             </h2>
-            <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-2xl xs:text-3xl sm:text-5xl tracking-tighter text-transparent lg:text-6xl xl:text-8xl ">
+            <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#a8d0ff] dark:to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-transparent lg:text-6xl xl:text-8xl ">
               <FormattedMessage id="spinet" />
             </h2>
           </div>

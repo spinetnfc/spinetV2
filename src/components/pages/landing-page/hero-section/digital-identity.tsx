@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import CtaButton from '../cta-button';
-
+// import { useTheme } from 'next-themes';
 
 type Props = {
   locale: string;
@@ -13,10 +13,15 @@ type Props = {
 
 function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
+  // const theme = useTheme();
   return (
-    <div className="relative flex h-full flex-col  overflow-hidden pt-16
-     bg-[url('/img/digital-identity-background.png')] bg-cover bg-no-repeat
-     ">
+    <div
+      className={`relative flex h-full flex-col  overflow-hidden pt-16
+     bg-[url('/img/digital-identity-background.png')] bg-cover bg-no-repeat`}
+    //  className={`relative flex h-full flex-col overflow-hidden pt-16 
+    //   ${theme.theme === "dark" ? "bg-[url('/img/digital-identity-background.png')]" : "bg-[url('/img/digital-identity-background-light.png')]"} 
+    //   bg-cover bg-no-repeat`}
+    >
       <div className="flex size-full flex-col lg:flex-row">
         <div className="z-10 lg:mx-5 mt-20 flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:items-start">
           {/* Section Text */}
@@ -40,14 +45,16 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             className="lg:w-[308px] text-base xs:text-lg sm:text-xl"
           />
         </div>
-        <div className="relative size-full">
+        <div className="relative size-full flex justify-center lg:justify-end">
           <Image
-            src="/img/hand-finger-print.png"
+            src="/img/Designer.png"
             alt="Hand image"
-            fill
-            sizes='100%'
+            width={600} // Set a fixed width
+            height={600} // Adjust height accordingly to maintain aspect ratio
+            className='h-auto max-w-full mt-auto lg:w-[700px]'
             priority
           />
+
         </div>
       </div>
     </div>
