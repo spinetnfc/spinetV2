@@ -1,5 +1,5 @@
 'use client';
-import { LayoutDashboard, Contact, BriefcaseBusiness, Bell, Package, Target, ArrowRightLeft, Users, UsersRound, Settings } from 'lucide-react';
+import { LayoutDashboard, Contact, BriefcaseBusiness, Bell, Package, Target, ArrowRightLeft, User, Users, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -19,21 +19,21 @@ const Layout = ({
 }) => {
   // const { checkAccess } = useAuthorization();
   const navigation = [
-    { name: 'Dashboard', to: `/${locale}/app`, icon: LayoutDashboard },
-    { name: 'Contacts', to: `/${locale}/app/contacts`, icon: Contact },
-    { name: 'Opportunities', to: `/${locale}/app/opportunities`, icon: BriefcaseBusiness },
-    { name: 'Notifications', to: `/${locale}/app/notifications`, icon: Bell },
-    { name: 'Offers', to: `/${locale}/app/offers`, icon: Package },
-    { name: 'Leads', to: `/${locale}/app/leads`, icon: Target },
-    { name: 'Redirections', to: `/${locale}/app/redirections`, icon: ArrowRightLeft },
+    { name: 'Dashboard', to: `/app`, icon: LayoutDashboard },
+    { name: 'Contacts', to: `/app/contacts`, icon: Contact },
+    { name: 'Opportunities', to: `/app/opportunities`, icon: BriefcaseBusiness },
+    { name: 'Notifications', to: `/app/notifications`, icon: Bell },
+    { name: 'Offers', to: `/app/offers`, icon: Package },
+    { name: 'Leads', to: `/app/leads`, icon: Target },
+    { name: 'Redirections', to: `/app/redirections`, icon: ArrowRightLeft },
     // checkAccess({ allowedRoles: [ROLES.ADMIN] }) &&
     {
       name: 'Users',
-      to: `/${locale}/app/users`,
-      icon: Users,
+      to: `/app/users`,
+      icon: User,
     },
-    { name: 'Groups', to: `/${locale}/app/groups`, icon: UsersRound },
-    { name: 'Settings', to: `/${locale}/app/settings`, icon: Settings },
+    { name: 'Groups', to: `/app/groups`, icon: Users },
+    { name: 'Settings', to: `/app/settings`, icon: Settings },
 
   ].filter(Boolean) as SideNavigationItem[];
 
@@ -41,7 +41,7 @@ const Layout = ({
     <div className="z-50 flex min-h-screen w-full flex-col   bg-muted/40">
       <SideBar navigation={navigation} locale={locale} />
       <div className="flex w-full flex-col sm:gap-4 sm:py-4 sm:ps-60">
-        <Header locale={locale} navigation={navigation} />
+        <Header locale={locale} />
         <main className="grid  flex-1 items-start gap-4  p-4 sm:px-6 sm:py-0 md:gap-8 ">
           {children}
         </main>
