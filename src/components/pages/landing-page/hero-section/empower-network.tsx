@@ -33,7 +33,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
         {/* Minimal content to prevent layout shift */}
-        <h1 className="z-10 mx-auto px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-8xl ">
+        <h1 className="z-10 mx-auto px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-6xl xl:text-8xl ">
           <FormattedMessage id="empower-your-network" />
         </h1>
       </div>
@@ -53,34 +53,34 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-one-dark.png" : "/img/Ellipse-one.png"}
           alt=""
-          className="absolute left-[-5%] top-[-10%] hidden w-2/5 max-w-[600px] lg:block"
+          className="absolute left-[10%] top-[20%] hidden w-2/5 max-w-[15%] lg:block"
         />
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-two-dark.png" : "/img/Ellipse-two.png"}
           alt=""
-          className="absolute right-[-10%] top-1/2 hidden w-1/2 max-w-[700px] lg:block"
+          className="absolute right-0 top-1/4 hidden w-1/2 max-w-[30%] lg:block"
         />
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-three-dark.png" : "/img/Ellipse-three.png"}
           alt=""
-          className="absolute bottom-[-10%] left-[10%] hidden w-[30%] max-w-[500px] lg:block"
+          className="absolute bottom-[5%] left-[5%] hidden w-[30%] max-w-[30%] lg:block"
         />
 
         {/* Mobile Ellipses */}
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-one-dark.png" : "/img/Ellipse-one.png"}
           alt=""
-          className="absolute left-[-10%] top-[-5%] w-3/5 max-w-[400px] lg:hidden"
+          className="absolute left-0 top-[30%] max-w-[30%] lg:hidden"
         />
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-two-dark.png" : "/img/Ellipse-two.png"}
           alt=""
-          className="absolute right-[-15%] top-1/2 w-[70%] max-w-[450px] lg:hidden"
+          className="absolute right-0 top-[40%] w-full max-w-[50%] lg:hidden"
         />
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-three-dark.png" : "/img/Ellipse-three.png"}
           alt=""
-          className="absolute bottom-[-10%] left-[5%] w-1/2 max-w-[350px] lg:hidden"
+          className="absolute bottom-[10%] left-[5%] w-full max-w-[50%] lg:hidden"
         />
       </div>
 
@@ -89,26 +89,26 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         {/* Title Container */}
         <div className="flex flex-col items-center gap-2 ">
           <div className="flex flex-row items-center justify-center gap-2">
-            <h1 className="text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl  sm:pb-2">
+            <h1 className="text-2xl xs:text-3xl sm:text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-6xl xl:text-8xl  sm:pb-2">
               <FormattedMessage id="empower-your" />
             </h1>
-            <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-transparent lg:text-8xl  sm:pb-2">
+            <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-2xl xs:text-3xl sm:text-5xl tracking-tighter text-transparent lg:text-6xl xl:text-8xl  sm:pb-2">
               <FormattedMessage id="network" />
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <h2 className="text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-8xl ">
+            <h2 className="text-2xl xs:text-3xl sm:text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-6xl xl:text-8xl ">
               <FormattedMessage id="with" />
             </h2>
-            <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-6xl tracking-tighter text-transparent lg:text-8xl ">
+            <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#EEF6FF] bg-clip-text text-2xl xs:text-3xl sm:text-5xl tracking-tighter text-transparent lg:text-6xl xl:text-8xl ">
               <FormattedMessage id="spinet" />
             </h2>
           </div>
         </div>
 
         {/* Description */}
-        <div className="mx-auto mt-5 max-w-[800px]">
-          <p className="text-base leading-relaxed text-[#010E37CC] dark:text-[#F5F5F5] lg:text-lg">
+        <div className="mx-auto mt-5 max-w-4/5 sm:max-w-[60%] lg:max-w-[800px]">
+          <p className=" text-xs xs:text-sm sm:text-base leading-relaxed text-[#010E37CC] dark:text-[#F5F5F5] lg:text-lg">
             <FormattedMessage id="empower-your-network-text" />
           </p>
         </div>
@@ -118,11 +118,12 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
           <CtaButton
             text={intl.formatMessage({ id: "sign-up-now" })}
             icon={<LogIn className="size-6" />}
-            link="/auth/register"
+            link={`/${locale}/auth/register`}
+            className="text-base xs:text-lg sm:text-xl"
           />
           <Button
             icon={<ChevronRight className="size-6" />}
-            className="h-12 rounded-2xl bg-white text-xl leading-6 text-[#145FF2] transition-all cursor-pointer
+            className="h-12 rounded-2xl bg-white text-base xs:text-lg sm:text-xl leading-6 text-[#145FF2] transition-all cursor-pointer
              hover:bg-blue-500 hover:text-white hover:brightness-125 dark:bg-[#082356] dark:text-white lg:w-[195px]"
             iconPosition="right"
             onClick={() => scrollToSection("pricing")}

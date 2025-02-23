@@ -18,18 +18,18 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
      bg-[url('/img/digital-identity-bg.png')] bg-cover bg-no-repeat
      ">
       <div className="flex size-full flex-col lg:flex-row">
-        <div className="z-10 mx-5 mt-20  flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2 lg:items-start">
+        <div className="z-10 lg:mx-5 mt-20 flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:items-start">
           {/* Section Text */}
-          <div className="flex flex-col gap-4  ">
+          <div className="flex flex-col gap-4 ">
             {/* Top */}
 
-            <h1 className="text-5xl font-semibold text-[#EEF6FF] lg:text-7xl">
+            <h1 className="text-4xl xs:text-5xl lg:text-6xl xl:text-7xl text-center lg:text-start font-semibold text-[#EEF6FF]">
               {' '}
               <FormattedMessage id="digital-identity" />
             </h1>
 
             {/* Paragraph */}
-            <p className="  w-full text-xl  font-medium text-[#EEF6FF]">
+            <p className="w-full text-base sm:text-xl text-center lg:text-start font-medium text-[#EEF6FF] ">
               <FormattedMessage id="digital-identity-text" />
             </p>
           </div>
@@ -37,7 +37,7 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
           <CtaButton
             icon={<Search className="size-6" />}
             text={intl.formatMessage({ id: 'search-spinet' })}
-            className="lg:w-[308px]"
+            className="lg:w-[308px] text-base xs:text-lg sm:text-xl"
           />
         </div>
         <div className="relative size-full">

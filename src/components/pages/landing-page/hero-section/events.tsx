@@ -55,6 +55,7 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             iconPosition="right"
             link="https://events.spinetnfc.com/login"
             newTab={true}
+            className='text-base xs:text-lg sm:text-xl'
           />
         </div>
       </div>
