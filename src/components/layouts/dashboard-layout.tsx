@@ -1,15 +1,13 @@
 'use client';
-
-import { Home, Folder, Users } from 'lucide-react';
+import { LayoutDashboard, Contact, BriefcaseBusiness, Bell, Package, Target, ArrowRightLeft, Users, UsersRound, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-
 import Header from '@/components/header';
 import SideBar from '@/components/side-bar';
 import { Spinner } from '@/components/ui/spinner';
 import { AuthLoader } from '@/lib/auth';
-import { ROLES, useAuthorization } from '@/lib/authorization';
+// import { ROLES, useAuthorization } from '@/lib/authorization';
 import type { SideNavigationItem } from '@/types/layout-types';
 
 const Layout = ({
@@ -19,16 +17,24 @@ const Layout = ({
   locale: string;
   children: React.ReactNode;
 }) => {
-  const { checkAccess } = useAuthorization();
-
+  // const { checkAccess } = useAuthorization();
   const navigation = [
-    { name: 'Dashboard', to: '/app', icon: Home },
-    { name: 'Discussions', to: '/app/discussions', icon: Folder },
-    checkAccess({ allowedRoles: [ROLES.ADMIN] }) && {
+    { name: 'Dashboard', to: `/${locale}/app`, icon: LayoutDashboard },
+    { name: 'Contacts', to: `/${locale}/app/contacts`, icon: Contact },
+    { name: 'Opportunities', to: `/${locale}/app/opportunities`, icon: BriefcaseBusiness },
+    { name: 'Notifications', to: `/${locale}/app/notifications`, icon: Bell },
+    { name: 'Offers', to: `/${locale}/app/offers`, icon: Package },
+    { name: 'Leads', to: `/${locale}/app/leads`, icon: Target },
+    { name: 'Redirections', to: `/${locale}/app/redirections`, icon: ArrowRightLeft },
+    // checkAccess({ allowedRoles: [ROLES.ADMIN] }) &&
+    {
       name: 'Users',
-      to: '/app/users',
+      to: `/${locale}/app/users`,
       icon: Users,
     },
+    { name: 'Groups', to: `/${locale}/app/groups`, icon: UsersRound },
+    { name: 'Settings', to: `/${locale}/app/settings`, icon: Settings },
+
   ].filter(Boolean) as SideNavigationItem[];
 
   return (
@@ -65,15 +71,15 @@ export const DashboardLayout = ({
           key={pathname}
           fallback={<div>Something went wrong!</div>}
         >
-          <AuthLoader
+          {/* <AuthLoader
             renderLoading={() => (
               <div className="flex size-full items-center justify-center">
                 <Spinner size="xl" />
               </div>
             )}
-          >
-            {children}
-          </AuthLoader>
+          > */}
+          {children}
+          {/* </AuthLoader> */}
         </ErrorBoundary>
       </Suspense>
     </Layout>

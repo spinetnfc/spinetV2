@@ -15,7 +15,7 @@ function SideBar({ navigation, locale }: Props) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 start-0 z-10 hidden w-60 flex-col border-e bg-black sm:flex">
+    <aside className="fixed inset-y-0 start-0 z-10 hidden w-60 flex-col bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 py-4">
         <div className="flex h-16 shrink-0 items-center px-4">
           <Logo locale={locale} />
