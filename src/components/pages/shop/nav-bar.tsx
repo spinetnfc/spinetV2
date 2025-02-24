@@ -1,8 +1,10 @@
+'use client';
 import { LogIn, Menu, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import ChangeLanguage from "@/components/change-language";
-import Logo from "@/components/logo-spinet";
+import LogoSpinet from "@/components/logo-spinet";
+import Logo from "@/components/logo";
 import ThemeSwitch from "@/components/theme-switch";
 import { cn } from "@/utils/cn";
 import Header from "@/components/header";
@@ -12,7 +14,7 @@ const navItems = [
     { id: "shop", label: "shop" },
     { id: "on-sale", label: "on-sale" },
     { id: "new-arrivals", label: "new-arrivals" },
-    { id: "promotion", label: "promotion" }
+    { id: "promotion", label: "promotion" },
 ];
 
 function scrollToSection(id: string, setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
@@ -35,15 +37,12 @@ function NavBar({
     setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     const intl = useIntl();
-
-    // State to handle auto-hiding behavior
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollPos = window.pageYOffset;
-            // Show navbar when scrolling up or near the top; hide when scrolling down
             setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
             setPrevScrollPos(currentScrollPos);
         };
@@ -55,16 +54,39 @@ function NavBar({
     return (
         <header
             className={cn(
-                "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-1 lg:py-2 transition-transform duration-800 bg-white dark:bg-[#010C32]",
+                "fixed z-50 flex w-full flex-row items-center justify-between gap-3 px-3 py-2 lg:py-2 transition-transform duration-800 bg-[#010C32]",
                 visible ? "translate-y-0" : "-translate-y-full"
             )}
         >
             {/* Left section with logo */}
             <div className="flex items-center">
-                <div className="me-8 flex h-11 items-center justify-center">
-                    <Logo locale={locale} parentDarkMode={parentDarkMode} />
+                <div className="flex h-11 items-center justify-center">
+                    <span className="lg:hidden">
+                        <Logo locale={locale} />
+                    </span>
+                    <span className="hidden lg:block">
+                        <LogoSpinet locale={locale} parentDarkMode={true} />
+                    </span>
                 </div>
             </div>
+
+            {/* Desktop Navigation - Before SearchBar */}
+            <nav className="hidden lg:flex lg:items-center">
+                {navItems.map(({ id, label }) => (
+                    <button
+                        key={id}
+                        onClick={() => scrollToSection(id)}
+                        className="flex h-12 items-center rounded-[14px] p-2 xl:p-3"
+                    >
+                        <span className="cursor-pointer text-lg font-medium leading-6 hover:text-gray-400 text-white">
+                            <FormattedMessage id={label} />
+                        </span>
+                    </button>
+                ))}
+            </nav>
+
+            {/* Single SearchBar */}
+            <SearchBar />
 
             {/* Mobile menu button */}
             <button
@@ -79,42 +101,18 @@ function NavBar({
                 )}
             </button>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between">
-                <div className="flex items-center ">
-                    {navItems.map(({ id, label }) => (
-                        <button
-                            key={id}
-                            onClick={() => scrollToSection(id)}
-                            className="flex h-12 items-center rounded-[14px] p-2 xl:p-3"
-                        >
-                            <span className=" cursor-pointer text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400">
-                                <FormattedMessage id={label} />
-                            </span>
-                        </button>
-                    ))}
-                </div>
-
-                <SearchBar />
-                <div className="flex items-center gap-3">
-                    <Header locale={locale} />
-                    {/* <ThemeSwitch parentDarkMode={parentDarkMode} locale={locale} />
-                    <ChangeLanguage locale={locale} /> */}
-                    {/* <CtaButton
-                        text={intl.formatMessage({ id: "log-in" })}
-                        icon={<LogIn className="me-2.5 size-6" />}
-                        link={`/${locale}/auth/login`}
-
-                    /> */}
-                </div>
-            </nav>
+            {/* Desktop Header */}
+            <div className="hidden lg:flex items-center gap-3">
+                <Header locale={locale} />
+                {/* Uncomment these if you want them back */}
+                {/* <ThemeSwitch parentDarkMode={parentDarkMode} locale={locale} />
+                <ChangeLanguage locale={locale} /> */}
+            </div>
 
             {/* Mobile Navigation */}
             {isMenuOpen && (
                 <div className="absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden">
                     <div className="flex items-center gap-3 border-b py-3">
-                        {/* <ThemeSwitch />
-                        <ChangeLanguage locale={locale} /> */}
                         <Header locale={locale} />
                     </div>
                     <nav className="flex flex-col space-y-2">
@@ -129,15 +127,6 @@ function NavBar({
                                 </span>
                             </button>
                         ))}
-
-
-                        {/* <CtaButton
-                            text={intl.formatMessage({ id: "log-in" })}
-                            icon={<LogIn className="me-2.5 size-6" />}
-                            className="h-fit w-max mx-auto"
-                            link="/auth/login"
-                        /> */}
-
                     </nav>
                 </div>
             )}

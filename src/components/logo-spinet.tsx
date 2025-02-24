@@ -2,7 +2,6 @@
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/utils/cn';
-import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 const Logo = ({
@@ -12,7 +11,6 @@ const Logo = ({
     locale: string;
     parentDarkMode?: boolean;
 }) => {
-    const { resolvedTheme } = useTheme();
     // Add state to prevent hydration mismatch
     const [mounted, setMounted] = useState(false);
 
@@ -43,7 +41,7 @@ const Logo = ({
         <NextLink className="flex items-center text-white" href={`/${locale}`}>
             <Image
                 src={
-                    resolvedTheme === 'light'
+                    !parentDarkMode
                         ? '/img/logo-spinet.svg'
                         : '/img/logo-spinet-dark.svg'
                 }
