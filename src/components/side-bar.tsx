@@ -4,8 +4,8 @@ import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { PanelLeft } from 'lucide-react';
-
-import Logo from '@/components/logo-spinet';
+import Logo from '@/components/logo';
+import LogoSpinet from '@/components/logo-spinet';
 import { SideNavigationItem } from '@/types/layout-types';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
@@ -14,33 +14,35 @@ import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } 
 type Props = {
   navigation: SideNavigationItem[];
   locale: string;
+  isExpanded: boolean;
+  setIsExpanded: (value: boolean) => void
 };
 
-function SideBar({ navigation, locale }: Props) {
+function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const pathname = usePathname();
-  const [isExpanded, setIsExpanded] = useState(false);
+  // const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <>
-      {/* Desktop Sidebar - Always visible */}
+      {/* desktop sidebar*/}
       <aside
         className={cn(
-          'hidden sm:flex h-full flex-col bg-background fixed top-0 transition-all duration-300 ease-in-out',
+          'hidden sm:flex h-full flex-col bg-background fixed top-0 transition-all duration-800 ease-in-out overflow-x-hidden', // Added overflow-x-hidden
           locale === 'ar' ? 'right-0' : 'left-0',
           isExpanded ? 'w-60' : 'w-16'
         )}
       >
         <div className="flex flex-col h-full overflow-auto">
-          {/* Logo */}
+          {/* logo */}
           <div className={cn(
-            'flex shrink-0 items-center justify-center border-b border-gray-300 h-20',
+            'flex shrink-0 items-center justify-center border-b border-gray-300 h-20 overflow-hidden', // Added overflow-hidden
             isExpanded ? 'w-full' : 'w-16'
           )}>
-            <Logo locale={locale} />
+            {isExpanded ? <LogoSpinet locale={locale} /> : <Logo locale={locale} />}
           </div>
 
-          {/* Navigation */}
-          <nav className="flex flex-col items-center gap-4 px-2 py-4 flex-1">
+          {/* navigation */}
+          <nav className={`flex flex-col ${isExpanded ? "items-center" : "items-start"} gap-4 px-2 py-4 flex-1 overflow-x-hidden`}> {/* Added overflow-x-hidden */}
             {navigation.map((item) => {
               const isActive = pathname.endsWith(item.to);
               return (
@@ -49,7 +51,8 @@ function SideBar({ navigation, locale }: Props) {
                   href={item.to}
                   className={cn(
                     'text-gray-400 hover:bg-gray-700 hover:text-white',
-                    'group flex items-center rounded-md p-2 text-base font-medium w-full',
+                    'group flex items-center rounded-md p-2 ms-1 text-base font-medium ',
+                    isExpanded && "w-full",
                     isActive && 'bg-blue-200 dark:bg-white text-blue-500 dark:text-blue-500'
                   )}
                 >
@@ -67,11 +70,11 @@ function SideBar({ navigation, locale }: Props) {
             })}
           </nav>
 
-          {/* Expand/Collapse Button */}
+          {/* Expand/Collapse sidebar*/}
           <Button
             size="icon"
             variant="outline"
-            className={`m-2 ${isExpanded ? '' : 'mx-auto'}`}
+            className="ms-3 my-2"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             <PanelLeft className="size-5" />
@@ -79,7 +82,7 @@ function SideBar({ navigation, locale }: Props) {
         </div>
       </aside>
 
-      {/* Mobile Drawer - Only visible on mobile */}
+      {/*mobile drawer*/}
       <Drawer>
         <DrawerTrigger asChild>
           <Button
@@ -108,7 +111,7 @@ function SideBar({ navigation, locale }: Props) {
           <aside className="flex h-full flex-col overflow-auto">
             <nav className="flex flex-col items-center gap-4 px-2 pb-4">
               <div className="flex h-20 w-full shrink-0 items-center justify-center border-b border-gray-300">
-                <Logo locale={locale} />
+                <LogoSpinet locale={locale} />
               </div>
               {navigation.map((item) => {
                 const isActive = pathname.endsWith(item.to);
