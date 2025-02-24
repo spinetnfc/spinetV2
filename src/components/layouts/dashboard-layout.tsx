@@ -17,7 +17,7 @@ const Layout = ({
   locale: string;
   children: React.ReactNode;
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false); // Changed back to false for default collapsed state
+  const [isExpanded, setIsExpanded] = useState(true);
   const navigation = [
     { name: 'Dashboard', to: `/app`, icon: LayoutDashboard },
     { name: 'Contacts', to: `/app/contacts`, icon: Contact },

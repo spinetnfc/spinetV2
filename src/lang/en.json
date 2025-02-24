@@ -160,5 +160,9 @@
   "resend-code": "Resend code",
   "enter-new-password": "Enter new password",
   "confirm-new-password": "Confirm new password",
-  "save": "Save"
+  "save": "Save",
+  "shop": "Shop",
+  "on-sale": "On Sale",
+  "new-arrivals": "New Arrivals",
+  "promotion": "Promotion"
 }

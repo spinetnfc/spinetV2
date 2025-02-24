@@ -160,5 +160,9 @@
   "resend-code": "إعادة إرسال الرمز",
   "enter-new-password": "أدخل كلمة المرور الجديدة",
   "confirm-new-password": "تأكيد كلمة المرور الجديدة",
-  "save": "حفظ"
+  "save": "حفظ",
+  "shop": "المتجر",
+  "on-sale": "تخفيضات",
+  "new-arrivals": "وصل حديثًا",
+  "promotion": "عرض ترويجي"
 }

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { IntlProvider } from 'react-intl';
-import NavBar from '@/components/pages/landing-page/hero-section/nav-bar';
-
+import HomeNavBar from '@/components/pages/landing-page/hero-section/nav-bar';
+import ShopNavBar from '@/components/pages/shop/nav-bar';
 import enMessages from '@/lang/en.json';
 import arMessages from '@/lang/ar.json';
 import frMessages from '@/lang/fr.json';
@@ -14,18 +14,24 @@ const messagesMap = {
     fr: frMessages,
 };
 
-export default function NavBarWrapper({ locale }: { locale: string }) {
+export default function NavBarWrapper({ locale, parent }: { locale: string, parent: string }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const messages = messagesMap[locale as keyof typeof messagesMap];
 
     return (
         <IntlProvider locale={locale} messages={messages}>
-            <NavBar
+            {parent === "home" ? <HomeNavBar
+                locale={locale}
+                isMenuOpen={isMenuOpen}
+                setIsMenuOpen={setIsMenuOpen}
+                parentDarkMode={false}
+            /> : <ShopNavBar
                 locale={locale}
                 isMenuOpen={isMenuOpen}
                 setIsMenuOpen={setIsMenuOpen}
                 parentDarkMode={false}
             />
+            }
         </IntlProvider>
     );
 }

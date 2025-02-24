@@ -28,7 +28,7 @@ const Page = async (
 
   return (
     <>
-      <NavBarWrapper locale={locale} />
+      <NavBarWrapper locale={locale} parent="home" />
       <div className="flex flex-col gap-3 overflow-x-hidden lg:gap-12">
         <section id="hero">
           <HeroSection locale={locale} messages={messages} />
