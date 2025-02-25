@@ -31,7 +31,7 @@ async function Footer({ locale }: Props) {
   ];
 
   return (
-    <div className="flex flex-col gap-5 p-4  bg-main text-white lg:gap-8 lg:px-16 lg:py-16">
+    <div className="flex flex-col gap-5 p-4  bg-main text-white lg:gap-8 lg:px-16 md:py-16">
       <div className="flex items-center justify-between border-b-2 pb-4 border-blue-950">
         <SpinetLogo className="hover:cursor-pointer" width={151} height={31} />
         <div className="flex items-center justify-center gap-3 sm:gap-5">
@@ -40,9 +40,9 @@ async function Footer({ locale }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-6 pb-4 border-b-2 border-blue-950 lg:flex-row lg:items-end  lg:gap-8">
+      <div className="flex flex-col items-center justify-evenly gap-6 pb-4 border-b-2 border-blue-950 md:flex-row lg:items-end ">
         {contacts.map((c, i) => (
-          <div className="flex flex-col items-center gap-2" key={i}>
+          <div className="md:w-3/10 flex flex-col items-center gap-2" key={i}>
             {c.icon}
             <span className="text-lg font-semibold">{t(c.title)}</span>
             <span>{c.text}</span>
@@ -50,7 +50,7 @@ async function Footer({ locale }: Props) {
         ))}
       </div>
 
-      <div className="flex w-full flex-col items-center justify-center gap-4 pb-4 border-b-2 border-blue-950 lg:flex-row lg:gap-8 ">
+      <div className="flex w-full flex-col items-center justify-center gap-4 pb-4 border-b-2 border-blue-950 md:flex-row lg:gap-8 ">
         <span className="text-sm hover:cursor-pointer">{t('about-us')}</span>
         <span className="text-sm hover:cursor-pointer">{t('blog')}</span>
         <span className="text-sm hover:cursor-pointer">{t('demo')}</span>

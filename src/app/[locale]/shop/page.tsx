@@ -1,3 +1,5 @@
+import Reviews from "@/components/pages/shop/Reviews/reviews";
+
 async function getMessages(locale: string) {
     return (await import(`@/lang/${locale}.json`)).default;
 }
@@ -12,6 +14,9 @@ const Shop = async ({ params }: {
         <section id="on-sale" className="h-screen flex items-center text-black text-6xl bg-red-400">on-sale</section>
         <section id="new-arrivals" className="h-screen flex items-center text-black text-6xl bg-green-400">new arrivals</section>
         <section id="promotion" className="h-screen flex items-center text-black text-6xl bg-blue-400">promotion</section>
+        <section>
+            <Reviews />
+        </section>
     </>
     );
 }

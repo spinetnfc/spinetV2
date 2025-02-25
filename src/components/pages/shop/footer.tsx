@@ -8,21 +8,21 @@ const ShopFooter = async ({ locale }: { locale: string }) => {
     const { t } = await useTranslate(locale);
     return (
         <>
-            <div className="bg-background relative h-32">
-                <div className="absolute top-0 inset-x-5 lg:inset-x-15 2xl:inset-x-30  h-44 bg-[#FCFCFC] border py-6 px-10 rounded-3xl
-                flex items-center justify-evenly  "
+            <div className="bg-background md:relative h-full md:h-32">
+                <div className="md:absolute top-0 mx-2 sm:mx-5  lg:inset-x-10 2xl:inset-x-30  mb-2 md:mb-0 h-full md:h-44 bg-[#FCFCFC] border py-6 px-5 lg:px-8 rounded-3xl shadow-lg
+                flex-row md:flex items-center justify-evenly gap-2 "
                 >
-                    <h2 className="max-w-2xl text-4xl lg:text-5xl font-semibold text-main">
+                    <h2 className="max-w-2xl text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-semibold text-main text-center md:text-start">
                         {t("stay-up-to-date-text")}
                     </h2>
-                    <form className="flex-1 max-w-xl min-w-80">
-                        <div className="flex gap-2 py-3 px-4 border rounded-xl mb-2">
+                    <form className="flex-1 max-w-[400px] md:max-w-xl md:min-w-[400px] mx-auto md:mx-0">
+                        <div className="flex gap-2 py-2 sm:py-3 px-2 lg:px-4 border rounded-xl mb-2">
                             <Mail size={24} className="text-gray-300 min-w-6" />
                             <input type="text" placeholder={t("enter-your-email")}
-                                className="w-full placeholder:text-gray-300 focus-visible:outline-hidden "
+                                className="w-full placeholder:text-gray-300 focus-visible:outline-hidden text-sm sm:text-md"
                             />
                         </div>
-                        <ShopButton title={t("subscribe-to-newsletter")} />
+                        <ShopButton title={t("subscribe-to-newsletter")} className="py-2 sm:py-3 text-sm sm:text-md" />
                     </form>
                 </div>
             </div>
