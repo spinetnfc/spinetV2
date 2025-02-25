@@ -12,6 +12,10 @@
 body {
   @apply font-sans;
  }
+
+@theme {
+  --color-main: #010C32; /* Define a custom blue color */
+}
 @layer base {
   :root {
     --background: 0 0% 100%;

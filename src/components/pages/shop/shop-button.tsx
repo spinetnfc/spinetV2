@@ -3,11 +3,11 @@ import { cn } from "@/utils/cn";
 
 const ShopButton = ({ title, className, onClick }: { title: string, className?: string, onClick?: () => void }) => {
     return (
-        <Button onClick={onClick}
-            className={cn(className, "bg-[#010C32] w-full")}
+        <button onClick={onClick}
+            className={cn(className, "bg-main w-full py-3 px-4 text-white rounded-xl")}
         >
             {title}
-        </Button>
+        </button>
     );
 }
 
