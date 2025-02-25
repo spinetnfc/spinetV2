@@ -45,6 +45,7 @@ async function Products({ locale }: Props) {
         text={t('go-to-store')}
         className="w-full max-w-[308px]"
         iconPosition="right"
+        link="/shop"
       />
       <div className="mt-8 flex h-fit w-full flex-col items-center justify-center gap-2 lg:flex-row">
         {products.map((product, index) => (
