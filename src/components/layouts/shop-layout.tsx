@@ -89,9 +89,9 @@ import Footer from "../pages/shop/footer";
 const ShopLayout = ({ locale, children }: { locale: string; children: ReactNode }) => {
     return (<div className="flex flex-col min-h-screen w-full">
         <NavBarWrapper locale={locale} parent="shop" />
-        <>
+        <div className="pt-16">
             {children}
-        </>
+        </div>
         <Footer />
     </div>);
 }
