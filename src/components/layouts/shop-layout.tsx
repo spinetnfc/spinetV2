@@ -12,7 +12,7 @@
 
 import { ReactNode } from "react";
 import NavBarWrapper from "../NavBarWrapper.client";
-import Footer from "../pages/shop/footer";
+import ShopFooter from "../pages/shop/footer";
 
 // const Layout = ({
 //     locale,
@@ -92,7 +92,7 @@ const ShopLayout = ({ locale, children }: { locale: string; children: ReactNode 
         <div className="pt-16">
             {children}
         </div>
-        <Footer />
+        <ShopFooter locale={locale} />
     </div>);
 }
 
