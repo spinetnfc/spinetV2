@@ -2,13 +2,13 @@
 import { LogIn, Menu, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import ChangeLanguage from "@/components/change-language";
+// import ChangeLanguage from "@/components/change-language";
 import LogoSpinet from "@/components/logo-spinet";
 import Logo from "@/components/logo";
-import ThemeSwitch from "@/components/theme-switch";
+// import ThemeSwitch from "@/components/theme-switch";
 import { cn } from "@/utils/cn";
 import Header from "@/components/header";
-import SearchBar from "./search-bar";
+import { SearchBar } from "./search-bar";
 
 const navItems = [
     { id: "shop", label: "shop" },
