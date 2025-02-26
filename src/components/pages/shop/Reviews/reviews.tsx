@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import useDrag from '@/hooks/use-horizontal-drag';
 import ReviewCard from './review-card';
-import reviews from '@/mockdata/reviews/data';
+import reviews from '@/mockdata/reviews';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const Reviews: React.FC = () => {
