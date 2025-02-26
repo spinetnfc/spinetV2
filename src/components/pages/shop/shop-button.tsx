@@ -4,7 +4,7 @@ import { cn } from "@/utils/cn";
 const ShopButton = ({ title, className, onClick }: { title: string, className?: string, onClick?: () => void }) => {
     return (
         <button onClick={onClick}
-            className={cn(className, "bg-main w-full py-3 px-4 text-white rounded-xl")}
+            className={cn(className, "bg-[#082356] w-full py-3 px-4 text-white rounded-xl")}
         >
             {title}
         </button>

@@ -7,7 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 export default function ProductsHeader() {
     const searchParams = useSearchParams()
     const router = useRouter()
-    const totalProducts = 100 // This would come from your API
+    const totalProducts = 100 // replace with real total products from api
 
     const sortOptions = [
         { value: "newest", label: "Newest" },
@@ -29,11 +29,11 @@ export default function ProductsHeader() {
     }
 
     return (
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 sm:flex space-y-2 items-center justify-between">
             <p className="text-sm text-muted-foreground">Showing {totalProducts} Products</p>
             <select
                 defaultValue={searchParams.get("sort") || "newest"}
-                className="rounded-md border p-2"
+                className="rounded-md border p-2 dark:bg-main focus-visible:outline-none"
                 onChange={handleSortChange}
             >
                 <option value="" disabled>

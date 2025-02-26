@@ -53,9 +53,9 @@ export function ProductsFilters() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="h-fit space-y-6 md:p-4 md:rounded-2xl md:border dark:border-blue-950">
             <div>
-                <h3 className="text-lg font-semibold mb-4">Filters</h3>
+                <h3 className="text-2xl font-semibold px-2 pb-3 mb-3 border-b dark:border-blue-950">Filters</h3>
                 <div className="space-y-2">
                     {CATEGORIES.map((category) => (
                         <button
@@ -63,7 +63,7 @@ export function ProductsFilters() {
                             onClick={() => updateFilters("category", category.toLowerCase())}
                             className={cn("block w-full text-left px-2 py-1.5 rounded-md",
                                 isChecked("category", category.toLowerCase()) ? "bg-blue-500" :
-                                    "hover:bg-gray-200 dark:bg-blue-900"
+                                    "hover:bg-gray-200 hover:dark:bg-blue-900"
                             )
                             }
                         >
@@ -76,7 +76,7 @@ export function ProductsFilters() {
             <div>
                 <button
                     onClick={() => setIsColorsOpen(!isColorsOpen)}
-                    className="flex items-center justify-between w-full mb-4"
+                    className="flex items-center justify-between w-full pb-3 mb-3 border-b dark:border-blue-950"
                 >
                     <span className="text-lg font-semibold">Colors</span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${isColorsOpen ? "transform rotate-180" : ""}`} />
@@ -87,7 +87,7 @@ export function ProductsFilters() {
                             <button
                                 key={color.value}
                                 onClick={() => updateFilters("color", color.value)}
-                                className={`w-8 h-8 rounded-full ${color.class} ${isChecked("color", color.value) ? "ring-2 ring-offset-2 ring-blue-500" : ""
+                                className={`w-6 xl:w-8 aspect-square rounded-full ${color.class} ${isChecked("color", color.value) ? "ring-2 ring-offset-2 ring-blue-500" : ""
                                     }`}
                                 title={color.value}
                             />
@@ -97,7 +97,7 @@ export function ProductsFilters() {
             </div>
 
             <div>
-                <button onClick={() => setIsSizeOpen(!isSizeOpen)} className="flex items-center justify-between w-full mb-4">
+                <button onClick={() => setIsSizeOpen(!isSizeOpen)} className="flex items-center justify-between w-full pb-3 mb-3 border-b dark:border-blue-950">
                     <span className="text-lg font-semibold">Size</span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${isSizeOpen ? "transform rotate-180" : ""}`} />
                 </button>
@@ -107,8 +107,10 @@ export function ProductsFilters() {
                             <button
                                 key={size}
                                 onClick={() => updateFilters("size", size.toLowerCase())}
-                                className={`px-4 py-2 rounded-full text-sm ${isChecked("size", size.toLowerCase()) ? "bg-gray-900 text-white" : "bg-gray-100 hover:bg-gray-200"
-                                    }`}
+                                className={cn("px-4 py-2 rounded-full text-sm",
+                                    isChecked("size", size.toLowerCase()) ? "bg-blue-500" :
+                                        "hover:bg-gray-200 dark:hover:bg-blue-900"
+                                )}
                             >
                                 {size}
                             </button>
@@ -120,7 +122,7 @@ export function ProductsFilters() {
             <div>
                 <button
                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                    className="flex items-center justify-between w-full mb-4"
+                    className="flex items-center justify-between w-full pb-3 mb-3 border-b dark:border-blue-950"
                 >
                     <span className="text-lg font-semibold">Category</span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${isCategoryOpen ? "transform rotate-180" : ""}`} />
@@ -133,7 +135,7 @@ export function ProductsFilters() {
                                 onClick={() => updateFilters("productCategory", category.toLowerCase())}
                                 className={cn("block w-full text-left px-2 py-1.5 rounded-md",
                                     isChecked("productCategory", category.toLowerCase()) ? "bg-blue-500" :
-                                        "hover:bg-gray-200 dark:bg-blue-900"
+                                        "hover:bg-gray-200 hover:dark:bg-blue-900"
                                 )
                                 }
                             >

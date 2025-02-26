@@ -1,14 +1,13 @@
-'use client';
+"use client";
+import { useSearchParams } from "next/navigation";
 import { LogIn, Menu, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-// import ChangeLanguage from "@/components/change-language";
 import LogoSpinet from "@/components/logo-spinet";
 import Logo from "@/components/logo";
-// import ThemeSwitch from "@/components/theme-switch";
-import { cn } from "@/utils/cn";
 import Header from "@/components/header";
 import { SearchBar } from "./search-bar";
+import { cn } from "@/utils/cn";
 
 const navItems = [
     { id: "shop", label: "shop" },
@@ -17,7 +16,10 @@ const navItems = [
     { id: "promotion", label: "promotion" },
 ];
 
-function scrollToSection(id: string, setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
+function scrollToSection(
+    id: string,
+    setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>
+) {
     const element = document.getElementById(id);
     if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -70,7 +72,7 @@ function NavBar({
                 </div>
             </div>
 
-            {/* Desktop Navigation - Before SearchBar */}
+            {/* Desktop Navigation */}
             <nav className="hidden lg:flex lg:items-center">
                 {navItems.map(({ id, label }) => (
                     <button
@@ -85,51 +87,53 @@ function NavBar({
                 ))}
             </nav>
 
-            {/* Single SearchBar */}
+            {/* Search Bar */}
             <SearchBar />
 
-            {/* Mobile menu button */}
+            {/* Mobile menu toggle button */}
             <button
                 className="lg:hidden"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle menu"
             >
                 {isMenuOpen ? (
-                    <X className="size-6 text-gray-600 dark:text-gray-300" />
+                    <X className="size-6 text-gray-600 dark:text-gray-100" />
                 ) : (
-                    <Menu className="size-6 text-gray-600 dark:text-gray-300" />
+                    <Menu className="size-6 text-gray-600 dark:text-gray-100" />
                 )}
             </button>
 
             {/* Desktop Header */}
             <div className="hidden lg:flex items-center gap-3">
                 <Header locale={locale} />
-                {/* Uncomment these if you want them back */}
-                {/* <ThemeSwitch parentDarkMode={parentDarkMode} locale={locale} />
-                <ChangeLanguage locale={locale} /> */}
             </div>
 
-            {/* Mobile Navigation */}
-            {isMenuOpen && (
-                <div className="absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden">
-                    <div className="flex items-center gap-3 border-b py-3">
-                        <Header locale={locale} />
-                    </div>
-                    <nav className="flex flex-col space-y-2">
-                        {navItems.map(({ id, label }) => (
-                            <button
-                                key={id}
-                                onClick={() => scrollToSection(id, setIsMenuOpen)}
-                                className="rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                                <span className="font-inter text-lg font-medium text-[#010E37] dark:text-white">
-                                    <FormattedMessage id={label} />
-                                </span>
-                            </button>
-                        ))}
-                    </nav>
+            {/* Mobile Navigation Dropdown */}
+            <div
+                className={cn(
+                    "absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden transition-all duration-500 transform",
+                    isMenuOpen
+                        ? "opacity-100 max-h-[500px] translate-y-0"
+                        : "opacity-0 max-h-0 -translate-y-2 pointer-events-none"
+                )}
+            >
+                <div className="flex items-center gap-3 border-b py-3">
+                    <Header locale={locale} />
                 </div>
-            )}
+                <nav className="flex flex-col space-y-2">
+                    {navItems.map(({ id, label }) => (
+                        <button
+                            key={id}
+                            onClick={() => scrollToSection(id, setIsMenuOpen)}
+                            className="rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                            <span className="font-inter text-lg font-medium text-[#010E37] dark:text-white">
+                                <FormattedMessage id={label} />
+                            </span>
+                        </button>
+                    ))}
+                </nav>
+            </div>
         </header>
     );
 }

@@ -1,10 +1,11 @@
 import Image from "next/image";
 import imgUrl from "@/mockdata/keychain.png"
 import { type Product } from "@/mockdata/products"
+import ShopButton from "../shop-button";
 
 function ProductCard({ product }: { product: Product }) {
     return (
-        <div className="group rounded-lg border p-4 transition-all hover:shadow-lg">
+        <div className="group rounded-lg border dark:border-blue-950 p-4 transition-all hover:shadow-lg">
             <div className="relative aspect-square overflow-hidden rounded-lg">
                 <Image
                     src={product.image || imgUrl}
@@ -16,8 +17,8 @@ function ProductCard({ product }: { product: Product }) {
             </div>
             <div className="mt-4 space-y-2">
                 <h3 className="text-sm font-medium">{product.name}</h3>
-                <p className="text-lg font-bold">${product.price.toFixed(2)}</p>
-                <button className="w-full rounded-md bg-blue-500 p-2 text-white hover:bg-blue-600">Add to Cart</button>
+                <p className="text-2xl font-semiBold text-blue-500">${product.price.toFixed(2)}</p>
+                <ShopButton title="Add to cart" />
             </div>
         </div>
     )

@@ -16,7 +16,10 @@ const navItems = [
   { id: "discover-more", label: "discover" },
 ];
 
-function scrollToSection(id: string, setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
+function scrollToSection(
+  id: string,
+  setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>
+) {
   const element = document.getElementById(id);
   if (element) {
     element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -103,42 +106,43 @@ function NavBar({
             text={intl.formatMessage({ id: "log-in" })}
             icon={<LogIn className="me-2.5 size-6" />}
             link={`/${locale}/auth/login`}
-
           />
         </div>
       </nav>
 
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden">
-          <div className="flex items-center gap-3 border-b py-3">
-            <ThemeSwitch />
-            <ChangeLanguage locale={locale} />
-          </div>
-          <nav className="flex flex-col space-y-2">
-            {navItems.map(({ id, label }) => (
-              <button
-                key={id}
-                onClick={() => scrollToSection(id, setIsMenuOpen)}
-                className="rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <span className="font-inter text-lg font-medium text-[#010E37] dark:text-white">
-                  <FormattedMessage id={label} />
-                </span>
-              </button>
-            ))}
-
-
-            <CtaButton
-              text={intl.formatMessage({ id: "log-in" })}
-              icon={<LogIn className="me-2.5 size-6" />}
-              className="h-fit w-max mx-auto"
-              link="/auth/login"
-            />
-
-          </nav>
+      {/* Mobile Navigation with Tailwind CSS Transition */}
+      <div
+        className={cn(
+          "absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden transition-all duration-500 transform",
+          isMenuOpen
+            ? "opacity-100 max-h-[500px] translate-y-0"
+            : "opacity-0 max-h-0 -translate-y-2 pointer-events-none"
+        )}
+      >
+        <div className="flex items-center gap-3 border-b py-3">
+          <ThemeSwitch />
+          <ChangeLanguage locale={locale} />
         </div>
-      )}
+        <nav className="flex flex-col space-y-2">
+          {navItems.map(({ id, label }) => (
+            <button
+              key={id}
+              onClick={() => scrollToSection(id, setIsMenuOpen)}
+              className="rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <span className="font-inter text-lg font-medium text-[#010E37] dark:text-white">
+                <FormattedMessage id={label} />
+              </span>
+            </button>
+          ))}
+          <CtaButton
+            text={intl.formatMessage({ id: "log-in" })}
+            icon={<LogIn className="me-2.5 size-6" />}
+            className="h-fit w-max mx-auto"
+            link="/auth/login"
+          />
+        </nav>
+      </div>
     </header>
   );
 }

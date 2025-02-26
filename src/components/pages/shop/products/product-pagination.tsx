@@ -1,5 +1,6 @@
 "use client"
-
+import { Button } from "@/components/ui/button"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 export function ProductPagination({
@@ -20,13 +21,15 @@ export function ProductPagination({
 
     return (
         <div className="flex items-center justify-center space-x-2">
-            <button
+            <Button
                 onClick={() => router.push(createPageURL(currentPage - 1))}
                 disabled={currentPage <= 1}
-                className="rounded-md border p-2 hover:bg-gray-100 disabled:opacity-50"
+                className="rounded-lg border p-2 disabled:opacity-50  me-auto"
+                icon={<ArrowLeft size={20} />}
+                iconPosition="left"
             >
                 Previous
-            </button>
+            </Button>
             {[...Array(totalPages)].map((_, i) => {
                 const page = i + 1
                 if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
@@ -34,7 +37,7 @@ export function ProductPagination({
                         <button
                             key={page}
                             onClick={() => router.push(createPageURL(page))}
-                            className={`rounded-md p-2 ${currentPage === page ? "bg-blue-500 text-white" : "border hover:bg-gray-100"
+                            className={`rounded-md w-8 aspect-square ${currentPage === page ? "bg-gray-300 dark:bg-blue-950 border" : "hover:bg-gray-100 hover:text-main"
                                 }`}
                         >
                             {page}
@@ -52,13 +55,15 @@ export function ProductPagination({
                 }
                 return null
             })}
-            <button
+            <Button
                 onClick={() => router.push(createPageURL(currentPage + 1))}
                 disabled={currentPage >= totalPages}
-                className="rounded-md border p-2 hover:bg-gray-100 disabled:opacity-50"
+                className="rounded-lg border p-2 disabled:opacity-50  ms-auto"
+                icon={<ArrowRight size={20} />}
+                iconPosition="right"
             >
                 Next
-            </button>
+            </Button>
         </div>
     )
 }
