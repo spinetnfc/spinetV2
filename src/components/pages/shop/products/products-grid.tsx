@@ -4,6 +4,8 @@ import { useSearchParams } from "next/navigation"
 import { ProductPagination } from "./product-pagination"
 import { MOCK_PRODUCTS, ITEMS_PER_PAGE } from "@/mockdata/products"
 import ProductCard from "./product-card"
+import { Form } from "react-hook-form"
+import { FormattedMessage } from "react-intl"
 
 export function ProductGrid({ locale }: { locale: string }) {
     const params = useSearchParams()
@@ -69,13 +71,15 @@ export function ProductGrid({ locale }: { locale: string }) {
         <div className="space-y-6">
             {paginatedProducts.length === 0 ? (
                 <div className="text-center py-10">
-                    <p className="text-lg">No products found matching your filters.</p>
+                    <p className="text-lg">
+                        <FormattedMessage id="no-products-found" />
+                    </p>
                 </div>
             ) : (
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                         {paginatedProducts.map((product) => (
-                            <ProductCard key={product.id} product={product} />
+                            <ProductCard key={product.id} product={product} locale={locale} />
                         ))}
                     </div>
                     {totalPages > 1 && (

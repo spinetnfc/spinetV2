@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { Form } from "react-hook-form"
+import { FormattedMessage } from "react-intl"
 
 export function ProductPagination({
     locale,
@@ -30,7 +32,7 @@ export function ProductPagination({
                 icon={locale !== "ar" ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}
                 iconPosition="left"
             >
-                Previous
+                <FormattedMessage id="previous" />
             </Button>
             {[...Array(totalPages)].map((_, i) => {
                 const page = i + 1
@@ -64,7 +66,7 @@ export function ProductPagination({
                 icon={locale !== "ar" ? <ArrowRight size={20} /> : <ArrowLeft size={20} />}
                 iconPosition="right"
             >
-                Next
+                <FormattedMessage id="next" />
             </Button>
         </div>
     )

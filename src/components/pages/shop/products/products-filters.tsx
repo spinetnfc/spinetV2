@@ -4,6 +4,8 @@ import { ChevronDown } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { FormattedMessage } from "react-intl"
+
 const CATEGORIES = ["New arrivals", "Promotion", "Top selling", "Pack"]
 const PRODUCT_CATEGORIES = ["Card", "Sticker", "Keychain", "Display", "Custom card"]
 
@@ -55,7 +57,9 @@ export function ProductsFilters({ locale }: { locale: string }) {
     return (
         <div className="h-fit space-y-6 md:p-4 md:rounded-2xl md:border dark:border-blue-950">
             <div>
-                <h3 className="text-2xl font-semibold px-2 pb-3 mb-3 border-b dark:border-blue-950">Filters</h3>
+                <h3 className="text-2xl font-semibold px-2 pb-3 mb-3 border-b dark:border-blue-950">
+                    <FormattedMessage id="filters" />
+                </h3>
                 <div className="space-y-2">
                     {CATEGORIES.map((category) => (
                         <button
@@ -67,7 +71,7 @@ export function ProductsFilters({ locale }: { locale: string }) {
                             )
                             }
                         >
-                            {category}
+                            <FormattedMessage id={category.toLowerCase()} />
                         </button>
                     ))}
                 </div>
@@ -112,7 +116,7 @@ export function ProductsFilters({ locale }: { locale: string }) {
                                         "hover:bg-gray-200 dark:hover:bg-blue-900"
                                 )}
                             >
-                                {size}
+                                <FormattedMessage id={size.toLowerCase()} />
                             </button>
                         ))}
                     </div>
@@ -139,7 +143,7 @@ export function ProductsFilters({ locale }: { locale: string }) {
                                 )
                                 }
                             >
-                                {category}
+                                <FormattedMessage id={category.toLocaleLowerCase()} />
                             </button>
                         ))}
                     </div>
@@ -150,7 +154,7 @@ export function ProductsFilters({ locale }: { locale: string }) {
                 onClick={applyFilters}
                 className="w-full py-3 bg-[#001838] text-white rounded-md hover:bg-[#002857] transition-colors"
             >
-                Apply Filter
+                <FormattedMessage id="apply-filter" />
             </button>
         </div>
     )

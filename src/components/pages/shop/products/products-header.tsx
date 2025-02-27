@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useSearchParams, useRouter } from "next/navigation"
+import { FormattedMessage } from "react-intl"
 
 export default function ProductsHeader() {
     const searchParams = useSearchParams()
@@ -30,18 +31,22 @@ export default function ProductsHeader() {
 
     return (
         <div className="mb-6 sm:flex space-y-2 items-center justify-between">
-            <p className="text-sm text-muted-foreground">Showing {totalProducts} Products</p>
+            <p className="text-sm text-muted-foreground">
+                <FormattedMessage id="showing" />{" "}
+                {totalProducts}{" "}
+                <FormattedMessage id="products" />
+            </p>
             <select
                 defaultValue={searchParams.get("sort") || "newest"}
                 className="rounded-md border p-2 dark:bg-main focus-visible:outline-none"
                 onChange={handleSortChange}
             >
                 <option value="" disabled>
-                    Sort by
+                    <FormattedMessage id="sort-by" />
                 </option>
                 {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
-                        {option.label}
+                        <FormattedMessage id={option.value} />
                     </option>
                 ))}
             </select>

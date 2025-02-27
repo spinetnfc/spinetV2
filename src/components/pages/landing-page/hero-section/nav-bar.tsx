@@ -110,7 +110,7 @@ function NavBar({
         </div>
       </nav>
 
-      {/* Mobile Navigation with Tailwind CSS Transition */}
+      {/* Mobile Navigation */}
       <div
         className={cn(
           "absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden transition-all duration-500 transform",
