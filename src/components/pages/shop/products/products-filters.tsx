@@ -22,7 +22,7 @@ const COLORS = [
 
 const SIZES = ["X-Small", "Small", "Medium", "Large", "X-Large", "XX-Large"]
 
-export function ProductsFilters() {
+export function ProductsFilters({ locale }: { locale: string }) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [isColorsOpen, setIsColorsOpen] = useState(true)
@@ -61,7 +61,7 @@ export function ProductsFilters() {
                         <button
                             key={category}
                             onClick={() => updateFilters("category", category.toLowerCase())}
-                            className={cn("block w-full text-left px-2 py-1.5 rounded-md",
+                            className={cn("block w-full text-start px-2 py-1.5 rounded-md",
                                 isChecked("category", category.toLowerCase()) ? "bg-blue-500" :
                                     "hover:bg-gray-200 hover:dark:bg-blue-900"
                             )
@@ -133,7 +133,7 @@ export function ProductsFilters() {
                             <button
                                 key={category}
                                 onClick={() => updateFilters("productCategory", category.toLowerCase())}
-                                className={cn("block w-full text-left px-2 py-1.5 rounded-md",
+                                className={cn("block w-full text-start px-2 py-1.5 rounded-md",
                                     isChecked("productCategory", category.toLowerCase()) ? "bg-blue-500" :
                                         "hover:bg-gray-200 hover:dark:bg-blue-900"
                                 )

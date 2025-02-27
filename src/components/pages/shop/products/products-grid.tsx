@@ -1,11 +1,11 @@
 "use client"
-
+//divide into server component later for data fetching and client component for fetching searchparams and rendering ui
 import { useSearchParams } from "next/navigation"
 import { ProductPagination } from "./product-pagination"
 import { MOCK_PRODUCTS, ITEMS_PER_PAGE } from "@/mockdata/products"
 import ProductCard from "./product-card"
 
-export function ProductGrid() {
+export function ProductGrid({ locale }: { locale: string }) {
     const params = useSearchParams()
 
     // Filter and sort products
@@ -79,7 +79,7 @@ export function ProductGrid() {
                         ))}
                     </div>
                     {totalPages > 1 && (
-                        <ProductPagination currentPage={page} totalPages={totalPages} />
+                        <ProductPagination currentPage={page} totalPages={totalPages} locale={locale} />
                     )}
                 </>
             )}
