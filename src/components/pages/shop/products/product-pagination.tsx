@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Form } from "react-hook-form"
 import { FormattedMessage } from "react-intl"
 
 export function ProductPagination({

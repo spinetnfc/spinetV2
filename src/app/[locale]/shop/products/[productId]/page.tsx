@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { notFound } from "next/navigation"; // If product doesn't exist
+import { notFound, useParams } from "next/navigation"; // If product doesn't exist
 import { getProductById, getRelatedProducts } from "@/mockdata/product";
 import { Tabs } from "@/components/ui/tabs"; // Example: If you're using a tabs component
 import { Suspense, useState } from "react";
@@ -8,12 +8,14 @@ import imgUrl from "@/mockdata/keychain.png"
 
 
 type ProductDetailsPageProps = {
-    params: { productId: string; locale: string };
+    params: Promise<{ prodId: string; locale: string }>;
 };
 
 export default async function ProductDetailsPage({ params }: ProductDetailsPageProps) {
     // Convert productId to number
-    const productId = Number(params.productId);
+    const { prodId, locale } = await params;
+
+    const productId = Number(prodId);
 
     // In a real app, fetch from DB or API
     const product = getProductById(productId);
@@ -30,13 +32,13 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
             <nav className="mb-4 text-sm text-gray-600 dark:text-gray-300">
                 <ol className="flex items-center space-x-2">
                     <li>
-                        <a href={`/${params.locale}`} className="hover:underline">
+                        <a href={`/${locale}`} className="hover:underline">
                             Home
                         </a>
                     </li>
                     <li>{">"}</li>
                     <li>
-                        <a href={`/${params.locale}/shop`} className="hover:underline">
+                        <a href={`/${locale}/shop`} className="hover:underline">
                             Shop
                         </a>
                     </li>
