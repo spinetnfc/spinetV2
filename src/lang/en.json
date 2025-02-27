@@ -20,8 +20,11 @@
   "price-asc": "Price: Low to High",
   "price-desc": "Price: High to Low",
   "apply-filter": "Apply Filter",
+  "no-products-found": "No products found that match your filters",
   "new arrivals": "New Arrivals",
   "top selling": "Top Selling",
+  "category": "Category",
+  "size": "Size",
   "pack": "Pack",
   "card": "Card",
   "sticker": "Sticker",
@@ -34,6 +37,7 @@
   "large": "Large",
   "x-large": "X-Large",
   "xx-large": "XX-Large",
+  "add-to-cart": "Add to Cart",
   "discover": "DISCOVER",
   "log-in": "Log In",
   "digital-identity-text": "Build a digital identity for you & your business, customize and share.",
@@ -191,5 +195,6 @@
   "stay-up-to-date-text": "STAY UP TO DATE ABOUT OUR LATEST OFFERS",
   "subscribe-to-newsletter": "Subscribe to Our Newsletter",
   "next": "Next",
-  "previous": "Previous"
+  "previous": "Previous",
+  "colors": "Colors"
 }

@@ -10,16 +10,16 @@ const CATEGORIES = ["New arrivals", "Promotion", "Top selling", "Pack"]
 const PRODUCT_CATEGORIES = ["Card", "Sticker", "Keychain", "Display", "Custom card"]
 
 const COLORS = [
-    { value: "green", class: "bg-green-500" },
-    { value: "red", class: "bg-red-500" },
-    { value: "yellow", class: "bg-yellow-400" },
-    { value: "orange", class: "bg-orange-500" },
-    { value: "cyan", class: "bg-cyan-400" },
-    { value: "blue", class: "bg-blue-500" },
-    { value: "purple", class: "bg-purple-500" },
-    { value: "pink", class: "bg-pink-500" },
-    { value: "white", class: "bg-white border border-gray-200" },
-    { value: "black", class: "bg-black" },
+    { value: "green", class: "bg-green-500 border-gray-200" },
+    { value: "red", class: "bg-red-500 border-gray-200" },
+    { value: "yellow", class: "bg-yellow-400 border-gray-200" },
+    { value: "orange", class: "bg-orange-500 border-gray-200" },
+    { value: "cyan", class: "bg-cyan-400 border-gray-200" },
+    { value: "blue", class: "bg-blue-500 border-gray-200" },
+    { value: "purple", class: "bg-purple-500 border-gray-200" },
+    { value: "pink", class: "bg-pink-500 border-gray-200" },
+    { value: "white", class: "bg-gray-50 border border-gray-200" },
+    { value: "black", class: "bg-black border-gray-200" },
 ]
 
 const SIZES = ["X-Small", "Small", "Medium", "Large", "X-Large", "XX-Large"]
@@ -82,7 +82,9 @@ export function ProductsFilters({ locale }: { locale: string }) {
                     onClick={() => setIsColorsOpen(!isColorsOpen)}
                     className="flex items-center justify-between w-full pb-3 mb-3 border-b dark:border-blue-950"
                 >
-                    <span className="text-lg font-semibold">Colors</span>
+                    <span className="text-lg font-semibold">
+                        <FormattedMessage id="colors" />
+                    </span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${isColorsOpen ? "transform rotate-180" : ""}`} />
                 </button>
                 {isColorsOpen && (
@@ -91,7 +93,7 @@ export function ProductsFilters({ locale }: { locale: string }) {
                             <button
                                 key={color.value}
                                 onClick={() => updateFilters("color", color.value)}
-                                className={`w-6 xl:w-8 aspect-square rounded-full ${color.class} ${isChecked("color", color.value) ? "ring-2 ring-offset-2 ring-blue-500" : ""
+                                className={`w-6 xl:w-8 aspect-square rounded-full cursor-pointer ${color.class} ${isChecked("color", color.value) ? "ring-2 ring-offset-2 ring-blue-500" : ""
                                     }`}
                                 title={color.value}
                             />
@@ -102,7 +104,9 @@ export function ProductsFilters({ locale }: { locale: string }) {
 
             <div>
                 <button onClick={() => setIsSizeOpen(!isSizeOpen)} className="flex items-center justify-between w-full pb-3 mb-3 border-b dark:border-blue-950">
-                    <span className="text-lg font-semibold">Size</span>
+                    <span className="text-lg font-semibold">
+                        <FormattedMessage id="size" />
+                    </span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${isSizeOpen ? "transform rotate-180" : ""}`} />
                 </button>
                 {isSizeOpen && (
@@ -128,7 +132,9 @@ export function ProductsFilters({ locale }: { locale: string }) {
                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                     className="flex items-center justify-between w-full pb-3 mb-3 border-b dark:border-blue-950"
                 >
-                    <span className="text-lg font-semibold">Category</span>
+                    <span className="text-lg font-semibold">
+                        <FormattedMessage id="category" />
+                    </span>
                     <ChevronDown className={`w-5 h-5 transition-transform ${isCategoryOpen ? "transform rotate-180" : ""}`} />
                 </button>
                 {isCategoryOpen && (
@@ -152,7 +158,7 @@ export function ProductsFilters({ locale }: { locale: string }) {
 
             <button
                 onClick={applyFilters}
-                className="w-full py-3 bg-[#001838] text-white rounded-md hover:bg-[#002857] transition-colors"
+                className="w-full py-3 bg-[#001838] text-white rounded-md hover:bg-[#002857] transition-colors cursor-pointer"
             >
                 <FormattedMessage id="apply-filter" />
             </button>

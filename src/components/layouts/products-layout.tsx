@@ -56,7 +56,7 @@ export default function ProductsLayout({ children, locale }: ProductsLayoutProps
                             side={locale === 'ar' ? 'right' : 'left'}
                             lang={locale}
                             className={cn(
-                                'bg-background p-4 h-full fixed top-0 md:hidden',
+                                'bg-background p-4 h-full fixed top-0 md:hidden overflow-auto',
                                 locale === 'ar' ? 'right-0' : 'left-0'
                             )}
                         >

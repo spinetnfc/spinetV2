@@ -170,7 +170,7 @@
   "invalid-email-address": "عنوان بريد إلكتروني غير صالح",
   "fullname-required": "الاسم الكامل مطلوب",
   "password-length": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
-  "passwords-must-match": "يجب أن تتطابق كلمات المرور",
+  "passwords-must-match": "كلمات المرور يجب أن تتطابق",
   "password-contains-uppercase-letter": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
   "password-contains-lowercase-letter": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل",
   "password-contains-number": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
@@ -190,8 +190,11 @@
   "new-arrivals": "وصل حديثًا",
   "promotion": "عرض ترويجي",
   "search-for-products": "البحث عن المنتجات",
-  "stay-up-to-date-text": "ابقَ على اطلاع بآخر عروضنا",
+  "stay-up-to-date-text": "ابق على اطلاع على آخر عروضنا",
   "subscribe-to-newsletter": "اشترك في نشرتنا الإخبارية",
   "next": "التالي",
-  "previous": "السابق"
+  "previous": "السابق",
+  "category": "الفئة",
+  "size": "الحجم",
+  "colors": "الألوان"
 }

@@ -39,6 +39,8 @@
   "new arrivals": "Nouvelles arrivées",
   "top selling": "Meilleures ventes",
   "pack": "Lot",
+  "category": "Catégorie",
+  "size": "taille",
   "card": "Carte",
   "sticker": "Autocollant",
   "keychain": "Porte-clés",
@@ -193,5 +195,6 @@
   "stay-up-to-date-text": "RESTEZ INFORMÉ DE NOS DERNIÈRES OFFRES",
   "subscribe-to-newsletter": "Abonnez-vous à notre newsletter",
   "next": "Suivant",
-  "previous": "Précédent"
+  "previous": "Précédent",
+  "colors": "Coleurs"
 }

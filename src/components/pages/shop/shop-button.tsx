@@ -15,7 +15,7 @@ const ShopButton = ({
     return (
         <button
             onClick={onClick}
-            className={cn(className, "bg-[#082356] w-full py-3 px-4 text-white rounded-xl")}
+            className={cn(className, "bg-[#082356] w-full py-3 px-4 text-white rounded-xl cursor-pointer")}
         >
             {title}
         </button>
