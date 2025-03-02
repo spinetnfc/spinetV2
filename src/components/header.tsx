@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { User2 } from 'lucide-react';
+import { ShoppingCart, User2 } from 'lucide-react';
 
 import ChangeLanguage from '@/components/change-language';
 import ThemeSwitch from '@/components/theme-switch';
@@ -14,15 +14,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
 import { useLogout } from '@/lib/auth';
-import { cn } from '@/utils/cn';
-
+import Link from 'next/link';
 function Header({ locale }: { locale: string }) {
   const router = useRouter();
   const logout = useLogout();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-end gap-4 px-4 sm:static sm:h-auto sm:bg-transparent sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-end gap-4 px-4 sm:static sm:h-auto sm:bg-transparent xl:px-6">
       <div className="flex items-center gap-4">
+        <Link href={`/${locale}/app/cart`}>
+          <ShoppingCart className="size-6 text-white" />
+        </Link>
         <ThemeSwitch locale={locale} />
         <ChangeLanguage locale={locale} />
         <DropdownMenu>

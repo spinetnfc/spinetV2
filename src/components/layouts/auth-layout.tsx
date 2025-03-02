@@ -77,7 +77,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
             ) : (
               <AuthenticationImage
                 className={cn('text-white', {
-                  'text-[#082356] dark:text-white lg:text-white':
+                  'text-navy dark:text-white lg:text-white':
                     pathname === '/auth/forgot-password',
                 })}
               />

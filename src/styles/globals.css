@@ -16,7 +16,8 @@ body {
  }
 
 @theme {
-  --color-main: #010C32; /* Define a custom blue color */
+  --color-main: #010C32;
+  --color-navy: #082356;
 }
 @layer base {
   :root {

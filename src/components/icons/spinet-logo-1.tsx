@@ -4,7 +4,7 @@ const SpinetLogo = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        'z-10 flex items-center  justify-center  object-contain text-[#082356] hover:cursor-pointer  dark:text-[#EEF6FF] lg:hidden',
+        'z-10 flex items-center  justify-center  object-contain text-navy hover:cursor-pointer  dark:text-[#EEF6FF] lg:hidden',
         className,
       )}
     >
@@ -14,7 +14,7 @@ const SpinetLogo = ({ className }: { className?: string }) => {
         xmlns="http://www.w3.org/2000/svg"
         width={350}
         height={75}
-        // viewBox={viewBox}
+      // viewBox={viewBox}
       >
         <g>
           <path

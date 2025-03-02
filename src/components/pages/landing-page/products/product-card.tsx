@@ -54,11 +54,11 @@ async function ProductCard({ index, product, locale }: Props) {
 
       {/* See in Store / Order Now Button */}
       {index === 0 ? (
-        <button className="relative z-10 flex h-[47px] w-[254px] items-center justify-center rounded-[8px] bg-[#082356] text-xl text-white transition-colors duration-300 hover:bg-[#0A2C6C]">
+        <button className="relative z-10 flex h-[47px] w-[254px] items-center justify-center rounded-[8px] bg-navy text-xl text-white transition-colors duration-300 hover:bg-[#0A2C6C]">
           {t('see-in-store')}
         </button>
       ) : (
-        <button className="relative z-10 flex h-[47px] w-[254px] items-center justify-center gap-4 rounded-[8px] bg-[#082356] text-xl text-white transition-colors duration-300 hover:bg-[#0A2C6C]">
+        <button className="relative z-10 flex h-[47px] w-[254px] items-center justify-center gap-4 rounded-[8px] bg-navy text-xl text-white transition-colors duration-300 hover:bg-[#0A2C6C]">
           <ShoppingCart className="size-6" />
           {t('order-now')}
         </button>
