@@ -76,7 +76,7 @@ export default function ProductOrderForm({ product }: ProductOrderFormProps) {
                                 onClick={() => setSelectedSize(size)}
                                 className={`px-4 py-2 rounded-full text-sm ${isSelected
                                     ? "bg-blue-500 text-white"
-                                    : "border border-gray-300 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-blue-900"
+                                    : " text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-blue-900"
                                     }`}
                             >
                                 {size}
