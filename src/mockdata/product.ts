@@ -26,7 +26,7 @@ export const MOCK_PRODUCTS: Product[] = [
             "It’s easy to set up, even easier to share.",
             // ... add as many bullet points as needed
         ],
-        colors: ["Black", "Silver", "Blue"],
+        colors: ["#87f6e3", "#123456", "#987654", "#a156f6"],
         sizes: ["Small", "Medium", "Large"],
     },
     // ... More products if needed
