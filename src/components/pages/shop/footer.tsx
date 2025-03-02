@@ -22,7 +22,7 @@ const ShopFooter = async ({ locale }: { locale: string }) => {
                                 className="w-full placeholder:text-gray-300 dark:placeholder:text-gray-500 focus-visible:outline-hidden text-sm sm:text-md"
                             />
                         </div>
-                        <ShopButton title={t("subscribe-to-newsletter")} className="py-2 sm:py-3 text-sm sm:text-md" />
+                        <ShopButton title={t("subscribe-to-newsletter")} className="py-2 sm:py-3 text-sm sm:text-md w-full" />
                     </form>
                 </div>
             </div>

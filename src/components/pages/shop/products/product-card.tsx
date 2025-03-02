@@ -19,7 +19,7 @@ function ProductCard({ product, locale }: { product: Product, locale: string }) 
             <div className="mt-4 space-y-2">
                 <h3 className="text-sm font-medium">{product.name}</h3>
                 <p className="text-lg md:text-2xl font-semiBold text-blue-500">${product.price.toFixed(2)}</p>
-                <ShopButton title={<FormattedMessage id="add-to-cart" />} className="text-sm sm:text-md" />
+                <ShopButton title={<FormattedMessage id="add-to-cart" />} className="text-sm sm:text-md w-full" />
             </div>
         </div>
     )
