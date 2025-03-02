@@ -1,26 +1,23 @@
 import Image from "next/image";
-import { notFound, useParams } from "next/navigation"; // If product doesn't exist
+import { notFound } from "next/navigation";
 import { getProductById, getRelatedProducts } from "@/mockdata/product";
-import { Tabs } from "@/components/ui/tabs"; // Example: If you're using a tabs component
-import { Suspense, useState } from "react";
-import ProductTabs from '@/components/pages/shop/products/product-tabs'
-import imgUrl from "@/mockdata/keychain.png"
-
+import { Suspense } from "react";
+import ProductTabs from '@/components/pages/shop/products/product-tabs';
+import imgUrl from "@/mockdata/keychain.png";
 
 type ProductDetailsPageProps = {
-    params: Promise<{ prodId: string; locale: string }>;
+    // Change 'prodId' to 'productId' to match the folder name and the URL segment
+    params: Promise<{ productId: string; locale: string }>;
 };
 
 export default async function ProductDetailsPage({ params }: ProductDetailsPageProps) {
-    // Convert productId to number
-    const { prodId, locale } = await params;
-
-    const productId = Number(prodId);
+    // Await the params and destructure the correct properties
+    const { productId, locale } = await params;
 
     // In a real app, fetch from DB or API
     const product = getProductById(productId);
     if (!product) {
-        // If product not found, you can return notFound() or handle the error
+        // If product not found, return notFound()
         return notFound();
     }
 
@@ -43,7 +40,9 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                         </a>
                     </li>
                     <li>{">"}</li>
-                    <li className="font-semibold text-gray-900 dark:text-white">{product.name}</li>
+                    <li className="font-semibold text-gray-900 dark:text-white">
+                        {product.name}
+                    </li>
                 </ol>
             </nav>
 
@@ -68,10 +67,14 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
 
                     {/* Price & Rating */}
                     <div className="flex items-center space-x-4">
-                        <p className="text-3xl font-semibold text-blue-600">{product.price} DA</p>
+                        <p className="text-3xl font-semibold text-blue-600">
+                            {product.price} DA
+                        </p>
                         <div className="flex items-center">
                             {/* Simple star rating example */}
-                            <span className="text-yellow-500">{"★".repeat(Math.round(product.rating))}</span>
+                            <span className="text-yellow-500">
+                                {"★".repeat(Math.round(product.rating))}
+                            </span>
                             <span className="ml-1 text-gray-600 dark:text-gray-300">
                                 {product.rating}/5
                             </span>
@@ -79,7 +82,9 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                     </div>
 
                     {/* Short description */}
-                    <p className="text-gray-700 dark:text-gray-200">{product.description}</p>
+                    <p className="text-gray-700 dark:text-gray-200">
+                        {product.description}
+                    </p>
 
                     {/* Select Colors */}
                     <div>
@@ -122,7 +127,6 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
 
             {/* Tabs Section: Product Details & Rating/Reviews */}
             <div className="mt-8">
-                {/* If you already have a tabs component, import it here. Otherwise, a simple approach: */}
                 <Suspense fallback={<div>Loading Tabs...</div>}>
                     <ProductTabs details={product.details} />
                 </Suspense>
@@ -143,7 +147,9 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                                 height={200}
                                 className="mb-2 h-48 w-full object-cover"
                             />
-                            <p className="font-medium text-gray-700 dark:text-gray-200">{rel.name}</p>
+                            <p className="font-medium text-gray-700 dark:text-gray-200">
+                                {rel.name}
+                            </p>
                             <p className="text-blue-600">{rel.price} DA</p>
                         </div>
                     ))}
@@ -152,6 +158,3 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
         </div>
     );
 }
-
-
-

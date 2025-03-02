@@ -1,5 +1,5 @@
 export interface Product {
-    id: number;
+    id: string;
     name: string;
     price: number;
     rating: number;
@@ -12,7 +12,7 @@ export interface Product {
 
 export const MOCK_PRODUCTS: Product[] = [
     {
-        id: 1,
+        id: "1",
         name: "Spinet keychain",
         price: 2500,
         rating: 4.5,
@@ -32,11 +32,11 @@ export const MOCK_PRODUCTS: Product[] = [
     // ... More products if needed
 ];
 
-export function getProductById(id: number): Product | null {
+export function getProductById(id: string): Product | null {
     return MOCK_PRODUCTS.find((p) => p.id === id) || null;
 }
 
-export function getRelatedProducts(id: number): Product[] {
+export function getRelatedProducts(id: string): Product[] {
     // For demo, return the same array minus the current product
     return MOCK_PRODUCTS.filter((p) => p.id !== id).slice(0, 4);
 }
