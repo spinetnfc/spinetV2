@@ -6,6 +6,7 @@ export interface Product {
     type: "new-arrival" | "promotion" | "top-selling"
     color: string
     size: string
+    description?: string
 }
 
 export const MOCK_PRODUCTS: Product[] = Array.from({ length: 50 }, (_, i) => ({
