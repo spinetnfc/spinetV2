@@ -1,10 +1,10 @@
-import Image from "next/image";
+// app/[locale]/shop/products/[productId]/page.tsx
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import ProductTabs from "@/components/pages/shop/products/product-tabs";
 import ProductOrderForm from "@/components/pages/shop/products/order-product-form";
 import RelatedProductsCarousel from "@/components/pages/shop/products/related-products";
-import { renderSmallImages } from "@/utils/renderImages";
+import ProductImageViewer from "@/components/pages/shop/products/product-image";
 import useTranslate from '@/hooks/use-translate';
 import { getProductById, getRelatedProducts } from "@/mockdata/product";
 
@@ -45,36 +45,12 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
 
             {/* Main Section: Images & Info */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:flex ">
-                {/* LEFT: Single or Multiple Images */}
+                {/* LEFT: Product Images with Modal integration */}
                 <div>
-                    {product.images.length === 1 ? (
-                        <div className="flex items-center justify-end">
-                            <Image
-                                src={product.images[0]}
-                                alt={product.name}
-                                width={360}
-                                height={360}
-                                className="flex-1 max-w-md object-contain border-2 border-blue-500 rounded-2xl"
-                            />
-                        </div>
-                    ) : (
-                        <div className="flex flex-col-reverse lg:flex-row gap-2 lg:gap-3 justify-end items-center">
-                            {/* Thumbnails on the left */}
-                            <div className="flex flex-row lg:flex-col gap-2 lg:gap-3">
-                                {renderSmallImages(product.images.slice(1))}
-                            </div>
-                            {/* Big image (the first one) */}
-                            <div className="flex items-center justify-center">
-                                <Image
-                                    src={product.images[0]}
-                                    alt={product.name}
-                                    width={360}
-                                    height={360}
-                                    className="lg:min-w-[360px] object-contain border-2 border-blue-500 rounded-2xl"
-                                />
-                            </div>
-                        </div>
-                    )}
+                    <ProductImageViewer
+                        images={product.images}
+                        productName={product.name}
+                    />
                 </div>
 
                 {/* RIGHT: Product Details */}
