@@ -1,11 +1,21 @@
 "use client";
-
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import QuantitySelector from "@/components/ui/quantity-selector";
 import ShopButton from "@/components/pages/shop/shop-button";
+import { useParams } from "next/navigation";
+import enMessages from '@/lang/en.json';
+import arMessages from '@/lang/ar.json';
+import frMessages from '@/lang/fr.json';
+
+const messagesMap = {
+    en: enMessages,
+    ar: arMessages,
+    fr: frMessages,
+};
+import { FormattedMessage, IntlProvider } from "react-intl";
 
 // Mock data for demonstration
 const INITIAL_CART = [
@@ -51,6 +61,9 @@ function calculateCartSummary(cart: typeof INITIAL_CART) {
 }
 
 export default function CartPage() {
+    const { locale } = useParams();
+    const effectiveLocale = (Array.isArray(locale) ? locale[0] : locale) || "en"; // Ensure it's a string and set default
+    const messages = messagesMap[locale as keyof typeof messagesMap];
     // We keep cart in local state for this demo
     const [cart, setCart] = useState(INITIAL_CART);
 
@@ -65,108 +78,116 @@ export default function CartPage() {
     const isCartEmpty = cart.length === 0;
 
     return (
-        <div className="px-4 py-6 md:py-10">
-            {/* Breadcrumbs */}
-            <nav className="mb-6 text-sm text-gray-600 dark:text-gray-300">
-                <ol className="flex items-center space-x-2">
-                    <li>
-                        <Link href="/" className="hover:underline">
-                            Home
-                        </Link>
-                    </li>
-                    <li>{">"}</li>
-                    <li>
-                        <Link href="/shop" className="hover:underline">
-                            Shop
-                        </Link>
-                    </li>
-                    <li>{">"}</li>
-                    <li className="font-semibold text-gray-900 dark:text-white">Cart</li>
-                </ol>
-            </nav>
+        <IntlProvider locale={effectiveLocale} messages={messages}>
+            <div className="px-4 py-6 md:py-10">
+                {/* Breadcrumbs */}
+                <nav className="mb-6 text-sm text-gray-600 dark:text-gray-300">
+                    <ol className="flex items-center space-x-2">
+                        <li>
+                            <Link href="/" className="hover:underline">
+                                <FormattedMessage id="home" />
+                            </Link>
+                        </li>
+                        <li>{">"}</li>
+                        <li>
+                            <Link href="/shop" className="hover:underline">
+                                <FormattedMessage id="shop" />
+                            </Link>
+                        </li>
+                        <li>{">"}</li>
+                        <li className="font-semibold text-gray-900 dark:text-white">
+                            <FormattedMessage id="cart" />
+                        </li>
+                    </ol>
+                </nav>
 
-            <h1 className="mb-6 text-2xl sm:text-4xl font-bold">Your cart</h1>
+                <h1 className="mb-6 text-2xl sm:text-4xl font-bold">
+                    <FormattedMessage id="your-cart" />
+                </h1>
 
-            {isCartEmpty ? (
-                // If cart is empty, display a message and a button to go back shopping
-                <div className="flex flex-col items-center justify-center gap-4 py-10">
-                    <p className="text-lg text-gray-700 dark:text-gray-200">
-                        Your cart is currently empty.
-                    </p>
-                    <ShopButton title="Continue Shopping" className="px-6 py-2" />
-                </div>
-            ) : (
-                // If cart has items, display the cart layout
-                <div className="grid grid-cols-1 space-y-6 md:space-y-0 md:gap-6 md:grid-cols-3">
-                    {/* Cart Items */}
-                    <div className="col-span-2 rounded-lg border px-2 xs:px-4">
-                        {cart.map((item) => (
-                            <div
-                                key={item.id}
-                                className="relative flex gap-1 xs:gap-4 p-2 sm:p-4 border-b"
-                            >
-                                {/* Delete icon in top-right corner */}
-                                <button
-                                    onClick={() => removeItem(item.id)}
-                                    className="absolute top-2 right-2 text-red-500 hover:scale-110 cursor-pointer"
-                                    aria-label="Delete item"
+                {isCartEmpty ? (
+                    // If cart is empty, display a message and a button to go back shopping
+                    <div className="flex flex-col items-center justify-center gap-4 py-10">
+                        <p className="text-lg text-gray-700 dark:text-gray-200">
+                            <FormattedMessage id="cart-is-empty" />
+                        </p>
+                        <ShopButton title="Continue Shopping" className="px-6 py-2" />
+                    </div>
+                ) : (
+                    // If cart has items, display the cart layout
+                    <div className="grid grid-cols-1 space-y-6 md:space-y-0 md:gap-6 md:grid-cols-3">
+                        {/* Cart Items */}
+                        <div className="col-span-2 rounded-lg border px-2 xs:px-4">
+                            {cart.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="relative flex gap-1 xs:gap-4 p-2 sm:p-4 border-b"
                                 >
-                                    <Trash2 size={18} />
-                                </button>
+                                    {/* Delete icon in top-right corner */}
+                                    <button
+                                        onClick={() => removeItem(item.id)}
+                                        className="absolute top-2 end-2 text-red-500 hover:scale-110 cursor-pointer"
+                                        aria-label="Delete item"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
 
-                                {/* Image (independent) */}
-                                <div className="relative h-14 xs:h-16 lg:h-20 w-14 xs:w-16 lg:w-20 flex-shrink-0 rounded-lg overflow-hidden">
-                                    <Image src={item.image} alt={item.name} fill className="object-contain" />
-                                </div>
-
-                                {/* Two rows on the right */}
-                                <div className="flex flex-1 flex-col justify-between">
-                                    {/* Row 1: Name, size, color */}
-                                    <div>
-                                        <h3 className="text-sm xs:text-base font-semibold text-gray-800 dark:text-gray-200">
-                                            {item.name}
-                                        </h3>
-                                        <p className="text-xs xs:text-sm text-gray-500 dark:text-gray-400">
-                                            Size: {item.size} &nbsp; | &nbsp; Color: {item.color}
-                                        </p>
+                                    {/* Image (independent) */}
+                                    <div className="relative h-14 xs:h-16 lg:h-20 w-14 xs:w-16 lg:w-20 flex-shrink-0 rounded-lg overflow-hidden">
+                                        <Image src={item.image} alt={item.name} fill className="object-contain" />
                                     </div>
 
-                                    {/* Row 2: Price + Quantity */}
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-base xs:text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                            {item.price * item.quantity} DA
-                                        </p>
-                                        <QuantitySelector initialQuantity={item.quantity} />
+                                    {/* Two rows on the right */}
+                                    <div className="flex flex-1 flex-col justify-between">
+                                        {/* Row 1: Name, size, color */}
+                                        <div>
+                                            <h3 className="text-sm xs:text-base font-semibold text-gray-800 dark:text-gray-200">
+                                                {item.name}
+                                            </h3>
+                                            <p className="text-xs xs:text-sm text-gray-500 dark:text-gray-400">
+                                                <FormattedMessage id="size" />: {item.size} &nbsp; | &nbsp; <FormattedMessage id="color" />: {item.color}
+                                            </p>
+                                        </div>
+
+                                        {/* Row 2: Price + Quantity */}
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-base xs:text-lg font-semibold text-gray-700 dark:text-gray-200">
+                                                {item.price * item.quantity} <FormattedMessage id="da" />
+                                            </p>
+                                            <QuantitySelector initialQuantity={item.quantity} />
+                                        </div>
                                     </div>
                                 </div>
+                            ))}
+                        </div>
+
+                        {/* Order Summary */}
+                        <div className="col-span-1 h-fit rounded-lg border p-2 sm:p-4 lg:p-6">
+                            <h2 className="mb-4 text-lg font-semibold">
+                                <FormattedMessage id="order-summary" />
+                            </h2>
+                            <div className="mb-2 flex items-center justify-between">
+                                <span className="text-sm text-gray-600 dark:text-gray-300"><FormattedMessage id="subtotal" /></span>
+                                <span className="font-medium">{subtotal} <FormattedMessage id="da" /></span>
                             </div>
-                        ))}
+                            <div className="mb-2 flex items-center justify-between">
+                                <span className="text-sm text-gray-600 dark:text-gray-300"> <FormattedMessage id="discount" /></span>
+                                <span className="font-medium text-red-500">-{discount} <FormattedMessage id="da" /></span>
+                            </div>
+                            <div className="mb-2 flex items-center justify-between">
+                                <span className="text-sm text-gray-600 dark:text-gray-300"><FormattedMessage id="delivery-fee" /></span>
+                                <span className="font-medium">{deliveryFee} <FormattedMessage id="da" /></span>
+                            </div>
+                            <hr className="my-2" />
+                            <div className="mb-4 flex items-center justify-between">
+                                <span className="font-semibold"><FormattedMessage id="total" /></span>
+                                <span className="font-bold text-blue-600">{total} <FormattedMessage id="da" /></span>
+                            </div>
+                            <ShopButton title={<FormattedMessage id="go-to-checkout" />} className="w-full" />
+                        </div>
                     </div>
-
-                    {/* Order Summary */}
-                    <div className="col-span-1 h-fit rounded-lg border p-2 sm:p-4 lg:p-6">
-                        <h2 className="mb-4 text-lg font-semibold">Order Summary</h2>
-                        <div className="mb-2 flex items-center justify-between">
-                            <span className="text-sm text-gray-600 dark:text-gray-300">Subtotal</span>
-                            <span className="font-medium">{subtotal} DA</span>
-                        </div>
-                        <div className="mb-2 flex items-center justify-between">
-                            <span className="text-sm text-gray-600 dark:text-gray-300">Discount</span>
-                            <span className="font-medium text-red-500">-{discount} DA</span>
-                        </div>
-                        <div className="mb-2 flex items-center justify-between">
-                            <span className="text-sm text-gray-600 dark:text-gray-300">Delivery Fee</span>
-                            <span className="font-medium">{deliveryFee} DA</span>
-                        </div>
-                        <hr className="my-2" />
-                        <div className="mb-4 flex items-center justify-between">
-                            <span className="font-semibold">Total</span>
-                            <span className="font-bold text-blue-600">{total} DA</span>
-                        </div>
-                        <ShopButton title="Go to Checkout" className="w-full" />
-                    </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </IntlProvider>
     );
 }

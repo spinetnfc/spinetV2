@@ -205,5 +205,16 @@
   "no-ratings-yet": "Pas encore d'avis. Soyez le premier à laisser un avis !",
   "choose-color": "Choisir une couleur",
   "choose-size": "Choisir une taille",
-  "you-may-also-like": "Vous aimerez peut-être aussi"
+  "you-may-also-like": "Vous aimerez peut-être aussi",
+  "cart": "Panier",
+  "your-cart": "Votre panier",
+  "cart-is-empty": "Votre panier est vide",
+  "continue-shopping": "Continuer vos achats",
+  "color": "Couleur",
+  "order-summary": "Résumé de la commande",
+  "subtotal": "Sous-total",
+  "discount": "Remise",
+  "delivery-fee": "Frais de livraison",
+  "total": "Total",
+  "go-to-checkout": "Passer à la caisse"
 }

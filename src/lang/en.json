@@ -205,5 +205,16 @@
   "no-ratings-yet": "No reviews yet. Be the first to leave a review!",
   "choose-color": "Choose Color",
   "choose-size": "Choose Size",
-  "you-may-also-like": "You may also like"
+  "you-may-also-like": "You may also like",
+  "cart": "Cart",
+  "your-cart": "Your Cart",
+  "cart-is-empty": "Your cart is empty",
+  "continue-shopping": "Continue Shopping",
+  "color": "Color",
+  "order-summary": "Order Summary",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "delivery-fee": "Delivery Fee",
+  "total": "Total",
+  "go-to-checkout": "Go to Checkout"
 }

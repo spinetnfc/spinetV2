@@ -205,5 +205,16 @@
   "no-ratings-yet": "لا توجد مراجعات بعد. كن أول من يترك مراجعة!",
   "choose-color": "اختر اللون",
   "choose-size": "اختر الحجم",
-  "you-may-also-like": "قد يعجبك أيضًا"
+  "you-may-also-like": "قد يعجبك أيضًا",
+  "cart": "السلة",
+  "your-cart": "سلتك",
+  "cart-is-empty": "سلتك فارغة",
+  "continue-shopping": "متابعة التسوق",
+  "color": "اللون",
+  "order-summary": "ملخص الطلب",
+  "subtotal": "الإجمالي الفرعي",
+  "discount": "الخصم",
+  "delivery-fee": "رسوم التوصيل",
+  "total": "الإجمالي",
+  "go-to-checkout": "إتمام الشراء"
 }
