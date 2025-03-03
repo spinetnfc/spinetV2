@@ -196,5 +196,14 @@
   "subscribe-to-newsletter": "Abonnez-vous à notre newsletter",
   "next": "Suivant",
   "previous": "Précédent",
-  "colors": "Coleurs"
+  "colors": "Coleurs",
+  "home": "Accueil",
+  "da": "DZA",
+  "loading-tabs": "Chargement des onglets...",
+  "details": "Détails",
+  "rating-reviews": "Évaluations et avis",
+  "no-ratings-yet": "Pas encore d'avis. Soyez le premier à laisser un avis !",
+  "choose-color": "Choisir une couleur",
+  "choose-size": "Choisir une taille",
+  "you-may-also-like": "Vous aimerez peut-être aussi"
 }

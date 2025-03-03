@@ -1,9 +1,10 @@
 "use client"
 import { useState } from "react";
 import { cn } from "@/utils/cn";
+import { FormattedMessage } from "react-intl";
 
 /** Simple client component for the tabs. Replace with your UI library if desired. */
-export default function ProductTabs({ details }: { details: string[] }) {
+export default function ProductTabs({ details, locale }: { details: string[], locale: string }) {
     const [activeTab, setActiveTab] = useState<"details" | "reviews">("details");
 
     return (
@@ -16,7 +17,7 @@ export default function ProductTabs({ details }: { details: string[] }) {
                     )}
                     onClick={() => setActiveTab("details")}
                 >
-                    Product Details
+                    <FormattedMessage id="details" />
                 </button>
                 <button
                     className={cn(
@@ -25,7 +26,7 @@ export default function ProductTabs({ details }: { details: string[] }) {
                     )}
                     onClick={() => setActiveTab("reviews")}
                 >
-                    Rating & Reviews
+                    <FormattedMessage id="rating-reviews" />
                 </button>
             </div>
 
@@ -42,7 +43,7 @@ export default function ProductTabs({ details }: { details: string[] }) {
                     </h3>
                     <p className="mt-2 text-gray-600 dark:text-gray-300">
                         {/* Replace with your actual reviews component or logic */}
-                        No reviews yet. Be the first to leave a review!
+                        <FormattedMessage id="no-reviews-yet" />
                     </p>
                 </div>
             )}

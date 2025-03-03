@@ -196,5 +196,14 @@
   "subscribe-to-newsletter": "Subscribe to Our Newsletter",
   "next": "Next",
   "previous": "Previous",
-  "colors": "Colors"
+  "colors": "Colors",
+  "home": "Home",
+  "da": "DZA",
+  "loading-tabs": "Loading tabs...",
+  "details": "Details",
+  "rating-reviews": "Rating & Reviews",
+  "no-ratings-yet": "No reviews yet. Be the first to leave a review!",
+  "choose-color": "Choose Color",
+  "choose-size": "Choose Size",
+  "you-may-also-like": "You may also like"
 }

@@ -5,14 +5,16 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import useDrag from "@/hooks/use-horizontal-drag";
 import { Product } from "@/mockdata/product";
+import { FormattedMessage } from "react-intl";
 
 interface RelatedProductsCarouselProps {
     products: Product[];
+    locale: string;
 }
 
-export default function RelatedProductsCarousel({ products }: RelatedProductsCarouselProps) {
+export default function RelatedProductsCarousel({ products, locale }: RelatedProductsCarouselProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-
+    console.log(locale);
     // Use our custom drag hook (with a fallback if undefined)
     const [
         handleMouseDown,
@@ -58,14 +60,14 @@ export default function RelatedProductsCarousel({ products }: RelatedProductsCar
         <section className="py-8 w-full">
             <div className="flex justify-between items-center p-2 xs:p-4 sm:p-8">
                 <h2 className="text-3xl font-bold text-[#010E37] dark:text-[#DEE3F8]">
-                    You Might Also Like
+                    <FormattedMessage id="you-may-also-like" />
                 </h2>
                 <div className="flex justify-center gap-4">
                     <button onClick={scrollLeft} className="cursor-pointer" aria-label="Scroll left">
-                        <ArrowLeft />
+                        <ArrowLeft className={`${locale === "ar" ? "scale-[-1]" : ""}`} />
                     </button>
                     <button onClick={scrollRight} className="cursor-pointer" aria-label="Scroll right">
-                        <ArrowRight />
+                        <ArrowRight className={`${locale === "ar" ? "scale-[-1]" : ""}`} />
                     </button>
                 </div>
             </div>

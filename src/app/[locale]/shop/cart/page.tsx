@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import QuantitySelector from "@/components/ui/quantity-selector";
 import ShopButton from "@/components/pages/shop/shop-button";
 
@@ -108,10 +108,10 @@ export default function CartPage() {
                                 {/* Delete icon in top-right corner */}
                                 <button
                                     onClick={() => removeItem(item.id)}
-                                    className="absolute top-2 right-2 text-red-500 hover:scale-110"
+                                    className="absolute top-2 right-2 text-red-500 hover:scale-110 cursor-pointer"
                                     aria-label="Delete item"
                                 >
-                                    <Trash size={16} />
+                                    <Trash2 size={18} />
                                 </button>
 
                                 {/* Image (independent) */}

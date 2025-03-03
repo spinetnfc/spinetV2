@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Product } from "@/mockdata/product";
 import QuantitySelector from "@/components/ui/quantity-selector";
+import { Form } from "react-hook-form";
+import { FormattedMessage } from "react-intl";
 
 interface ProductOrderFormProps {
     product: Product;
@@ -25,7 +27,7 @@ export default function ProductOrderForm({ product }: ProductOrderFormProps) {
             {/* Select Colors */}
             <div>
                 <label className="block font-medium text-gray-800 dark:text-gray-200 mb-1">
-                    Select Colors
+                    <FormattedMessage id="choose-color" />
                 </label>
                 <div className="flex items-center gap-3">
                     {product.colors.map((color) => {
@@ -51,7 +53,7 @@ export default function ProductOrderForm({ product }: ProductOrderFormProps) {
             {/* Choose Size */}
             <div>
                 <label className="block font-medium text-gray-800 dark:text-gray-200 mb-1">
-                    Choose Size
+                    <FormattedMessage id="choose-size" />
                 </label>
                 <div className="flex flex-wrap gap-2">
                     {product.sizes.map((size) => {
@@ -84,7 +86,7 @@ export default function ProductOrderForm({ product }: ProductOrderFormProps) {
                     type="submit"
                     className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                 >
-                    Sign in to buy
+                    <FormattedMessage id="add-to-cart" />
                 </button>
             </div>
         </form>
