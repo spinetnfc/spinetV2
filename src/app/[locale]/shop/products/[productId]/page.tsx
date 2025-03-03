@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getProductById, getRelatedProducts } from "@/mockdata/product";
 import { Suspense } from "react";
 import ProductTabs from "@/components/pages/shop/products/product-tabs";
 import ProductOrderForm from "@/components/pages/shop/products/order-product-form";
 import RelatedProductsCarousel from "@/components/pages/shop/products/related-products";
 import { renderSmallImages } from "@/utils/renderImages";
 import useTranslate from '@/hooks/use-translate';
+import { getProductById, getRelatedProducts } from "@/mockdata/product";
 
 type ProductDetailsPageProps = {
     params: Promise<{ productId: string; locale: string }>;
@@ -23,7 +23,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
     const related = getRelatedProducts(productId);
 
     return (
-        <div className="mx-2 sm:mx-5 lg:mx-20 min-h-screen px-4 py-6">
+        <div className="mx-5 sm:mx-8 lg:mx-10 min-h-screen py-6">
             {/* Breadcrumbs */}
             <nav className="mb-4 text-sm text-gray-600 dark:text-gray-300">
                 <ol className="flex items-center space-x-2">
@@ -44,23 +44,23 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
             </nav>
 
             {/* Main Section: Images & Info */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:flex ">
                 {/* LEFT: Single or Multiple Images */}
                 <div>
                     {product.images.length === 1 ? (
-                        <div className="flex items-center justify-center">
+                        <div className="flex items-center justify-end">
                             <Image
                                 src={product.images[0]}
                                 alt={product.name}
                                 width={360}
                                 height={360}
-                                className="object-contain border-2 border-blue-500 rounded-2xl"
+                                className="flex-1 max-w-md object-contain border-2 border-blue-500 rounded-2xl"
                             />
                         </div>
                     ) : (
-                        <div className="flex flex-col-reverse lg:flex-row gap-4 justify-center items-center">
+                        <div className="flex flex-col-reverse lg:flex-row gap-2 lg:gap-3 justify-end items-center">
                             {/* Thumbnails on the left */}
-                            <div className="flex flex-row lg:flex-col gap-4">
+                            <div className="flex flex-row lg:flex-col gap-2 lg:gap-3">
                                 {renderSmallImages(product.images.slice(1))}
                             </div>
                             {/* Big image (the first one) */}
@@ -70,7 +70,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                                     alt={product.name}
                                     width={360}
                                     height={360}
-                                    className="object-contain border-2 border-blue-500 rounded-2xl"
+                                    className="lg:min-w-[360px] object-contain border-2 border-blue-500 rounded-2xl"
                                 />
                             </div>
                         </div>
@@ -78,7 +78,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                 </div>
 
                 {/* RIGHT: Product Details */}
-                <div className="flex flex-col space-y-4 w-4/5">
+                <div className="flex flex-col space-y-4 ">
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{product.name}</h1>
                     <div className="flex items-center">
                         <span className="text-yellow-500">

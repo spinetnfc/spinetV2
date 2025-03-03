@@ -75,7 +75,7 @@ export default function ProductOrderForm({ product }: ProductOrderFormProps) {
                 </div>
             </div>
 
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex justify-start gap-2">
                 {/* Use our separate QuantitySelector */}
                 <QuantitySelector
                     initialQuantity={1}
@@ -84,7 +84,7 @@ export default function ProductOrderForm({ product }: ProductOrderFormProps) {
 
                 <button
                     type="submit"
-                    className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                    className="w-fit sm:w-40 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                 >
                     <FormattedMessage id="add-to-cart" />
                 </button>

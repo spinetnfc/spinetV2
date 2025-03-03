@@ -22,7 +22,7 @@ function Header({ locale }: { locale: string }) {
   return (
     <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-end gap-4 px-4 sm:static sm:h-auto sm:bg-transparent xl:px-6">
       <div className="flex items-center gap-4">
-        <Link href={`/${locale}/app/cart`}>
+        <Link href={`/${locale}/shop/cart`}>
           <ShoppingCart className="size-6 text-white" />
         </Link>
         <ThemeSwitch locale={locale} />

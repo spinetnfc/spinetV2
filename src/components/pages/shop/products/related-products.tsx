@@ -14,7 +14,6 @@ interface RelatedProductsCarouselProps {
 
 export default function RelatedProductsCarousel({ products, locale }: RelatedProductsCarouselProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    console.log(locale);
     // Use our custom drag hook (with a fallback if undefined)
     const [
         handleMouseDown,

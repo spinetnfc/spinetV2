@@ -16,7 +16,7 @@ export function renderSmallImages(smallImages: string[]) {
                 alt="Thumbnail"
                 width={60}
                 height={60}
-                className="w-24 xs:h-28 xs:w-28 object-cover border-2 border-blue-500  cursor-pointer rounded-xl"
+                className="w-24 xs:w-28 object-cover border-2 border-blue-500  cursor-pointer rounded-xl"
             />
         ));
     } else {
@@ -32,17 +32,17 @@ export function renderSmallImages(smallImages: string[]) {
                         alt="Thumbnail"
                         width={60}
                         height={60}
-                        className="w-3/10 xs:h-28 xs:w-28 object-cover border-2 border-blue-500  cursor-pointer rounded-xl"
+                        className="w-3/10 xs:w-28 object-cover border-2 border-blue-500  cursor-pointer rounded-xl"
                     />
                 ))}
                 {/* Third thumbnail with dark overlay showing remaining count */}
-                <div className="relative w-3/10 xs:h-28 xs:w-28 cursor-pointer border-2 border-blue-500 rounded-xl overflow-hidden">
+                <div className="relative   xs:w-28 cursor-pointer border-2 border-blue-500 rounded-xl overflow-hidden">
                     <Image
                         src={thirdImage}
                         alt="Thumbnail"
                         width={60}
                         height={60}
-                        className="w-3/10 xs:h-28 xs:w-28 object-cover rounded-xl"
+                        className="w-1/3 xs:w-28 object-cover rounded-xl"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black opacity-60">
                         <span className="text-sm text-white">+{remaining}</span>
