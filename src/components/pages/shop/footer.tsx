@@ -19,7 +19,7 @@ const ShopFooter = async ({ locale }: { locale: string }) => {
                         <div className="flex gap-2 py-2 sm:py-3 px-2 lg:px-4 border border-gray-300 rounded-xl mb-2">
                             <Mail size={24} className="text-gray-400 dark:text-gray-500 min-w-6" />
                             <input type="text" placeholder={t("enter-your-email")}
-                                className="w-full placeholder:text-gray-400 dark:placeholder:text-gray-500 focus-visible:outline-hidden text-sm sm:text-md"
+                                className="w-full text-main placeholder:text-gray-400 dark:placeholder:text-gray-500 focus-visible:outline-hidden text-sm sm:text-md"
                             />
                         </div>
                         <ShopButton title={t("subscribe-to-newsletter")} className="py-2 sm:py-3 text-sm sm:text-md w-full" />
