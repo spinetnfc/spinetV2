@@ -43,6 +43,7 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             icon={<Search className="size-6" />}
             text={intl.formatMessage({ id: 'search-spinet' })}
             className="lg:w-[308px] text-base xs:text-lg sm:text-xl"
+            link='/search'
           />
         </div>
         <div className="relative size-full flex justify-center lg:justify-end">
