@@ -216,5 +216,7 @@
   "discount": "Remise",
   "delivery-fee": "Frais de livraison",
   "total": "Total",
-  "go-to-checkout": "Passer à la caisse"
+  "go-to-checkout": "Passer à la caisse",
+  "customize-experience": "Personnalisez votre expérience avec nos accessoires NFC",
+  "customize-experience-text": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Assumenda vel dolorem maxime eius cupiditate. Sequi, repellat explicabo? Odit delectus quasi soluta voluptas quae earum distinctio velit voluptates porro expedita inventore at,accusantium, excepturi ducimus amet aut enim mollitia? Nam, quod."
 }

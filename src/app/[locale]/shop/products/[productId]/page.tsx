@@ -1,10 +1,9 @@
-// app/[locale]/shop/products/[productId]/page.tsx
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import ProductTabs from "@/components/pages/shop/products/product-tabs";
 import ProductOrderForm from "@/components/pages/shop/products/order-product-form";
 import RelatedProductsCarousel from "@/components/pages/shop/products/related-products";
-import ProductImageViewer from "@/components/pages/shop/products/product-image";
+import ProductImageViewer from "@/components/pages/shop/products/product-images";
 import useTranslate from '@/hooks/use-translate';
 import { getProductById, getRelatedProducts } from "@/mockdata/product";
 
@@ -45,7 +44,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
 
             {/* Main Section: Images & Info */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:flex ">
-                {/* LEFT: Product Images with Modal integration */}
+                {/*Product Images */}
                 <div>
                     <ProductImageViewer
                         images={product.images}
@@ -53,7 +52,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                     />
                 </div>
 
-                {/* RIGHT: Product Details */}
+                {/*Product Details */}
                 <div className="flex flex-col space-y-4 ">
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{product.name}</h1>
                     <div className="flex items-center">

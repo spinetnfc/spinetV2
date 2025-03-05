@@ -78,7 +78,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ images, initialIndex, onClose }
 
                 <button
                     onClick={scrollPrev}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black/50 p-2 rounded-full hover:bg-black/70"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 hidden sm:block"
                     aria-label="Previous image"
                 >
                     <ChevronLeft size={32} />
@@ -86,7 +86,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ images, initialIndex, onClose }
 
                 <button
                     onClick={scrollNext}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black/50 p-2 rounded-full hover:bg-black/70"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 hidden sm:block"
                     aria-label="Next image"
                 >
                     <ChevronRight size={32} />
