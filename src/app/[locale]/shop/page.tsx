@@ -1,4 +1,4 @@
-import Products from "@/components/pages/landing-page/products/products";
+import { BrowseCategories } from "@/components/pages/shop/categories";
 import { ProductsShowcase } from "@/components/pages/shop/products-showcase";
 import Reviews from "@/components/pages/shop/Reviews/reviews";
 import useTranslate from "@/hooks/use-translate";
@@ -31,7 +31,9 @@ const Shop = async ({ params }: {
         <section >
             <ProductsShowcase type="top-selling" locale={locale} />
         </section>
-
+        <section className="px-3 xs:px-6 sm:px-8 xl:px-16 mb-12">
+            <BrowseCategories title="BROWSE BY CATEGORY" locale={locale} />
+        </section>
         <section>
             <Reviews />
         </section>

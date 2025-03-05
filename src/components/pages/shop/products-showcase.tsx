@@ -39,7 +39,7 @@ export function ProductsShowcase({ type, locale }: ProductsShowcaseProps) {
                 <div className="text-center">
                     <Link
                         href={`/shop/products?category=${type}`}
-                        className="inline-block px-6 py-2 border-2 border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                        className="inline-block px-6 py-2 border-2 border-primary text-primary rounded-md hover:opacity-70 transition-colors"
                     >
                         View All
                     </Link>

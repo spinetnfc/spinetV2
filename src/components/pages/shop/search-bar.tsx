@@ -30,7 +30,6 @@ export function SearchBar() {
         [router, searchParams, pathname]
     );
 
-
     // Get translated placeholder text
     const placeholderText = intl.formatMessage({
         id: "search-for-products",
