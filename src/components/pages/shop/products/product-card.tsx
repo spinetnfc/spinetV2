@@ -2,7 +2,6 @@ import Image from "next/image";
 import imgUrl from "@/mockdata/keychain.png"
 import { type Product } from "@/mockdata/products"
 import ShopButton from "../shop-button";
-import useTranslate from "@/hooks/use-translate";
 import { FormattedMessage } from "react-intl";
 function ProductCard({ product, locale }: { product: Product, locale: string }) {
     return (

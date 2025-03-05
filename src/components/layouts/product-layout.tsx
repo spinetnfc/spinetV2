@@ -2,7 +2,7 @@
 import enMessages from '@/lang/en.json';
 import arMessages from '@/lang/ar.json';
 import frMessages from '@/lang/fr.json';
-import { FormattedMessage, IntlProvider } from "react-intl";
+import { IntlProvider } from "react-intl";
 
 const messagesMap = {
     en: enMessages,

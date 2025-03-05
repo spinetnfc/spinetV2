@@ -1,7 +1,7 @@
 "use client";
-import { useSearchParams } from "next/navigation";
-import { LogIn, Menu, X } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import React from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import LogoSpinet from "@/components/logo-spinet";
 import Logo from "@/components/logo";
@@ -11,53 +11,25 @@ import { cn } from "@/utils/cn";
 
 const navItems = [
     { id: "shop", label: "shop" },
-    { id: "on-sale", label: "on-sale" },
+    { id: "top-selling", label: "top-selling" },
     { id: "new-arrivals", label: "new-arrivals" },
     { id: "promotion", label: "promotion" },
 ];
 
-function scrollToSection(
-    id: string,
-    setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>
-) {
-    const element = document.getElementById(id);
-    if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-        setIsMenuOpen?.(false); // Close menu in mobile view
-    }
-}
-
-function NavBar({
-    locale,
-    parentDarkMode = false,
-    isMenuOpen,
-    setIsMenuOpen,
-}: {
+interface NavBarProps {
     locale: string;
     parentDarkMode?: boolean;
     isMenuOpen: boolean;
     setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+}
+
+function NavBar({ locale, parentDarkMode = false, isMenuOpen, setIsMenuOpen }: NavBarProps) {
     const intl = useIntl();
-    const [prevScrollPos, setPrevScrollPos] = useState(0);
-    const [visible, setVisible] = useState(true);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollPos = window.pageYOffset;
-            setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
-            setPrevScrollPos(currentScrollPos);
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [prevScrollPos]);
 
     return (
         <header
             className={cn(
-                "fixed z-50 flex w-full h-16 flex-row items-center justify-between gap-3 px-3 py-2 lg:py-2 transition-transform duration-800 bg-[#010C32]",
-                visible ? "translate-y-0" : "-translate-y-full"
+                "fixed z-50 flex w-full h-16 flex-row items-center justify-between gap-3 px-3 py-2 lg:py-2 transition-transform duration-800 bg-[#010C32]"
             )}
         >
             {/* Left section with logo */}
@@ -75,15 +47,15 @@ function NavBar({
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex lg:items-center">
                 {navItems.map(({ id, label }) => (
-                    <button
+                    <Link
                         key={id}
-                        onClick={() => scrollToSection(id)}
+                        href={id !== "shop" ? `/shop/products?category=${id}` : `/shop`}
                         className="flex h-12 items-center rounded-[14px] p-2 xl:p-3"
                     >
                         <span className="cursor-pointer text-lg font-medium leading-6 hover:text-gray-400 text-white">
                             <FormattedMessage id={label} />
                         </span>
-                    </button>
+                    </Link>
                 ))}
             </nav>
 
@@ -122,15 +94,16 @@ function NavBar({
                 </div>
                 <nav className="flex flex-col space-y-2">
                     {navItems.map(({ id, label }) => (
-                        <button
+                        <Link
                             key={id}
-                            onClick={() => scrollToSection(id, setIsMenuOpen)}
+                            href={id !== "shop" ? `/shop/products?category=${id}` : `/shop`}
+                            onClick={() => setIsMenuOpen(false)}
                             className="rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                             <span className="font-inter text-lg font-medium text-[#010E37] dark:text-white">
                                 <FormattedMessage id={label} />
                             </span>
-                        </button>
+                        </Link>
                     ))}
                 </nav>
             </div>

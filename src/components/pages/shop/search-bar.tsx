@@ -1,7 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useIntl } from "react-intl"; // Import useIntl
 
@@ -10,6 +10,7 @@ export function SearchBar() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+    const pathname = usePathname();
 
     const handleSearch = useCallback(
         (query: string) => {
@@ -19,10 +20,16 @@ export function SearchBar() {
             } else {
                 params.delete("q");
             }
-            router.push(`?${params.toString()}`);
+
+            if (pathname !== "/shop/products") {
+                router.push(`/shop/products?${params.toString()}`);
+            } else {
+                router.push(`?${params.toString()}`);
+            }
         },
-        [router, searchParams],
+        [router, searchParams, pathname]
     );
+
 
     // Get translated placeholder text
     const placeholderText = intl.formatMessage({

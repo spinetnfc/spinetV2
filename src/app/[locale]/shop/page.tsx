@@ -1,3 +1,5 @@
+import Products from "@/components/pages/landing-page/products/products";
+import { ProductsShowcase } from "@/components/pages/shop/products-showcase";
 import Reviews from "@/components/pages/shop/Reviews/reviews";
 import useTranslate from "@/hooks/use-translate";
 import Image from "next/image";
@@ -20,10 +22,16 @@ const Shop = async ({ params }: {
             </div>
             <Image src="/img/shop/shop.svg" alt="NFC" width={240} height={240} />
         </section>
-        <section id="shop" className="h-screen flex items-center text-black text-6xl bg-yellow-200">shop</section>
-        <section id="on-sale" className="h-screen flex items-center text-black text-6xl bg-red-400">on-sale</section>
-        <section id="new-arrivals" className="h-screen flex items-center text-black text-6xl bg-green-400">new arrivals</section>
-        <section id="promotion" className="h-screen flex items-center text-black text-6xl bg-blue-400">promotion</section>
+        <section >
+            <ProductsShowcase type="new-arrivals" locale={locale} />
+        </section>
+        <section >
+            <ProductsShowcase type="promotion" locale={locale} />
+        </section>
+        <section >
+            <ProductsShowcase type="top-selling" locale={locale} />
+        </section>
+
         <section>
             <Reviews />
         </section>
