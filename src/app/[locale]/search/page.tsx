@@ -7,15 +7,17 @@ import { SearchFilters } from "@/components/pages/search/search-filters"
 export default async function SearchPage({
     searchParams,
 }: {
-    searchParams: { [key: string]: string | string[] | undefined }
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-    // Get the active tab from URL or default to "people"
-    const activeTab = searchParams.tab || "people"
-    const page = Number(searchParams.page) || 1
-    const sort = (searchParams.sort as string) || "popular"
+    // Await the searchParams before accessing its properties
+    const params = await searchParams
+
+    // Now we can safely access the properties
+    const activeTab = typeof params.tab === 'string' ? params.tab : "people"
+    const page = typeof params.page === 'string' ? parseInt(params.page, 10) : 1
+    const sort = typeof params.sort === 'string' ? params.sort : "popular"
 
     // This would be your server-side data fetching
-    // You can fetch data based on the searchParams
     // const peopleData = await fetchPeople({ page, sort, ...otherFilters })
     // const offersData = await fetchOffers({ page, sort, ...otherFilters })
 
@@ -48,7 +50,7 @@ export default async function SearchPage({
         <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col gap-8">
                 <div className="flex items-center justify-between mb-6">
-                    <SearchTabs activeTab={activeTab as string} />
+                    <SearchTabs activeTab={activeTab} />
                     <SearchFilters currentSort={sort} />
                 </div>
 

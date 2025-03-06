@@ -25,8 +25,8 @@ export function PersonCard({ person }: PersonCardProps) {
                 />
             </div>
             <div className="relative px-6 pb-6">
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2">
-                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white">
+                <div className="absolute -top-25 left-1/2 -translate-x-1/2">
+                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-white">
                         <Image
                             src={person.profileImage || "/placeholder.svg"}
                             alt={person.name}

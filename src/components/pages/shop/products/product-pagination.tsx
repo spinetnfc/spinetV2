@@ -28,8 +28,8 @@ export function ProductPagination({
                 onClick={() => router.push(createPageURL(currentPage - 1))}
                 disabled={currentPage <= 1}
                 className="rounded-lg border p-2 disabled:opacity-50  me-auto"
-                icon={locale !== "ar" ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}
-                iconPosition="left"
+            // icon={locale !== "ar" ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}
+            // iconPosition="left"
             >
                 <FormattedMessage id="previous" />
             </Button>
@@ -62,8 +62,8 @@ export function ProductPagination({
                 onClick={() => router.push(createPageURL(currentPage + 1))}
                 disabled={currentPage >= totalPages}
                 className="rounded-lg border p-2 disabled:opacity-50  ms-auto"
-                icon={locale !== "ar" ? <ArrowRight size={20} /> : <ArrowLeft size={20} />}
-                iconPosition="right"
+            // icon={locale !== "ar" ? <ArrowRight size={20} /> : <ArrowLeft size={20} />}
+            // iconPosition="right"
             >
                 <FormattedMessage id="next" />
             </Button>
