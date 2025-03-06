@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { IntlProvider } from 'react-intl';
 import HomeNavBar from '@/components/pages/landing-page/hero-section/nav-bar';
 import ShopNavBar from '@/components/pages/shop/nav-bar';
+import SearchNavBar from '@/components/pages/search/nav-bar';
 import enMessages from '@/lang/en.json';
 import arMessages from '@/lang/ar.json';
 import frMessages from '@/lang/fr.json';
+import { Search } from 'lucide-react';
 
 const messagesMap = {
     en: enMessages,
@@ -25,7 +27,12 @@ export default function NavBarWrapper({ locale, parent }: { locale: string, pare
                 isMenuOpen={isMenuOpen}
                 setIsMenuOpen={setIsMenuOpen}
                 parentDarkMode={false}
-            /> : <ShopNavBar
+            /> : parent === "shop" ? <ShopNavBar
+                locale={locale}
+                isMenuOpen={isMenuOpen}
+                setIsMenuOpen={setIsMenuOpen}
+                parentDarkMode={false}
+            /> : <SearchNavBar
                 locale={locale}
                 isMenuOpen={isMenuOpen}
                 setIsMenuOpen={setIsMenuOpen}

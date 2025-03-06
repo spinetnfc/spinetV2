@@ -150,6 +150,7 @@
   "describe-your-query": "Describe your query",
   "follow-us": "Follow Us",
   "send": "Send",
+  "about": "About",
   "about-us": "About Us",
   "blog": "Blog",
   "demo": "DEMO",
@@ -219,5 +220,7 @@
   "total": "Total",
   "go-to-checkout": "Go to Checkout",
   "customize-experience": "Customize your experience with our NFC accessories",
-  "customize-experience-text": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Assumenda vel dolorem maxime eius cupiditate. Sequi, repellat explicabo? Odit delectus quasi soluta voluptas quae earum distinctio velit voluptates porro expedita inventore at,accusantium, excepturi ducimus amet aut enim mollitia? Nam, quod."
+  "customize-experience-text": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Assumenda vel dolorem maxime eius cupiditate. Sequi, repellat explicabo? Odit delectus quasi soluta voluptas quae earum distinctio velit voluptates porro expedita inventore at,accusantium, excepturi ducimus amet aut enim mollitia? Nam, quod.",
+  "offers": "Offers",
+  "companies": "Companies"
 }
