@@ -62,10 +62,8 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             />
 
             <Button
-              icon={<ChevronRight className="ms-2.5 size-6" />}
               className="cursor-pointer h-12  rounded-2xl bg-white text-base xs:text-lg sm:text-xl leading-6 text-[#145FF2] 
              transition-all  hover:bg-blue-500  hover:text-white hover:brightness-125  dark:bg-navy dark:text-white"
-              iconposition="right"
               onClick={() => scrollToSection("features")}
             >
               <FormattedMessage id="see-features" />
