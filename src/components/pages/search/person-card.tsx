@@ -14,7 +14,7 @@ interface PersonCardProps {
 
 export function PersonCard({ person }: PersonCardProps) {
     return (
-        <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white dark:bg-navy rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <div className="relative h-32">
                 <Image
                     src={person.coverImage || "/placeholder.svg"}
@@ -38,8 +38,8 @@ export function PersonCard({ person }: PersonCardProps) {
                 </div>
                 <div className="mt-14 text-center">
                     <h3 className="text-xl font-semibold">{person.name}</h3>
-                    <p className="text-gray-500">{person.position}</p>
-                    <p className="mt-2 text-gray-600">{person.description}</p>
+                    <p className="text-gray-500 text-sm xs:text-md">{person.position}</p>
+                    <p className="mt-2 text-gray-600 text-sm xs:text-md">{person.description}</p>
 
                     <div className="mt-4 flex justify-center gap-2">
                         <button className="p-2 bg-[#001838] text-white rounded-full hover:bg-[#002857]">
@@ -57,7 +57,7 @@ export function PersonCard({ person }: PersonCardProps) {
                         </button>
                     </div>
 
-                    <button className="mt-4 w-full flex items-center justify-center gap-2 border-2 border-[#001838] text-[#001838] rounded-lg py-2 hover:bg-[#001838] hover:text-white transition-colors">
+                    <button className="mt-4 w-full flex items-center justify-center gap-2 border-2 border-primary text-primary rounded-lg py-2 hover:bg-primary hover:text-white transition-colors">
                         <UserPlus className="h-4 w-4" />
                         Connect
                     </button>
