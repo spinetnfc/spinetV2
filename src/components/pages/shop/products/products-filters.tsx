@@ -64,9 +64,9 @@ export function ProductsFilters({ locale }: { locale: string }) {
                     {CATEGORIES.map((category) => (
                         <button
                             key={category}
-                            onClick={() => updateFilters("category", category.toLowerCase())}
+                            onClick={() => updateFilters("category", category.toLowerCase().replace(/\s+/g, "-"))}
                             className={cn("block w-full text-start px-2 py-1.5 rounded-md",
-                                isChecked("category", category.toLowerCase()) ? "bg-blue-500" :
+                                isChecked("category", category.toLowerCase().replace(/\s+/g, "-")) ? "bg-blue-500" :
                                     "hover:bg-gray-200 hover:dark:bg-blue-900"
                             )
                             }

@@ -119,7 +119,7 @@ export default function SubmitQuestionForm() {
                 <FormControl>
                   <Textarea
                     {...field}
-                    className="h-[165px] rounded-[5px] border-[1.5px] border-[#152656] text-black opacity-80 focus:opacity-100  "
+                    className="h-[165px] rounded-[5px] border-[1.5px] border-[#152656] text-[#152656] opacity-80 focus:opacity-100  "
                     placeholder={intl.formatMessage({
                       id: 'describe-your-query',
                     })}

@@ -8,12 +8,12 @@ import { cn } from "@/utils/cn";
 import CtaButton from "../cta-button";
 
 const navItems = [
+  { id: "discover-more", label: "discover" },
   { id: "features", label: "features" },
   { id: "pricing", label: "pricing" },
-  { id: "support", label: "support" },
-  { id: "products", label: "products" },
   { id: "how-it-works", label: "demo" },
-  { id: "discover-more", label: "discover" },
+  { id: "products", label: "products" },
+  { id: "support", label: "support" },
 ];
 
 function scrollToSection(

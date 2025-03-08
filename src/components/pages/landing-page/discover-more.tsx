@@ -25,6 +25,7 @@ async function DiscoverMore({ locale }: Props) {
         icon={<Search className="ms-2.5 size-6" />}
         text={t('search-spinet')}
         className="max-w-[308px] w-full"
+        link='/search'
       />
     </div>
   );
