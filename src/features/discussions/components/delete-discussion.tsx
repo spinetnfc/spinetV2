@@ -33,13 +33,14 @@ export const DeleteDiscussion = ({ id }: DeleteDiscussionProps) => {
         title="Delete Discussion"
         body="Are you sure you want to delete this discussion?"
         triggerButton={
-          <Button variant="destructive" icon={<Trash className="size-4" />}>
+          <Button variant="destructive">
             Delete Discussion
+            <Trash className="size-4" />
           </Button>
         }
         confirmButton={
           <Button
-            isLoading={deleteDiscussionMutation.isPending}
+            // isLoading={deleteDiscussionMutation.isPending}
             type="button"
             variant="destructive"
             onClick={() =>

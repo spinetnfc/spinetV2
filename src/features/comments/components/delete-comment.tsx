@@ -37,14 +37,14 @@ export const DeleteComment = ({ id, discussionId }: DeleteCommentProps) => {
         <Button
           variant="destructive"
           size="sm"
-          icon={<Trash className="size-4" />}
         >
           Delete Comment
+          <Trash className="size-4" />
         </Button>
       }
       confirmButton={
         <Button
-          isLoading={deleteCommentMutation.isPending}
+          // isLoading={deleteCommentMutation.isPending}
           type="button"
           variant="destructive"
           onClick={() => deleteCommentMutation.mutate({ commentId: id })}
