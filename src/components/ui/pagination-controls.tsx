@@ -62,7 +62,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
                 <button
                     onClick={() => router.push(createPageURL(currentPage + 1))}
                     disabled={currentPage >= totalPages}
-                    className={`p-2 rounded-md border ${currentPage >= totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100  dark:hover:bg-gray-800 dark:hover:bg-gray-800"
+                    className={`p-2 rounded-md border ${currentPage >= totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 dark:hover:bg-gray-800"
                         }`}
                     aria-label="Next page"
                 >

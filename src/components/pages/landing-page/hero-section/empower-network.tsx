@@ -122,10 +122,8 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             className="text-base xs:text-lg sm:text-xl"
           />
           <Button
-            icon={<ChevronRight className="size-6" />}
             className="h-12 rounded-2xl bg-white text-base xs:text-lg sm:text-xl leading-6 text-[#145FF2] transition-all cursor-pointer
              hover:bg-blue-500 hover:text-white hover:brightness-125 dark:bg-navy dark:text-white lg:w-[195px]"
-            iconposition="right"
             onClick={() => scrollToSection("pricing")}
           >
             <FormattedMessage id="see-offers" />
