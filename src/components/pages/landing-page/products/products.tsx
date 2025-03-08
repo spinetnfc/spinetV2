@@ -44,7 +44,7 @@ async function Products({ locale }: Props) {
         icon={<Store className="ms-2.5 size-6" />}
         text={t('go-to-store')}
         className="w-full max-w-[308px]"
-        iconPosition="right"
+        iconposition="right"
         link="/shop"
       />
       <div className="mt-8 flex h-fit w-full flex-col items-center justify-center gap-2 lg:flex-row">

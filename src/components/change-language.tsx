@@ -40,10 +40,10 @@ function ChangeLanguage({ locale }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className="size-8 cursor-pointer overflow-hidden rounded-full"
+        <button
+          // variant="outline"
+          // size="icon"
+          className="cursor-pointer overflow-hidden rounded-full outline-1"
         >
           <span className="sr-only">Open Language Switcher</span>
           {locale === 'en' ? (
@@ -53,7 +53,8 @@ function ChangeLanguage({ locale }: Props) {
           ) : (
             <ArabicIcon />
           )}
-        </Button>
+
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <Link

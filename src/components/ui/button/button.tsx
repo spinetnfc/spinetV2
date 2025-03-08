@@ -41,7 +41,7 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
     asChild?: boolean;
     isLoading?: boolean;
     icon?: React.ReactNode;
-    iconPosition?: 'left' | 'right';
+    iconposition?: 'left' | 'right';
   };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -54,7 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       isLoading,
       icon,
-      iconPosition = 'left',
+      iconposition = 'left',
       ...props
     },
     ref,
@@ -68,11 +68,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && <Spinner size="sm" className="text-current" />}
 
-        {!isLoading && icon && iconPosition === 'left' && (
+        {!isLoading && icon && iconposition === 'left' && (
           <span className="me-2">{icon}</span>
         )}
         <span className="mx-2">{children}</span>
-        {!isLoading && icon && iconPosition === 'right' && (
+        {!isLoading && icon && iconposition === 'right' && (
           <span className="ms-2">{icon}</span>
         )}
       </Comp>

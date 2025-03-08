@@ -52,7 +52,7 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
           <CtaButton
             text={intl.formatMessage({ id: 'checkout-spinet-events' })}
             icon={<ChevronRight className="size-6" />}
-            iconPosition="right"
+            iconposition="right"
             link="https://events.spinetnfc.com/login"
             newTab={true}
             className='text-base xs:text-lg sm:text-xl'

@@ -56,7 +56,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             <CtaButton
               text={intl.formatMessage({ id: 'free-trial' })}
               icon={<ChevronRight className="ms-2.5 size-6" />}
-              iconPosition="right"
+              iconposition="right"
               className="text-base xs:text-lg sm:text-xl"
 
             />
@@ -65,7 +65,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen }: Props) {
               icon={<ChevronRight className="ms-2.5 size-6" />}
               className="cursor-pointer h-12  rounded-2xl bg-white text-base xs:text-lg sm:text-xl leading-6 text-[#145FF2] 
              transition-all  hover:bg-blue-500  hover:text-white hover:brightness-125  dark:bg-navy dark:text-white"
-              iconPosition="right"
+              iconposition="right"
               onClick={() => scrollToSection("features")}
             >
               <FormattedMessage id="see-features" />

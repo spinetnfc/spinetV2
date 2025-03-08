@@ -29,7 +29,7 @@ export function ProductPagination({
                 disabled={currentPage <= 1}
                 className="rounded-lg border p-2 disabled:opacity-50  me-auto"
             // icon={locale !== "ar" ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}
-            // iconPosition="left"
+            // iconposition="left"
             >
                 <FormattedMessage id="previous" />
             </Button>
@@ -63,7 +63,7 @@ export function ProductPagination({
                 disabled={currentPage >= totalPages}
                 className="rounded-lg border p-2 disabled:opacity-50  ms-auto"
             // icon={locale !== "ar" ? <ArrowRight size={20} /> : <ArrowLeft size={20} />}
-            // iconPosition="right"
+            // iconposition="right"
             >
                 <FormattedMessage id="next" />
             </Button>
