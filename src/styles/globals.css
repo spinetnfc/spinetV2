@@ -16,6 +16,7 @@ body {
  }
 
 @theme {
+  --color-azure:#145FF2;
   --color-main: #010C32;
   --color-navy: #082356;
 }

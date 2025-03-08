@@ -19,7 +19,7 @@ interface OfferCardProps {
 
 export function OfferCard({ offer }: OfferCardProps) {
     return (
-        <div className="bg-[#F8F9FF] rounded-xl overflow-hidden">
+        <div className="bg-[#F8F9FF] dark:bg-navy rounded-xl overflow-hidden">
             <div className="relative h-48">
                 <Image
                     src={offer.coverImage || "/placeholder.svg"}
@@ -28,23 +28,24 @@ export function OfferCard({ offer }: OfferCardProps) {
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-                <button className="absolute top-4 right-4 p-2 bg-white rounded-full hover:bg-gray-100">
-                    <Heart className="h-5 w-5" />
+                <button className="absolute top-4 right-4 p-2 bg-white/60 rounded-full hover:bg-gray-100/80">
+                    <Heart className="h-5 w-5 text-white" />
                 </button>
             </div>
             <div className="p-6">
-                <h3 className="text-lg font-semibold">{offer.title}</h3>
                 <div className="flex items-center gap-4 mt-2">
+                    <h3 className="text-lg font-semibold">{offer.title}</h3>
+                    <div className="flex-1" />
                     <div className="flex items-center gap-1">
                         <Star className="h-4 w-4 text-yellow-400 fill-current" />
                         <span className="font-semibold">{offer.rating}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                        <Heart className="h-4 w-4" />
+                        <Heart className="h-4 w-4 fill-current" />
                         <span>{offer.likes}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-4 w-4 " />
                         <span>{offer.views}k</span>
                     </div>
                 </div>
