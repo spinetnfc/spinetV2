@@ -1,7 +1,7 @@
 "use client"
 //divide into server component later for data fetching and client component for fetching searchparams and rendering ui
 import { useSearchParams } from "next/navigation"
-import { ProductPagination } from "./product-pagination"
+import { PaginationControls } from "@/components/ui/pagination-controls"
 import { MOCK_PRODUCTS, ITEMS_PER_PAGE } from "@/mockdata/products"
 import ProductCard from "./product-card"
 import { Form } from "react-hook-form"
@@ -83,7 +83,8 @@ export function ProductGrid({ locale }: { locale: string }) {
                         ))}
                     </div>
                     {totalPages > 1 && (
-                        <ProductPagination currentPage={page} totalPages={totalPages} locale={locale} />
+                        <PaginationControls currentPage={page} totalPages={totalPages} />
+
                     )}
                 </>
             )}

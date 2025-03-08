@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation"
 import { PersonCard } from "./person-card"
-import { PaginationControls } from "./pagination-controls"
+import { PaginationControls } from "@/components/ui/pagination-controls"
 
 const ITEMS_PER_PAGE = 12
 

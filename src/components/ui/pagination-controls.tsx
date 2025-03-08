@@ -24,7 +24,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
                 <button
                     onClick={() => router.push(createPageURL(currentPage - 1))}
                     disabled={currentPage <= 1}
-                    className={`p-2 rounded-md border ${currentPage <= 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
+                    className={`p-2 rounded-md border ${currentPage <= 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100  dark:hover:bg-gray-800"
                         }`}
                     aria-label="Previous page"
                 >
@@ -39,7 +39,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
                                 <button
                                     key={page}
                                     onClick={() => router.push(createPageURL(page))}
-                                    className={`w-10 h-10 rounded-md mx-1 ${currentPage === page ? "bg-[#001838] text-white" : "border hover:bg-gray-100"
+                                    className={`w-10 h-10 rounded-md mx-1 ${currentPage === page ? "bg-[#001838] text-white" : "border hover:bg-gray-100  dark:hover:bg-gray-800"
                                         }`}
                                 >
                                     {page}
@@ -62,7 +62,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
                 <button
                     onClick={() => router.push(createPageURL(currentPage + 1))}
                     disabled={currentPage >= totalPages}
-                    className={`p-2 rounded-md border ${currentPage >= totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
+                    className={`p-2 rounded-md border ${currentPage >= totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100  dark:hover:bg-gray-800 dark:hover:bg-gray-800"
                         }`}
                     aria-label="Next page"
                 >

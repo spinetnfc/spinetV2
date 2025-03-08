@@ -1,5 +1,5 @@
 import { OfferCard } from "./offer-card"
-import { PaginationControls } from "./pagination-controls"
+import { PaginationControls } from "@/components/ui/pagination-controls"
 
 const ITEMS_PER_PAGE = 12
 

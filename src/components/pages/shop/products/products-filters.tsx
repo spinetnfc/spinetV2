@@ -27,9 +27,9 @@ const SIZES = ["X-Small", "Small", "Medium", "Large", "X-Large", "XX-Large"]
 export function ProductsFilters({ locale }: { locale: string }) {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const [isColorsOpen, setIsColorsOpen] = useState(true)
-    const [isSizeOpen, setIsSizeOpen] = useState(true)
-    const [isCategoryOpen, setIsCategoryOpen] = useState(true)
+    const [isColorsOpen, setIsColorsOpen] = useState(false)
+    const [isSizeOpen, setIsSizeOpen] = useState(false)
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false)
 
     const updateFilters = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString())
