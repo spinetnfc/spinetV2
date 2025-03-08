@@ -59,13 +59,13 @@ function NavBar({
   return (
     <header
       className={cn(
-        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-4 transition-transform duration-800 bg-white dark:bg-[#010C32]",
+        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-2 transition-transform duration-800 bg-white dark:bg-[#010C32]",
         visible ? "translate-y-0" : "-translate-y-full"
       )}
     >
       {/* Left section with logo */}
       <div className="flex items-center">
-        <div className="me-8 flex h-11 items-center justify-center">
+        <div className="me-8 flex items-center justify-center">
           <Logo locale={locale} parentDarkMode={parentDarkMode} />
         </div>
       </div>
