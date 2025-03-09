@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { FormattedMessage } from "react-intl"
 
 interface SearchFiltersProps {
     currentSort: string
@@ -28,9 +29,15 @@ export function SearchFilters({ currentSort }: SearchFiltersProps) {
                     <SelectValue placeholder="Filter by" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="popular">Popular</SelectItem>
-                    <SelectItem value="recent">Recent</SelectItem>
-                    <SelectItem value="rating">Top Rated</SelectItem>
+                    <SelectItem value="popular">
+                        <FormattedMessage id="popular" />
+                    </SelectItem>
+                    <SelectItem value="recent">
+                        <FormattedMessage id="recent" />
+                    </SelectItem>
+                    <SelectItem value="rating">
+                        <FormattedMessage id="rating" />
+                    </SelectItem>
                 </SelectContent>
             </Select>
         </div>

@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation"
 import { PaginationControls } from "@/components/ui/pagination-controls"
 import { MOCK_PRODUCTS, ITEMS_PER_PAGE } from "@/mockdata/products"
 import ProductCard from "./product-card"
-import { Form } from "react-hook-form"
 import { FormattedMessage } from "react-intl"
 
 export function ProductGrid({ locale }: { locale: string }) {

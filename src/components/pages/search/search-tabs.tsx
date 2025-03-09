@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserIcon, BriefcaseIcon } from "lucide-react"
+import { Form } from "react-hook-form"
+import { FormattedMessage } from "react-intl"
 
 interface SearchTabsProps {
     activeTab: string
@@ -25,11 +27,11 @@ export function SearchTabs({ activeTab }: SearchTabsProps) {
             <TabsList>
                 <TabsTrigger value="people" className="gap-2">
                     <UserIcon className="h-4 w-4" />
-                    People
+                    <FormattedMessage id="people" defaultMessage="People" />
                 </TabsTrigger>
                 <TabsTrigger value="offers" className="gap-2">
                     <BriefcaseIcon className="h-4 w-4" />
-                    Offers
+                    <FormattedMessage id="offers" defaultMessage="Offers" />
                 </TabsTrigger>
             </TabsList>
         </Tabs>

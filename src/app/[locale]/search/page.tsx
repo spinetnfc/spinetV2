@@ -9,19 +9,16 @@ export default async function SearchPage({
 }: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-    // Await the searchParams before accessing its properties
     const params = await searchParams
 
-    // Now we can safely access the properties
     const activeTab = typeof params.tab === 'string' ? params.tab : "people"
     const page = typeof params.page === 'string' ? parseInt(params.page, 10) : 1
     const sort = typeof params.sort === 'string' ? params.sort : "popular"
 
-    // This would be your server-side data fetching
     // const peopleData = await fetchPeople({ page, sort, ...otherFilters })
     // const offersData = await fetchOffers({ page, sort, ...otherFilters })
 
-    // For now, we'll use mock data
+    // mock data
     const mockPeople = Array.from({ length: 50 }, (_, i) => ({
         id: i + 1,
         name: `Jane Cooper ${i + 1}`,

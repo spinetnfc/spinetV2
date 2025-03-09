@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image"
 import { Mail, Phone, Linkedin, Plus, UserPlus } from "lucide-react"
+import { FormattedMessage } from "react-intl"
 
 interface PersonCardProps {
     person: {
@@ -59,7 +61,7 @@ export function PersonCard({ person }: PersonCardProps) {
 
                     <button className="mt-4 w-full flex items-center justify-center gap-2 border-2 border-primary text-primary rounded-lg py-2 hover:bg-primary hover:text-white transition-colors">
                         <UserPlus className="h-4 w-4" />
-                        Connect
+                        <FormattedMessage id="connect" />
                     </button>
                 </div>
             </div>

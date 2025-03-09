@@ -8,7 +8,6 @@ import SearchNavBar from '@/components/pages/search/nav-bar';
 import enMessages from '@/lang/en.json';
 import arMessages from '@/lang/ar.json';
 import frMessages from '@/lang/fr.json';
-import { Search } from 'lucide-react';
 
 const messagesMap = {
     en: enMessages,

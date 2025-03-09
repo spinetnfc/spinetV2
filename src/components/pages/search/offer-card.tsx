@@ -1,5 +1,8 @@
+"use client";
 import Image from "next/image"
 import { Star, Heart, Eye } from "lucide-react"
+import { FormattedMessage } from "react-intl"
+import useTranslate from "@/hooks/use-translate"
 
 interface OfferCardProps {
     offer: {
@@ -63,8 +66,8 @@ export function OfferCard({ offer }: OfferCardProps) {
                         </div>
                         <span className="font-medium">{offer.author.name}</span>
                     </div>
-                    <button className="text-sm xs:text-base ms-auto xs:ms-0 xs:mt-0 mt-2 px-4 py-2 bg-[#001838] text-white rounded-lg hover:bg-[#002857]">
-                        View details
+                    <button className="text-sm xl:text-base ms-auto xs:ms-0 xs:mt-0 mt-2 px-3 py-2 bg-[#001838] text-white rounded-lg hover:bg-[#002857]">
+                        <FormattedMessage id="view-details" />
                     </button>
                 </div>
 

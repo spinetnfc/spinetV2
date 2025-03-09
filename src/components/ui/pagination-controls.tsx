@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface PaginationControlsProps {
@@ -9,8 +9,10 @@ interface PaginationControlsProps {
 }
 
 export function PaginationControls({ currentPage, totalPages }: PaginationControlsProps) {
-    const router = useRouter()
-    const searchParams = useSearchParams()
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const locale = pathname.split("/")[1]; // 'en', 'ar', 'fr', etc.
 
     const createPageURL = (pageNumber: number) => {
         const params = new URLSearchParams(searchParams.toString())
@@ -28,7 +30,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
                         }`}
                     aria-label="Previous page"
                 >
-                    <ChevronLeft className="h-5 w-5" />
+                    <ChevronLeft className={`h-5 w-5 ${locale === "ar" ? "-scale-100" : ""}`} />
                 </button>
 
                 <div className="flex items-center">
@@ -66,7 +68,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
                         }`}
                     aria-label="Next page"
                 >
-                    <ChevronRight className="h-5 w-5" />
+                    <ChevronRight className={`h-5 w-5 ${locale === "ar" ? "-scale-100" : ""}`} />
                 </button>
             </nav>
         </div>
