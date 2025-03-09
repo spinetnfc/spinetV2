@@ -16,7 +16,7 @@ const SearchLayout = ({ locale, children }: { locale: string; children: ReactNod
 
     return (
         <IntlProvider locale={locale} messages={messages}>
-            <div className="flex flex-col min-h-screen w-full">
+            <div className="flex flex-col min-h-screen w-screen">
                 <NavBarWrapper locale={locale} parent="search" />
                 <div className="pt-16">
                     {children}
