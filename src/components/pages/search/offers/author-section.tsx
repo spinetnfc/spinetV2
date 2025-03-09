@@ -1,8 +1,13 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { OfferCard } from "@/components/pages/search/offer-card"
+import { ChevronRight } from "lucide-react"
+import { FormattedMessage } from "react-intl"
 
 interface AuthorSectionProps {
+    locale: string
     author: {
         id: string
         name: string
@@ -22,7 +27,7 @@ interface AuthorSectionProps {
     }>
 }
 
-export function AuthorSection({ author, moreOffers }: AuthorSectionProps) {
+export function AuthorSection({ locale, author, moreOffers }: AuthorSectionProps) {
     // Transform moreOffers to match the OfferCard component's expected structure
     const formattedOffers = moreOffers.map((offer) => ({
         id: offer.id,
@@ -59,18 +64,10 @@ export function AuthorSection({ author, moreOffers }: AuthorSectionProps) {
 
             {/* More Offers Section */}
             <div className="mb-8 flex items-center justify-between">
-                <h2 className="text-2xl font-bold">More by {author.name}</h2>
+                <h2 className="text-2xl font-bold"><FormattedMessage id="more-by" /> {author.name}</h2>
                 <Link href={`/profile/${author.id}`} className="text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                    View Profile
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M6 12L10 8L6 4"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
+                    <FormattedMessage id="view-profile" />
+                    <ChevronRight className={locale === "ar" ? "-scale-100" : ""} />
                 </Link>
             </div>
 

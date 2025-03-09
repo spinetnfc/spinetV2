@@ -5,7 +5,10 @@ import ReviewCard from './review-card';
 import reviews from '@/mockdata/reviews';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
-const Reviews: React.FC = () => {
+interface ReviewsProps {
+    locale: string;
+}
+const Reviews: React.FC<ReviewsProps> = ({ locale }) => {
     const reviewsContainerRef = useRef<HTMLDivElement>(null);
 
     // Use Drag Hook (with fallback if undefined)
@@ -51,7 +54,6 @@ const Reviews: React.FC = () => {
             });
         }
     };
-
     return (
         <section className="py-8 w-full">
             <div className='flex justify-between items-center p-2 xs:p-4 sm:p-8'>
@@ -65,14 +67,14 @@ const Reviews: React.FC = () => {
                         className='cursor-pointer'
                         aria-label="Scroll left"
                     >
-                        <ArrowLeft />
+                        <ArrowLeft className={locale === "ar" ? "-scale-100" : ""} />
                     </button>
                     <button
                         onClick={scrollRight}
                         className='cursor-pointer'
                         aria-label="Scroll right"
                     >
-                        <ArrowRight />
+                        <ArrowRight className={locale === "ar" ? "-scale-100" : ""} />
                     </button>
                 </div>
             </div>

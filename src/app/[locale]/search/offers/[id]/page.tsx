@@ -5,7 +5,7 @@ import { OfferHeader } from "@/components/pages/search/offers/offer-header"
 import { OfferGallery } from "@/components/pages/search/offers/offer-gallery"
 import Reviews from "@/components/pages/shop/Reviews/reviews"
 import { AuthorSection } from "@/components/pages/search/offers/author-section"
-import { OfferCard } from "@/components/pages/search/offer-card"
+import { RelatedOffers } from "@/components/pages/search/offers/related-offers"
 
 interface OfferPageProps {
     params: Promise<{
@@ -23,7 +23,8 @@ export async function generateMetadata({ params }: OfferPageProps): Promise<Meta
 }
 
 export default async function OfferPage({ params }: OfferPageProps) {
-    // In a real app, fetch the offer data here
+
+
     const offer = {
         id: (await params).id,
         title: "Frontend Development",
@@ -73,6 +74,7 @@ export default async function OfferPage({ params }: OfferPageProps) {
         },
     }))
 
+    const { locale } = await params;
     if (!offer) {
         notFound()
     }
@@ -83,8 +85,9 @@ export default async function OfferPage({ params }: OfferPageProps) {
                 <OfferHeader offer={offer} />
                 <OfferContent offer={offer} />
                 <OfferGallery images={offer.gallery} videoUrl={offer.videoUrl} />
-                <Reviews />
+                <Reviews locale={locale} />
                 <AuthorSection
+                    locale={locale}
                     author={{
                         id: "jane-cooper",
                         name: offer.author.name,
@@ -93,14 +96,8 @@ export default async function OfferPage({ params }: OfferPageProps) {
                     }}
                     moreOffers={moreOffers}
                 />
-                <div className="mt-16">
-                    <h2 className="text-2xl font-bold mb-8">Related Offers</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {relatedOffers.slice(0, 3).map((offer) => (
-                            <OfferCard key={offer.id} offer={offer} />
-                        ))}
-                    </div>
-                </div>
+                <RelatedOffers relatedOffers={relatedOffers} />
+
             </div>
         </main>
     )

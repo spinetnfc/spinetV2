@@ -230,5 +230,11 @@
   "top-rated": "Top Rated",
   "rating": "Rating",
   "connect": "Connect",
-  "view-details": "View Details"
+  "view-details": "View Details",
+  "offer-details": "Offer details",
+  "posted": "Posted",
+  "tags": "Tags",
+  "view-profile": "View Profile",
+  "more-by": "More by",
+  "related-offers": "Related Offers"
 }
