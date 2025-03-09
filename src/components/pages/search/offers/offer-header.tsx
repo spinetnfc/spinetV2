@@ -22,7 +22,7 @@ export function OfferHeader({ offer }: OfferHeaderProps) {
         <div className="mb-12">
             {/* Top header with author info and actions */}
             <div className="mb-4">
-                <h1 className="text-xs font-semibold uppercase tracking-wider mb-4">OFFER NAME</h1>
+                {/* <h1 className="text-xs font-semibold uppercase tracking-wider mb-4">OFFER NAME</h1> */}
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -84,13 +84,13 @@ export function OfferHeader({ offer }: OfferHeaderProps) {
             </div>
 
             {/* Offer title and category */}
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
                 <h2 className="text-2xl font-semibold">{offer.title}</h2>
                 <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-400">Category</span>
                     <span className="text-sm">{offer.category}</span>
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }

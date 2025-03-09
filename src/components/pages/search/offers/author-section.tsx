@@ -56,7 +56,7 @@ export function AuthorSection({ locale, author, moreOffers }: AuthorSectionProps
                         sizes="96px"
                     />
                 </div>
-                <p className="text-gray-300 mb-4">{author.bio}</p>
+                <p className="text-gray-500 dark:text-gray-300 mb-4">{author.bio}</p>
                 <button className="bg-[#001838] hover:bg-[#002857] text-white px-8 py-2 rounded-md transition-colors">
                     Button Text
                 </button>

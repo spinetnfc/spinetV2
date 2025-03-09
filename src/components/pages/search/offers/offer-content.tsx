@@ -23,7 +23,7 @@ export function OfferContent({ offer }: OfferContentProps) {
                     <span className="px-2 py-1 text-sm bg-white/10 rounded">{offer.category}</span>
                 </div>
 
-                <div className="flex items-center gap-6 text-sm text-gray-300">
+                <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-300">
                     <div className="flex items-center gap-1">
                         <Star className="h-4 w-4 text-yellow-400 fill-current" />
                         <span>{offer.rating}</span>
@@ -40,7 +40,7 @@ export function OfferContent({ offer }: OfferContentProps) {
                 </div>
             </div>
 
-            <p className="text-gray-300 leading-relaxed">{offer.description}</p>
+            <p className="text-gray-500 dark:text-gray-300 leading-relaxed">{offer.description}</p>
         </div>
     )
 }

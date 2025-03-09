@@ -5,6 +5,7 @@ import { Star, Heart, Eye } from "lucide-react"
 import { FormattedMessage } from "react-intl"
 import { useState } from "react"
 import { OfferDetailsModal } from "./offer-details-modal"
+import Link from "next/link"
 
 interface OfferCardProps {
     offer: {
@@ -71,13 +72,16 @@ export function OfferCard({ offer }: OfferCardProps) {
                             </div>
                             <span className="font-medium">{offer.author.name}</span>
                         </div>
-                        <button
+                        {/* <button
                             //decide weather to use modal or route
                             onClick={() => setIsModalOpen(true)}
                             className="text-sm xl:text-base ms-auto xs:ms-0 xs:mt-0 mt-2 px-3 py-2 bg-[#001838] text-white rounded-lg hover:bg-[#002857]"
                         >
                             <FormattedMessage id="view-details" />
-                        </button>
+                        </button> */}
+                        <Link href={`${offer.id}`} className="text-sm xl:text-base ms-auto xs:ms-0 xs:mt-0 mt-2 px-3 py-2 bg-[#001838] text-white rounded-lg hover:bg-[#002857]">
+                            <FormattedMessage id="view-details" />
+                        </Link>
                     </div>
                 </div>
             </div>
