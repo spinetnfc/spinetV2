@@ -35,7 +35,7 @@ const Shop = async ({ params }: {
             <BrowseCategories title="BROWSE BY CATEGORY" locale={locale} />
         </section>
         <section>
-            <Reviews />
+            <Reviews locale={locale} />
         </section>
     </>
     );
