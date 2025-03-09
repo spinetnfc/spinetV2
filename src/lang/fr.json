@@ -230,5 +230,8 @@
   "top-rated": "de premier ordre",
   "rating": "Évaluation",
   "connect": "Ajouter",
-  "view-details": "Voir les détails"
+  "view-details": "Voir les détails",
+  "offer-details": "Détails de l'offre",
+  "posted": "Publié",
+  "tags": "Tags"
 }
