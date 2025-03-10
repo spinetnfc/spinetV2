@@ -20,6 +20,7 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-poppins)', ...defaultTheme.fontFamily.sans],
         inter: ['var(--font-inter)', 'sans-serif'],
+        kufi: ['var(--font-arabic)', 'sans-serif'],
         // sans: ['Inter var', 'sans-serif'],
       },
       colors: {

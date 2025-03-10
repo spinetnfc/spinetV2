@@ -12,8 +12,12 @@
   scrollbar-width: none; /* Firefox */
 }
 body {
-  @apply font-sans;
- }
+  font-family: var(--font-poppins);
+}
+
+html.ar {
+  font-family: var(--font-arabic) !important;
+}
 
 @theme {
   --color-azure:#145FF2;

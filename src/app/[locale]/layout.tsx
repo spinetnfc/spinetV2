@@ -4,7 +4,7 @@ import { AppProvider } from '@/app/[locale]/provider';
 import '@/styles/globals.css';
 // getIntl;
 import { getDirection } from '@/lib/intl';
-import { Poppins, Inter } from 'next/font/google'
+import { Poppins, Inter, Cairo } from 'next/font/google'
 // If you need to generate metadata, you can uncomment and adjust the code below.
 // type RouteProps = {
 //   params: { locale: string };
@@ -38,6 +38,12 @@ const inter = Inter({
   display: 'swap',
   variable: '--font-inter',
 });
+const arabic = Cairo({
+  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['arabic'],
+  display: 'swap',
+  variable: '--font-arabic',
+});
 
 const RootLayout = async ({
   params,
@@ -49,10 +55,11 @@ const RootLayout = async ({
   // Await params (without calling it as a function)
   const { locale } = await params;
   const dir = getDirection(locale);
-  const fontClass = locale === 'ar' ? inter.variable : poppins.variable;
+  const fontClass = locale === 'ar' ? arabic.variable : poppins.variable;
+  console.log("Applied font class:", fontClass);
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning className={`${fontClass} scroll-smooth`}>
+    <html lang={locale} dir={dir} suppressHydrationWarning className={`${fontClass} scroll-smooth ${locale === 'ar' ? 'ar' : ''}`}>
       <title>Spinet NFC</title>
       <body suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>
