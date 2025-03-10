@@ -56,7 +56,6 @@ const RootLayout = async ({
   const { locale } = await params;
   const dir = getDirection(locale);
   const fontClass = locale === 'ar' ? arabic.variable : poppins.variable;
-  console.log("Applied font class:", fontClass);
 
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning className={`${fontClass} scroll-smooth ${locale === 'ar' ? 'ar' : ''}`}>
