@@ -1,12 +1,10 @@
 import { Check } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import React from 'react';
-
 import { Link } from '@/components//ui/link';
 import ArabicIcon from '@/components/icons/arabic-icon';
 import EnglishIcon from '@/components/icons/english-icon';
 import FrenchIcon from '@/components/icons/french-icon';
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,13 +45,17 @@ function ChangeLanguage({ locale }: Props) {
         >
           <span className="sr-only">Open Language Switcher</span>
           {locale === 'en' ? (
-            <EnglishIcon />
+            // <EnglishIcon />
+            <div className='bg-red-500 text-white text-sm font-semibold w-8 h-8 rounded-full flex items-center justify-center'>EN</div>
           ) : locale === 'fr' ? (
-            <FrenchIcon />
-          ) : (
-            <ArabicIcon />
-          )}
+            // <FrenchIcon />
+            <div className='bg-blue-500 text-white text-sm font-semibold w-8 h-8 rounded-full flex items-center justify-center'>FR</div>
 
+          ) : (
+            // <ArabicIcon />
+            <div className='bg-green-600 text-white text-xs font-semibold w-8 h-8 rounded-full flex items-center justify-center'>AR</div>
+
+          )}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
