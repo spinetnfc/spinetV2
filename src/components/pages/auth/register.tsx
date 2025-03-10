@@ -72,7 +72,9 @@ const RegisterForm = ({ locale }: { locale: string }) => {
   return (
     <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
       {/* Login Title */}
-      <h1 className="text-start text-4xl font-semibold ">Sign up</h1>
+      <h1 className="text-start text-4xl font-semibold ">
+        <FormattedMessage id='sign-up' />
+      </h1>
 
       {/* Login Form */}
       <Form {...form}>
@@ -208,13 +210,13 @@ const RegisterForm = ({ locale }: { locale: string }) => {
           <div className="flex justify-center space-x-4">
             <Button
               variant="outline"
-              className="flex items-center  gap-2 rounded-3xl border-gray-200 bg-white px-4 py-2 transition-colors duration-300 hover:bg-gray-200"
+              className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
             >
               <GoogleIcon />
             </Button>
             <Button
               variant="outline"
-              className="flex items-center gap-2 rounded-3xl border-gray-200 bg-white px-4 py-2 transition-colors duration-300 hover:bg-gray-200"
+              className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
             >
               <FacebookIcon />
             </Button>

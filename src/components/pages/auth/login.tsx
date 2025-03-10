@@ -153,13 +153,13 @@ const LoginForm = ({ locale }: { locale: string }) => {
           <div className="flex justify-center space-x-4">
             <Button
               variant="outline"
-              className="flex items-center gap-2 rounded-3xl border-gray-200 bg-white px-4 py-2 transition-colors duration-300 hover:bg-gray-200"
+              className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
             >
               <GoogleIcon />
             </Button>
             <Button
               variant="outline"
-              className="flex items-center gap-2 rounded-3xl border-gray-200 bg-white px-4 py-2 transition-colors duration-300 hover:bg-gray-200"
+              className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
             >
               <FacebookIcon />
             </Button>
@@ -172,7 +172,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
             </span>
             <Link
               href={`/${locale}/auth/register`}
-              className="text-[#0F62FE] underline"
+              className="text-[#0F62FE] hover:underline"
             >
               <FormattedMessage id="register-for-free" />
             </Link>
