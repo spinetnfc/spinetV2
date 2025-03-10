@@ -126,7 +126,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
           <div className="flex justify-end">
             <Link
               href={`/${locale}/auth/forgot-password`}
-              className="text-sm text-[#145FF2] hover:underline"
+              className="text-sm text-azure hover:underline"
             >
               <FormattedMessage id="forgot-password" />
             </Link>
@@ -135,7 +135,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
           {/* Sign In Button */}
           <Button
             type="submit"
-            className="w-full bg-[#145FF2] text-white hover:bg-blue-700 "
+            className="w-full"
           >
             <FormattedMessage id="sign-in" />
           </Button>

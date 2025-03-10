@@ -128,7 +128,7 @@ const NewPasswordForm = ({ email }: Props) => {
         />
         <Button
           type="submit"
-          className="w-full bg-[#145FF2] text-white hover:bg-blue-700"
+          className="w-full"
         >
           <FormattedMessage id="save" />
         </Button>

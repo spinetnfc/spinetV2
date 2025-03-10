@@ -69,10 +69,10 @@ const OtpForm = ({ email, setStep }: Props) => {
           name="otp"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>OTP</FormLabel>
+              {/* <FormLabel className='m-auto'>OTP</FormLabel> */}
               <FormControl>
                 <InputOTP maxLength={6} {...field} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
-                  <InputOTPGroup>
+                  <InputOTPGroup className='m-auto'>
                     {[...Array(6)].map((_, index) => (
                       <InputOTPSlot key={index} index={index} />
                     ))}
@@ -85,7 +85,7 @@ const OtpForm = ({ email, setStep }: Props) => {
         />
         <Button
           type="submit"
-          className="w-full bg-[#145FF2] text-white hover:bg-blue-700"
+          className="w-full"
         >
           <FormattedMessage id="verify" />
         </Button>

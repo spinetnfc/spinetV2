@@ -1,3 +1,4 @@
+
 'use client';
 import React, { useState } from 'react';
 import { IntlProvider } from 'react-intl';
@@ -15,7 +16,7 @@ const ForgotPassword = ({
   locale: string;
   messages: Record<string, string>;
 }) => {
-  const [step, setStep] = useState<'email' | 'otp' | 'newPassword'>('email');
+  const [step, setStep] = useState<'email' | 'otp' | 'newPassword'>('newPassword');
   const [email, setEmail] = useState('');
   return (
     <IntlProvider locale={locale} messages={messages}>
