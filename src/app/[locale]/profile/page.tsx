@@ -1,31 +1,93 @@
 import Image from "next/image"
-import { Linkedin, Globe, Phone, UserPlus, Send, Facebook, Instagram, Youtube, Mail, Twitter } from "lucide-react"
+import {
+    Linkedin,
+    Globe,
+    Phone,
+    Facebook,
+    Instagram,
+    Youtube,
+    Mail,
+    Twitter,
+    Store,
+    MapPinned,
+    UserPlus,
+    Send,
+    Github,
+    MessageCircle,
+} from "lucide-react"
 import Link from "next/link"
 import PlayStoreIcon from "@/components/icons/play-store"
 import AppStoreIcon from "@/components/icons/app-store"
+import Whatsapp from "@/components/icons/whatsapp"
+import Telegram from "@/components/icons/telegram"
+import Viber from "@/components/icons/viber"
+import Tiktok from "@/components/icons/tiktok"
 
 export default function ProfilePage() {
-    // Links array that will be fetched dynamically later
     const links = [
         {
-            href: "#",
-            label: "Linkedin",
+            href: "https://www.instagram.com/spinet.nfc/",
+            label: "Instagram",
+            iconType: "instagram",
+        },
+        {
+            href: "https://play.google.com/store/apps/details?id=com.spinet.spinetnfc",
+            label: "Play Store",
+            iconType: "playStore",
+        },
+        {
+            href: "https://apps.apple.com/app/spinet-nfc/id1606369890",
+            label: "App Store",
+            iconType: "appStore",
+        },
+        {
+            href: "https://spinet-nfc.youcan.store/",
+            label: "Order now",
+            iconType: "store",
+        },
+        {
+            href: "https://www.linkedin.com/company/sarl-spinet-nfc/",
+            label: "LinkedIn",
             iconType: "linkedin",
         },
         {
-            href: "#",
+            href: "https://www.google.com/maps/place/Itihad.group,+15+Rue+Zareb+MEDJADJ,+martitimes/data=!4m2!3m1!1s0x128e534c5e1df32d:0x8e6b7c61def6e281?entry=gps&lucs=karto&g_ep=CAESCTExLjYwLjcwMxgAIIgnKgVrYXJ0b0ICRFo%3D",
+            label: "location",
+            iconType: "location",
+        },
+        {
+            href: "https://spinetnfc.com/",
             label: "Website",
             iconType: "globe",
         },
         {
-            href: "tel:+2130556565198",
-            label: "+2130556565198",
-            iconType: "phone",
+            href: "https://www.facebook.com/spinetnfc/",
+            label: "Facebook",
+            iconType: "facebook",
         },
         {
             href: "tel:+2130556565198",
-            label: "+2130556565198",
+            label: "Phone",
             iconType: "phone",
+            phoneNumber: "+2130556565198",
+        },
+        {
+            href: "https://wa.me/2130556565198",
+            label: "WhatsApp",
+            iconType: "whatsapp",
+            phoneNumber: "+2130556565198",
+        },
+        {
+            href: "https://t.me/+2130556565198",
+            label: "Telegram",
+            iconType: "telegram",
+            phoneNumber: "+2130556565198",
+        },
+        {
+            href: "viber://chat?number=+2130556565198",
+            label: "Viber",
+            iconType: "viber",
+            phoneNumber: "+2130556565198",
         },
     ]
 
@@ -46,10 +108,33 @@ export default function ProfilePage() {
                 return <Mail className="w-5 h-5 text-azure" />
             case "phone":
                 return <Phone className="w-5 h-5 text-azure" />
+            case "github":
+                return <Github className="w-5 h-5 text-azure" />
+            case "playStore":
+                return <PlayStoreIcon className="w-5 h-5 text-azure" />
+            case "appStore":
+                return <AppStoreIcon className="w-5 h-5 text-azure" />
+            case "store":
+                return <Store className="w-5 h-5 text-azure" />
+            case "location":
+                return <MapPinned className="w-5 h-5 text-azure" />
+            case "whatsapp":
+                return <Whatsapp className="w-5 h-5 text-azure" />
+            case "telegram":
+                return <Telegram className="w-5 h-5 text-azure" />
+            case "viber":
+                return <Viber className="w-5 h-5 text-azure" />
+            case "tiktok":
+                return <Tiktok className="w-5 h-5 text-azure" />
             case "globe":
             default:
                 return <Globe className="w-5 h-5 text-azure" />
         }
+    }
+
+    // Check if the link is a phone or messaging app type
+    const isPhoneOrMessaging = (iconType: string) => {
+        return ["phone", "whatsapp", "telegram", "viber"].includes(iconType)
     }
 
     return (
@@ -76,8 +161,8 @@ export default function ProfilePage() {
                 <div className="max-w-md mx-auto sm:bg-neutral-50 sm:dark:bg-navy rounded-3xl sm:shadow-xl overflow-hidden">
                     <div className="flex flex-col items-center sm:pt-8 pb-6">
                         {/* Name and Title */}
-                        <h1 className="text-xl font-bold">Abdellah Bouras</h1>
-                        <p className="text-sm text-gray-500">dev at SPINET</p>
+                        <h1 className="text-xl font-bold">Spinet NFC</h1>
+                        <p className="text-sm text-gray-500">Company at SPINET</p>
 
                         {/* Contact Buttons */}
                         <div className="w-full px-6 mt-6 space-y-3">
@@ -85,10 +170,15 @@ export default function ProfilePage() {
                                 <Link
                                     key={index}
                                     href={link.href}
-                                    className="flex items-center w-full p-3 bg-blue-50 rounded-md hover:bg-gray-200 transition-colors"
+                                    className="flex items-center w-full h-12 px-3 bg-blue-50 rounded-md hover:bg-gray-200 transition-colors"
                                 >
                                     {renderIcon(link.iconType)}
-                                    <span className="ml-3 font-medium text-gray-700">{link.label}</span>
+                                    <div className="ml-3">
+                                        <span className="font-medium text-gray-700">{link.label}</span>
+                                        {isPhoneOrMessaging(link.iconType) && link.phoneNumber && (
+                                            <p className="text-[10px] font-semibold text-gray-500 -mt-1">{link.phoneNumber}</p>
+                                        )}
+                                    </div>
                                 </Link>
                             ))}
                         </div>
