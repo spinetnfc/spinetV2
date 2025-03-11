@@ -10,6 +10,7 @@ import { useUser } from '@/lib/auth';
 import { cn } from '@/utils/cn';
 import ThemeSwitch from '../theme-switch';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 
 type LayoutProps = {
   children: ReactNode;
@@ -46,7 +47,12 @@ export const AuthLayout = ({ children }: LayoutProps) => {
     <ErrorBoundary key={pathname} fallback={<div>Something went wrong!</div>}>
       <div className="relative flex w-full flex-col items-center justify-center sm:h-dvh md:h-screen md:max-h-screen">
         <div className="absolute end-2 top-2 z-10">
-          <ThemeSwitch parentDarkMode locale={locale} />
+          <div className='flex px-4 w-screen items-center justify-between'>
+            <Link href="/" className="cursor-pointer">
+              <Image src='/img/logo-spinet-dark.svg' alt='logo' width={160} height={40} />
+            </Link>
+            <ThemeSwitch />
+          </div>
         </div>
         <Image
           src="/img/abstract.jpeg"
