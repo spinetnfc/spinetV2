@@ -13,7 +13,6 @@ import {
     UserPlus,
     Send,
     Github,
-    MessageCircle,
 } from "lucide-react"
 import Link from "next/link"
 import PlayStoreIcon from "@/components/icons/play-store"
@@ -22,9 +21,17 @@ import Whatsapp from "@/components/icons/whatsapp"
 import Telegram from "@/components/icons/telegram"
 import Viber from "@/components/icons/viber"
 import Tiktok from "@/components/icons/tiktok"
+import { EmailLink } from "@/components/pages/profile/email-link-wrapper"
 
 export default function ProfilePage() {
     const links = [
+        {
+            href: "mailto:contact@spinetnfc.com", // Default fallback for SSR
+            label: "Email",
+            iconType: "email",
+            email: "contact@spinetnfc.com",
+            isEmail: true,
+        },
         {
             href: "https://www.instagram.com/spinet.nfc/",
             label: "Instagram",
@@ -104,7 +111,7 @@ export default function ProfilePage() {
                 return <Youtube className="w-5 h-5 text-azure" />
             case "twitter":
                 return <Twitter className="w-5 h-5 text-azure" />
-            case "mail":
+            case "email":
                 return <Mail className="w-5 h-5 text-azure" />
             case "phone":
                 return <Phone className="w-5 h-5 text-azure" />
@@ -119,13 +126,13 @@ export default function ProfilePage() {
             case "location":
                 return <MapPinned className="w-5 h-5 text-azure" />
             case "whatsapp":
-                return <Whatsapp className="w-5 h-5 text-azure" />
+                return <Whatsapp className="w-6 h-6 text-azure" />
             case "telegram":
-                return <Telegram className="w-5 h-5 text-azure" />
+                return <Telegram className="w-6 h-6 text-azure" />
             case "viber":
-                return <Viber className="w-5 h-5 text-azure" />
+                return <Viber className="w-6 h-6 text-azure" />
             case "tiktok":
-                return <Tiktok className="w-5 h-5 text-azure" />
+                return <Tiktok className="w-6 h-6 text-azure" />
             case "globe":
             default:
                 return <Globe className="w-5 h-5 text-azure" />
@@ -133,8 +140,8 @@ export default function ProfilePage() {
     }
 
     // Check if the link is a phone or messaging app type
-    const isPhoneOrMessaging = (iconType: string) => {
-        return ["phone", "whatsapp", "telegram", "viber"].includes(iconType)
+    const isNumberOrEmail = (iconType: string) => {
+        return ["phone", "whatsapp", "telegram", "viber", "email"].includes(iconType)
     }
 
     return (
@@ -158,7 +165,7 @@ export default function ProfilePage() {
                 </div>
             </div>
             <div className="sm:container mx-auto px-4 -mt-10 sm:-mt-16 mb-8">
-                <div className="max-w-md mx-auto sm:bg-neutral-50 sm:dark:bg-navy rounded-3xl sm:shadow-xl overflow-hidden">
+                <div className="max-w-md mx-auto sm:border sm:bg-gray-100 sm:dark:bg-navy rounded-3xl sm:shadow-xl overflow-hidden">
                     <div className="flex flex-col items-center sm:pt-8 pb-6">
                         {/* Name and Title */}
                         <h1 className="text-xl font-bold">Spinet NFC</h1>
@@ -166,21 +173,32 @@ export default function ProfilePage() {
 
                         {/* Contact Buttons */}
                         <div className="w-full px-6 mt-6 space-y-3">
-                            {links.map((link, index) => (
-                                <Link
-                                    key={index}
-                                    href={link.href}
-                                    className="flex items-center w-full h-12 px-3 bg-blue-50 rounded-md hover:bg-gray-200 transition-colors"
-                                >
-                                    {renderIcon(link.iconType)}
-                                    <div className="ml-3">
-                                        <span className="font-medium text-gray-700">{link.label}</span>
-                                        {isPhoneOrMessaging(link.iconType) && link.phoneNumber && (
-                                            <p className="text-[10px] font-semibold text-gray-500 -mt-1">{link.phoneNumber}</p>
-                                        )}
-                                    </div>
-                                </Link>
-                            ))}
+                            {links.map((link, index) => {
+                                if (link.isEmail && link.email) {
+                                    return (
+                                        <EmailLink key={index} email={link.email} label={link.label} icon={renderIcon(link.iconType)} />
+                                    )
+                                }
+
+                                return (
+                                    <Link
+                                        key={index}
+                                        href={link.href}
+                                        target="_blank"
+                                        className="flex items-center w-full h-12 px-3 bg-blue-50 rounded-md hover:bg-gray-200 transition-colors"
+                                    >
+                                        {renderIcon(link.iconType)}
+                                        <div className="ml-3 overflow-hidden">
+                                            <span className="font-medium text-gray-700 truncate block">{link.label}</span>
+                                            {isNumberOrEmail(link.iconType) && (link.phoneNumber || link.email) && (
+                                                <p className="text-[10px] font-semibold text-gray-500 -mt-1 truncate">
+                                                    {link.phoneNumber || link.email}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </Link>
+                                )
+                            })}
                         </div>
 
                         {/* Action Buttons */}
@@ -203,14 +221,14 @@ export default function ProfilePage() {
                                     className="flex items-center gap-1 text-azure font-medium"
                                 >
                                     <PlayStoreIcon className="w-8 h-8" />
-                                    From Play Store
+                                    <span className="truncate">From Play Store</span>
                                 </Link>
                                 <Link
                                     href="https://apps.apple.com/fr/app/spinet-nfc/id1606369890"
                                     className="flex items-center gap-1 text-azure font-medium"
                                 >
                                     <AppStoreIcon className="w-8 h-8" />
-                                    From App Store
+                                    <span className="truncate">From App Store</span>
                                 </Link>
                             </div>
                         </div>
