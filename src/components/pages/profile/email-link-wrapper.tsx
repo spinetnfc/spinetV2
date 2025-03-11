@@ -28,7 +28,7 @@ export function EmailLink({ email, label, icon, phoneNumber }: EmailLinkProps) {
             href={emailLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center w-full h-12 px-3 bg-blue-50 rounded-md hover:bg-gray-200 transition-colors"
+            className="flex items-center w-full h-12 px-3 bg-blue-200 rounded-md hover:bg-gray-200 transition-colors"
         >
             {icon}
             <div className="ml-3 overflow-hidden">

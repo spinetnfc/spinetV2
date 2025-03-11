@@ -18,16 +18,14 @@ const ProfileLayout = ({ locale, children }: { locale: string; children: ReactNo
 
     return (
         <IntlProvider locale={locale} messages={messages}>
-            <div>
-                <div
-                    className="max-w-screen dark:bg-neutral-100 h-40 p-2 flex items-start justify-between
-                    bg-[url('/img/spinet-banner.jpg')] bg-cover bg-center"
-                >
+            <div className="relative sm:pt-8"> {/* Added `pt-16` to prevent margin-top issues */}
+                <div className="absolute top-0 left-0 max-w-screen w-full p-2 flex items-start justify-between bg-none z-10">
                     <Link href="/" className="cursor-pointer">
                         <Image src='/img/logo-spinet-dark.svg' alt='logo' width={160} height={40} />
                     </Link>
                     <ThemeSwitch />
                 </div>
+                <div className="max-w-screen dark:bg-neutral-100 h-40 bg-[url('/img/spinet-banner.jpg')] bg-cover bg-center sm:hidden"></div>
                 {children}
             </div>
         </IntlProvider>
