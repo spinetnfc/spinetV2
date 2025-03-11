@@ -23,6 +23,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   const params = useParams();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     if (user.data) {
@@ -30,9 +31,12 @@ export const AuthLayout = ({ children }: LayoutProps) => {
     }
   }, [user.data, router]);
 
-  // Ensure component is mounted before using theme
+  // Ensure component is mounted before using window properties
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+      setIsMobile(window.innerWidth < 1024);
+    }
   }, []);
 
   const localeParam = params.locale;
@@ -47,9 +51,22 @@ export const AuthLayout = ({ children }: LayoutProps) => {
     <ErrorBoundary key={pathname} fallback={<div>Something went wrong!</div>}>
       <div className="relative flex w-full flex-col items-center justify-center sm:h-dvh md:h-screen md:max-h-screen">
         <div className="absolute end-2 top-2 z-10">
-          <div className='flex px-4 w-screen items-center justify-between'>
+          <div className="flex px-4 w-screen items-center justify-between">
             <Link href="/" className="cursor-pointer">
-              <Image src='/img/logo-spinet-dark.svg' alt='logo' width={160} height={40} />
+              {mounted ? (
+                <Image
+                  src={
+                    resolvedTheme === 'light' && isMobile
+                      ? '/img/logo-spinet.svg'
+                      : '/img/logo-spinet-dark.svg'
+                  }
+                  alt="logo"
+                  width={160}
+                  height={40}
+                />
+              ) : (
+                <div className="w-40 h-10 bg-gray-200 animate-pulse" />
+              )}
             </Link>
             <ThemeSwitch />
           </div>
@@ -67,19 +84,11 @@ export const AuthLayout = ({ children }: LayoutProps) => {
           {children}
           <div className="z-10 lg:w-1/2">
             {pathname !== '/auth/forgot-password' ? (
-              mounted ? (
-                <img
-                  src={
-                    resolvedTheme === "light"
-                      ? "/img/authentication-light.png"
-                      : "/img/authentication.png"
-                  }
-                  alt="auth illustration"
-                  className="w-60 xs:w-80"
-                />
-              ) : (
-                <div className="w-60 xs:w-80 h-48 bg-gray-200 animate-pulse" />
-              )
+              <img
+                src="/img/authentication.png"
+                alt="auth illustration"
+                className="w-60 xs:w-80"
+              />
             ) : (
               <AuthenticationImage
                 className={cn('text-white', {
