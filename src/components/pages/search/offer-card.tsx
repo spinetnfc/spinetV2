@@ -79,7 +79,7 @@ export function OfferCard({ offer }: OfferCardProps) {
                         >
                             <FormattedMessage id="view-details" />
                         </button> */}
-                        <Link href={`${offer.id}`} className="text-sm xl:text-base ms-auto xs:ms-0 xs:mt-0 mt-2 px-3 py-2 bg-[#001838] text-white rounded-lg hover:bg-[#002857]">
+                        <Link href={`/search/offers/${offer.id}`} className="text-sm xl:text-base ms-auto xs:ms-0 xs:mt-0 mt-2 px-3 py-2 bg-[#001838] text-white rounded-lg hover:bg-[#002857]">
                             <FormattedMessage id="view-details" />
                         </Link>
                     </div>
