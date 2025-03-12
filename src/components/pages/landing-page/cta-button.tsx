@@ -32,7 +32,7 @@ function CtaButton({
     <Button
       asChild
       className={cn(
-        'cursor-pointer h-12 rounded-2xl bg-azure text-xl leading-6 text-white dark:text-white hover:bg-azure/90 transition-colors duration-200 dark:bg-linear-to-b dark:from-[#1841B5E5] dark:via-[#0A234D] dark:to-[#1841B5E5]',
+        'cursor-pointer h-12 rounded-2xl bg-azure text-xl leading-6 text-white dark:text-white hover:bg-azure/90 dark:bg-linear-to-b dark:from-[#1841B5E5] dark:via-[#0A234D] dark:to-[#1841B5E5] hover:scale-[101%] transition-transform duration-200',
         className
       )}
       style={{
@@ -46,7 +46,7 @@ function CtaButton({
   ) : (
     <Button
       className={cn(
-        'cursor-pointer h-12 rounded-2xl bg-azure text-xl leading-6 text-white dark:text-white hover:bg-azure/70 transition-colors duration-200 dark:bg-linear-to-b dark:from-[#1841B5E5] dark:via-[#0A234D] dark:to-[#1841B5E5]',
+        'cursor-pointer h-12 rounded-2xl bg-azure text-xl leading-6 text-white dark:text-white hover:bg-azure/70 dark:bg-linear-to-b dark:from-[#1841B5E5] dark:via-[#0A234D] dark:to-[#1841B5E5] hover:scale-[101%] transition-transform duration-200',
         className
       )}
       style={{
