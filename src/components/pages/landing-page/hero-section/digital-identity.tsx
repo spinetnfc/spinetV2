@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react';
 import Image from 'next/image';
+import Spline from '@splinetool/react-spline';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import CtaButton from '../cta-button';
@@ -46,15 +47,19 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             link='/search'
           />
         </div>
-        <div className="relative size-full flex justify-center lg:justify-end">
+        <div className="relative flex size-full flex-col items-center justify-end flex-grow">
           <Image
             src="/img/Designer.png"
             alt="Hand image"
             width={600} // Set a fixed width
             height={600} // Adjust height accordingly to maintain aspect ratio
-            className='h-auto max-w-full mt-auto lg:w-[700px]'
+            className='h-auto max-w-full mt-auto lg:w-[700px] aspect-[1/1]'
             priority
           />
+          {/* <Spline
+            scene="https://prod.spline.design/vE8CaPtt6QlDw0g3/scene.splinecode"
+            className="w-[300px] sm:w-[400px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto [&>canvas]:w-full [&>canvas]:h-full flex justify start items-start"
+          /> */}
 
         </div>
       </div>

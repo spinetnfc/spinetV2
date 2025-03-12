@@ -53,36 +53,37 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-one-dark.png" : "/img/Ellipse-one.png"}
           alt=""
-          className="absolute left-[10%] top-[20%] hidden w-2/5 max-w-[15%] lg:block"
+          className="absolute left-[10%] top-[20%] hidden w-2/5 max-w-[15%] lg:block animate-floating"
         />
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-two-dark.png" : "/img/Ellipse-two.png"}
           alt=""
-          className="absolute right-0 top-1/4 hidden w-1/2 max-w-[30%] lg:block"
+          className="absolute right-0 top-1/4 hidden w-1/2 max-w-[30%] lg:block animate-floating"
         />
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-three-dark.png" : "/img/Ellipse-three.png"}
           alt=""
-          className="absolute bottom-[5%] left-[5%] hidden w-[30%] max-w-[30%] lg:block"
+          className="absolute bottom-[5%] left-[5%] hidden w-[30%] max-w-[30%] lg:block animate-floating"
         />
 
         {/* Mobile Ellipses */}
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-one-dark.png" : "/img/Ellipse-one.png"}
           alt=""
-          className="absolute left-0 top-[30%] max-w-[30%] lg:hidden"
+          className="absolute left-0 top-[30%] max-w-[30%] lg:hidden animate-floating"
         />
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-two-dark.png" : "/img/Ellipse-two.png"}
           alt=""
-          className="absolute right-0 top-[40%] w-full max-w-[50%] lg:hidden"
+          className="absolute right-0 top-[40%] w-full max-w-[50%] lg:hidden animate-floating"
         />
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-three-dark.png" : "/img/Ellipse-three.png"}
           alt=""
-          className="absolute bottom-[10%] left-[5%] w-full max-w-[50%] lg:hidden"
+          className="absolute bottom-[10%] left-[5%] w-full max-w-[50%] lg:hidden animate-floating"
         />
       </div>
+
 
       {/* Content Container */}
       <div className="container z-10 text-center p-0">
