@@ -18,7 +18,6 @@ type Props = {
 
 function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Props) {
   const intl = useIntl();
-
   function scrollToSection(id: string, setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
     const element = document.getElementById(id);
     if (element) {
@@ -70,16 +69,21 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
           </div>
         </div>
 
-        {/* Image with CSS-based Slide-in Animation */}
+        {/* Image with slide-in animation */}
         <div
           className={`w-full lg:w-auto transition-transform duration-2000 ease-out 
-          ${isActive ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}`}
+          ${isActive
+              ? "translate-x-0 opacity-100"
+              : locale === "ar"
+                ? "-translate-x-full opacity-0" // Slide in from left in RTL
+                : "translate-x-full opacity-0"  // Slide in from right in LTR
+            }`}
         >
           <Image
             src="/img/transform-business.png"
             alt="Transform business image"
             width={1075}
-            height={923}
+            height={920}
             priority
           />
         </div>

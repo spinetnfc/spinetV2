@@ -1,6 +1,6 @@
 import { Search } from 'lucide-react';
 import Image from 'next/image';
-import Spline from '@splinetool/react-spline';
+// import Spline from '@splinetool/react-spline';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import CtaButton from '../cta-button';

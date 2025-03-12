@@ -18,9 +18,11 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
   isMenuOpen,
   setActiveIndex,
 }) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: autoplayInterval }),
-  ]);
+  const isRTL = locale === "ar" || locale === "he"; // Detect RTL language
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, direction: isRTL ? "rtl" : "ltr" }, // Set direction dynamically
+    [Autoplay({ delay: autoplayInterval })]
+  );
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -47,7 +49,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
   };
 
   return (
-    <div className="relative h-full overflow-hidden">
+    <div className="relative h-full overflow-hidden" dir={isRTL ? "rtl" : "ltr"}>
       <div ref={emblaRef} className="h-full overflow-hidden">
         <div className="flex h-full">
           {slides.map((slide, index) => (
@@ -60,15 +62,19 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
 
       {/* Navigation Buttons */}
       <button
-        className="absolute hidden md:block left-1 top-1/2 z-10 -translate-y-1/2 rounded-full dark:bg-white p-1 shadow-md transition hover:bg-navy bg-main dark:hover:bg-gray-200"
-        onClick={scrollPrev}
+        className={`absolute hidden md:block left-1 
+        top-1/2 z-10 -translate-y-1/2 rounded-full dark:bg-white p-1 shadow-md transition 
+        hover:bg-navy bg-main dark:hover:bg-gray-200`}
+        onClick={isRTL ? scrollNext : scrollPrev} // Swap button action for RTL
       >
         <ChevronLeft className="size-6 dark:text-gray-700 text-gray-200" />
       </button>
 
       <button
-        className="absolute hidden md:block right-1 top-1/2 z-10 -translate-y-1/2 rounded-full dark:bg-white p-1 shadow-md transition hover:bg-navy bg-main dark:hover:bg-gray-200"
-        onClick={scrollNext}
+        className={`absolute hidden md:block right-1 
+        top-1/2 z-10 -translate-y-1/2 rounded-full dark:bg-white p-1 shadow-md transition 
+        hover:bg-navy bg-main dark:hover:bg-gray-200`}
+        onClick={isRTL ? scrollPrev : scrollNext} // Swap button action for RTL
       >
         <ChevronRight className="size-6 dark:text-gray-700 text-gray-200" />
       </button>
