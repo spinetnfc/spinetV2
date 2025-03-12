@@ -18,55 +18,24 @@ export default function HeroSection({
   messages: Record<string, string>;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // const { resolvedTheme } = useTheme();
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const slides = [
-    <DigitalIdentity
-      key="0"
-      locale={locale}
-      isMenuOpen={isMenuOpen}
-      setIsMenuOpen={setIsMenuOpen}
-    />,
-    <EmpowerNetwork
-      key="1"
-      locale={locale}
-      isMenuOpen={isMenuOpen}
-      setIsMenuOpen={setIsMenuOpen}
-    />,
-    <TransformBusiness
-      key="2"
-      locale={locale}
-      isMenuOpen={isMenuOpen}
-      setIsMenuOpen={setIsMenuOpen}
-    />,
-    <Events
-      key="3"
-      locale={locale}
-      isMenuOpen={isMenuOpen}
-      setIsMenuOpen={setIsMenuOpen}
-    />,
+    <DigitalIdentity key="0" locale={locale} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />,
+    <EmpowerNetwork key="1" locale={locale} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />,
+    <TransformBusiness key="2" locale={locale} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} isActive={activeIndex === 2} />,
+    <Events key="3" locale={locale} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />,
   ];
 
   return (
     <IntlProvider locale={locale} messages={messages}>
-      <div className=" flex h-dvh flex-col overflow-x-hidden lg:h-screen">
-        {/* <Image
-          src={
-            resolvedTheme === 'dark'
-              ? '/img/rectangle-dark.png'
-              : '/img/rectangle.png'
-          }
-          alt="background"
-          fill
-          className={cn(
-            'absolute inset-0 box-border rounded-3xl dark:bg-[#01173A] dark:shadow-[0px_-1px_4px_rgba(20,95,242,0.2)]',
-            locale === 'ar' && 'scale-x-[-1]',
-          )}
-        /> */}
+      <div className="flex h-dvh flex-col overflow-x-hidden lg:h-screen">
         <HeroCarousel
           slides={slides}
           locale={locale}
-          autoplayInterval={500000} //adjust wehn done working
+          autoplayInterval={5000}
           isMenuOpen={isMenuOpen}
+          setActiveIndex={setActiveIndex} // New prop
         />
       </div>
     </IntlProvider>
