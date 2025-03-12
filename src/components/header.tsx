@@ -45,7 +45,7 @@ function Header({ locale }: { locale: string }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => router.push('/app/profile')} className="text-primary">
+              <DropdownMenuItem onClick={() => router.push('/profile')} className="text-primary">
                 Your Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
