@@ -44,12 +44,12 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       {/* Background Ellipses */}
       <div className="absolute inset-0 pointer-events-none">
-        {resolvedTheme === "dark" && (
+        {/* {resolvedTheme === "dark" && (
           <>
             <div className="absolute left-[384px] top-[-70px] h-[422px] w-[121px] rotate-[-20deg] bg-linear-to-b from-[#0A234D] via-[#8FC8FF] to-[#145FF2] opacity-70 blur-[58px]" />
             <div className="absolute left-[710px] top-[-106px] h-[422px] w-[121px] rotate-[31deg] bg-linear-to-b from-[#0A234D] via-[#8FC8FF] to-[#145FF2] opacity-70 blur-[58px]" />
           </>
-        )}
+        )} */}
         <img
           src={resolvedTheme === "dark" ? "/img/Ellipse-one-dark.png" : "/img/Ellipse-one.png"}
           alt=""

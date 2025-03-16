@@ -63,7 +63,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
       </div>
     );
   return (
-    <div className="noSelect  flex min-w-[300px] lg:w-full flex-col gap-4 rounded-xl border border-[#145FF4] px-2 py-4 transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69)] dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69)]">
+    <div className="noSelect  flex min-w-[calc(100vw-44px)] xs:min-w-[300px] lg:w-full flex-col gap-4 rounded-xl border border-[#145FF4] px-2 py-4 transition-shadow duration-300 hover:cursor-pointer hover:shadow-[0px_9px_19px_rgba(0,0,0,0.69)] dark:hover:shadow-[0px_9px_19px_rgba(100,100,100,0.69)]">
       <div className=" flex flex-col gap-2.5 ">
         <h2 className="text-4xl font-bold  leading-[150%]">
           {' '}
@@ -88,13 +88,15 @@ const PricingCard: React.FC<PricingCardProps> = ({
         {index === 0 ? (
           <div className='flex justify-center'>
             <CtaButton
+              className='text-sm'
               text={intl.formatMessage({ id: 'sign-up' })}
               icon={<LogIn className="me-2.5 size-6" />}
             />
           </div>
         ) : (
-          <div className=" flex flex-row items-center justify-center gap-2 ">
+          <div className=" flex flex-col lg:flex-row items-center justify-center gap-2 ">
             <CtaButton
+              className='text-sm'
               icon={<ShoppingCart className="ms-2.5 size-6" />}
               text={intl.formatMessage({ id: 'buy-now' })}
             />

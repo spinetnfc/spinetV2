@@ -43,7 +43,7 @@ async function Products({ locale }: Props) {
       <CtaButton
         icon={<Store className="ms-2.5 size-6" />}
         text={t('go-to-store')}
-        className="w-full max-w-[308px]"
+        className="w-fit text-base xs:text-xl"
         iconposition="right"
         link="/shop"
       />

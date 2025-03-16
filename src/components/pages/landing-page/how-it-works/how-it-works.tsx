@@ -49,7 +49,7 @@ async function HowItWorks({ locale }: Props) {
       <CtaButton
         icon={<ChevronRight className="ms-2.5 size-6" />}
         text={t('book-a-demo')}
-        className="max-w-[308px] w-full mt-4"
+        className=" w-fit mt-4 text-base xs:text-xl"
         iconposition="right"
       />
       <div className="mt-8 flex h-fit w-full flex-col items-center justify-center lg:flex-row">
