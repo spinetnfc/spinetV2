@@ -68,7 +68,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
                 <div className="w-40 h-10 bg-gray-200 animate-pulse" />
               )}
             </Link>
-            <ThemeSwitch />
+            <ThemeSwitch locale={locale} />
           </div>
         </div>
         <Image

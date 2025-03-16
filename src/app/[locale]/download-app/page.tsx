@@ -24,7 +24,7 @@ export default async function DownloadApp({ params }: {
                 </Button>
                 <Button className="bg-transparent text-base sm:text-lg px-0 text-black dark:text-white hover:bg-transparent">
                     <Link
-                        href="./app"
+                        href="./"
                         className="flex items-center hover:underline">
                         {t("continue-on-web")}
                         <ArrowRight size={20} className={`ms-2.5 ${locale === "ar" ? "scale-x-[-1]" : ""}`} />

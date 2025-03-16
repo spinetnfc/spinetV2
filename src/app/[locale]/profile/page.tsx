@@ -22,8 +22,14 @@ import Telegram from "@/components/icons/telegram"
 import Viber from "@/components/icons/viber"
 import Tiktok from "@/components/icons/tiktok"
 import { EmailLink } from "@/components/pages/profile/email-link-wrapper"
+import useTranslate from '@/hooks/use-translate';
 
-export default function ProfilePage() {
+export default async function ProfilePage({ params }: {
+    params: Promise<{ locale: string }>;
+}) {
+    const { locale } = await params;
+    const { t } = await useTranslate(locale);
+
     const links = [
         {
             href: "mailto:contact@spinetnfc.com", // Default fallback for SSR
@@ -165,7 +171,7 @@ export default function ProfilePage() {
                 className="flex items-center w-full h-12 px-3 bg-blue-200 rounded-md hover:bg-gray-200 transition-colors"
             >
                 {renderIcon(link.iconType)}
-                <div className="ml-3 overflow-hidden">
+                <div className="ms-3 overflow-hidden">
                     <span className="font-medium text-gray-700 truncate block">{link.label}</span>
                     {isNumberOrEmail(link.iconType) && (link.phoneNumber || link.email) && (
                         <p className="text-[10px] font-semibold text-gray-500 -mt-1 truncate">{link.phoneNumber || link.email}</p>
@@ -187,7 +193,7 @@ export default function ProfilePage() {
                         fill
                         className="rounded-full object-cover border-4 border-neutral-50"
                     />
-                    <div className="absolute -bottom-2 left-13 xs:left-16 bg-neutral-50 border border-gray-300 h-7 xs:h-8 w-7 xs:w-8 p-[1px] flex items-center justify-center rounded-md">
+                    <div className="absolute -bottom-2 start-13 xs:start-16 bg-neutral-50 border border-gray-300 h-7 xs:h-8 w-7 xs:w-8 p-[1px] flex items-center justify-center rounded-md">
                         <Image
                             src="/img/spinet-logo.svg"
                             alt="company logo"
@@ -253,7 +259,7 @@ export default function ProfilePage() {
                     {/* Banner */}
                     <div className="relative h-48 bg-[url('/img/spinet-banner.jpg')] bg-cover bg-center">
                         {/* Profile Image */}
-                        <div className="absolute left-8 bottom-0 transform translate-y-1/2 w-32 h-32 bg-white rounded-full border-4 border-white">
+                        <div className="absolute start-8 bottom-0 transform translate-y-1/2 w-32 h-32 bg-white rounded-full border-4 border-white">
                             <Image src="/img/user.png" alt="Profile picture" fill className="rounded-full object-cover" />
                             <div className="absolute -bottom-2 right-0 bg-white border border-gray-300 h-8 w-8 p-[1px] flex items-center justify-center rounded-md">
                                 <Image
@@ -282,11 +288,11 @@ export default function ProfilePage() {
                         <div className="grid grid-cols-2 gap-4 mt-6">
                             <button className="border-2 border-azure hover:opacity-80 text-azure font-medium flex items-center justify-center gap-2 py-2 rounded-md cursor-pointer">
                                 <UserPlus className="h-5 w-5" />
-                                <span>Ajouter contact</span>
+                                <span>{t("add-contact")}</span>
                             </button>
                             <button className="bg-azure hover:bg-azure/70 text-white font-medium flex items-center justify-center gap-2 py-2 rounded-md cursor-pointer">
                                 <Send className="h-5 w-5" />
-                                <span>Envoyer message</span>
+                                <span>{t("send-message")}</span>
                             </button>
                         </div>
                     </div>

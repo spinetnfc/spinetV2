@@ -47,7 +47,7 @@ const ProfileLayout = ({ locale, children }: { locale: string; children: ReactNo
                             />
                         )}
                     </Link>
-                    <ThemeSwitch />
+                    <ThemeSwitch locale={locale} />
                 </div>
                 <div className="max-w-screen dark:bg-neutral-100 h-40 bg-[url('/img/spinet-banner.jpg')] bg-cover bg-center sm:hidden"></div>
                 {children}
