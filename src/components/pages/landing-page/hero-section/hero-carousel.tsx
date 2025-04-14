@@ -63,7 +63,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
       {/* Navigation Buttons */}
       <button
         className={`absolute hidden md:block left-1 
-        top-1/2 z-10 -translate-y-1/2 rounded-full dark:bg-white p-1 shadow-md transition 
+        top-1/2 z-10 -translate-y-1/2 rounded-full dark:bg-white p-1 shadow-md transition cursor-pointer
         hover:bg-navy bg-main dark:hover:bg-gray-200`}
         onClick={isRTL ? scrollNext : scrollPrev} // Swap button action for RTL
       >
@@ -72,7 +72,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({
 
       <button
         className={`absolute hidden md:block right-1 
-        top-1/2 z-10 -translate-y-1/2 rounded-full dark:bg-white p-1 shadow-md transition 
+        top-1/2 z-10 -translate-y-1/2 rounded-full dark:bg-white p-1 shadow-md transition cursor-pointer
         hover:bg-navy bg-main dark:hover:bg-gray-200`}
         onClick={isRTL ? scrollPrev : scrollNext} // Swap button action for RTL
       >
