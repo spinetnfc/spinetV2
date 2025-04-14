@@ -35,7 +35,7 @@ function Legend({ text, locale }: Props) {
       <div className="hidden h-8 lg:block">
         <span
           className={cn(
-            'h-5 rounded-full  border border-[#145FF2]/10 bg-white/[0.15] bg-linear-to-r from-[#145FF2] to-[#BDDDFF] bg-clip-text px-3 py-1 text-center text-sm font-normal uppercase  tracking-[3px] text-transparent shadow-[0_4px_4px_rgba(20,95,242,0.05)] dark:border-white/[0.15] dark:bg-white/[0.05] dark:from-[#EEF6FF] dark:to-[#145FF2]',
+            'h-5 rounded-full  border border-[#145FF2]/20 bg-white/[0.15] bg-linear-to-r from-[#145FF2] to-[#86c1ff] bg-clip-text px-3 py-1 text-center text-sm font-normal uppercase  tracking-[3px] text-transparent shadow-[0_4px_4px_rgba(20,95,242,0.05)] dark:border-white/[0.15] dark:bg-white/[0.05] dark:from-[#EEF6FF] dark:to-[#145FF2]',
             { 'tracking-wider bg-linear-to-l': locale === 'ar' },
           )}
         >

@@ -34,12 +34,12 @@ function Header({ locale }: { locale: string }) {
           link={`/${locale}/auth/login`}
         />}
         {isLogged && <>
-          {path === "/shop" && <Link href={`/${locale}/shop/cart`}>
+          {path?.includes("/shop") && <Link href={`/${locale}/shop/cart`}>
             <ShoppingCart className="size-6 text-white" />
           </Link>}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="rounded-full">
+              <Button variant="outline" size="icon" className="rounded-full bg-white dark:bg-background">
                 <User2 className="size-6" />
                 <span className="sr-only">Open user menu</span>
               </Button>
