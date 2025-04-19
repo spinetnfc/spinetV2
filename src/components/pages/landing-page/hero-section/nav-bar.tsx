@@ -12,7 +12,7 @@ const navItems = [
   { id: "features", label: "features" },
   { id: "pricing", label: "pricing" },
   { id: "how-it-works", label: "demo" },
-  { id: "products", label: "products" },
+  { id: "products", label: "PRODUCTS" },
   { id: "support", label: "support" },
 ];
 

@@ -1,27 +1,18 @@
-import { ReactNode } from 'react';
+import { Metadata } from "next"
 
-import ProfileLayout from '@/components/layouts/profile-layout';
+export const metadata: Metadata = {
+    title: "Profile | Spinet",
+    description: "Manage your Spinet profile and settings",
+}
 
-export const metadata = {
-    title: 'Shop',
-    description: 'Shop',
-};
-
-const AppLayout = async ({
-    params,
+export default function ProfileLayout({
     children,
 }: {
-    params: Promise<{ locale: string }>;
-    children: ReactNode;
-}) => {
-    const { locale } = await params;
+    children: React.ReactNode
+}) {
     return (
-        <>
-            <ProfileLayout locale={locale}>
-                {children}
-            </ProfileLayout>
-        </>
+        <div className="container mx-auto px-4 py-8">
+            {children}
+        </div>
     )
-};
-
-export default AppLayout;
+} 
