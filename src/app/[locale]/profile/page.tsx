@@ -41,7 +41,7 @@ export default async function ProfilePage({
         phone: "+1 234 567 890",
         location: "New York, USA",
         bio: "Digital business card enthusiast and tech lover",
-        avatar: "/placeholder-avatar.jpg",
+        avatar: "/img/user.png",
         socialLinks: {
             linkedin: "https://linkedin.com/in/johndoe",
             instagram: "https://instagram.com/johndoe",
@@ -84,7 +84,7 @@ export default async function ProfilePage({
                             alt={user.name}
                             width={128}
                             height={128}
-                            className="rounded-full border-4 border-white dark:border-gray-800"
+                            className="rounded-full border-4 bg-white border-white dark:border-gray-800"
                         />
                         <button className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-lg">
                             <Edit className="w-4 h-4" />
