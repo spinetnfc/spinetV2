@@ -6,7 +6,6 @@ import { ReactNode, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import AuthenticationImage from '@/components/icons/authentication-image';
 import { Spinner } from '@/components/ui/spinner';
-import { useUser } from '@/lib/auth';
 import { cn } from '@/utils/cn';
 import ThemeSwitch from '../theme-switch';
 import { useTheme } from 'next-themes';
@@ -17,7 +16,6 @@ type LayoutProps = {
 };
 
 export const AuthLayout = ({ children }: LayoutProps) => {
-  const user = useUser();
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
@@ -25,11 +23,6 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    if (user.data) {
-      router.replace('/app');
-    }
-  }, [user.data, router]);
 
   // Ensure component is mounted before using window properties
   useEffect(() => {

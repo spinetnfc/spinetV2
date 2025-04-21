@@ -64,6 +64,20 @@ export function middleware(request: NextRequest) {
 
   if (nextLocale) response.cookies.set('NEXT_LOCALE', nextLocale);
 
+  // Authentication logic
+  const token = request.cookies.get('token')?.value;
+  const publicRoutes = ['/', '/auth', '/public-profile', '/download-app'];
+  const routePath = pathLocale
+    ? pathname.replace(`/${pathLocale}`, '') || '/'
+    : pathname;
+  const isPublicRoute = publicRoutes.includes(routePath);
+
+  if (!token && !isPublicRoute) {
+    const redirectUrl = new URL(`/${nextLocale || defaultLocale}/auth`, request.url);
+    redirectUrl.searchParams.set('redirectTo', pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
+
   return response;
 }
 
