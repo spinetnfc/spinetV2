@@ -23,13 +23,21 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-
   // Ensure component is mounted before using window properties
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
+    const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
-    }
+    };
+
+    checkMobile();
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   const localeParam = params.locale;
@@ -40,26 +48,32 @@ export const AuthLayout = ({ children }: LayoutProps) => {
         ? localeParam[0]
         : 'en';
 
+  // Render a simple loading state during server-side rendering
+  // to avoid hydration mismatches
+  if (!mounted) {
+    return (
+      <div className="relative flex w-full flex-col items-center justify-center min-h-screen">
+        <Spinner size="xxl" />
+      </div>
+    );
+  }
+
   return (
-    <ErrorBoundary key={pathname} fallback={<div>Something went wrong!</div>}>
+    <ErrorBoundary fallback={<div>Something went wrong!</div>}>
       <div className="relative flex w-full flex-col items-center justify-center sm:h-dvh md:h-screen md:max-h-screen">
         <div className="absolute end-2 top-2 z-10">
           <div className="flex px-4 w-screen items-center justify-between">
             <Link href="/" className="cursor-pointer">
-              {mounted ? (
-                <Image
-                  src={
-                    resolvedTheme === 'light' && isMobile
-                      ? '/img/logo-spinet.svg'
-                      : '/img/logo-spinet-dark.svg'
-                  }
-                  alt="logo"
-                  width={160}
-                  height={40}
-                />
-              ) : (
-                <div className="w-40 h-10 bg-gray-200 animate-pulse" />
-              )}
+              <Image
+                src={
+                  resolvedTheme === 'light' && isMobile
+                    ? '/img/logo-spinet.svg'
+                    : '/img/logo-spinet-dark.svg'
+                }
+                alt="logo"
+                width={160}
+                height={40}
+              />
             </Link>
             <ThemeSwitch locale={locale} />
           </div>

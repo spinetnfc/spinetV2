@@ -13,12 +13,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
-import { useLogout } from '@/lib/auth';
+// import { useLogout } from '@/lib/auth';
 import Link from 'next/link';
 import CtaButton from './pages/landing-page/cta-button';
 function Header({ locale }: { locale: string }) {
   const router = useRouter();
-  const logout = useLogout();
+  // const logout = useLogout();
   const isLogged = true;
   const path = usePathname();
 
@@ -49,7 +49,7 @@ function Header({ locale }: { locale: string }) {
                 Your Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => logout.mutate({})} className="text-primary">
+              <DropdownMenuItem className="text-primary">
                 Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>
