@@ -1,12 +1,12 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FormattedMessage, IntlProvider, useIntl } from 'react-intl';
 import * as z from 'zod';
-
+import type { NewUser } from '@/types/api';
 import FacebookIcon from '@/components/icons/facebook-icon';
 import GoogleIcon from '@/components/icons/google-icon';
 import { Button } from '@/components/ui/button';
@@ -19,23 +19,52 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/utils/cn';
+import { ColorPicker } from '@/components/ui/color-picker';
 
-const signupSchema = z
-  .object({
-    name: z.string().min(2, { message: 'fullname-required' }),
-    email: z.string().email({ message: 'invalid-email-address' }),
-    password: z.string().min(8, { message: 'password-length' }),
-    passwordConfirmation: z.string().min(8, { message: 'password-length' }),
-  })
-  .superRefine((data, ctx) => {
-    if (data.password !== data.passwordConfirmation) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['passwordConfirmation'],
-        message: 'passwords-must-match',
-      });
-    }
-  });
+const registerSchema = z.object({
+  // Personal Info
+  email: z.string().email({ message: 'invalid-email-address' }),
+  firstName: z.string().min(2, { message: 'firstname-required' }),
+  lastName: z.string().min(2, { message: 'lastname-required' }),
+  birthDate: z.date().optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
+  phoneNumber: z.string().optional(),
+  website: z.string().url().optional().or(z.literal('')),
+
+  // Company Info
+  companyName: z.string().optional(),
+  activitySector: z.string().optional(),
+  position: z.string().optional(),
+
+  // Customization
+  language: z.enum(['en', 'fr', 'ar']).default('en'),
+  theme: z.object({
+    color: z.string().default('#0F62FE'),
+  }).default({ color: '#0F62FE' }),
+
+  // Password
+  password: z.string().min(8, { message: 'password-length' }),
+  passwordConfirmation: z.string().min(8, { message: 'password-length' }),
+}).refine((data) => data.password === data.passwordConfirmation, {
+  message: 'passwords-must-match',
+  path: ['passwordConfirmation'],
+});
 
 export default function Register({ locale, messages }: {
   locale: string;
@@ -50,191 +79,576 @@ export default function Register({ locale, messages }: {
 
 const RegisterForm = ({ locale }: { locale: string }) => {
   const intl = useIntl();
-
   const [showPassword, setShowPassword] = useState(false);
+  const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize form with zod resolver
-  const form = useForm<z.infer<typeof signupSchema>>({
-    resolver: zodResolver(signupSchema),
+  const totalSteps = 4;
+
+  // Initialize form
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: '',
       email: '',
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      website: '',
+      companyName: '',
+      activitySector: '',
+      position: '',
+      language: 'en',
+      theme: { color: '#0F62FE' },
       password: '',
       passwordConfirmation: '',
     },
   });
 
-  // Handle form submission
-  const onSubmit = (data: z.infer<typeof signupSchema>) => {
-    console.log(data);
-    // Implement your login logic here
+  const nextStep = async () => {
+    let fieldsToValidate: string[] = [];
+
+    switch (step) {
+      case 1:
+        fieldsToValidate = ['email', 'firstName', 'lastName'];
+        break;
+      case 2:
+        fieldsToValidate = [];
+        break;
+      case 3:
+        fieldsToValidate = [];
+        break;
+      case 4:
+        fieldsToValidate = ['password', 'passwordConfirmation'];
+        break;
+    }
+
+    const result = await form.trigger(fieldsToValidate as any);
+    if (result) {
+      if (step < totalSteps) {
+        setStep(prev => prev + 1);
+      }
+    }
   };
+
+  const prevStep = () => {
+    if (step > 1) {
+      setStep(prev => prev - 1);
+    }
+  };
+
+  // Handle form submission
+  const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+    setIsSubmitting(true);
+    try {
+      // Convert data to NewUser type
+      const userData: NewUser = {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
+        gender: data.gender,
+        phoneNumber: data.phoneNumber,
+        website: data.website,
+        companyName: data.companyName,
+        activitySector: data.activitySector,
+        position: data.position,
+        language: data.language,
+        theme: data.theme,
+        password: data.password,
+      };
+
+      console.log('Submitting user data:', userData);
+      // Add API call here
+
+      // Mock success
+      alert('Registration successful!');
+
+    } catch (error) {
+      console.error('Registration error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const renderStepTitle = () => {
+    switch (step) {
+      case 1: return <FormattedMessage id="personal-information" defaultMessage="Personal Information" />;
+      case 2: return <FormattedMessage id="company-information" defaultMessage="Company Information" />;
+      case 3: return <FormattedMessage id="customization" defaultMessage="Customization" />;
+      case 4: return <FormattedMessage id="password-setup" defaultMessage="Password Setup" />;
+      default: return <FormattedMessage id="sign-up" />;
+    }
+  };
+
   return (
     <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
-      {/* Login Title */}
-      <h1 className="text-start text-4xl font-semibold ">
-        <FormattedMessage id='sign-up' />
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-start text-2xl font-semibold">
+          {renderStepTitle()}
+        </h1>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          <FormattedMessage id="step-of" defaultMessage="Step {current} of {total}" values={{ current: step, total: totalSteps }} />
+        </div>
+      </div>
 
-      {/* Login Form */}
+      <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full">
+        <div className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+          style={{ width: `${(step / totalSteps) * 100}%` }}></div>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {/* Name Field */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm ">
-                  {' '}
-                  <FormattedMessage id="full-name" />{' '}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={intl.formatMessage({
-                      id: 'enter-your-full-name',
-                    })}
-                    {...field}
-                    className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* Email Field */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm ">
-                  <FormattedMessage id="email-address" />
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="username@gmail.com"
-                    {...field}
-                    className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {step === 1 && (
+            <div className="space-y-4">
+              {/* Email Field */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="email-address" />*
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="username@example.com"
+                        {...field}
+                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* Password Field */}
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm ">
-                  <FormattedMessage id="password" />
-                </FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder={intl.formatMessage({
-                        id: 'password',
-                      })}
-                      {...field}
-                      className="border-gray-200 dark:border-blue-950 pr-10  focus:border-blue-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+              {/* First Name Field */}
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="first-name" />*
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={intl.formatMessage({
+                          id: 'enter-your-first-name',
+                          defaultMessage: 'Enter your first name'
+                        })}
+                        {...field}
+                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Last Name Field */}
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="last-name" />*
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Birth Date Field */}
+              <FormField
+                control={form.control}
+                name="birthDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="birth-date" />
+                    </FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span><FormattedMessage id="pick-a-date" defaultMessage="Pick a date" /></span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          captionLayout='dropdown-buttons'
+                          // defaultMonth={new Date('january')}
+                          fromYear={1900}
+                          toYear={2050}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Gender Field */}
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="gender" />
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
                     >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                      <FormControl>
+                        <SelectTrigger className="border-gray-200 dark:border-blue-950">
+                          <SelectValue placeholder={intl.formatMessage({
+                            id: 'select-gender',
+                            defaultMessage: 'Select gender'
+                          })} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="male">
+                          <FormattedMessage id="male" defaultMessage="Male" />
+                        </SelectItem>
+                        <SelectItem value="female">
+                          <FormattedMessage id="female" defaultMessage="Female" />
+                        </SelectItem>
+                        <SelectItem value="other">
+                          <FormattedMessage id="other" defaultMessage="Other" />
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* Password Confirmation Field */}
-          <FormField
-            control={form.control}
-            name="passwordConfirmation"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm ">
-                  <FormattedMessage id="password-confirmation" />
-                </FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder={intl.formatMessage({
-                        id: 'password-confirmation',
-                      })}
-                      {...field}
-                      className="border-gray-200 dark:border-blue-950 pr-10  focus:border-blue-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+              {/* Phone Number Field */}
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="phone-number" />
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Website Field */}
+              <FormField
+                control={form.control}
+                name="website"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="website" />
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-4">
+              {/* Company Name Field */}
+              <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="company-name" />
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Activity Sector Field */}
+              <FormField
+                control={form.control}
+                name="activitySector"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="activity-sector" />
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Position Field */}
+              <FormField
+                control={form.control}
+                name="position"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="position" />
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-4">
+              {/* Language Field */}
+              <FormField
+                control={form.control}
+                name="language"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="language" />
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
                     >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+                      <FormControl>
+                        <SelectTrigger className="border-gray-200 dark:border-blue-950">
+                          <SelectValue placeholder={intl.formatMessage({
+                            id: 'select-language',
+                            defaultMessage: 'Select language'
+                          })} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="en">
+                          <FormattedMessage id="english" defaultMessage="English" />
+                        </SelectItem>
+                        <SelectItem value="fr">
+                          <FormattedMessage id="french" defaultMessage="French" />
+                        </SelectItem>
+                        <SelectItem value="ar">
+                          <FormattedMessage id="arabic" defaultMessage="Arabic" />
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Theme Color Field */}
+              <FormField
+                control={form.control}
+                name="theme.color"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="theme-color" />
+                    </FormLabel>
+                    <FormControl>
+                      <ColorPicker
+                        color={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-4">
+              {/* Password Field */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="password" />*
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          {...field}
+                          className="border-gray-200 dark:border-blue-950 pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 flex items-center pr-3"
+                        >
+                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Password Confirmation Field */}
+              <FormField
+                control={form.control}
+                name="passwordConfirmation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="password-confirmation" />*
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          {...field}
+                          className="border-gray-200 dark:border-blue-950 pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 flex items-center pr-3"
+                        >
+                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+
+          <div className="flex justify-between mt-6">
+            {step > 1 ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                className="flex items-center gap-2"
+                disabled={isSubmitting}
+              >
+                <ChevronLeft size={16} />
+                <FormattedMessage id="previous" defaultMessage="Previous" />
+              </Button>
+            ) : (
+              <div></div>
             )}
-          />
 
-          {/* Sign up Button */}
-          <Button
-            type="submit"
-            className="w-full"
-          >
-            <FormattedMessage id="sign-up" />
-          </Button>
-
-          {/* Divider */}
-          <div className="flex items-center justify-center space-x-4">
-            <div className="h-px grow bg-gray-300"></div>
-            <span className="text-sm ">
-              <FormattedMessage id="or-continue-with" />
-            </span>
-            <div className="h-px grow bg-gray-300"></div>
+            {step < totalSteps ? (
+              <Button
+                type="button"
+                onClick={nextStep}
+                className="flex items-center gap-2"
+                disabled={isSubmitting}
+              >
+                <FormattedMessage id="next" defaultMessage="Next" />
+                <ChevronRight size={16} />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                className="flex items-center gap-2"
+                disabled={isSubmitting}
+              >
+                <FormattedMessage id="sign-up" />
+                {isSubmitting && (
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                )}
+              </Button>
+            )}
           </div>
 
-          {/* Social Login Options */}
-          <div className="flex justify-center space-x-4">
-            <Button
-              variant="outline"
-              className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
-            >
-              <GoogleIcon />
-            </Button>
-            <Button
-              variant="outline"
-              className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
-            >
-              <FacebookIcon />
-            </Button>
-          </div>
+          {step === 1 && (
+            <>
+              {/* Social Login Options */}
+              <div className="mt-4">
+                <div className="flex items-center justify-center space-x-4 mb-4">
+                  <div className="h-px grow bg-gray-300"></div>
+                  <span className="text-sm"><FormattedMessage id="or-continue-with" /></span>
+                  <div className="h-px grow bg-gray-300"></div>
+                </div>
 
-          {/* Sign Up Link */}
-          <div className="flex justify-center space-x-1 text-sm">
-            <span className="">
-              {' '}
-              <FormattedMessage id="you-have-an-account" />
-            </span>
-            <Link
-              href={`/${locale}/auth/login`}
-              className="text-[#0F62FE] underline"
-            >
-              <FormattedMessage id="sign-in" />
-            </Link>
-          </div>
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2"
+                  >
+                    <GoogleIcon />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2"
+                  >
+                    <FacebookIcon />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Sign In Link */}
+              <div className="flex justify-center space-x-1 text-sm mt-4">
+                <span><FormattedMessage id="you-have-an-account" /></span>
+                <Link
+                  href={`/${locale}/auth/login`}
+                  className="text-[#0F62FE] underline"
+                >
+                  <FormattedMessage id="sign-in" />
+                </Link>
+              </div>
+            </>
+          )}
         </form>
       </Form>
     </div>

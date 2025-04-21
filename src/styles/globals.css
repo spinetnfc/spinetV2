@@ -20,8 +20,8 @@ html.ar {
 }
 
 @theme {
-  --color-azure:#145FF2;
-  --color-main: #010C32;
+  --color-azure: #145ff2;
+  --color-main: #010c32;
   --color-navy: #082356;
 }
 @layer base {
@@ -110,8 +110,8 @@ html.ar {
   }
 
   code {
-    font-family:
-      source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
   }
 }
 .noSelect {
@@ -146,4 +146,8 @@ html.ar {
 
 .compare-plans-row:last-child {
   border-bottom: none;
+}
+
+.rdp-vhidden {
+  @apply hidden;
 }
