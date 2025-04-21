@@ -101,13 +101,110 @@ src/
 The application uses Next.js App Router with internationalization support through route parameters:
 
 - `/[locale]/` - Home page
+
+  - Landing page showcasing product features and benefits
+  - Hero section with call-to-action buttons
+  - Feature highlights with animated illustrations
+  - Testimonials carousel from existing users
+  - Pricing plans and subscription options
+  - FAQ accordion section
+  - Newsletter signup form
+
 - `/[locale]/profile` - User profile management
-- `/[locale]/public-profile` - Public profile view
+
+  - User profile editor with avatar upload
+  - Personal information management (name, title, bio, contact details)
+  - Social media account linking
+  - Custom fields management
+  - Privacy settings configuration
+  - NFC card connection and management
+  - QR code generation for profile sharing
+  - Analytics dashboard showing profile visits and interactions
+
+- `/[locale]/public-profile/[username]` - Public profile view
+
+  - Shareable public view of user profiles
+  - Contact information display based on privacy settings
+  - Social media links display
+  - Custom sections defined by the profile owner
+  - One-click contact saving functionality
+  - Direct message/contact options
+  - Profile theme based on user customization
+
 - `/[locale]/search` - Search functionality
+
+  - User search with filters for industry, location, and skills
+  - Advanced search options with boolean operators
+  - Search result display with card and list views
+  - Quick action buttons for connection requests
+  - Search history tracking
+  - Saved searches management
+
 - `/[locale]/shop` - E-commerce shop
+
+  - Product catalog with filtering and sorting
+  - Product listings with specifications
+  - Other physical product offerings
+  - Subscription plan details and comparison
+  - Shopping cart management
+  - Checkout process with address and payment collection
+  - Order history and tracking
+
 - `/[locale]/auth` - Authentication pages
+
+  - Login page with email/password and social auth options
+  - Registration flow with progressive information collection
+  - Password reset process with secure email verification
+  - Two-factor authentication setup
+  - Account recovery options
+  - Social account linking
+
 - `/[locale]/download-app` - App download information
+
+  - Mobile app promotion with feature highlights
+  - Direct links to app stores (iOS and Android)
+  - QR codes for quick app download
+  - App screenshots and feature descriptions
+  - Companion app benefits explanation
+
 - `/[locale]/app` - App-specific features
+
+  - Dashboard with activity summary and quick actions
+  - Contacts management and organization
+  - Lead management with status tracking
+  - Follow-up reminders and task management
+  - Team collaboration features
+  - Analytics and reporting
+  - Settings and account management
+  - Integrations with third-party services
+
+- `/[locale]/events` - Event management
+
+  - Event creation and editing interface
+  - Attendee management and invitations
+  - QR code generation for event check-ins
+  - Attendee analytics and reporting
+  - Event promotion tools
+  - Post-event follow-up automation
+
+- `/[locale]/teams` - Team collaboration
+
+  - Team creation and member management
+  - Role-based permission settings
+  - Shared contacts and leads
+  - Team activity feed
+  - Resource sharing and access controls
+  - Team performance analytics
+
+- `/[locale]/settings` - Account settings
+  - Account information management
+  - Subscription plan management and billing
+  - Notification preferences
+  - Security settings
+  - Language and localization preferences
+  - Theme and display preferences
+  - Integration management with third-party services
+  - Data export and account deletion options
 
 ### Internationalization
 
