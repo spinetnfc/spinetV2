@@ -168,7 +168,7 @@ function Calendar({
 
   return (
     <div className={cn('p-3', className, classNames?.root)}>
-      <div className={cn('flex justify-center pt-1 relative items-center', classNames?.caption)}>
+      <div className={cn('flex justify-center mb-3 pt-1 relative items-center', classNames?.caption)}>
         <button
           className={cn(
             buttonVariants(),

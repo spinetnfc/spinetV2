@@ -1,11 +1,14 @@
+import api from '@/lib/axios';
+import { NewUser, LoginUser } from '@/types/api';
 
-export const register = async () => {}
+export const register = async (user: NewUser) => {
+  const response = await api.post('/auth/register', user);
+  return response.data;
+};
 
-export const login = async (email: string, password: string) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-  });
+export const login = async (user: LoginUser) => {
+  const response = await api.post('/auth/login', user);
+  return response.data;
 };
 
 export const logout = async () => {}
