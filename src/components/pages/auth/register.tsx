@@ -180,7 +180,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
   };
 
   return (
-    <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
+    <div className="z-50 w-full space-y-4 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
       <div className="flex items-center justify-between">
         <h1 className="text-start text-2xl font-semibold">
           {renderStepTitle()}
@@ -193,9 +193,9 @@ const RegisterForm = ({ locale }: { locale: string }) => {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
           {step === 1 && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Email Field */}
               <FormField
                 control={form.control}
@@ -378,7 +378,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
           )}
 
           {step === 2 && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Company Name Field */}
               <FormField
                 control={form.control}
@@ -433,7 +433,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
           )}
 
           {step === 3 && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Language Field */}
               <FormField
                 control={form.control}
@@ -495,7 +495,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
           )}
 
           {step === 4 && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Password Field */}
               <FormField
                 control={form.control}
