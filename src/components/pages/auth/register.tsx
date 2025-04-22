@@ -145,8 +145,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
-        birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
-        gender: data.gender,
+        birthDate: data.birthDate ? format(data.birthDate, 'dd/MM/yyyy') : undefined, gender: data.gender,
         phoneNumber: data.phoneNumber,
         website: data.website,
         companyName: data.companyName,
@@ -186,9 +185,6 @@ const RegisterForm = ({ locale }: { locale: string }) => {
         <h1 className="text-start text-2xl font-semibold">
           {renderStepTitle()}
         </h1>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          <FormattedMessage id="step-of" defaultMessage="Step {current} of {total}" values={{ current: step, total: totalSteps }} />
-        </div>
       </div>
 
       <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full">
@@ -285,7 +281,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "PPP")
+                              format(field.value, "dd-MM-yyyy")
                             ) : (
                               <span><FormattedMessage id="pick-a-date" defaultMessage="Pick a date" /></span>
                             )}
@@ -571,7 +567,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 className="flex items-center gap-2"
                 disabled={isSubmitting}
               >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
                 <FormattedMessage id="previous" defaultMessage="Previous" />
               </Button>
             ) : (
@@ -586,7 +582,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 disabled={isSubmitting}
               >
                 <FormattedMessage id="next" defaultMessage="Next" />
-                <ChevronRight size={16} />
+                <ChevronRight size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
               </Button>
             ) : (
               <Button
