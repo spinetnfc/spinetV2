@@ -7,7 +7,6 @@ import Header from '@/components/header';
 import SideBar from '@/components/side-bar';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/utils/cn';
-import { AuthLoader } from '@/lib/auth';
 import type { SideNavigationItem } from '@/types/layout-types';
 
 const Layout = ({
