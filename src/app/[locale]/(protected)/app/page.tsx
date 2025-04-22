@@ -1,7 +1,5 @@
 'use client';
 
-import { useUser } from '@/lib/auth';
-import { ROLES } from '@/lib/authorization';
 
 const DashboardPage = () => {
   // const user = useUser();
