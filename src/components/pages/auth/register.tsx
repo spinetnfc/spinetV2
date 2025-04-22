@@ -296,16 +296,9 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          captionLayout='dropdown-buttons'
-                          // defaultMonth={new Date('january')}
-                          fromYear={1900}
-                          toYear={2050}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
+
                         />
                       </PopoverContent>
                     </Popover>
