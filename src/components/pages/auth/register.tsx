@@ -1,4 +1,5 @@
 'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -25,13 +26,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
@@ -45,19 +46,32 @@ const registerSchema = z.object({
   lastName: z.string().min(2, { message: 'lastname-required' }),
   birthDate: z.date().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
-  phoneNumber: z.string().optional(),
-  website: z.string().url().optional().or(z.literal('')),
+  phoneNumber: z
+    .string()
+    .min(1, { message: 'phone-number-required' })
+    .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
+      message: 'invalid-phone-number',
+    }),
+  website: z
+    .string()
+    .min(1, { message: 'website-required' })
+    .regex(
+      /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+      { message: 'invalid-website' },
+    ),
 
   // Company Info
-  companyName: z.string().optional(),
-  activitySector: z.string().optional(),
-  position: z.string().optional(),
+  companyName: z.string().min(1, { message: 'company-name-required' }),
+  activitySector: z.string().min(1, { message: 'activity-sector-required' }),
+  position: z.string().min(1, { message: 'position-required' }),
 
   // Customization
   language: z.enum(['en', 'fr', 'ar']).default('en'),
-  theme: z.object({
-    color: z.string().default('#0F62FE'),
-  }).default({ color: '#0F62FE' }),
+  theme: z
+    .object({
+      color: z.string().default('#0F62FE'),
+    })
+    .default({ color: '#0F62FE' }),
 
   // Password
   password: z.string().min(8, { message: 'password-length' }),
@@ -67,10 +81,7 @@ const registerSchema = z.object({
   path: ['passwordConfirmation'],
 });
 
-export default function Register({ locale, messages }: {
-  locale: string;
-  messages: Record<string, string>;
-}) {
+export default function Register({ locale, messages }: { locale: string; messages: Record<string, string> }) {
   return (
     <IntlProvider locale={locale} messages={messages}>
       <RegisterForm locale={locale} />
@@ -83,6 +94,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const totalSteps = 4;
 
@@ -110,13 +122,13 @@ const RegisterForm = ({ locale }: { locale: string }) => {
 
     switch (step) {
       case 1:
-        fieldsToValidate = ['email', 'firstName', 'lastName'];
+        fieldsToValidate = ['email', 'firstName', 'lastName', 'phoneNumber', 'website'];
         break;
       case 2:
-        fieldsToValidate = [];
+        fieldsToValidate = ['companyName', 'activitySector', 'position'];
         break;
       case 3:
-        fieldsToValidate = [];
+        fieldsToValidate = ['language', 'theme.color'];
         break;
       case 4:
         fieldsToValidate = ['password', 'passwordConfirmation'];
@@ -126,27 +138,30 @@ const RegisterForm = ({ locale }: { locale: string }) => {
     const result = await form.trigger(fieldsToValidate as any);
     if (result) {
       if (step < totalSteps) {
-        setStep(prev => prev + 1);
+        setStep((prev) => prev + 1);
       }
     }
   };
 
   const prevStep = () => {
     if (step > 1) {
-      setStep(prev => prev - 1);
+      setStep((prev) => prev - 1);
+      setApiError(null);
     }
   };
 
   // Handle form submission
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsSubmitting(true);
+    setApiError(null);
     try {
       // Convert data to NewUser type
       const userData: NewUser = {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
-        birthDate: data.birthDate ? format(data.birthDate, 'dd/MM/yyyy') : undefined, gender: data.gender,
+        birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
+        gender: data.gender,
         phoneNumber: data.phoneNumber,
         website: data.website,
         companyName: data.companyName,
@@ -158,13 +173,16 @@ const RegisterForm = ({ locale }: { locale: string }) => {
       };
 
       console.log('Submitting user data:', userData);
-      registerUser(userData);
+      await registerUser(userData);
 
-      // Mock success
       alert('Registration successful!');
-
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'Registration failed. Please try again.';
+      setApiError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -172,26 +190,42 @@ const RegisterForm = ({ locale }: { locale: string }) => {
 
   const renderStepTitle = () => {
     switch (step) {
-      case 1: return <FormattedMessage id="personal-information" defaultMessage="Personal Information" />;
-      case 2: return <FormattedMessage id="company-information" defaultMessage="Company Information" />;
-      case 3: return <FormattedMessage id="customization" defaultMessage="Customization" />;
-      case 4: return <FormattedMessage id="password-setup" defaultMessage="Password Setup" />;
-      default: return <FormattedMessage id="sign-up" />;
+      case 1:
+        return <FormattedMessage id="personal-information" defaultMessage="Personal Information" />;
+      case 2:
+        return <FormattedMessage id="company-information" defaultMessage="Company Information" />;
+      case 3:
+        return <FormattedMessage id="customization" defaultMessage="Customization" />;
+      case 4:
+        return <FormattedMessage id="password-setup" defaultMessage="Password Setup" />;
+      default:
+        return <FormattedMessage id="sign-up" />;
     }
   };
 
   return (
     <div className="z-50 w-full space-y-4 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
       <div className="flex items-center justify-between">
-        <h1 className="text-start text-2xl font-semibold">
-          {renderStepTitle()}
-        </h1>
+        <h1 className="text-start text-2xl font-semibold">{renderStepTitle()}</h1>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          <FormattedMessage
+            id="step-of"
+            defaultMessage="Step {current} of {total}"
+            values={{ current: step, total: totalSteps }}
+          />
+        </div>
       </div>
 
       <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full">
-        <div className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-          style={{ width: `${(step / totalSteps) * 100}%` }}></div>
+        <div
+          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+          style={{ width: `${(step / totalSteps) * 100}%` }}
+        ></div>
       </div>
+
+      {apiError && (
+        <div className="text-red-500 text-sm">{apiError}</div>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -231,7 +265,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                       <Input
                         placeholder={intl.formatMessage({
                           id: 'enter-your-first-name',
-                          defaultMessage: 'Enter your first name'
+                          defaultMessage: 'Enter your first name',
                         })}
                         {...field}
                         className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
@@ -277,14 +311,16 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950",
-                              !field.value && "text-muted-foreground"
+                              'w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950',
+                              !field.value && 'text-muted-foreground',
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "dd-MM-yyyy")
+                              format(field.value, 'yyyy-MM-dd')
                             ) : (
-                              <span><FormattedMessage id="pick-a-date" defaultMessage="Pick a date" /></span>
+                              <span>
+                                <FormattedMessage id="pick-a-date" defaultMessage="Pick a date" />
+                              </span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -295,7 +331,6 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-
                         />
                       </PopoverContent>
                     </Popover>
@@ -313,16 +348,15 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                     <FormLabel className="text-sm">
                       <FormattedMessage id="gender" />
                     </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger className="border-gray-200 dark:border-blue-950">
-                          <SelectValue placeholder={intl.formatMessage({
-                            id: 'select-gender',
-                            defaultMessage: 'Select gender'
-                          })} />
+                          <SelectValue
+                            placeholder={intl.formatMessage({
+                              id: 'select-gender',
+                              defaultMessage: 'Select gender',
+                            })}
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -349,10 +383,14 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">
-                      <FormattedMessage id="phone-number" />
+                      <FormattedMessage id="phone-number" />*
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                      <Input
+                        placeholder="+1234567890"
+                        {...field}
+                        className="border-gray-200 dark:border-blue-950"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -366,10 +404,14 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">
-                      <FormattedMessage id="website" />
+                      <FormattedMessage id="website" />*
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                      <Input
+                        placeholder="https://example.com"
+                        {...field}
+                        className="border-gray-200 dark:border-blue-950"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -387,10 +429,17 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">
-                      <FormattedMessage id="company-name" />
+                      <FormattedMessage id="company-name" />*
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                      <Input
+                        placeholder={intl.formatMessage({
+                          id: 'enter-company-name',
+                          defaultMessage: 'Enter company name',
+                        })}
+                        {...field}
+                        className="border-gray-200 dark:border-blue-950"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -404,10 +453,17 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">
-                      <FormattedMessage id="activity-sector" />
+                      <FormattedMessage id="activity-sector" />*
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                      <Input
+                        placeholder={intl.formatMessage({
+                          id: 'enter-activity-sector',
+                          defaultMessage: 'Enter activity sector',
+                        })}
+                        {...field}
+                        className="border-gray-200 dark:border-blue-950"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -421,10 +477,17 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">
-                      <FormattedMessage id="position" />
+                      <FormattedMessage id="position" />*
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} className="border-gray-200 dark:border-blue-950" />
+                      <Input
+                        placeholder={intl.formatMessage({
+                          id: 'enter-position',
+                          defaultMessage: 'Enter position',
+                        })}
+                        {...field}
+                        className="border-gray-200 dark:border-blue-950"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -444,16 +507,15 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                     <FormLabel className="text-sm">
                       <FormattedMessage id="language" />
                     </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger className="border-gray-200 dark:border-blue-950">
-                          <SelectValue placeholder={intl.formatMessage({
-                            id: 'select-language',
-                            defaultMessage: 'Select language'
-                          })} />
+                          <SelectValue
+                            placeholder={intl.formatMessage({
+                              id: 'select-language',
+                              defaultMessage: 'Select language',
+                            })}
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -483,10 +545,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                       <FormattedMessage id="theme-color" />
                     </FormLabel>
                     <FormControl>
-                      <ColorPicker
-                        color={field.value}
-                        onChange={field.onChange}
-                      />
+                      <ColorPicker color={field.value} onChange={field.onChange} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -605,7 +664,9 @@ const RegisterForm = ({ locale }: { locale: string }) => {
               <div className="mt-4">
                 <div className="flex items-center justify-center space-x-4 mb-4">
                   <div className="h-px grow bg-gray-300"></div>
-                  <span className="text-sm"><FormattedMessage id="or-continue-with" /></span>
+                  <span className="text-sm">
+                    <FormattedMessage id="or-continue-with" />
+                  </span>
                   <div className="h-px grow bg-gray-300"></div>
                 </div>
 
@@ -629,11 +690,10 @@ const RegisterForm = ({ locale }: { locale: string }) => {
 
               {/* Sign In Link */}
               <div className="flex justify-center space-x-1 text-sm mt-4">
-                <span><FormattedMessage id="you-have-an-account" /></span>
-                <Link
-                  href={`/${locale}/auth/login`}
-                  className="text-[#0F62FE] underline"
-                >
+                <span>
+                  <FormattedMessage id="you-have-an-account" />
+                </span>
+                <Link href={`/${locale}/auth/login`} className="text-[#0F62FE] underline">
                   <FormattedMessage id="sign-in" />
                 </Link>
               </div>
