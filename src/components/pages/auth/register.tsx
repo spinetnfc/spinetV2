@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FormattedMessage, IntlProvider, useIntl } from 'react-intl';
@@ -38,6 +39,7 @@ import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { ColorPicker } from '@/components/ui/color-picker';
+import { toast } from "sonner";
 
 const registerSchema = z.object({
   // Personal Info
@@ -91,10 +93,10 @@ export default function Register({ locale, messages }: { locale: string; message
 
 const RegisterForm = ({ locale }: { locale: string }) => {
   const intl = useIntl();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
 
   const totalSteps = 4;
 
@@ -146,14 +148,12 @@ const RegisterForm = ({ locale }: { locale: string }) => {
   const prevStep = () => {
     if (step > 1) {
       setStep((prev) => prev - 1);
-      setApiError(null);
     }
   };
 
   // Handle form submission
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsSubmitting(true);
-    setApiError(null);
     try {
       // Convert data to NewUser type
       const userData: NewUser = {
@@ -173,16 +173,23 @@ const RegisterForm = ({ locale }: { locale: string }) => {
       };
 
       console.log('Submitting user data:', userData);
-      await registerUser(userData);
+      const response = await registerUser(userData);
 
-      alert('Registration successful!');
+      // Handle successful response
+      console.log('Registration response:', response);
+      toast.success("Account registered successfully, Proceeding to login...")
+
+      // Redirect to login page after a short delay to show the success message
+      setTimeout(() => {
+        router.push(`/${locale}/auth/login`);
+      }, 8000);
     } catch (error: any) {
       console.error('Registration error:', error);
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
         'Registration failed. Please try again.';
-      setApiError(errorMessage);
+      toast.error("Error: Failed to register");
     } finally {
       setIsSubmitting(false);
     }
@@ -222,10 +229,6 @@ const RegisterForm = ({ locale }: { locale: string }) => {
           style={{ width: `${(step / totalSteps) * 100}%` }}
         ></div>
       </div>
-
-      {apiError && (
-        <div className="text-red-500 text-sm">{apiError}</div>
-      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
