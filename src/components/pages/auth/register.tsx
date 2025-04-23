@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { FormattedMessage, IntlProvider, useIntl } from 'react-intl';
 import * as z from 'zod';
 import type { NewUser } from '@/types/api';
+import { registerUser } from '@/lib/api/auth';
 import FacebookIcon from '@/components/icons/facebook-icon';
 import GoogleIcon from '@/components/icons/google-icon';
 import { Button } from '@/components/ui/button';
@@ -157,7 +158,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
       };
 
       console.log('Submitting user data:', userData);
-      // Add API call here
+      registerUser(userData);
 
       // Mock success
       alert('Registration successful!');

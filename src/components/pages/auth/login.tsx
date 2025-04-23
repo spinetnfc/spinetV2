@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { login } from '@/lib/api/auth';
 
 // Zod validation schema
 const loginSchema = z.object({
@@ -55,6 +56,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
   // Handle form submission
   const onSubmit = (data: z.infer<typeof loginSchema>) => {
     console.log(data);
+    login(data);
     // Implement your login logic here
   };
 
