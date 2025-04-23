@@ -13,7 +13,7 @@ export const registerUser = async (user: NewUser) => {
 
 export const login = async (user: LoginUser) => {
   try {
-    const response = await api.post('/auth/login', user);
+    const response = await api.post('/auth/signin', user);
     return response.data;
   } catch (error) {
     console.error('Login error:', error);

@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { login } from '@/lib/api/auth';
+import { toast } from 'sonner';
 
 // Zod validation schema
 const loginSchema = z.object({
@@ -54,10 +55,15 @@ const LoginForm = ({ locale }: { locale: string }) => {
   });
 
   // Handle form submission
-  const onSubmit = (data: z.infer<typeof loginSchema>) => {
-    console.log(data);
-    login(data);
-    // Implement your login logic here
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+    try {
+      const response = await login(data);
+      console.log(response);
+      toast.success('Login successful');
+    } catch (error) {
+      console.log(error);
+      toast.error('Login failed');
+    }
   };
 
   return (

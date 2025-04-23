@@ -29,13 +29,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
   } as React.CSSProperties;
 
   const darkThemeStyles = {
-    '--normal-bg': 'var(--background)',
+    '--normal-bg': '#010C32',
     '--normal-text': '#e0e0e0',
     '--normal-border': '#333333',
-    '--success-bg': 'var(--background)',
+    '--success-bg': '#010C32',
     '--success-text': '#d4edda',
     '--success-border': '#40916c',
-    '--error-bg': 'var(--background)',
+    '--error-bg': '#010C32',
     '--error-text': '#7f1d1d',
     '--error-border': '#7f1d1d',
   } as React.CSSProperties;
