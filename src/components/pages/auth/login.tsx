@@ -20,20 +20,20 @@ import {
 import { Input } from '@/components/ui/input';
 import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/authContext'; // Import useAuth
 
 // Zod validation schema
 const loginSchema = z.object({
   email: z.string().email({ message: 'invalid-email-address' }),
   password: z.string().min(8, { message: 'password-length' }),
 });
+
 type Props = {
   locale: string;
   messages: Record<string, string>;
 };
-export default function Login({ locale, messages }: {
-  locale: string;
-  messages: Record<string, string>;
-}) {
+
+export default function Login({ locale, messages }: Props) {
   return (
     <IntlProvider locale={locale} messages={messages}>
       <LoginForm locale={locale} />
@@ -44,6 +44,7 @@ export default function Login({ locale, messages }: {
 const LoginForm = ({ locale }: { locale: string }) => {
   const intl = useIntl();
   const [showPassword, setShowPassword] = useState(false);
+  const { login: authLogin } = useAuth(); // Get login function from AuthContext
 
   // Initialize form with zod resolver
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -58,13 +59,25 @@ const LoginForm = ({ locale }: { locale: string }) => {
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
       const response = await login(data);
-      console.log(response);
+
+      const user = response; // ❌ don't await this, it's not a promise
+
+      // If you're getting the whole user object correctly:
+      if (!user || typeof user !== 'object') {
+        throw new Error('Invalid user response');
+      }
+
+      // Save user to cookie — must stringify safely
+      document.cookie = `current-user=${encodeURIComponent(JSON.stringify(user))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+
+      authLogin(user); // Call AuthContext login function
       toast.success('Login successful');
     } catch (error) {
-      console.log(error);
+      console.error('Login error:', error);
       toast.error('Login failed');
     }
   };
+
 
   return (
     <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">

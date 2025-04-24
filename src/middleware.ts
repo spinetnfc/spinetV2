@@ -97,8 +97,7 @@ export function middleware(request: NextRequest) {
 
   // Authentication logic - only apply to protected routes
   if (!isPublic) {
-    const token = request.cookies.get('token')?.value;
-    // const token = 'mock-token';
+    const token = request.cookies.get('current-user')?.value;
     
     if (!token) {
       const localePart = nextLocale || defaultLocale;
