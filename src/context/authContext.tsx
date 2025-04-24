@@ -66,14 +66,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const pathname = usePathname();
 
-    const getLocale = useMemo(
-        () => () => {
+    const getLocale = useMemo(() => {
+        const supportedLocales = ['fr', 'ar', 'en'];
+
+        return () => {
             if (!pathname) return 'en';
             const parts = pathname.split('/');
-            return parts.length > 1 ? parts[1] : 'en';
-        },
-        [pathname]
-    );
+            const localeCandidate = parts[1];
+
+            return supportedLocales.includes(localeCandidate) ? localeCandidate : 'en';
+        };
+    }, [pathname]);
+
 
     // 1) Hydrate user from cookie
     useEffect(() => {
@@ -92,7 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         )}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
 
         const locale = getLocale();
-        window.location.href = `/${locale}/app`;
+        window.location.href = `/${locale}`;
     };
 
     // 3) logout
