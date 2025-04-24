@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { signOut } from '@/lib/api/auth';
 
 export interface User {
     _id: string;
@@ -103,7 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logout = () => {
         setUser(null);
         document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
-
+        signOut();
         const locale = getLocale();
         window.location.href = `/${locale}/auth/login`;
     };

@@ -21,7 +21,17 @@ export const login = async (user: LoginUser) => {
   }
 };
 
-export const logout = async () => {}
+
+
+export const signOut = async () => {
+  try {
+    const response = await api.post('/auth/signout');
+    return response.data;
+  } catch (error) {
+    console.error('Log-out error:', error);
+    throw error;
+  }
+}
 
 export const refreshToken = async () => {}
 export const getCurrentUser = async () => {}

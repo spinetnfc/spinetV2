@@ -60,9 +60,8 @@ const LoginForm = ({ locale }: { locale: string }) => {
     try {
       const response = await login(data);
 
-      const user = response; // ❌ don't await this, it's not a promise
+      const user = response;
 
-      // If you're getting the whole user object correctly:
       if (!user || typeof user !== 'object') {
         throw new Error('Invalid user response');
       }

@@ -16,6 +16,7 @@ import {
 // import { useLogout } from '@/lib/auth';
 import Link from 'next/link';
 import CtaButton from './pages/landing-page/cta-button';
+import UserMenu from './userMenu';
 function Header({ locale }: { locale: string }) {
   const router = useRouter();
   // const logout = useLogout();
@@ -37,23 +38,7 @@ function Header({ locale }: { locale: string }) {
           {path?.includes("/shop") && <Link href={`/${locale}/shop/cart`}>
             <ShoppingCart className="size-6 text-white" />
           </Link>}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="rounded-full bg-white dark:bg-background">
-                <User2 className="size-6" />
-                <span className="sr-only">Open user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => router.push('/profile')} className="text-primary">
-                Your Profile
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-primary">
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <UserMenu locale={locale} />
         </>}
 
       </div>

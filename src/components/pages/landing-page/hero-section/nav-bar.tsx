@@ -1,4 +1,4 @@
-import { LogIn, Menu, X } from "lucide-react";
+import { LogIn, Menu, User2, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import ChangeLanguage from "@/components/change-language";
@@ -6,6 +6,8 @@ import Logo from "@/components/logo";
 import ThemeSwitch from "@/components/theme-switch";
 import { cn } from "@/utils/cn";
 import CtaButton from "../cta-button";
+import { useAuth } from "@/context/authContext";
+import UserMenu from "@/components/userMenu";
 
 const navItems = [
   { id: "discover-more", label: "discover" },
@@ -43,6 +45,7 @@ function NavBar({
   // State to handle auto-hiding behavior
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
+  const { logout: authLogout, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -102,11 +105,12 @@ function NavBar({
         <div className="flex items-center gap-3">
           <ThemeSwitch parentDarkMode={parentDarkMode} locale={locale} />
           <ChangeLanguage locale={locale} />
-          <CtaButton
+
+          {!isAuthenticated ? <CtaButton
             text={intl.formatMessage({ id: "log-in" })}
             icon={<LogIn className="me-2.5 size-6" />}
             link={`/${locale}/auth/login`}
-          />
+          /> : <UserMenu locale={locale} />}
         </div>
       </nav>
 
