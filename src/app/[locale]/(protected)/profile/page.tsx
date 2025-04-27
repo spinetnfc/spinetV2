@@ -76,7 +76,7 @@ export default async function ProfilePage({
     return (
         <div className="min-h-screen w-full">
             {/* Profile Header */}
-            <div className="relative h-64 bg-gradient-to-r from-blue-500 to-purple-600">
+            <div className="relative h-96 bg-gradient-to-r from-blue-500 to-purple-600">
                 <div className="absolute -bottom-16 left-8">
                     <div className="relative">
                         <Image

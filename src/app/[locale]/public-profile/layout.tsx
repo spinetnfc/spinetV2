@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
 
-import ProfileLayout from '@/components/layouts/profile-layout';
+import ProfileLayout from '@/components/layouts/public-profile-layout';
 
 export const metadata = {
     title: 'Shop',
     description: 'Shop',
 };
 
-const AppLayout = async ({
+const PublicProfileLayout = async ({
     params,
     children,
 }: {
@@ -24,4 +24,4 @@ const AppLayout = async ({
     )
 };
 
-export default AppLayout;
+export default PublicProfileLayout;
