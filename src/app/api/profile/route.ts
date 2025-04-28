@@ -1,5 +1,6 @@
-import api from "@/lib/axios"
+import {api} from "@/lib/axios"
 import { type NextRequest, NextResponse } from "next/server"
+import axios from "axios"
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 })
     }
 
-    const response = await api.get(`/profile/${userId}`)
+    const response = await axios.get(`${process.env.API_URL}/profile/${userId}`)
 
     // Return the data from the API response
     return NextResponse.json(response.data)

@@ -1,4 +1,4 @@
-import api from '@/lib/axios';
+import {api} from '@/lib/axios';
 import { NewUser, LoginUser } from '@/types/api';
 
 export const registerUser = async (user: NewUser) => {

@@ -24,7 +24,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { getProfile, ProfileData } from '@/lib/api/profile'
+import SaveButton from "@/components/pages/profile/save-button"
+import { cookies } from 'next/headers'
+import { getUserCookieOnServer } from "@/utils/cookies"
+
 
 export default async function ProfilePage({
     params,
@@ -34,54 +38,40 @@ export default async function ProfilePage({
     const { locale } = await params
     const { t } = await useTranslate(locale)
 
-    // Mock user data - replace with actual user data from your backend
-    const user = {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "+1 234 567 890",
-        location: "New York, USA",
-        bio: "Digital business card enthusiast and tech lover",
-        avatar: "/img/user.png",
-        socialLinks: {
-            linkedin: "https://linkedin.com/in/johndoe",
-            instagram: "https://instagram.com/johndoe",
-            twitter: "https://twitter.com/johndoe",
-            github: "https://github.com/johndoe",
-            website: "https://johndoe.com",
-        },
-        security: {
-            twoFactorEnabled: false,
-            lastPasswordChange: "2024-03-15",
-            activeSessions: 2,
-        },
-        activity: [
-            {
-                type: "login",
-                description: "Logged in from New York, USA",
-                timestamp: "2024-04-19T10:30:00Z",
-            },
-            {
-                type: "profile_update",
-                description: "Updated profile information",
-                timestamp: "2024-04-18T15:45:00Z",
-            },
-            {
-                type: "security",
-                description: "Changed password",
-                timestamp: "2024-04-15T09:20:00Z",
-            },
-        ],
+
+    const userId = await getUserCookieOnServer();
+
+    // Fetch user profile using getProfile
+    let profileData: ProfileData | null = null
+
+    try {
+        // Now that we've fixed the URL encoding, we can use the actual userId
+        profileData = await getProfile(userId)
+    } catch (err: any) {
+        console.error('Error fetching profile:', err)
+        throw new Error(`Failed to load profile data: ${err.message}`)
     }
+
+    // No fallback data - if profile can't be loaded, show error
+    if (!profileData) {
+        throw new Error('Profile data not found')
+    }
+
+    const fullName = `${profileData.firstName} ${profileData.lastName}`
+    const profilePictureUrl = profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
+    const coverImageUrl = profileData.profileCover ? `/api/files/${profileData.profileCover}` : ""
 
     return (
         <div className="min-h-screen w-full">
             {/* Profile Header */}
-            <div className="relative h-96 bg-gradient-to-r from-blue-500 to-purple-600">
+            <div className="relative h-96 bg-gradient-to-r from-blue-500 to-purple-600"
+                style={coverImageUrl ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } :
+                    profileData.theme?.color ? { backgroundColor: profileData.theme.color } : {}}>
                 <div className="absolute -bottom-16 left-8">
                     <div className="relative">
                         <Image
-                            src={user.avatar}
-                            alt={user.name}
+                            src={profilePictureUrl}
+                            alt={fullName}
                             width={128}
                             height={128}
                             className="rounded-full border-4 bg-white border-white dark:border-gray-800"
@@ -98,9 +88,11 @@ export default async function ProfilePage({
                 <div className="flex justify-between items-start mb-8">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            {user.name}
+                            {fullName}
                         </h1>
-                        <p className="text-gray-600 dark:text-gray-300 mt-1">{user.bio}</p>
+                        <p className="text-gray-600 dark:text-gray-300 mt-1">
+                            {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
+                        </p>
                     </div>
                 </div>
 
@@ -126,197 +118,242 @@ export default async function ProfilePage({
 
                     {/* Personal Information Tab */}
                     <TabsContent value="personal" className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">Basic Information</h2>
+                        <form id="personal-form">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="name">Full Name</Label>
-                                        <Input id="name" defaultValue={user.name} />
+                                    <h2 className="text-lg font-semibold">Basic Information</h2>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <Label htmlFor="firstName">First Name</Label>
+                                            <Input
+                                                id="firstName"
+                                                defaultValue={profileData.firstName}
+                                                disabled={profileData.lockedFeatures?.firstName}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="lastName">Last Name</Label>
+                                            <Input
+                                                id="lastName"
+                                                defaultValue={profileData.lastName}
+                                                disabled={profileData.lockedFeatures?.lastName}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="birthDate">Birth Date</Label>
+                                            <Input
+                                                id="birthDate"
+                                                type="date"
+                                                defaultValue={profileData.birthDate}
+                                                disabled={profileData.lockedFeatures?.birthDate}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="gender">Gender</Label>
+                                            <Input
+                                                id="gender"
+                                                defaultValue={profileData.gender}
+                                                disabled={profileData.lockedFeatures?.gender}
+                                            />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <Label htmlFor="email">Email</Label>
-                                        <Input id="email" type="email" defaultValue={user.email} />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="phone">Phone</Label>
-                                        <Input id="phone" defaultValue={user.phone} />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="location">Location</Label>
-                                        <Input id="location" defaultValue={user.location} />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="bio">Bio</Label>
-                                        <Textarea id="bio" defaultValue={user.bio} />
+                                </div>
+
+                                <div className="space-y-4">
+                                    <h2 className="text-lg font-semibold">Professional Information</h2>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <Label htmlFor="companyName">Company Name</Label>
+                                            <Input
+                                                id="companyName"
+                                                defaultValue={profileData.companyName}
+                                                disabled={profileData.lockedFeatures?.companyName}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="activitySector">Activity Sector</Label>
+                                            <Input
+                                                id="activitySector"
+                                                defaultValue={profileData.activitySector}
+                                                disabled={profileData.lockedFeatures?.activitySector}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="position">Position</Label>
+                                            <Input
+                                                id="position"
+                                                defaultValue={profileData.position}
+                                                disabled={profileData.lockedFeatures?.position}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="profileType">Profile Type</Label>
+                                            <Input
+                                                id="profileType"
+                                                defaultValue={profileData.type}
+                                                disabled
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">Social Links</h2>
-                                <div className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="linkedin">LinkedIn</Label>
-                                        <Input id="linkedin" defaultValue={user.socialLinks.linkedin} />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="instagram">Instagram</Label>
-                                        <Input id="instagram" defaultValue={user.socialLinks.instagram} />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="twitter">Twitter</Label>
-                                        <Input id="twitter" defaultValue={user.socialLinks.twitter} />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="github">GitHub</Label>
-                                        <Input id="github" defaultValue={user.socialLinks.github} />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="website">Website</Label>
-                                        <Input id="website" defaultValue={user.socialLinks.website} />
+                            {profileData.lockedFeatures?.canAddLinks && (
+                                <div className="space-y-4 mt-8">
+                                    <h2 className="text-lg font-semibold">Social Links</h2>
+                                    <div className="space-y-4">
+                                        {profileData.links && profileData.links.length > 0 ? (
+                                            profileData.links.map((link, index) => (
+                                                <div key={index} className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <Label htmlFor={`link-title-${index}`}>Platform</Label>
+                                                        <Input
+                                                            id={`link-title-${index}`}
+                                                            defaultValue={link.title}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <Label htmlFor={`link-url-${index}`}>URL/Username</Label>
+                                                        <Input
+                                                            id={`link-url-${index}`}
+                                                            defaultValue={link.link}
+                                                        />
+                                                    </div>
+                                                    <div className="col-span-2">
+                                                        <Label htmlFor={`link-name-${index}`}>Display Name</Label>
+                                                        <Input
+                                                            id={`link-name-${index}`}
+                                                            defaultValue={link.name}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-gray-500">No social links added yet.</p>
+                                        )}
+                                        <Button variant="outline">Add New Link</Button>
                                     </div>
                                 </div>
+                            )}
+
+                            <div className="flex justify-end mt-6">
+                                <SaveButton userId={userId || ''} sectionName="profile" />
                             </div>
-                        </div>
-                        <div className="flex justify-end">
-                            <Button>Save Changes</Button>
-                        </div>
+                        </form>
                     </TabsContent>
 
                     {/* Security Tab */}
                     <TabsContent value="security" className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">Password</h2>
+                        <form id="security-form">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="current-password">Current Password</Label>
-                                        <Input id="current-password" type="password" />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="new-password">New Password</Label>
-                                        <Input id="new-password" type="password" />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="confirm-password">Confirm New Password</Label>
-                                        <Input id="confirm-password" type="password" />
+                                    <h2 className="text-lg font-semibold">Password</h2>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <Label htmlFor="current-password">Current Password</Label>
+                                            <Input id="current-password" type="password" />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="new-password">New Password</Label>
+                                            <Input id="new-password" type="password" />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="confirm-password">Confirm New Password</Label>
+                                            <Input id="confirm-password" type="password" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">Two-Factor Authentication</h2>
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <h3 className="font-medium">Two-Factor Authentication</h3>
-                                            <p className="text-sm text-gray-500">
-                                                Add an extra layer of security to your account
-                                            </p>
+                                    <h2 className="text-lg font-semibold">Two-Factor Authentication</h2>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="font-medium">Two-Factor Authentication</h3>
+                                                <p className="text-sm text-gray-500">
+                                                    Add an extra layer of security to your account
+                                                </p>
+                                            </div>
+                                            <Button variant="default">
+                                                Enable
+                                            </Button>
                                         </div>
-                                        <Button variant={user.security.twoFactorEnabled ? "destructive" : "default"}>
-                                            {user.security.twoFactorEnabled ? "Disable" : "Enable"}
-                                        </Button>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <h3 className="font-medium">Active Sessions</h3>
-                                            <p className="text-sm text-gray-500">
-                                                {user.security.activeSessions} active sessions
-                                            </p>
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="font-medium">Active Sessions</h3>
+                                                <p className="text-sm text-gray-500">
+                                                    View your active sessions
+                                                </p>
+                                            </div>
+                                            <Button variant="outline">View All</Button>
                                         </div>
-                                        <Button variant="outline">View All</Button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="flex justify-end">
-                            <Button>Update Security Settings</Button>
-                        </div>
+                            <div className="flex justify-end mt-6">
+                                <SaveButton userId={userId || ''} sectionName="security" />
+                            </div>
+                        </form>
                     </TabsContent>
 
                     {/* Activity Tab */}
                     <TabsContent value="activity" className="space-y-6">
                         <div className="space-y-4">
                             <h2 className="text-lg font-semibold">Recent Activity</h2>
-                            <div className="space-y-4">
-                                {user.activity.map((activity, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-start gap-4 p-4 border rounded-lg"
-                                    >
-                                        <div className="mt-1">
-                                            {activity.type === "login" && <User className="w-5 h-5" />}
-                                            {activity.type === "profile_update" && <Edit className="w-5 h-5" />}
-                                            {activity.type === "security" && <Shield className="w-5 h-5" />}
-                                        </div>
-                                        <div>
-                                            <p className="font-medium">{activity.description}</p>
-                                            <p className="text-sm text-gray-500">
-                                                {new Date(activity.timestamp).toLocaleString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="p-4 border rounded-lg">
+                                <p className="text-center text-gray-500">No recent activity to display.</p>
                             </div>
                         </div>
                     </TabsContent>
 
                     {/* Preferences Tab */}
                     <TabsContent value="preferences" className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">Notifications</h2>
+                        <form id="preferences-form">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
+                                    <h2 className="text-lg font-semibold">Theme Settings</h2>
+                                    <div className="space-y-4">
                                         <div>
-                                            <h3 className="font-medium">Email Notifications</h3>
-                                            <p className="text-sm text-gray-500">
-                                                Receive notifications via email
-                                            </p>
+                                            <Label htmlFor="theme-color">Theme Color</Label>
+                                            <div className="flex gap-2">
+                                                <Input
+                                                    id="theme-color"
+                                                    type="color"
+                                                    defaultValue={profileData.theme?.color || "#FFFFFF"}
+                                                    className="w-16 h-10"
+                                                    disabled={profileData.lockedFeatures?.theme}
+                                                />
+                                                <Input
+                                                    id="theme-color-hex"
+                                                    defaultValue={profileData.theme?.color || "#FFFFFF"}
+                                                    className="flex-1"
+                                                    disabled={profileData.lockedFeatures?.theme}
+                                                />
+                                            </div>
                                         </div>
-                                        <Button variant="outline">Configure</Button>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <h3 className="font-medium">Push Notifications</h3>
-                                            <p className="text-sm text-gray-500">
-                                                Receive push notifications
-                                            </p>
-                                        </div>
-                                        <Button variant="outline">Configure</Button>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">Privacy</h2>
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <h3 className="font-medium">Profile Visibility</h3>
-                                            <p className="text-sm text-gray-500">
-                                                Control who can see your profile
-                                            </p>
-                                        </div>
-                                        <Button variant="outline">Configure</Button>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <h3 className="font-medium">Data Sharing</h3>
-                                            <p className="text-sm text-gray-500">
-                                                Manage your data sharing preferences
-                                            </p>
-                                        </div>
-                                        <Button variant="outline">Configure</Button>
+                                    <h2 className="text-lg font-semibold">Feature Access</h2>
+                                    <div className="space-y-2">
+                                        {Object.entries(profileData.lockedFeatures || {}).map(([feature, isLocked]) =>
+                                            feature !== 'excludedLinks' && (
+                                                <div key={feature} className="flex items-center justify-between px-4 py-2 border rounded">
+                                                    <span className="capitalize">{feature.replace(/([A-Z])/g, ' $1')}</span>
+                                                    <span className={isLocked ? "text-red-500" : "text-green-500"}>
+                                                        {isLocked ? "Locked" : "Unlocked"}
+                                                    </span>
+                                                </div>
+                                            )
+                                        )}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="flex justify-end">
-                            <Button>Save Preferences</Button>
-                        </div>
+                            <div className="flex justify-end mt-6">
+                                <SaveButton userId={userId || ''} sectionName="preferences" />
+                            </div>
+                        </form>
                     </TabsContent>
                 </Tabs>
             </div>

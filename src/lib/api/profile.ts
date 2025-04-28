@@ -1,4 +1,5 @@
-import api from '@/lib/axios';
+import {api, ServerApi} from '@/lib/axios';
+import axios from 'axios';
 
 export interface ProfileData {
     type: string;
@@ -39,40 +40,19 @@ export interface ProfileData {
     };
 }
 
-export const getProfile = async (userId: string): Promise<ProfileData> => {
+export const getProfile = async (userId: string |null): Promise<ProfileData> => {
     try {
-        console.log('Fetching profile for userId:', userId);
+        console.log('Fetching profile for userId:',userId);
         
         // Make sure userId is a valid string
         if (!userId || typeof userId !== 'string') {
             throw new Error(`Invalid userId: ${userId}`);
-        }
-        
-        // Construct URL path carefully
-        const url = `/user/${encodeURIComponent(userId)}/profiles`;
-        console.log('Request URL:', url);
-        
-        // Make the actual API call - NO MOCK DATA
-        const response = await api.get(url);
+        }        
+        // Use proper URL format
+        const response = await ServerApi.get(`/user/${userId}/profiles`);
         return response.data;
     } catch (error) {
         console.error('Profile fetch error:', error);
-        
-        // Additional debugging
-        if (error instanceof Error) {
-            console.error('Error details:', error.message);
-            
-            // Check for axios error properties
-            const axiosError = error as any;
-            if (axiosError.config) {
-                console.error('Request config:', axiosError.config);
-            }
-            if (axiosError.response) {
-                console.error('Response status:', axiosError.response.status);
-                console.error('Response data:', axiosError.response.data);
-            }
-        }
-        
         throw error;
     }
 };

@@ -59,9 +59,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
       const response = await login(data);
-
       const user = response;
-
       if (!user || typeof user !== 'object') {
         throw new Error('Invalid user response');
       }
