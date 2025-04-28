@@ -66,6 +66,8 @@ const LoginForm = ({ locale }: { locale: string }) => {
 
       // Save user to cookie — must stringify safely
       document.cookie = `current-user=${encodeURIComponent(JSON.stringify(user))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      document.cookie = `fileApiToken=${encodeURIComponent(JSON.stringify((user.tokens.fileApiToken)))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      document.cookie = `fileApiRefreshToken=${encodeURIComponent(JSON.stringify(user.tokens.fileApiRefreshToken))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
 
       authLogin(user); // Call AuthContext login function
       toast.success('Login successful');
