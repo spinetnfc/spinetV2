@@ -28,7 +28,7 @@ import { getProfile, ProfileData } from '@/lib/api/profile'
 import SaveButton from "@/components/pages/profile/save-button"
 import { cookies } from 'next/headers'
 import { getUserCookieOnServer } from "@/utils/cookies"
-
+import ProfileForm from "@/components/pages/profile/profile-form";
 
 export default async function ProfilePage({
     params,
@@ -38,7 +38,7 @@ export default async function ProfilePage({
     const { locale } = await params
     const { t } = await useTranslate(locale)
     const user = await getUserCookieOnServer();
-    const profileId = user.selectedProfile;
+    const profileId = user?.selectedProfile || null;
     // Fetch user profile using getProfile
     let profileData: ProfileData | null
 
@@ -117,128 +117,12 @@ export default async function ProfilePage({
 
                     {/* Personal Information Tab */}
                     <TabsContent value="personal" className="space-y-6">
-                        <form id="personal-form">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Basic Information</h2>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <Label htmlFor="firstName">First Name</Label>
-                                            <Input
-                                                id="firstName"
-                                                defaultValue={profileData.firstName}
-                                                disabled={profileData.lockedFeatures?.firstName}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="lastName">Last Name</Label>
-                                            <Input
-                                                id="lastName"
-                                                defaultValue={profileData.lastName}
-                                                disabled={profileData.lockedFeatures?.lastName}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="birthDate">Birth Date</Label>
-                                            <Input
-                                                id="birthDate"
-                                                type="date"
-                                                defaultValue={profileData.birthDate ? new Date(profileData.birthDate).toISOString().split('T')[0] : ''}
-                                                disabled={profileData.lockedFeatures?.birthDate}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="gender">Gender</Label>
-                                            <Input
-                                                id="gender"
-                                                defaultValue={profileData.gender}
-                                                disabled={profileData.lockedFeatures?.gender}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Professional Information</h2>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <Label htmlFor="companyName">Company Name</Label>
-                                            <Input
-                                                id="companyName"
-                                                defaultValue={profileData.companyName}
-                                                disabled={profileData.lockedFeatures?.companyName}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="activitySector">Activity Sector</Label>
-                                            <Input
-                                                id="activitySector"
-                                                defaultValue={profileData.activitySector}
-                                                disabled={profileData.lockedFeatures?.activitySector}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="position">Position</Label>
-                                            <Input
-                                                id="position"
-                                                defaultValue={profileData.position}
-                                                disabled={profileData.lockedFeatures?.position}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="profileType">Profile Type</Label>
-                                            <Input
-                                                id="profileType"
-                                                defaultValue={profileData.type}
-                                                disabled
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {profileData.lockedFeatures?.canAddLinks && (
-                                <div className="space-y-4 mt-8">
-                                    <h2 className="text-lg font-semibold">Social Links</h2>
-                                    <div className="space-y-4">
-                                        {profileData.links && profileData.links.length > 0 ? (
-                                            profileData.links.map((link, index) => (
-                                                <div key={index} className="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <Label htmlFor={`link-title-${index}`}>Platform</Label>
-                                                        <Input
-                                                            id={`link-title-${index}`}
-                                                            defaultValue={link.title}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <Label htmlFor={`link-url-${index}`}>URL/Username</Label>
-                                                        <Input
-                                                            id={`link-url-${index}`}
-                                                            defaultValue={link.link}
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-2">
-                                                        <Label htmlFor={`link-name-${index}`}>Display Name</Label>
-                                                        <Input
-                                                            id={`link-name-${index}`}
-                                                            defaultValue={link.name}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p className="text-gray-500">No social links added yet.</p>
-                                        )}
-                                        <Button variant="outline">Add New Link</Button>
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="flex justify-end mt-6">
-                                <SaveButton profileId={profileId || ''} sectionName="profile" />
-                            </div>
-                        </form>
+                        <ProfileForm
+                            profileData={profileData}
+                            profileId={profileId || ''}
+                            sectionName="profile"
+                            locale={locale}
+                        />
                     </TabsContent>
 
                     {/* Security Tab */}

@@ -33,6 +33,9 @@ SPINET Web is a digital business card platform that allows users to create and m
 - Social links are displayed and can be edited if allowed
 - Form submission handled by client components with proper user feedback
 - Different forms for different profile sections (personal, security, preferences)
+- Form validation using Zod schema validation
+- Calendar component for date selection instead of basic date input
+- Dynamic form fields for social links with add/remove functionality
 
 ## Code Organization
 
@@ -48,6 +51,7 @@ SPINET Web is a digital business card platform that allows users to create and m
 - Internationalization implemented with locale in URL path (`[locale]`)
 - Protected routes are in the `(protected)` directory
 - Server components fetch data, client components handle interactivity
+- Form components are client-side with validation
 
 ## Styling and UI
 
@@ -62,6 +66,9 @@ SPINET Web is a digital business card platform that allows users to create and m
 - React for UI
 - Lucide for icons
 - Tailwind CSS for styling
+- Zod for form validation
+- React Hook Form for form state management
+- date-fns for date formatting and manipulation
 
 ## Coding Conventions
 
@@ -71,3 +78,5 @@ SPINET Web is a digital business card platform that allows users to create and m
 - Server components for data fetching
 - Client components for interactivity when needed
 - Form-based updates with FormData API
+- Schema validation for form inputs
+- Toast notifications for user feedback

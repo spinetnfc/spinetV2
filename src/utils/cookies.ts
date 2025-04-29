@@ -1,3 +1,4 @@
+import { User } from '@/context/authContext';
 import { cookies } from 'next/headers';  // for server-side cookie handling
 
 export function getUserFromCookie() {
@@ -16,7 +17,7 @@ export function getUserFromCookie() {
   }
 
 
-  export async function getUserCookieOnServer(): Promise<any> {
+  export async function getUserCookieOnServer(): Promise<User | null> {
     const cookieStore = await cookies();
     const userCookie = cookieStore.get('current-user')?.value;
   
@@ -24,6 +25,7 @@ export function getUserFromCookie() {
       const userFromCookie = JSON.parse(decodeURIComponent(userCookie));
       return userFromCookie;
     } else {
+      console.error('No user cookie found');
       return null;
     }
   }
