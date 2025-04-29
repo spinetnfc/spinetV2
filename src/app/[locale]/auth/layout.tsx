@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
-  return <AuthLayoutComponent> {children}</AuthLayoutComponent>;
+  return <AuthLayoutComponent>{children}</AuthLayoutComponent>;
 };
 
 export default AuthLayout;

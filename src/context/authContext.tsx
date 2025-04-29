@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
         document.cookie = `fileApiToken=; path=/; max-age=0; SameSite=Lax`;
         document.cookie = `fileApiRefreshToken=; path=/; max-age=0; SameSite=Lax`;
-        //can't delete cause it's http only, mus tbe done on server side
+        // can't delete cause it's http only, mus tbe done on server side
         // document.cookie = `spinet-session=; path=/; max-age=0; SameSite=Lax`;
         // document.cookie = `sounet-session-sig=; path=/; max-age=0; SameSite=Lax`;
         signOut();

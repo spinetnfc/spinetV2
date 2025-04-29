@@ -10,6 +10,7 @@ import { cn } from '@/utils/cn';
 import ThemeSwitch from '../theme-switch';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
+import { useAuth } from '@/context/authContext';
 
 type LayoutProps = {
   children: ReactNode;
@@ -22,6 +23,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   // Ensure component is mounted before using window properties
   useEffect(() => {
@@ -40,6 +42,20 @@ export const AuthLayout = ({ children }: LayoutProps) => {
     };
   }, []);
 
+  // Handle redirection for authenticated users
+  useEffect(() => {
+    if (mounted && isAuthenticated && pathname !== '/auth/forgot-password') {
+      const localeParam = params.locale;
+      const locale =
+        typeof localeParam === 'string'
+          ? localeParam
+          : Array.isArray(localeParam)
+            ? localeParam[0]
+            : 'en';
+      router.push(`/${locale}`);
+    }
+  }, [mounted, isAuthenticated, pathname, router, params.locale]);
+
   const localeParam = params.locale;
   const locale =
     typeof localeParam === 'string'
@@ -51,6 +67,15 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   // Render a simple loading state during server-side rendering
   // to avoid hydration mismatches
   if (!mounted) {
+    return (
+      <div className="relative flex w-full flex-col items-center justify-center min-h-screen">
+        <Spinner size="xxl" />
+      </div>
+    );
+  }
+
+  // Show loading spinner while redirecting
+  if (isAuthenticated && pathname !== '/auth/forgot-password') {
     return (
       <div className="relative flex w-full flex-col items-center justify-center min-h-screen">
         <Spinner size="xxl" />

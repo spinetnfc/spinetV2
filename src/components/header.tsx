@@ -1,25 +1,14 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
-import { LogIn, ShoppingCart, User2 } from 'lucide-react';
-
+import { usePathname } from 'next/navigation';
+import { LogIn, ShoppingCart } from 'lucide-react';
 import ChangeLanguage from '@/components/change-language';
 import ThemeSwitch from '@/components/theme-switch';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown';
-// import { useLogout } from '@/lib/auth';
 import Link from 'next/link';
 import CtaButton from './pages/landing-page/cta-button';
 import UserMenu from './userMenu';
+
 function Header({ locale }: { locale: string }) {
-  const router = useRouter();
-  // const logout = useLogout();
   const isLogged = true;
   const path = usePathname();
 
