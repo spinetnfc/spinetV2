@@ -21,8 +21,6 @@ export const login = async (user: LoginUser) => {
   }
 };
 
-
-
 export const signOut = async () => {
   try {
     const response = await api.post('/auth/signout');
@@ -33,7 +31,16 @@ export const signOut = async () => {
   }
 }
 
-export const refreshToken = async () => {}
+export const refreshToken = async (): Promise<{ message: string }> => {
+  try {
+    const response = await api.post('/auth/refresh');
+    return response.data;
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    throw error;
+  }
+};
+
 export const getCurrentUser = async () => {}
 
 export const updateUser = async () => {}

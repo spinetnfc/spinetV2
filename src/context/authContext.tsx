@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { signOut } from '@/lib/api/auth';
+import { signOut, refreshToken } from '@/lib/api/auth';
 
 export interface User {
     _id: string;
@@ -34,6 +34,7 @@ interface AuthContextType {
     logout: () => void;
     isAuthenticated: boolean;
     isLoading: boolean;
+    refreshUserToken: () => Promise<boolean>;
 }
 
 const defaultContextValue: AuthContextType = {
@@ -42,6 +43,7 @@ const defaultContextValue: AuthContextType = {
     logout: () => { },
     isAuthenticated: false,
     isLoading: true,
+    refreshUserToken: async () => false,
 };
 
 const AuthContext = createContext<AuthContextType>(defaultContextValue);
@@ -103,16 +105,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // 3) logout
     const logout = () => {
         setUser(null);
+        // Clear all authentication-related cookies
         document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
+        document.cookie = `fileApiToken=; path=/; max-age=0; SameSite=Lax`;
+        document.cookie = `fileApiRefreshToken=; path=/; max-age=0; SameSite=Lax`;
+        //can't delete cause it's http only, mus tbe done on server side
+        // document.cookie = `spinet-session=; path=/; max-age=0; SameSite=Lax`;
+        // document.cookie = `sounet-session-sig=; path=/; max-age=0; SameSite=Lax`;
         signOut();
         const locale = getLocale();
         window.location.href = `/${locale}/auth/login`;
     };
 
+    // 4) refresh token
+    const refreshUserToken = async (): Promise<boolean> => {
+        try {
+            const result = await refreshToken();
+            console.log('Token refreshed:', result);
+            return true;
+        } catch (error: any) {
+            console.error('Failed to refresh token:', error);
+
+            // If token is invalid, log the user out
+            if (error.response?.status === 406) {
+                logout();
+            }
+
+            return false;
+        }
+    };
+
+    // Set up automatic token refresh
+    useEffect(() => {
+        if (!user) return;
+
+        // Refresh token every 30 minutes
+        const refreshInterval = setInterval(async () => {
+            await refreshUserToken();
+        }, 30 * 60 * 1000);
+
+        return () => clearInterval(refreshInterval);
+    }, [user]);
+
     const isAuthenticated = !!user;
 
     const contextValue = useMemo(
-        () => ({ user, login, logout, isAuthenticated, isLoading }),
+        () => ({ user, login, logout, isAuthenticated, isLoading, refreshUserToken }),
         [user, isAuthenticated, isLoading]
     );
 

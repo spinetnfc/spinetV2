@@ -31,7 +31,73 @@ function getLocale(request: NextRequest, i18nConfig: I18nConfig): string {
   return match(languages, locales, defaultLocale);
 }
 
-export function middleware(request: NextRequest) {
+// Function to attempt token refresh
+async function attemptTokenRefresh(request: NextRequest): Promise<boolean> {
+  try {
+    // First check if the user is logged in by checking for the current-user cookie
+    const userCookie = request.cookies.get('current-user')?.value;
+    if (!userCookie) {
+      return false;
+    }
+
+    // Get the refresh token from cookies
+    const refreshToken = request.cookies.get('fileApiRefreshToken')?.value;
+    
+    if (!refreshToken) {
+      return false;
+    }
+
+    // Make a request to the refresh token endpoint
+    const response = await fetch(`${request.nextUrl.origin}/api/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const data = await response.json();
+    
+    if (data.success) {
+      // Get the user data from the current-user cookie
+      try {
+        const user = JSON.parse(decodeURIComponent(userCookie));
+        
+        // Update cookies with new tokens
+        const response = NextResponse.next();
+        
+        // Set the new file API tokens
+        response.cookies.set('fileApiToken', user.tokens.fileApiToken, {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 7, // 7 days
+          sameSite: 'lax',
+        });
+        
+        response.cookies.set('fileApiRefreshToken', user.tokens.fileApiRefreshToken, {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 7, // 7 days
+          sameSite: 'lax',
+        });
+        
+        return true;
+      } catch (error) {
+        console.error('Error parsing user cookie:', error);
+        return false;
+      }
+    }
+    
+    return false;
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    return false;
+  }
+}
+
+export async function middleware(request: NextRequest) {
   let response;
   let nextLocale;
 
@@ -100,6 +166,20 @@ export function middleware(request: NextRequest) {
     const token = request.cookies.get('current-user')?.value;
     
     if (!token) {
+      // Check if we have a refresh token and try to refresh
+      const refreshToken = request.cookies.get('fileApiRefreshToken')?.value;
+      
+      if (refreshToken) {
+        // Attempt to refresh the token
+        const refreshed = await attemptTokenRefresh(request);
+        
+        if (refreshed) {
+          // If token refresh was successful, continue to the requested page
+          return response;
+        }
+      }
+      
+      // If no refresh token or refresh failed, redirect to login
       const localePart = nextLocale || defaultLocale;
       const redirectUrl = new URL(`/${localePart}/auth/login`, request.url);
       redirectUrl.searchParams.set('redirectTo', pathname);

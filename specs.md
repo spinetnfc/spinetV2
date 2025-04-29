@@ -80,3 +80,53 @@ SPINET Web is a digital business card platform that allows users to create and m
 - Form-based updates with FormData API
 - Schema validation for form inputs
 - Toast notifications for user feedback
+
+## Authentication
+
+### Token Refresh
+
+- Implemented automatic token refresh mechanism in the authentication context
+- Token refresh occurs every 30 minutes for logged-in users
+- Manual token refresh available through `refreshUserToken` function
+- Login page attempts token refresh on mount
+- Refresh token endpoint: `/auth/refresh`
+- Response format:
+  ```typescript
+  {
+    success: boolean;
+    user?: {
+      _id: string;
+      email: string;
+      tokens: {
+        fileApiToken: string;
+        fileApiRefreshToken: string;
+      }
+    }
+  }
+  ```
+
+### Login Flow
+
+- User enters credentials
+- On successful login:
+  - User data stored in cookies
+  - File API tokens stored in cookies
+  - User redirected to home page
+- On failed login:
+  - Error message displayed
+  - User can retry
+
+### Protected Routes
+
+- All routes under `[locale]/(protected)` require authentication
+- Unauthorized users redirected to login page
+- Token refresh attempts made before redirecting
+
+## Libraries Used
+
+- React Context API for state management
+- React Hook Form for form handling
+- Zod for validation
+- React Intl for internationalization
+- Sonner for toast notifications
+- Lucide React for icons
