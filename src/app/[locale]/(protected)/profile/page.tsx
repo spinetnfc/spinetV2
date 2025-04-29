@@ -37,16 +37,15 @@ export default async function ProfilePage({
 }) {
     const { locale } = await params
     const { t } = await useTranslate(locale)
-
-
-    const userId = await getUserCookieOnServer();
-
+    const user = await getUserCookieOnServer();
+    const profileId = user.selectedProfile;
     // Fetch user profile using getProfile
-    let profileData: ProfileData | null = null
+    let profileData: ProfileData | null
 
     try {
-        // Now that we've fixed the URL encoding, we can use the actual userId
-        profileData = await getProfile(userId)
+        // Now that we've fixed the URL encoding, we can use the actual profileId
+        profileData = await getProfile(profileId)
+        console.log("profileData", profileData)
     } catch (err: any) {
         console.error('Error fetching profile:', err)
         throw new Error(`Failed to load profile data: ${err.message}`)
@@ -144,7 +143,7 @@ export default async function ProfilePage({
                                             <Input
                                                 id="birthDate"
                                                 type="date"
-                                                defaultValue={profileData.birthDate}
+                                                defaultValue={profileData.birthDate ? new Date(profileData.birthDate).toISOString().split('T')[0] : ''}
                                                 disabled={profileData.lockedFeatures?.birthDate}
                                             />
                                         </div>
@@ -237,7 +236,7 @@ export default async function ProfilePage({
                             )}
 
                             <div className="flex justify-end mt-6">
-                                <SaveButton userId={userId || ''} sectionName="profile" />
+                                <SaveButton profileId={profileId || ''} sectionName="profile" />
                             </div>
                         </form>
                     </TabsContent>
@@ -291,7 +290,7 @@ export default async function ProfilePage({
                                 </div>
                             </div>
                             <div className="flex justify-end mt-6">
-                                <SaveButton userId={userId || ''} sectionName="security" />
+                                <SaveButton profileId={profileId || ''} sectionName="security" />
                             </div>
                         </form>
                     </TabsContent>
@@ -351,7 +350,7 @@ export default async function ProfilePage({
                                 </div>
                             </div>
                             <div className="flex justify-end mt-6">
-                                <SaveButton userId={userId || ''} sectionName="preferences" />
+                                <SaveButton profileId={profileId || ''} sectionName="preferences" />
                             </div>
                         </form>
                     </TabsContent>

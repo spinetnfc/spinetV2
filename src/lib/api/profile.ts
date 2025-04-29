@@ -49,7 +49,7 @@ export const getProfile = async (userId: string |null): Promise<ProfileData> => 
             throw new Error(`Invalid userId: ${userId}`);
         }        
         // Use proper URL format
-        const response = await ServerApi.get(`/user/${userId}/profiles`);
+        const response = await ServerApi.get(`/profile/${userId}`);
         return response.data;
     } catch (error) {
         console.error('Profile fetch error:', error);

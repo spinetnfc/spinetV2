@@ -5,8 +5,8 @@ import { updateProfile } from "@/lib/api/profile"
 // import { useRouter } from "next/router"
 import { useTransition } from "react"
 
-export default function SaveButton({ userId, sectionName }:
-    { userId: string, sectionName: string }) {
+export default function SaveButton({ profileId, sectionName }:
+    { profileId: string, sectionName: string }) {
     const [isPending, startTransition] = useTransition()
     // const router = useRouter()
 
@@ -24,7 +24,7 @@ export default function SaveButton({ userId, sectionName }:
 
         startTransition(async () => {
             try {
-                await updateProfile(userId, data)
+                await updateProfile(profileId, data)
                 // router.refresh()
                 // Show success notification
             } catch (error) {
