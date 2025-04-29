@@ -59,7 +59,7 @@ export const getProfile = async (userId: string |null): Promise<ProfileData> => 
 
 export const updateProfile = async (userId: string, profileData: Partial<ProfileData>): Promise<ProfileData> => {
     try {
-        const response = await api.put(`/profile/${userId}`, profileData);
+        const response = await api.patch(`/profile/${userId}`, profileData);
         return response.data;
     } catch (error) {
         console.error('Profile update error:', error);

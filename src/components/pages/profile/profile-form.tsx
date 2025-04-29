@@ -99,7 +99,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                 ...data,
                 birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
             };
-
+            updateProfile(profileId, formattedData);
             console.log('Submitting profile data:', formattedData);
             await updateProfile(profileId, formattedData);
 
