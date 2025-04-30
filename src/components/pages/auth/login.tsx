@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { Divide, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -21,6 +21,9 @@ import { Input } from '@/components/ui/input';
 import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/authContext'; // Import useAuth
+import { set } from 'date-fns';
+import { Spinnaker } from 'next/font/google';
+import { Spinner } from '@/components/ui/spinner';
 
 // Zod validation schema
 const loginSchema = z.object({
@@ -45,7 +48,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
   const intl = useIntl();
   const [showPassword, setShowPassword] = useState(false);
   const { login: authLogin } = useAuth(); // Get login function from AuthContext
-
+  const [isSunbmitting, setIsSubmitting] = useState(false);
   // Initialize form with zod resolver
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -58,6 +61,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
   // Handle form submission
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
+      setIsSubmitting(true);
       const response = await login(data);
       const user = response;
       if (!user || typeof user !== 'object') {
@@ -74,6 +78,9 @@ const LoginForm = ({ locale }: { locale: string }) => {
     } catch (error) {
       console.error('Login error:', error);
       toast.error('Login failed');
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -156,8 +163,9 @@ const LoginForm = ({ locale }: { locale: string }) => {
           <Button
             type="submit"
             className="w-full"
+            disabled={isSunbmitting}
           >
-            <FormattedMessage id="sign-in" />
+            {!isSunbmitting ? <FormattedMessage id="sign-in" /> : <FormattedMessage id="signing-in" />}
           </Button>
 
           {/* Divider */}
