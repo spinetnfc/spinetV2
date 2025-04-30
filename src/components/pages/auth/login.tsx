@@ -165,7 +165,10 @@ const LoginForm = ({ locale }: { locale: string }) => {
             className="w-full"
             disabled={isSunbmitting}
           >
-            {!isSunbmitting ? <FormattedMessage id="sign-in" /> : <FormattedMessage id="signing-in" />}
+            {!isSunbmitting ? <FormattedMessage id="sign-in" /> : <>
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+              <FormattedMessage id="signing-in" />
+            </>}
           </Button>
 
           {/* Divider */}

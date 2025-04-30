@@ -30,8 +30,8 @@ type Props = {
   >;
 };
 const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // OTP Validation Schema
-
   const otpSchema = z.object({
     otp: z.string().length(5, { message: 'otp-length' }),
   });
@@ -45,6 +45,7 @@ const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
 
   const onSubmit = async (data: z.infer<typeof otpSchema>) => {
     try {
+      setIsSubmitting(true);
       console.log('Current sessionId before verify:', sessionId);
       const response = await verifyOTP(sessionId, data.otp);
       setSessionId(response.resetSessionId);
@@ -54,6 +55,9 @@ const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
     } catch (error) {
       toast.error('Failed to verify OTP, try again');
       console.error('Forgot password error:', error);
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -92,6 +96,7 @@ const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
           className="w-full"
         >
           <FormattedMessage id="verify" />
+          {isSubmitting && <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>}
         </Button>
         <div className="text-center text-sm">
           <FormattedMessage id="did-not-receive-code" />

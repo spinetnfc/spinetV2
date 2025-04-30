@@ -15,6 +15,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { forgotPassword } from '@/lib/api/auth';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { set } from 'date-fns';
 
 type Props = {
   setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -25,6 +27,7 @@ type Props = {
   locale: string;
 };
 const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Email Validation Schema
   const emailSchema = z.object({
     email: z.string().email({ message: 'invalid-email-address' }),
@@ -36,6 +39,7 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
 
   const onSubmit = async (data: z.infer<typeof emailSchema>) => {
     try {
+      setIsSubmitting(true);
       const response = await forgotPassword(data.email);
       console.log(response);
       if (response.success)
@@ -47,6 +51,9 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
     } catch (error) {
       toast.error('Failed to send OTP, try again with a valid email');
       console.error('Forgot password error:', error);
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -77,6 +84,7 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
           className="w-full"
         >
           <FormattedMessage id="send-otp" />
+          {isSubmitting && <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>}
         </Button>
         <div className="flex justify-center space-x-1 text-sm">
           <span>

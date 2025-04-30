@@ -28,6 +28,7 @@ const NewPasswordForm = ({ email, sessionId }: Props) => {
   const intl = useIntl();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const newPasswordSchema = z
     .object({
       password: z.string().min(8, { message: 'password-length' }),
@@ -48,15 +49,17 @@ const NewPasswordForm = ({ email, sessionId }: Props) => {
 
   const onSubmit = async (data: z.infer<typeof newPasswordSchema>) => {
     try {
-      console.log("data:", data);
+      setIsSubmitting(true);
       const response = await resetPassword(sessionId, data.password);
-      console.log(response);
       toast.success('Password reset successfully, Proceed to login');
       router.push('/auth/login');
 
     } catch (error) {
       toast.error('Failed to reset password, try again');
       console.error('Reset password error:', error);
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,6 +133,9 @@ const NewPasswordForm = ({ email, sessionId }: Props) => {
         />
         <Button type="submit" className="w-full">
           <FormattedMessage id="save" />
+          {isSubmitting && (
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+          )}
         </Button>
       </form>
     </Form>
