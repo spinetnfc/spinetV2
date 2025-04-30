@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ function CtaButton({
   iconposition = 'left',
   newTab = false,
 }: Props) {
+  const [isLoading, setIsLoading] = React.useState(false);
   const content = (
     <>
       {iconposition === 'left' && icon}
@@ -30,6 +32,7 @@ function CtaButton({
 
   return link ? (
     <Button
+      onClick={() => setIsLoading(true)}
       asChild
       className={cn(
         'cursor-pointer h-12 rounded-2xl bg-azure text-xl leading-6 text-white dark:text-white hover:bg-azure/90 dark:bg-linear-to-b dark:from-[#1841B5E5] dark:via-[#0A234D] dark:to-[#1841B5E5] hover:scale-[101%] transition-transform duration-200',
@@ -40,11 +43,13 @@ function CtaButton({
       }}
     >
       <Link href={link} target={newTab ? '_blank' : '_self'} rel="noreferrer">
-        {content}
-      </Link>
+        {isLoading ? (
+          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>) : content
+        }      </Link>
     </Button>
   ) : (
     <Button
+      onClick={() => setIsLoading(true)}
       className={cn(
         'cursor-pointer h-12 rounded-2xl bg-azure leading-6 text-white dark:text-white hover:bg-azure/70 dark:bg-linear-to-b dark:from-[#1841B5E5] dark:via-[#0A234D] dark:to-[#1841B5E5] hover:scale-[101%] transition-transform duration-200',
         className
@@ -53,7 +58,9 @@ function CtaButton({
         boxShadow: 'inset 0px 2px 0px #367cd1, inset 0px -1px 0px #0A234D'
       }}
     >
-      {content}
+      {isLoading ? (
+        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>) : content
+      }
     </Button>
   );
 }
