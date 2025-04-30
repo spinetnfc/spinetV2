@@ -18,18 +18,21 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
+import { verifyOTP } from '@/lib/api/auth';
 
 type Props = {
   email: string;
+  sessionId: string;
+  setSessionId: React.Dispatch<React.SetStateAction<string>>;
   setStep: React.Dispatch<
     React.SetStateAction<'email' | 'otp' | 'newPassword'>
   >;
 };
-const OtpForm = ({ email, setStep }: Props) => {
+const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
   // OTP Validation Schema
 
   const otpSchema = z.object({
-    otp: z.string().length(6, { message: 'otp-length' }),
+    otp: z.string().length(5, { message: 'otp-length' }),
   });
   const [otpAttempts, setOtpAttempts] = useState(0);
   console.log(otpAttempts);
@@ -39,17 +42,16 @@ const OtpForm = ({ email, setStep }: Props) => {
     defaultValues: { otp: '' },
   });
 
-  const onSubmit = (data: z.infer<typeof otpSchema>) => {
-    // Simulated OTP validation
-    const correctOTP = '123456';
-    if (data.otp === correctOTP) {
+  const onSubmit = async (data: z.infer<typeof otpSchema>) => {
+    try {
+      console.log('Current sessionId before verify:', sessionId);
+      const response = await verifyOTP(sessionId, data.otp);
+      console.log('Verify OTP response:', response);
+      console.log('New sessionId from response:', response.confirmationSessionId);
+      setSessionId(response.confirmationSessionId);
       setStep('newPassword');
-    } else {
-      setOtpAttempts((prev) => prev + 1);
-      form.setError('otp', {
-        type: 'manual',
-        message: 'wrong-otp',
-      });
+    } catch (error) {
+      console.error('Forgot password error:', error);
     }
   };
 
@@ -71,9 +73,9 @@ const OtpForm = ({ email, setStep }: Props) => {
             <FormItem>
               {/* <FormLabel className='m-auto'>OTP</FormLabel> */}
               <FormControl>
-                <InputOTP maxLength={6} {...field} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
+                <InputOTP maxLength={5} {...field} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
                   <InputOTPGroup className='m-auto'>
-                    {[...Array(6)].map((_, index) => (
+                    {[...Array(5)].map((_, index) => (
                       <InputOTPSlot key={index} index={index} />
                     ))}
                   </InputOTPGroup>

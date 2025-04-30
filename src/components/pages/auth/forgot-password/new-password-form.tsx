@@ -15,47 +15,43 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { resetPassword } from '@/lib/api/auth';
 
 type Props = {
   email: string;
+  sessionId: string;
 };
-const NewPasswordForm = ({ email }: Props) => {
-  const intl = useIntl();
 
+const NewPasswordForm = ({ email, sessionId }: Props) => {
+  const intl = useIntl();
   const [showPassword, setShowPassword] = useState(false);
 
   const newPasswordSchema = z
     .object({
-      password: z
-        .string()
-        .min(8, { message: 'password-length' })
-        .regex(/[A-Z]/, {
-          message: 'password-contains-uppercase-letter',
-        })
-        .regex(/[a-z]/, {
-          message: 'password-contains-lowercase-letter',
-        })
-        .regex(/[0-9]/, {
-          message: 'password-contains-number',
-        }),
-      confirmPassword: z.string(),
+      password: z.string().min(8, { message: 'password-length' }),
+      passwordConfirmation: z.string().min(8, { message: 'password-length' }), // Changed to passwordConfirmation
     })
-    .refine((data) => data.password === data.confirmPassword, {
+    .refine((data) => data.password === data.passwordConfirmation, {
       message: 'passwords-must-match',
-      path: ['confirmPassword'],
+      path: ['passwordConfirmation'],
     });
+
   const form = useForm<z.infer<typeof newPasswordSchema>>({
     resolver: zodResolver(newPasswordSchema),
     defaultValues: {
       password: '',
-      confirmPassword: '',
+      passwordConfirmation: '',
     },
   });
 
-  const onSubmit = (data: z.infer<typeof newPasswordSchema>) => {
-    console.log(data);
-    // Password reset logic would go here
-    console.log('Password reset for', email);
+  const onSubmit = async (data: z.infer<typeof newPasswordSchema>) => {
+    try {
+      console.log("data:", data);
+      const response = await resetPassword(sessionId, data.password);
+      console.log(response);
+    } catch (error) {
+      console.error('Reset password error:', error);
+    }
   };
 
   return (
@@ -76,7 +72,7 @@ const NewPasswordForm = ({ email }: Props) => {
                 <div className="relative mt-2">
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    className='border-gray-200 dark:border-blue-950 focus:border-blue-500'
+                    className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
                     placeholder={intl.formatMessage({
                       id: 'enter-new-password',
                     })}
@@ -97,7 +93,7 @@ const NewPasswordForm = ({ email }: Props) => {
         />
         <FormField
           control={form.control}
-          name="confirmPassword"
+          name="passwordConfirmation" // Changed to passwordConfirmation
           render={({ field }) => (
             <FormItem>
               <FormLabel>
@@ -107,7 +103,7 @@ const NewPasswordForm = ({ email }: Props) => {
                 <div className="relative mt-2">
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    className='border-gray-200 dark:border-blue-950 focus:border-blue-500'
+                    className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
                     placeholder={intl.formatMessage({
                       id: 'confirm-new-password',
                     })}
@@ -126,10 +122,7 @@ const NewPasswordForm = ({ email }: Props) => {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          className="w-full"
-        >
+        <Button type="submit" className="w-full">
           <FormattedMessage id="save" />
         </Button>
       </form>

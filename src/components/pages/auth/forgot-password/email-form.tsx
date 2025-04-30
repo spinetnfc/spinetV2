@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { FormattedMessage } from 'react-intl';
 import * as z from 'zod';
-
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -14,15 +13,17 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { forgotPassword } from '@/lib/api/auth';
 
 type Props = {
   setEmail: React.Dispatch<React.SetStateAction<string>>;
+  setSessionId: React.Dispatch<React.SetStateAction<string>>;
   setStep: React.Dispatch<
     React.SetStateAction<'email' | 'otp' | 'newPassword'>
   >;
   locale: string;
 };
-const EmailForm = ({ setEmail, locale, setStep }: Props) => {
+const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
   // Email Validation Schema
   const emailSchema = z.object({
     email: z.string().email({ message: 'invalid-email-address' }),
@@ -32,17 +33,17 @@ const EmailForm = ({ setEmail, locale, setStep }: Props) => {
     defaultValues: { email: '' },
   });
 
-  const onSubmit = (data: z.infer<typeof emailSchema>) => {
-    // Simulated backend check
-    const existingEmails = ['user@example.com', 'test@example.com'];
-    if (existingEmails.includes(data.email)) {
-      setEmail(data.email);
+  const onSubmit = async (data: z.infer<typeof emailSchema>) => {
+    try {
+      const response = await forgotPassword(data.email);
+      console.log(response);
+      if (response.success)
+        setEmail(data.email);
+      setSessionId(response.confirmationSessionId);
       setStep('otp');
-    } else {
-      form.setError('email', {
-        type: 'manual',
-        message: 'email-non-existing',
-      });
+
+    } catch (error) {
+      console.error('Forgot password error:', error);
     }
   };
 

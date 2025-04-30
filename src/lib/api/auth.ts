@@ -41,7 +41,35 @@ export const refreshToken = async (): Promise<{ message: string }> => {
   }
 };
 
-export const getCurrentUser = async () => {}
+export const forgotPassword = async (email: string) => {
+  try {
+    const response = await api.post('/auth/forgot-password', { email });
+    return response.data;
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    throw error;
+  }
+};
 
-export const updateUser = async () => {}
+export const verifyOTP = async (sessionId: string, code: string) => {
+  try {
+    const response = await api.post(`/auth/confirm-code/${sessionId}`, {code});
+    return response.data;
+  } catch (error) {
+    console.error('Verify OTP error:', error);
+    throw error;
+  }
+}
+
+export const resetPassword = async (sessionId: string, password: string) => {
+  try {
+    const response = await api.post(`/auth/reset-password/${sessionId}`, { password });
+    return response.data;
+  } catch (error) {
+    console.error('Reset password error:', error);
+    throw error;
+  }
+}
+
+
 

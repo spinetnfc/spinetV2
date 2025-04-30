@@ -16,16 +16,17 @@ const ForgotPassword = ({
   locale: string;
   messages: Record<string, string>;
 }) => {
-  const [step, setStep] = useState<'email' | 'otp' | 'newPassword'>('newPassword');
+  const [step, setStep] = useState<'email' | 'otp' | 'newPassword'>('email');
   const [email, setEmail] = useState('');
+  const [sessionId, setSessionId] = useState('');
   return (
     <IntlProvider locale={locale} messages={messages}>
       <div className="z-50 w-full max-w-[800px] space-y-6 rounded-lg p-4 xs:p-8 text-[#0D2C60] lg:shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
         {step === 'email' && (
-          <EmailForm setEmail={setEmail} setStep={setStep} locale={locale} />
+          <EmailForm setEmail={setEmail} setStep={setStep} locale={locale} setSessionId={setSessionId} />
         )}
-        {step === 'otp' && <OtpForm email={email} setStep={setStep} />}
-        {step === 'newPassword' && <NewPasswordForm email={email} />}
+        {step === 'otp' && <OtpForm email={email} setStep={setStep} sessionId={sessionId} setSessionId={setSessionId} />}
+        {step === 'newPassword' && <NewPasswordForm email={email} sessionId={sessionId} />}
       </div>
     </IntlProvider>
   );
