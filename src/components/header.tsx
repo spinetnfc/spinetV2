@@ -17,18 +17,10 @@ function Header({ locale }: { locale: string }) {
       <div className="flex items-center gap-4">
         <ThemeSwitch locale={locale} />
         <ChangeLanguage locale={locale} />
-        {!isLogged && <CtaButton
-          text="log in"
-          // text={intl.formatMessage({ id: "log-in" })}
-          icon={<LogIn className="me-2.5 size-6" />}
-          link={`/${locale}/auth/login`}
-        />}
-        {isLogged && <>
-          {path?.includes("/shop") && <Link href={`/${locale}/shop/cart`}>
-            <ShoppingCart className="size-6 text-white" />
-          </Link>}
-          <UserMenu locale={locale} />
-        </>}
+        {path?.includes("/shop") && <Link href={`/${locale}/shop/cart`}>
+          <ShoppingCart className="size-6 text-white" />
+        </Link>}
+        <UserMenu locale={locale} />
 
       </div>
     </header>

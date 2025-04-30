@@ -44,7 +44,7 @@ function CtaButton({
     >
       <Link href={link} target={newTab ? '_blank' : '_self'} rel="noreferrer">
         {isLoading ? (
-          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>) : content
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>) : content
         }      </Link>
     </Button>
   ) : (
@@ -59,7 +59,7 @@ function CtaButton({
       }}
     >
       {isLoading ? (
-        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>) : content
+        <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>) : content
       }
     </Button>
   );
