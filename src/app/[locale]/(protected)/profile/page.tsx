@@ -1,245 +1,215 @@
+import type React from "react"
 import Image from "next/image"
 import {
-    User,
-    Mail,
     Phone,
-    MapPin,
+    Mail,
+    Edit,
+    ChevronRight,
+    Briefcase,
+    ArrowLeft,
     Globe,
     Linkedin,
     Instagram,
     Twitter,
     Github,
-    Edit,
-    Lock,
-    Bell,
-    Activity,
-    Settings,
-    Shield,
-    Key,
-    Eye,
-    EyeOff,
+    LinkIcon,
 } from "lucide-react"
-import useTranslate from '@/hooks/use-translate'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { getProfile, ProfileData } from '@/lib/api/profile'
-import SaveButton from "@/components/pages/profile/save-button"
-import { cookies } from 'next/headers'
+import { getProfile, type ProfileData } from "@/lib/api/profile"
 import { getUserCookieOnServer } from "@/utils/cookies"
-import ProfileForm from "@/components/pages/profile/profile-form";
+import Link from "next/link"
 
-export default async function ProfilePage({
-    params,
-}: {
-    params: Promise<{ locale: string }>
-}) {
-    const { locale } = await params
-    const { t } = await useTranslate(locale)
-    const user = await getUserCookieOnServer();
-    const profileId = user?.selectedProfile || null;
-    // Fetch user profile using getProfile
+// Helper function to get the appropriate icon for a link type
+function getLinkIcon(linkName: string) {
+    switch (linkName.toLowerCase()) {
+        case "email":
+            return <Mail className="text-orange-400" size={20} />
+        case "phone":
+            return <Phone className="text-orange-400" size={20} />
+        case "website":
+            return <Globe className="text-orange-400" size={20} />
+        case "linkedin":
+            return <Linkedin className="text-orange-400" size={20} />
+        case "instagram":
+            return <Instagram className="text-orange-400" size={20} />
+        case "twitter":
+            return <Twitter className="text-orange-400" size={20} />
+        case "github":
+            return <Github className="text-orange-400" size={20} />
+        default:
+            return <LinkIcon className="text-orange-400" size={20} />
+    }
+}
+
+export default async function ProfilePage() {
+    // Get user and profile ID from cookies
+    const user = await getUserCookieOnServer()
+    const profileId = user?.selectedProfile || null
+
+    // Fetch user profile data
     let profileData: ProfileData | null
 
     try {
-        // Now that we've fixed the URL encoding, we can use the actual profileId
         profileData = await getProfile(profileId)
         console.log("profileData", profileData)
     } catch (err: any) {
-        console.error('Error fetching profile:', err)
+        console.error("Error fetching profile:", err)
         throw new Error(`Failed to load profile data: ${err.message}`)
     }
 
     // No fallback data - if profile can't be loaded, show error
     if (!profileData) {
-        throw new Error('Profile data not found')
+        throw new Error("Profile data not found")
     }
 
     const fullName = `${profileData.firstName} ${profileData.lastName}`
     const profilePictureUrl = profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
     const coverImageUrl = profileData.profileCover ? `/api/files/${profileData.profileCover}` : ""
+    const email = profileData.links.find((link) => link.name === "email")?.title || ""
+    const phone = profileData.links.find((link) => link.name === "phone")?.title || ""
 
     return (
         <div className="min-h-screen w-full">
-            {/* Profile Header */}
-            <div className="relative h-96 bg-gradient-to-r from-blue-500 to-purple-600"
-                style={coverImageUrl ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } :
-                    profileData.theme?.color ? { backgroundColor: profileData.theme.color } : {}}>
-                <div className="absolute -bottom-16 left-8">
-                    <div className="relative">
-                        <Image
-                            src={profilePictureUrl}
-                            alt={fullName}
-                            width={128}
-                            height={128}
-                            className="rounded-full border-4 bg-white border-white dark:border-gray-800"
-                        />
-                        <button className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-lg">
-                            <Edit className="w-4 h-4" />
+            {/* Header with gradient background */}
+            <div className="relative">
+                <div
+                    className="h-48 bg-gradient-to-r from-blue-700 via-blue-600 to-pink-400"
+                    style={
+                        coverImageUrl
+                            ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+                            : profileData.theme?.color
+                                ? { backgroundColor: profileData.theme.color }
+                                : {}
+                    }
+                >
+                    <div className="absolute top-4 left-4">
+                        <button className="p-2 rounded-full bg-white/20 text-white">
+                            <ArrowLeft size={24} />
                         </button>
                     </div>
                 </div>
-            </div>
 
-            {/* Profile Content */}
-            <div className="container mx-auto px-4 pt-20 pb-8">
-                <div className="flex justify-between items-start mb-8">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            {fullName}
-                        </h1>
-                        <p className="text-gray-600 dark:text-gray-300 mt-1">
-                            {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
-                        </p>
+                {/* Profile picture */}
+                <div className="absolute left-6 -bottom-16">
+                    <div className="relative">
+                        <Image
+                            src={profilePictureUrl || "/placeholder.svg"}
+                            alt={fullName}
+                            width={120}
+                            height={120}
+                            className="rounded-full border-4 border-white"
+                        />
+                        <button className="absolute bottom-0 right-0 p-2 rounded-full bg-blue-700 text-white">
+                            <Edit size={16} />
+                        </button>
                     </div>
                 </div>
 
-                <Tabs defaultValue="personal" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 mb-8">
-                        <TabsTrigger value="personal" className="flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            Personal Info
-                        </TabsTrigger>
-                        <TabsTrigger value="security" className="flex items-center gap-2">
-                            <Shield className="w-4 h-4" />
-                            Security
-                        </TabsTrigger>
-                        <TabsTrigger value="activity" className="flex items-center gap-2">
-                            <Activity className="w-4 h-4" />
-                            Activity
-                        </TabsTrigger>
-                        <TabsTrigger value="preferences" className="flex items-center gap-2">
-                            <Settings className="w-4 h-4" />
-                            Preferences
-                        </TabsTrigger>
-                    </TabsList>
+                {/* Contact buttons */}
+                <div className="absolute right-6 bottom-6 flex gap-3">
+                    {phone && (
+                        <a href={`tel:${phone}`} className="p-4 rounded-full bg-orange-400 text-white">
+                            <Phone size={20} />
+                        </a>
+                    )}
+                    {email && (
+                        <a href={`mailto:${email}`} className="p-4 rounded-full bg-orange-400 text-white">
+                            <Mail size={20} />
+                        </a>
+                    )}
+                </div>
+            </div>
 
-                    {/* Personal Information Tab */}
-                    <TabsContent value="personal" className="space-y-6">
-                        <ProfileForm
-                            profileData={profileData}
-                            profileId={profileId || ''}
-                            sectionName="profile"
-                            locale={locale}
-                        />
-                    </TabsContent>
+            {/* Profile info */}
+            <div className="mt-20 px-6">
+                <h1 className="text-2xl font-bold">{fullName}</h1>
+                <p className="text-gray-500">
+                    {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
+                </p>
+            </div>
 
-                    {/* Security Tab */}
-                    <TabsContent value="security" className="space-y-6">
-                        <form id="security-form">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Password</h2>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <Label htmlFor="current-password">Current Password</Label>
-                                            <Input id="current-password" type="password" />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="new-password">New Password</Label>
-                                            <Input id="new-password" type="password" />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="confirm-password">Confirm New Password</Label>
-                                            <Input id="confirm-password" type="password" />
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Two-Factor Authentication</h2>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <h3 className="font-medium">Two-Factor Authentication</h3>
-                                                <p className="text-sm text-gray-500">
-                                                    Add an extra layer of security to your account
-                                                </p>
-                                            </div>
-                                            <Button variant="default">
-                                                Enable
-                                            </Button>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <h3 className="font-medium">Active Sessions</h3>
-                                                <p className="text-sm text-gray-500">
-                                                    View your active sessions
-                                                </p>
-                                            </div>
-                                            <Button variant="outline">View All</Button>
-                                        </div>
-                                    </div>
-                                </div>
+            {/* Profile sections */}
+            <div className="px-6 mt-8 space-y-4">
+                {/* Lead captions */}
+                <div className="bg-navy rounded-lg p-4 flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-lg font-semibold">Lead captions</h2>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button className="text-gray-500">
+                            <Edit size={18} />
+                        </button>
+                        <ChevronRight className="text-gray-400" size={20} />
+                    </div>
+                </div>
+
+                {/* Services */}
+                <div className="bg-navy rounded-lg p-4">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-orange-400 rounded-lg">
+                                <Briefcase className="text-white" size={20} />
                             </div>
-                            <div className="flex justify-end mt-6">
-                                <SaveButton profileId={profileId || ''} sectionName="security" />
-                            </div>
-                        </form>
-                    </TabsContent>
-
-                    {/* Activity Tab */}
-                    <TabsContent value="activity" className="space-y-6">
-                        <div className="space-y-4">
-                            <h2 className="text-lg font-semibold">Recent Activity</h2>
-                            <div className="p-4 border rounded-lg">
-                                <p className="text-center text-gray-500">No recent activity to display.</p>
+                            <div>
+                                <h2 className="text-lg font-semibold">Services I provide</h2>
+                                <p className="text-gray-500 text-sm">1 service</p>
                             </div>
                         </div>
-                    </TabsContent>
+                        <button className="text-gray-500">
+                            <div className="flex flex-col gap-1">
+                                <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+                                <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+                                <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
 
-                    {/* Preferences Tab */}
-                    <TabsContent value="preferences" className="space-y-6">
-                        <form id="preferences-form">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Theme Settings</h2>
-                                    <div className="space-y-4">
+                {/* Personal links section */}
+                <h2 className="text-xl font-semibold mt-6">Personal links</h2>
+
+                {/* Dynamic links */}
+                {profileData.links.map((link, index) => {
+                    const isClickableLink = link.name !== "email" && link.name !== "phone" && link.link
+
+                    const LinkWrapper = ({ children }: { children: React.ReactNode }) => {
+                        if (isClickableLink) {
+                            return (
+                                <Link href={link.link || "#"} target="_blank" rel="noopener noreferrer" className="block">
+                                    {children}
+                                </Link>
+                            )
+                        }
+                        return <>{children}</>
+                    }
+
+                    return (
+                        <LinkWrapper key={index}>
+                            <div className="bg-navy rounded-lg p-4">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-3 bg-orange-100 rounded-lg">{getLinkIcon(link.name)}</div>
                                         <div>
-                                            <Label htmlFor="theme-color">Theme Color</Label>
-                                            <div className="flex gap-2">
-                                                <Input
-                                                    id="theme-color"
-                                                    type="color"
-                                                    defaultValue={profileData.theme?.color || "#FFFFFF"}
-                                                    className="w-16 h-10"
-                                                    disabled={profileData.lockedFeatures?.theme}
-                                                />
-                                                <Input
-                                                    id="theme-color-hex"
-                                                    defaultValue={profileData.theme?.color || "#FFFFFF"}
-                                                    className="flex-1"
-                                                    disabled={profileData.lockedFeatures?.theme}
-                                                />
-                                            </div>
+                                            <h2 className="text-lg font-semibold">
+                                                {link.name.charAt(0).toUpperCase() + link.name.slice(1)}
+                                            </h2>
+                                            <p className="text-gray-500">{link.title || ""}</p>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Feature Access</h2>
-                                    <div className="space-y-2">
-                                        {Object.entries(profileData.lockedFeatures || {}).map(([feature, isLocked]) =>
-                                            feature !== 'excludedLinks' && (
-                                                <div key={feature} className="flex items-center justify-between px-4 py-2 border rounded">
-                                                    <span className="capitalize">{feature.replace(/([A-Z])/g, ' $1')}</span>
-                                                    <span className={isLocked ? "text-red-500" : "text-green-500"}>
-                                                        {isLocked ? "Locked" : "Unlocked"}
-                                                    </span>
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
+                                    <button className="text-gray-500">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+                                            <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+                                            <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
-                            <div className="flex justify-end mt-6">
-                                <SaveButton profileId={profileId || ''} sectionName="preferences" />
-                            </div>
-                        </form>
-                    </TabsContent>
-                </Tabs>
+                        </LinkWrapper>
+                    )
+                })}
             </div>
+
         </div>
     )
-} 
+}
