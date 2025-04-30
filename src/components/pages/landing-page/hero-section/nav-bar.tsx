@@ -1,5 +1,6 @@
+"use client";
 import { LogIn, Menu, User2, X } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import ChangeLanguage from "@/components/change-language";
 import Logo from "@/components/logo";
@@ -8,7 +9,10 @@ import { cn } from "@/utils/cn";
 import CtaButton from "../cta-button";
 import { useAuth } from "@/context/authContext";
 import UserMenu from "@/components/userMenu";
-import { usePathname } from "next/navigation";
+
+// Memoize CtaButton and UserMenu to prevent unnecessary re-renders
+const MemoizedCtaButton = memo(CtaButton);
+const MemoizedUserMenu = memo(UserMenu);
 
 const navItems = [
   { id: "discover-more", label: "discover" },
@@ -42,16 +46,19 @@ function NavBar({
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const intl = useIntl();
-
-  // State to handle auto-hiding behavior
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
-  const { isAuthenticated } = useAuth();
-  const path = usePathname();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+
+  // Memoize scrollToSection to prevent re-creation
+  const memoizedScrollToSection = useCallback(
+    (id: string) => scrollToSection(id, setIsMenuOpen),
+    [setIsMenuOpen]
+  );
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPos = window.pageYOffset;
-      // Show navbar when scrolling up or near the top; hide when scrolling down
       setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
       setPrevScrollPos(currentScrollPos);
     };
@@ -60,10 +67,26 @@ function NavBar({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [prevScrollPos]);
 
+  // Memoize auth-dependent rendering to avoid unnecessary re-renders
+  const authButton = React.useMemo(() => {
+    if (authLoading) {
+      return <div className="h-12 w-24 animate-pulse bg-azure dark:bg-[#162556] rounded-2xl"></div>;
+    }
+    return !isAuthenticated ? (
+      <MemoizedCtaButton
+        text={intl.formatMessage({ id: "log-in" })}
+        icon={<LogIn className="me-2.5 size-6" />}
+        link={`/${locale}/auth/login`}
+      />
+    ) : (
+      <MemoizedUserMenu locale={locale} />
+    );
+  }, [isAuthenticated, authLoading, locale, intl]);
+
   return (
     <header
       className={cn(
-        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-2 transition-transform duration-800 bg-white dark:bg-[#010C32]",
+        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-2 transition-transform duration-300 bg-white dark:bg-[#010C32]",
         visible ? "translate-y-0" : "-translate-y-full"
       )}
     >
@@ -89,14 +112,14 @@ function NavBar({
 
       {/* Desktop Navigation */}
       <nav className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between">
-        <div className="flex items-center ">
+        <div className="flex items-center">
           {navItems.map(({ id, label }) => (
             <button
               key={id}
-              onClick={() => scrollToSection(id)}
+              onClick={() => memoizedScrollToSection(id)}
               className="flex h-12 items-center rounded-[14px] p-2 xl:p-3"
             >
-              <span className=" cursor-pointer text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400">
+              <span className="cursor-pointer text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400">
                 <FormattedMessage id={label} />
               </span>
             </button>
@@ -106,19 +129,14 @@ function NavBar({
         <div className="flex items-center gap-3">
           <ThemeSwitch parentDarkMode={parentDarkMode} locale={locale} />
           <ChangeLanguage locale={locale} />
-
-          {!isAuthenticated ? <CtaButton
-            text={intl.formatMessage({ id: "log-in" })}
-            icon={<LogIn className="me-2.5 size-6" />}
-            link={`/${locale}/auth/login`}
-          /> : <UserMenu locale={locale} />}
+          {authButton}
         </div>
       </nav>
 
       {/* Mobile Navigation */}
       <div
         className={cn(
-          "absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden transition-all duration-500 transform",
+          "absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden transition-all duration-300 transform",
           isMenuOpen
             ? "opacity-100 max-h-[500px] translate-y-0"
             : "opacity-0 max-h-0 -translate-y-2 pointer-events-none"
@@ -128,18 +146,14 @@ function NavBar({
           <div className="flex items-center gap-3 justify-between">
             <ThemeSwitch />
             <ChangeLanguage locale={locale} />
-            {!isAuthenticated ? <CtaButton
-              text={intl.formatMessage({ id: "log-in" })}
-              icon={<LogIn className="me-2.5 size-6" />}
-              link={`/${locale}/auth/login`}
-            /> : <UserMenu locale={locale} />}
+            {authButton}
           </div>
         </div>
         <nav className="flex flex-col space-y-2">
           {navItems.map(({ id, label }) => (
             <button
               key={id}
-              onClick={() => scrollToSection(id, setIsMenuOpen)}
+              onClick={() => memoizedScrollToSection(id)}
               className="rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <span className="font-inter text-lg font-medium text-[#010E37] dark:text-white">
@@ -147,12 +161,6 @@ function NavBar({
               </span>
             </button>
           ))}
-          {/* <CtaButton
-            text={intl.formatMessage({ id: "log-in" })}
-            icon={<LogIn className="me-2.5 size-6" />}
-            className="h-fit w-max mx-auto"
-            link="/auth/login"
-          /> */}
         </nav>
       </div>
     </header>
