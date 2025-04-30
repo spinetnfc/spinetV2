@@ -72,7 +72,7 @@ export default async function ProfilePage() {
             {/* Header with gradient background */}
             <div className="relative">
                 <div
-                    className="h-48 bg-gradient-to-r from-blue-700 via-blue-600 to-pink-400"
+                    className="w-full aspect-video md:max-h-96 bg-gradient-to-r from-blue-700 via-blue-600 to-pink-400"
                     style={
                         coverImageUrl
                             ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
@@ -89,14 +89,14 @@ export default async function ProfilePage() {
                 </div>
 
                 {/* Profile picture */}
-                <div className="absolute left-6 -bottom-16">
+                <div className="absolute -bottom-12 xs:-bottom-14 sm:-bottom-16 left-4 sm:left-8">
                     <div className="relative">
                         <Image
                             src={profilePictureUrl || "/placeholder.svg"}
                             alt={fullName}
                             width={120}
                             height={120}
-                            className="rounded-full border-4 border-white"
+                            className="w-24 xs:w-28 sm:w-32 rounded-full border-4 bg-white border-white dark:border-gray-800"
                         />
                         <button className="absolute bottom-0 right-0 p-2 rounded-full bg-blue-700 text-white">
                             <Edit size={16} />

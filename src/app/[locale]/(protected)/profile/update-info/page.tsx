@@ -63,17 +63,17 @@ export default async function UpdateProfilePage({
     return (
         <div className="min-h-screen w-full">
             {/* Profile Header */}
-            <div className="relative h-96 bg-gradient-to-r from-blue-500 to-purple-600"
+            <div className="relative w-full aspect-video md:max-h-96  bg-gradient-to-r from-blue-500 to-purple-600"
                 style={coverImageUrl ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } :
                     profileData.theme?.color ? { backgroundColor: profileData.theme.color } : {}}>
-                <div className="absolute -bottom-16 left-8">
+                <div className="absolute -bottom-12 xs:-bottom-14 sm:-bottom-16 left-4 sm:left-8">
                     <div className="relative">
                         <Image
                             src={profilePictureUrl}
                             alt={fullName}
                             width={128}
                             height={128}
-                            className="rounded-full border-4 bg-white border-white dark:border-gray-800"
+                            className="w-24 xs:w-28 sm:w-32 rounded-full border-4 bg-white border-white dark:border-gray-800"
                         />
                         <button className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-lg">
                             <Edit className="w-4 h-4" />
@@ -97,20 +97,20 @@ export default async function UpdateProfilePage({
 
                 <Tabs defaultValue="personal" className="w-full">
                     <TabsList className="grid w-full grid-cols-4 mb-8">
-                        <TabsTrigger value="personal" className="flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            Personal Info
+                        <TabsTrigger value="personal" className="flex items-center gap-[1px] sm:gap-2 text-[9px] xs:text-[11px] sm:text-sm px-0">
+                            <User className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
+                            Information
                         </TabsTrigger>
-                        <TabsTrigger value="security" className="flex items-center gap-2">
-                            <Shield className="w-4 h-4" />
+                        <TabsTrigger value="security" className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm  px-0">
+                            <Shield className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             Security
                         </TabsTrigger>
-                        <TabsTrigger value="activity" className="flex items-center gap-2">
-                            <Activity className="w-4 h-4" />
+                        <TabsTrigger value="activity" className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm  px-0">
+                            <Activity className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             Activity
                         </TabsTrigger>
-                        <TabsTrigger value="preferences" className="flex items-center gap-2">
-                            <Settings className="w-4 h-4" />
+                        <TabsTrigger value="preferences" className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm  px-0">
+                            <Settings className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             Preferences
                         </TabsTrigger>
                     </TabsList>
