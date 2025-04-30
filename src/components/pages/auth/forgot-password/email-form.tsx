@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { forgotPassword } from '@/lib/api/auth';
+import { toast } from 'sonner';
 
 type Props = {
   setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -40,9 +41,11 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
       if (response.success)
         setEmail(data.email);
       setSessionId(response.confirmationSessionId);
+      toast.success('OTP sent to your email');
       setStep('otp');
 
     } catch (error) {
+      toast.error('Failed to send OTP, try again with a valid email');
       console.error('Forgot password error:', error);
     }
   };

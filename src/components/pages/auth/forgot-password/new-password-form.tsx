@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { resetPassword } from '@/lib/api/auth';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   email: string;
@@ -25,7 +27,7 @@ type Props = {
 const NewPasswordForm = ({ email, sessionId }: Props) => {
   const intl = useIntl();
   const [showPassword, setShowPassword] = useState(false);
-
+  const router = useRouter();
   const newPasswordSchema = z
     .object({
       password: z.string().min(8, { message: 'password-length' }),
@@ -49,7 +51,11 @@ const NewPasswordForm = ({ email, sessionId }: Props) => {
       console.log("data:", data);
       const response = await resetPassword(sessionId, data.password);
       console.log(response);
+      toast.success('Password reset successfully, Proceed to login');
+      router.push('/login');
+
     } catch (error) {
+      toast.error('Failed to reset password, try again');
       console.error('Reset password error:', error);
     }
   };

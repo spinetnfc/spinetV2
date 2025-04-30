@@ -19,6 +19,7 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { verifyOTP } from '@/lib/api/auth';
+import { toast } from 'sonner';
 
 type Props = {
   email: string;
@@ -46,11 +47,12 @@ const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
     try {
       console.log('Current sessionId before verify:', sessionId);
       const response = await verifyOTP(sessionId, data.otp);
-      console.log('Verify OTP response:', response);
-      console.log('New sessionId from response:', response.confirmationSessionId);
-      setSessionId(response.confirmationSessionId);
+      setSessionId(response.resetSessionId);
+      toast.success('OTP verified successfully');
       setStep('newPassword');
+
     } catch (error) {
+      toast.error('Failed to verify OTP, try again');
       console.error('Forgot password error:', error);
     }
   };
