@@ -52,7 +52,7 @@ const NewPasswordForm = ({ email, sessionId }: Props) => {
       const response = await resetPassword(sessionId, data.password);
       console.log(response);
       toast.success('Password reset successfully, Proceed to login');
-      router.push('/login');
+      router.push('/auth/login');
 
     } catch (error) {
       toast.error('Failed to reset password, try again');
