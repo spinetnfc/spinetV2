@@ -38,7 +38,7 @@ import {
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { ColorPicker } from '@/components/ui/color-picker';
+import ColorPicker from '@/components/ui/color-picker';
 import { toast } from "sonner";
 
 const registerSchema = z.object({
@@ -544,7 +544,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 name="theme.color"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
+                    <FormLabel className="text-sm me-4">
                       <FormattedMessage id="theme-color" />
                     </FormLabel>
                     <FormControl>
