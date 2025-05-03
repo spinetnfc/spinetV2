@@ -1,4 +1,4 @@
-import {api, ServerApi} from '@/lib/axios';
+import { api, ServerApi } from '@/lib/axios';
 import axios from 'axios';
 
 export interface ProfileData {
@@ -40,14 +40,14 @@ export interface ProfileData {
     };
 }
 
-export const getProfile = async (userId: string |null): Promise<ProfileData> => {
+export const getProfile = async (userId: string | null): Promise<ProfileData> => {
     try {
-        console.log('Fetching profile for userId:',userId);
-        
+        console.log('Fetching profile for userId:', userId);
+
         // Make sure userId is a valid string
         if (!userId || typeof userId !== 'string') {
             throw new Error(`Invalid userId: ${userId}`);
-        }        
+        }
         // Use proper URL format
         const response = await ServerApi.get(`/profile/${userId}`);
         return response.data;

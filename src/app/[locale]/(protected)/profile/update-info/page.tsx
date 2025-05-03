@@ -1,4 +1,4 @@
-import Image from "next/image"
+import Image from "next/image";
 import {
     User,
     Mail,
@@ -18,54 +18,66 @@ import {
     Key,
     Eye,
     EyeOff,
-} from "lucide-react"
-import useTranslate from '@/hooks/use-translate'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { getProfile, ProfileData } from '@/lib/api/profile'
-import SaveButton from "@/components/pages/profile/save-button"
-import { cookies } from 'next/headers'
-import { getUserCookieOnServer } from "@/utils/cookies"
+} from "lucide-react";
+import useTranslate from "@/hooks/use-translate";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { getProfile, ProfileData } from "@/lib/api/profile";
+import SaveButton from "@/components/pages/profile/save-button";
+import { cookies } from "next/headers";
+import { getUserCookieOnServer } from "@/utils/cookies";
 import ProfileForm from "@/components/pages/profile/profile-form";
+import PreferencesForm from "@/components/pages/profile/preferences-form"; // New component
 
 export default async function UpdateProfilePage({
     params,
 }: {
-    params: Promise<{ locale: string }>
+    params: Promise<{ locale: string }>;
 }) {
-    const { locale } = await params
-    const { t } = await useTranslate(locale)
+    const { locale } = await params;
+    const { t } = await useTranslate(locale);
     const user = await getUserCookieOnServer();
     const profileId = user?.selectedProfile || null;
+
     // Fetch user profile using getProfile
-    let profileData: ProfileData | null
+    let profileData: ProfileData | null;
 
     try {
-        // Now that we've fixed the URL encoding, we can use the actual profileId
-        profileData = await getProfile(profileId)
-        console.log("profileData", profileData)
+        profileData = await getProfile(profileId);
+        console.log("profileData : ", profileData);
     } catch (err: any) {
-        console.error('Error fetching profile:', err)
-        throw new Error(`Failed to load profile data: ${err.message}`)
+        console.error("Error fetching profile:", err);
+        throw new Error(`Failed to load profile data: ${err.message}`);
     }
 
     // No fallback data - if profile can't be loaded, show error
     if (!profileData) {
-        throw new Error('Profile data not found')
+        throw new Error("Profile data not found");
     }
 
-    const fullName = `${profileData.firstName} ${profileData.lastName}`
-    const profilePictureUrl = profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
-    const coverImageUrl = profileData.profileCover ? `/api/files/${profileData.profileCover}` : ""
+    const fullName = `${profileData.firstName} ${profileData.lastName}`;
+    const profilePictureUrl = profileData.profilePicture
+        ? `/api/files/${profileData.profilePicture}`
+        : "/img/user.png";
+    const coverImageUrl = profileData.profileCover
+        ? `/api/files/${profileData.profileCover}`
+        : "";
 
     return (
         <div className="min-h-screen w-full">
             {/* Profile Header */}
-            <div className="relative w-full aspect-video md:max-h-96  bg-gradient-to-r from-blue-500 to-purple-600"
-                style={coverImageUrl ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } :
-                    profileData.theme?.color ? { backgroundColor: profileData.theme.color } : {}}>
+            <div
+                className="relative w-full aspect-video md:max-h-96 bg-gradient-to-r from-blue-500 to-purple-600"
+                style={
+                    coverImageUrl
+                        ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+                        : profileData.theme?.color
+                            ? { backgroundColor: profileData.theme.color }
+                            : {}
+                }
+            >
                 <div className="absolute -bottom-12 xs:-bottom-14 sm:-bottom-16 left-4 sm:left-8">
                     <div className="relative">
                         <Image
@@ -86,9 +98,7 @@ export default async function UpdateProfilePage({
             <div className="container mx-auto px-4 pt-20 pb-8">
                 <div className="flex justify-between items-start mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            {fullName}
-                        </h1>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{fullName}</h1>
                         <p className="text-gray-600 dark:text-gray-300 mt-1">
                             {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
                         </p>
@@ -97,19 +107,31 @@ export default async function UpdateProfilePage({
 
                 <Tabs defaultValue="personal" className="w-full">
                     <TabsList className="grid w-full grid-cols-4 mb-8">
-                        <TabsTrigger value="personal" className="flex items-center gap-[1px] sm:gap-2 text-[9px] xs:text-[11px] sm:text-sm px-0">
+                        <TabsTrigger
+                            value="personal"
+                            className="flex items-center gap-[1px] sm:gap-2 text-[9px] xs:text-[11px] sm:text-sm px-0"
+                        >
                             <User className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             Information
                         </TabsTrigger>
-                        <TabsTrigger value="security" className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm  px-0">
+                        <TabsTrigger
+                            value="security"
+                            className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
+                        >
                             <Shield className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             Security
                         </TabsTrigger>
-                        <TabsTrigger value="activity" className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm  px-0">
+                        <TabsTrigger
+                            value="activity"
+                            className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
+                        >
                             <Activity className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             Activity
                         </TabsTrigger>
-                        <TabsTrigger value="preferences" className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm  px-0">
+                        <TabsTrigger
+                            value="preferences"
+                            className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
+                        >
                             <Settings className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             Preferences
                         </TabsTrigger>
@@ -119,7 +141,7 @@ export default async function UpdateProfilePage({
                     <TabsContent value="personal" className="space-y-6">
                         <ProfileForm
                             profileData={profileData}
-                            profileId={profileId || ''}
+                            profileId={profileId || ""}
                             sectionName="profile"
                             locale={locale}
                         />
@@ -157,9 +179,7 @@ export default async function UpdateProfilePage({
                                                     Add an extra layer of security to your account
                                                 </p>
                                             </div>
-                                            <Button variant="default">
-                                                Enable
-                                            </Button>
+                                            <Button variant="default">Enable</Button>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <div>
@@ -174,7 +194,7 @@ export default async function UpdateProfilePage({
                                 </div>
                             </div>
                             <div className="flex justify-end mt-6">
-                                <SaveButton profileId={profileId || ''} sectionName="security" />
+                                <SaveButton profileId={profileId || ""} sectionName="security" />
                             </div>
                         </form>
                     </TabsContent>
@@ -191,55 +211,15 @@ export default async function UpdateProfilePage({
 
                     {/* Preferences Tab */}
                     <TabsContent value="preferences" className="space-y-6">
-                        <form id="preferences-form">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Theme Settings</h2>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <Label htmlFor="theme-color">Theme Color</Label>
-                                            <div className="flex gap-2">
-                                                <Input
-                                                    id="theme-color"
-                                                    type="color"
-                                                    defaultValue={profileData.theme?.color || "#FFFFFF"}
-                                                    className="w-16 h-10"
-                                                    disabled={profileData.lockedFeatures?.theme}
-                                                />
-                                                <Input
-                                                    id="theme-color-hex"
-                                                    defaultValue={profileData.theme?.color || "#FFFFFF"}
-                                                    className="flex-1"
-                                                    disabled={profileData.lockedFeatures?.theme}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Feature Access</h2>
-                                    <div className="space-y-2">
-                                        {Object.entries(profileData.lockedFeatures || {}).map(([feature, isLocked]) =>
-                                            feature !== 'excludedLinks' && (
-                                                <div key={feature} className="flex items-center justify-between px-4 py-2 border rounded">
-                                                    <span className="capitalize">{feature.replace(/([A-Z])/g, ' $1')}</span>
-                                                    <span className={isLocked ? "text-red-500" : "text-green-500"}>
-                                                        {isLocked ? "Locked" : "Unlocked"}
-                                                    </span>
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex justify-end mt-6">
-                                <SaveButton profileId={profileId || ''} sectionName="preferences" />
-                            </div>
-                        </form>
+                        <PreferencesForm
+                            profileData={profileData}
+                            profileId={profileId || ""}
+                            sectionName="preferences"
+                            locale={locale}
+                        />
                     </TabsContent>
                 </Tabs>
             </div>
         </div>
-    )
-} 
+    );
+}

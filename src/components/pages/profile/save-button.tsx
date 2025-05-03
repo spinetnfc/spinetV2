@@ -2,13 +2,11 @@
 
 import { Button } from "@/components/ui/button"
 import { updateProfile } from "@/lib/api/profile"
-// import { useRouter } from "next/router"
 import { useTransition } from "react"
 
 export default function SaveButton({ profileId, sectionName }:
     { profileId: string, sectionName: string }) {
     const [isPending, startTransition] = useTransition()
-    // const router = useRouter()
 
     const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()

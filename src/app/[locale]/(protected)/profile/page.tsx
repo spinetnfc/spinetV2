@@ -1,5 +1,5 @@
-import type React from "react"
-import Image from "next/image"
+import type React from "react";
+import Image from "next/image";
 import {
     Phone,
     Mail,
@@ -13,59 +13,61 @@ import {
     Twitter,
     Github,
     LinkIcon,
-} from "lucide-react"
-import { getProfile, type ProfileData } from "@/lib/api/profile"
-import { getUserCookieOnServer } from "@/utils/cookies"
-import Link from "next/link"
+} from "lucide-react";
+import { getProfile, type ProfileData } from "@/lib/api/profile";
+import { getUserCookieOnServer } from "@/utils/cookies";
+import Link from "next/link";
 
 // Helper function to get the appropriate icon for a link type
-function getLinkIcon(linkName: string) {
+function getLinkIcon(linkName: string, themeColor: string) {
     switch (linkName.toLowerCase()) {
         case "email":
-            return <Mail className="text-orange-400" size={20} />
+            return <Mail style={{ color: themeColor }} size={20} />;
         case "phone":
-            return <Phone className="text-orange-400" size={20} />
+            return <Phone style={{ color: themeColor }} size={20} />;
         case "website":
-            return <Globe className="text-orange-400" size={20} />
+            return <Globe style={{ color: themeColor }} size={20} />;
         case "linkedin":
-            return <Linkedin className="text-orange-400" size={20} />
+            return <Linkedin style={{ color: themeColor }} size={20} />;
         case "instagram":
-            return <Instagram className="text-orange-400" size={20} />
+            return <Instagram style={{ color: themeColor }} size={20} />;
         case "twitter":
-            return <Twitter className="text-orange-400" size={20} />
+            return <Twitter style={{ color: themeColor }} size={20} />;
         case "github":
-            return <Github className="text-orange-400" size={20} />
+            return <Github style={{ color: themeColor }} size={20} />;
         default:
-            return <LinkIcon className="text-orange-400" size={20} />
+            return <LinkIcon style={{ color: themeColor }} size={20} />;
     }
 }
 
 export default async function ProfilePage() {
     // Get user and profile ID from cookies
-    const user = await getUserCookieOnServer()
-    const profileId = user?.selectedProfile || null
+    const user = await getUserCookieOnServer();
+    const profileId = user?.selectedProfile || null;
 
     // Fetch user profile data
-    let profileData: ProfileData | null
+    let profileData: ProfileData | null;
 
     try {
-        profileData = await getProfile(profileId)
-        console.log("profileData", profileData)
+        profileData = await getProfile(profileId);
+        console.log("profileData", profileData);
     } catch (err: any) {
-        console.error("Error fetching profile:", err)
-        throw new Error(`Failed to load profile data: ${err.message}`)
+        console.error("Error fetching profile:", err);
+        throw new Error(`Failed to load profile data: ${err.message}`);
     }
 
     // No fallback data - if profile can't be loaded, show error
     if (!profileData) {
-        throw new Error("Profile data not found")
+        throw new Error("Profile data not found");
     }
 
-    const fullName = `${profileData.firstName} ${profileData.lastName}`
-    const profilePictureUrl = profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
-    const coverImageUrl = profileData.profileCover ? `/api/files/${profileData.profileCover}` : ""
-    const email = profileData.links.find((link) => link.name === "email")?.title || ""
-    const phone = profileData.links.find((link) => link.name === "phone")?.title || ""
+    const fullName = `${profileData.firstName} ${profileData.lastName}`;
+    const profilePictureUrl = profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png";
+    const coverImageUrl = profileData.profileCover ? `/api/files/${profileData.profileCover}` : "";
+    const email = profileData.links.find((link) => link.name === "email")?.title || "user@email.com";
+    const phone = profileData.links.find((link) => link.name === "phone")?.title || "0666778899";
+    const themeColor = profileData.theme?.color || "#000000"; // Fallback to black if undefined
+    console.log("themeColor", themeColor);
 
     return (
         <div className="min-h-screen w-full">
@@ -76,9 +78,7 @@ export default async function ProfilePage() {
                     style={
                         coverImageUrl
                             ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
-                            : profileData.theme?.color
-                                ? { backgroundColor: profileData.theme.color }
-                                : {}
+                            : { backgroundColor: themeColor }
                     }
                 >
                     <div className="absolute top-4 left-4">
@@ -98,21 +98,18 @@ export default async function ProfilePage() {
                             height={120}
                             className="w-24 xs:w-28 sm:w-32 rounded-full border-4 bg-white border-white dark:border-gray-800"
                         />
-                        <button className="absolute bottom-0 right-0 p-2 rounded-full bg-blue-700 text-white">
-                            <Edit size={16} />
-                        </button>
                     </div>
                 </div>
 
                 {/* Contact buttons */}
                 <div className="absolute right-6 bottom-6 flex gap-3">
                     {phone && (
-                        <a href={`tel:${phone}`} className="p-4 rounded-full bg-orange-400 text-white">
+                        <a href={`tel:${phone}`} className="p-4 rounded-full text-white" style={{ backgroundColor: themeColor }}>
                             <Phone size={20} />
                         </a>
                     )}
                     {email && (
-                        <a href={`mailto:${email}`} className="p-4 rounded-full bg-orange-400 text-white">
+                        <a href={`mailto:${email}`} className="p-4 rounded-full text-white" style={{ backgroundColor: themeColor }}>
                             <Mail size={20} />
                         </a>
                     )}
@@ -120,34 +117,25 @@ export default async function ProfilePage() {
             </div>
 
             {/* Profile info */}
-            <div className="mt-20 px-6">
-                <h1 className="text-2xl font-bold">{fullName}</h1>
-                <p className="text-gray-500">
-                    {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
-                </p>
+            <div className="flex items-start mt-20 px-6">
+                <div>
+                    <h1 className="text-2xl font-bold">{fullName}</h1>
+                    <p className="text-gray-500">
+                        {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
+                    </p>
+                </div>
+                <Link href={`/profile/update-info`} className="text-primary hover:scale-105 cursor-pointer">
+                    <Edit size={20} />
+                </Link>
             </div>
-
 
             {/* Profile sections */}
             <div className="px-6 mt-8 space-y-4">
-                {/* Lead captions */}
-                <div className="bg-navy rounded-lg p-4 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <h2 className="text-lg font-semibold">Lead captions</h2>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button className="text-gray-500">
-                            <Edit size={18} />
-                        </button>
-                        <ChevronRight className="text-gray-400" size={20} />
-                    </div>
-                </div>
-
                 {/* Services */}
                 <div className="bg-navy rounded-lg p-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <div className="p-3 bg-orange-400 rounded-lg">
+                            <div className="p-3 rounded-lg" style={{ backgroundColor: themeColor }}>
                                 <Briefcase className="text-white" size={20} />
                             </div>
                             <div>
@@ -170,7 +158,7 @@ export default async function ProfilePage() {
 
                 {/* Dynamic links */}
                 {profileData.links.map((link, index) => {
-                    const isClickableLink = link.name !== "email" && link.name !== "phone" && link.link
+                    const isClickableLink = link.name !== "email" && link.name !== "phone" && link.link;
 
                     const LinkWrapper = ({ children }: { children: React.ReactNode }) => {
                         if (isClickableLink) {
@@ -178,17 +166,19 @@ export default async function ProfilePage() {
                                 <Link href={link.link || "#"} target="_blank" rel="noopener noreferrer" className="block">
                                     {children}
                                 </Link>
-                            )
+                            );
                         }
-                        return <>{children}</>
-                    }
+                        return <>{children}</>;
+                    };
 
                     return (
                         <LinkWrapper key={index}>
                             <div className="bg-navy rounded-lg p-4">
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-3 bg-orange-100 rounded-lg">{getLinkIcon(link.name)}</div>
+                                        <div className="p-3 rounded-lg" style={{ backgroundColor: themeColor }}>
+                                            {getLinkIcon(link.name, themeColor)}
+                                        </div>
                                         <div>
                                             <h2 className="text-lg font-semibold">
                                                 {link.name.charAt(0).toUpperCase() + link.name.slice(1)}
@@ -206,10 +196,9 @@ export default async function ProfilePage() {
                                 </div>
                             </div>
                         </LinkWrapper>
-                    )
+                    );
                 })}
             </div>
-
         </div>
-    )
+    );
 }
