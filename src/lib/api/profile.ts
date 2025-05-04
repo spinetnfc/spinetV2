@@ -1,5 +1,4 @@
 import { api, ServerApi } from '@/lib/axios';
-import axios from 'axios';
 
 export interface ProfileData {
     type: string;
@@ -42,7 +41,7 @@ export interface ProfileData {
 
 export const getProfile = async (userId: string | null): Promise<ProfileData> => {
     try {
-        console.log('Fetching profile for userId:', userId);
+        // console.log('Fetching profile for userId:', userId);
 
         // Make sure userId is a valid string
         if (!userId || typeof userId !== 'string') {
