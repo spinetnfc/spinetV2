@@ -65,7 +65,7 @@ export default async function ProfilePage() {
         throw new Error("Profile data not found")
     }
 
-    const fullName = `${profileData.firstName} ${profileData.lastName}`
+    const fullName = profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`
     const profilePictureUrl = profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
     const coverImageUrl = profileData.profileCover ? `/api/files/${profileData.profileCover}` : ""
     const email = profileData.links.find((link) => link.name === "email")?.title || "user@email.com"

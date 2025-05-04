@@ -6,8 +6,9 @@ export interface ProfileData {
     theme: {
         color: string;
     };
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    fullName: string;
+    lastName?: string;
     birthDate: string;
     gender: string;
     companyName: string;

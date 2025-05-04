@@ -45,7 +45,7 @@ const registerSchema = z.object({
   // Personal Info
   email: z.string().email({ message: 'invalid-email-address' }),
   firstName: z.string().min(2, { message: 'firstname-required' }),
-  lastName: z.string().min(2, { message: 'lastname-required' }),
+  // lastName: z.string().min(2, { message: 'lastname-required' }),
   birthDate: z.date().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   phoneNumber: z
@@ -106,7 +106,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
     defaultValues: {
       email: '',
       firstName: '',
-      lastName: '',
+      // lastName: '',
       phoneNumber: '',
       website: '',
       companyName: '',
@@ -159,7 +159,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
       const userData: NewUser = {
         email: data.email,
         firstName: data.firstName,
-        lastName: data.lastName,
+        // lastName: data.lastName,
         birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
         gender: data.gender,
         phoneNumber: data.phoneNumber,
@@ -262,13 +262,13 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">
-                      <FormattedMessage id="first-name" />*
+                      <FormattedMessage id="full-name" />*
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder={intl.formatMessage({
-                          id: 'enter-your-first-name',
-                          defaultMessage: 'Enter your first name',
+                          id: 'enter-your-full-name',
+                          defaultMessage: 'Enter your full name',
                         })}
                         {...field}
                         className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
@@ -280,7 +280,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
               />
 
               {/* Last Name Field */}
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="lastName"
                 render={({ field }) => (
@@ -297,7 +297,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               {/* Birth Date Field */}
               <FormField

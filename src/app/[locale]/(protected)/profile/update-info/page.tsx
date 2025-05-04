@@ -57,7 +57,7 @@ export default async function UpdateProfilePage({
         throw new Error("Profile data not found");
     }
 
-    const fullName = `${profileData.firstName} ${profileData.lastName}`;
+    const fullName = profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`
     const profilePictureUrl = profileData.profilePicture
         ? `/api/files/${profileData.profilePicture}`
         : "/img/user.png";

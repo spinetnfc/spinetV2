@@ -23,3 +23,5 @@ export const getUser = async (userId: string | null): Promise<User> => {
 
     return response.data;
 };
+
+

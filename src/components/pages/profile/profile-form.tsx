@@ -38,8 +38,8 @@ import { toast } from "sonner";
 // Define the validation schema
 const profileSchema = z.object({
     // Basic Information
-    firstName: z.string().min(2, { message: 'First name is required' }),
-    lastName: z.string().min(2, { message: 'Last name is required' }),
+    fullName: z.string().min(2, { message: 'First name is required' }),
+    // lastName: z.string().min(2, { message: 'Last name is required' }),
     birthDate: z.date().optional(),
     gender: z.enum(['male', 'female', 'other']).optional(),
 
@@ -73,8 +73,8 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileSchema),
         defaultValues: {
-            firstName: profileData.firstName || '',
-            lastName: profileData.lastName || '',
+            fullName: profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`,
+            // lastName: profileData.lastName || '',
             birthDate: profileData.birthDate ? new Date(profileData.birthDate) : undefined,
             gender: profileData.gender as 'male' | 'female' | 'other' || undefined,
             companyName: profileData.companyName || '',
@@ -126,7 +126,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                             {/* First Name Field */}
                             <FormField
                                 control={form.control}
-                                name="firstName"
+                                name="fullName"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="text-sm">First Name</FormLabel>
@@ -144,7 +144,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                             />
 
                             {/* Last Name Field */}
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="lastName"
                                 render={({ field }) => (
@@ -161,7 +161,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
 
                             {/* Birth Date Field */}
                             <FormField
