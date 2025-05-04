@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FormattedMessage, IntlProvider, useIntl } from 'react-intl';
 import * as z from 'zod';
-import type { NewUser } from '@/types/api';
+import type { NewUser } from '@/types/auth';
 import { registerUser } from '@/lib/api/auth';
 import FacebookIcon from '@/components/icons/facebook-icon';
 import GoogleIcon from '@/components/icons/google-icon';

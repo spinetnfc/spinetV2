@@ -1,5 +1,5 @@
-import {api} from '@/lib/axios';
-import { NewUser, LoginUser } from '@/types/api';
+import { api } from '@/lib/axios';
+import { NewUser, LoginUser } from '@/types/auth';
 
 export const registerUser = async (user: NewUser) => {
   try {
@@ -53,7 +53,7 @@ export const forgotPassword = async (email: string) => {
 
 export const verifyOTP = async (sessionId: string, code: string) => {
   try {
-    const response = await api.post(`/auth/confirm-code/${sessionId}`, {code});
+    const response = await api.post(`/auth/confirm-code/${sessionId}`, { code });
     return response.data;
   } catch (error) {
     console.error('Verify OTP error:', error);
