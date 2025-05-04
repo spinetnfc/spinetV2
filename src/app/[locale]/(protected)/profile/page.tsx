@@ -71,7 +71,6 @@ export default async function ProfilePage() {
     const email = profileData.links.find((link) => link.name === "email")?.title || "user@email.com"
     const phone = profileData.links.find((link) => link.name === "phone")?.title || "0666778899"
     const themeColor = profileData.theme?.color || "#3b82f6" // Default to blue if undefined
-    console.log("themeColor", themeColor)
 
     return (
         <div className="min-h-screen w-full">
@@ -136,7 +135,7 @@ export default async function ProfilePage() {
             {/* Profile sections */}
             <div className="px-6 mt-8 space-y-4">
                 {/* Services */}
-                <div className="bg-navy rounded-lg p-4">
+                {/* <div className="bg-navy rounded-lg p-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <div className="p-3 rounded-lg" style={{ backgroundColor: themeColor }}>
@@ -155,7 +154,7 @@ export default async function ProfilePage() {
                             </div>
                         </button>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Personal links section */}
                 <div className="flex justify-between items-center mt-6">
