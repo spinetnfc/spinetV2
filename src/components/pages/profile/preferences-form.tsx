@@ -17,10 +17,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import ColorOutlet from '@/components/ui/color-outlet';
-
-// Predefined colors for the color picker
-const COLOR_PALETTE = ['#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF'];
-
+import { COLOR_PALETTE } from '@/utils/constants/colors';
 // Define the validation schema for Preferences
 const preferencesSchema = z.object({
     themeColor: z
@@ -98,7 +95,7 @@ export default function PreferencesForm({
                                     <FormItem>
                                         <FormLabel>Theme Color</FormLabel>
                                         <FormControl>
-                                            <div className="my-3 inline-flex w-[90%] flex-row items-center space-x-6">
+                                            <div className="my-3 w-fit xl:w-[90%] grid grid-rows-2 xl:inline-flex space-x-6 space-y-2 grid-flow-col ">
                                                 <div
                                                     className={`picker h-[30px] w-[30px] rounded-full cursor-pointer ${isCustomColor ? 'border-2 border-primary' : ''}`}
                                                     style={{

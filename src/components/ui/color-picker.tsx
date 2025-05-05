@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ColorOutlet from '@/components/ui/color-outlet';
-
-const COLOR_PALETTE = ['#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF'];
+import { COLOR_PALETTE } from '@/utils/constants/colors';
 
 interface ThemeColorPickerProps {
     color: string;
