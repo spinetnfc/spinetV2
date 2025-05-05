@@ -196,6 +196,7 @@
   "email-non-existing": "هذا البريد الإلكتروني غير موجود. أدخل بريدًا إلكترونيًا مختلفًا.",
   "invalid-email-address": "عنوان بريد إلكتروني غير صالح",
   "fullname-required": "الاسم الكامل مطلوب",
+  "phone-number-required": "رقم الهاتف مطلوب",
   "password-length": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
   "passwords-must-match": "كلمات المرور يجب أن تتطابق",
   "password-contains-uppercase-letter": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",

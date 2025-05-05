@@ -42,7 +42,12 @@ const profileSchema = z.object({
     // lastName: z.string().min(2, { message: 'Last name is required' }),
     birthDate: z.date().optional(),
     gender: z.enum(['male', 'female', 'other']).optional(),
-
+    phoneNumber: z
+        .string()
+        .min(1, { message: 'phone-number-required' })
+        .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
+            message: 'invalid-phone-number',
+        }),
     // Professional Information
     companyName: z.string().min(1, { message: 'Company name is required' }),
     activitySector: z.string().min(1, { message: 'Activity sector is required' }),
@@ -77,6 +82,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
             // lastName: profileData.lastName || '',
             birthDate: profileData.birthDate ? new Date(profileData.birthDate) : undefined,
             gender: profileData.gender as 'male' | 'female' | 'other' || undefined,
+            phoneNumber: profileData.phoneNumber || '',
             companyName: profileData.companyName || '',
             activitySector: profileData.activitySector || '',
             position: profileData.position || '',
@@ -227,6 +233,25 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                                 <SelectItem value="other">Other</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            {/* Phone Number Field */}
+                            <FormField
+                                control={form.control}
+                                name="phoneNumber"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-sm">Phone number</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Enter your phone number"
+                                                {...field}
+                                                // disabled={profileData.lockedFeatures?.phoneNumber}
+                                                className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
+                                            />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}

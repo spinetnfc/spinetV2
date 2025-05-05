@@ -120,14 +120,14 @@ export default async function ProfilePage() {
             </div>
 
             {/* Profile info */}
-            <div className="flex items-start mt-20 px-6">
+            <div className="flex items-start mt-20 px-6 gap-2">
                 <div>
                     <h1 className="text-2xl font-bold">{fullName}</h1>
                     <p className="text-gray-500">
                         {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
                     </p>
                 </div>
-                <Link href={`/profile/update-info`} className="text-primary hover:scale-105 cursor-pointer">
+                <Link href={`/profile/update-info`} className="text-primary hover:scale-105 cursor-pointer pt-1">
                     <Edit size={20} />
                 </Link>
             </div>

@@ -198,6 +198,7 @@
   "email-non-existing": "That email doesn't exist. Enter a different email",
   "invalid-email-address": "Invalid email address",
   "fullname-required": "Full Name is required",
+  "phone-number-required": "Phone Number is required",
   "password-length": "Password must be at least 8 characters'",
   "passwords-must-match": "Passwords must match",
   "password-contains-uppercase-letter": "Password must contain at least one uppercase letter",

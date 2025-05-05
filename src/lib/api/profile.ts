@@ -11,6 +11,7 @@ export interface ProfileData {
     lastName?: string;
     birthDate: string;
     gender: string;
+    phoneNumber?: string;
     companyName: string;
     activitySector: string;
     position: string;
