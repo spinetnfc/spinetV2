@@ -135,7 +135,7 @@ export default async function ProfilePage() {
             {/* Profile sections */}
             <div className="px-6 mt-8 space-y-4">
                 {/* Services */}
-                {/* <div className="bg-navy rounded-lg p-4">
+                <div className="bg-blue-200 dark:bg-navy rounded-lg p-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <div className="p-3 rounded-lg" style={{ backgroundColor: themeColor }}>
@@ -154,7 +154,7 @@ export default async function ProfilePage() {
                             </div>
                         </button>
                     </div>
-                </div> */}
+                </div>
 
                 {/* Personal links section */}
                 <div className="flex justify-between items-center mt-6">
