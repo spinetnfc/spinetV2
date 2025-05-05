@@ -70,6 +70,3 @@ export const resetPassword = async (sessionId: string, password: string) => {
     throw error;
   }
 }
-
-
-

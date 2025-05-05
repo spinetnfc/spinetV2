@@ -29,7 +29,9 @@ import SaveButton from "@/components/pages/profile/save-button";
 import { cookies } from "next/headers";
 import { getUserCookieOnServer } from "@/utils/cookies";
 import ProfileForm from "@/components/pages/profile/profile-form";
-import PreferencesForm from "@/components/pages/profile/preferences-form"; // New component
+import PreferencesForm from "@/components/pages/profile/preferences-form";
+import ChangeEmailForm from "@/components/pages/profile/change-email-form";
+import Link from "next/link";
 
 export default async function UpdateProfilePage({
     params,
@@ -41,7 +43,6 @@ export default async function UpdateProfilePage({
     const user = await getUserCookieOnServer();
     const profileId = user?.selectedProfile || null;
 
-    // Fetch user profile using getProfile
     let profileData: ProfileData | null;
 
     try {
@@ -52,7 +53,6 @@ export default async function UpdateProfilePage({
         throw new Error(`Failed to load profile data: ${err.message}`);
     }
 
-    // No fallback data - if profile can't be loaded, show error
     if (!profileData) {
         throw new Error("Profile data not found");
     }
@@ -137,7 +137,6 @@ export default async function UpdateProfilePage({
                         </TabsTrigger>
                     </TabsList>
 
-                    {/* Personal Information Tab */}
                     <TabsContent value="personal" className="space-y-6">
                         <ProfileForm
                             profileData={profileData}
@@ -147,59 +146,51 @@ export default async function UpdateProfilePage({
                         />
                     </TabsContent>
 
-                    {/* Security Tab */}
                     <TabsContent value="security" className="space-y-6">
-                        <form id="security-form">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Password</h2>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <Label htmlFor="current-password">Current Password</Label>
-                                            <Input id="current-password" type="password" />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="new-password">New Password</Label>
-                                            <Input id="new-password" type="password" />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="confirm-password">Confirm New Password</Label>
-                                            <Input id="confirm-password" type="password" />
-                                        </div>
-                                    </div>
-                                </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                {user && <ChangeEmailForm
+                                    user={user}
+                                />}
+                            </div>
 
+                            <div className="space-y-4">
+                                <h2 className="text-lg font-semibold">Account Security</h2>
                                 <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold">Two-Factor Authentication</h2>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <h3 className="font-medium">Two-Factor Authentication</h3>
-                                                <p className="text-sm text-gray-500">
-                                                    Add an extra layer of security to your account
-                                                </p>
-                                            </div>
-                                            <Button variant="default">Enable</Button>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h3 className="font-medium">Change Password</h3>
+                                            <p className="text-sm text-gray-500">
+                                                Update your account password
+                                            </p>
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <h3 className="font-medium">Active Sessions</h3>
-                                                <p className="text-sm text-gray-500">
-                                                    View your active sessions
-                                                </p>
-                                            </div>
-                                            <Button variant="outline">View All</Button>
+                                        <Link href={`/${locale}/auth/forgot-password`}>
+                                            <Button variant="default">Change Password</Button>
+                                        </Link>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        {/* <div>
+                                            <h3 className="font-medium">Two-Factor Authentication</h3>
+                                            <p className="text-sm text-gray-500">
+                                                Add an extra layer of security to your account
+                                            </p>
                                         </div>
+                                        <Button variant="default">Enable</Button>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h3 className="font-medium">Active Sessions</h3>
+                                            <p className="text-sm text-gray-500">
+                                                View your active sessions
+                                            </p>
+                                        </div>
+                                        <Button variant="outline">View All</Button> */}
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex justify-end mt-6">
-                                <SaveButton profileId={profileId || ""} sectionName="security" />
-                            </div>
-                        </form>
+                        </div>
                     </TabsContent>
 
-                    {/* Activity Tab */}
                     <TabsContent value="activity" className="space-y-6">
                         <div className="space-y-4">
                             <h2 className="text-lg font-semibold">Recent Activity</h2>
@@ -209,7 +200,6 @@ export default async function UpdateProfilePage({
                         </div>
                     </TabsContent>
 
-                    {/* Preferences Tab */}
                     <TabsContent value="preferences" className="space-y-6">
                         <PreferencesForm
                             profileData={profileData}

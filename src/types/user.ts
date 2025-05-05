@@ -3,7 +3,7 @@ export type User = {
     email: string;
     firstName: string;
     position: string;
-    activated: boolean;
+    activated?: boolean;
     createdAt: string;
     selectedProfile: string;
     tokens: {
