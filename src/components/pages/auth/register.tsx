@@ -211,7 +211,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
   };
 
   return (
-    <div className="z-50 w-full space-y-4 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
+    <div className="z-50 w-full space-y-2 rounded-lg px-6 py-4 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
       <div className="flex items-center justify-between">
         <h1 className="text-start text-2xl font-semibold">{renderStepTitle()}</h1>
         <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -231,9 +231,9 @@ const RegisterForm = ({ locale }: { locale: string }) => {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           {step === 1 && (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {/* Email Field */}
               <FormField
                 control={form.control}
@@ -247,7 +247,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                       <Input
                         placeholder="username@example.com"
                         {...field}
-                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
+                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500 h-9"
                       />
                     </FormControl>
                     <FormMessage />
@@ -271,33 +271,13 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                           defaultMessage: 'Enter your full name',
                         })}
                         {...field}
-                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
+                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500 h-9"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              {/* Last Name Field */}
-              {/* <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="last-name" />*
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
 
               {/* Birth Date Field */}
               <FormField
@@ -314,7 +294,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                           <Button
                             variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950',
+                              'w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950 text-gray-400 dark:text-blue-800',
                               !field.value && 'text-muted-foreground',
                             )}
                           >
@@ -353,7 +333,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="border-gray-200 dark:border-blue-950">
+                        <SelectTrigger className="border-gray-200 dark:border-blue-950 font-regular">
                           <SelectValue
                             placeholder={intl.formatMessage({
                               id: 'select-gender',
@@ -392,7 +372,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                       <Input
                         placeholder="+1234567890"
                         {...field}
-                        className="border-gray-200 dark:border-blue-950"
+                        className="border-gray-200 dark:border-blue-950 h-9"
                       />
                     </FormControl>
                     <FormMessage />
@@ -413,7 +393,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                       <Input
                         placeholder="https://example.com"
                         {...field}
-                        className="border-gray-200 dark:border-blue-950"
+                        className="border-gray-200 dark:border-blue-950 h-9"
                       />
                     </FormControl>
                     <FormMessage />
@@ -621,7 +601,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
             </div>
           )}
 
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-3">
             {step > 1 ? (
               <Button
                 type="button"
@@ -664,8 +644,8 @@ const RegisterForm = ({ locale }: { locale: string }) => {
           {step === 1 && (
             <>
               {/* Social Login Options */}
-              <div className="mt-4">
-                <div className="flex items-center justify-center space-x-4 mb-4">
+              <>
+                <div className="flex items-center justify-center space-x-4 mb-2">
                   <div className="h-px grow bg-gray-300"></div>
                   <span className="text-sm">
                     <FormattedMessage id="or-continue-with" />
@@ -677,22 +657,22 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2"
+                    className="flex items-center rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2"
                   >
                     <GoogleIcon />
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2"
+                    className="flex items-center rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2"
                   >
                     <FacebookIcon />
                   </Button>
                 </div>
-              </div>
+              </>
 
               {/* Sign In Link */}
-              <div className="flex justify-center space-x-1 text-sm mt-4">
+              <div className="flex justify-center space-x-1 text-sm mt-2">
                 <span>
                   <FormattedMessage id="you-have-an-account" />
                 </span>

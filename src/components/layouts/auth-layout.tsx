@@ -112,7 +112,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
             }`}
           priority
         />
-        <div className="flex size-full flex-col-reverse items-center justify-center rounded-md pt-12 lg:mx-48 lg:my-52 lg:flex-row lg:gap-10 lg:px-10 xl:gap-20 xl:px-20 lg:py-20">
+        <div className="flex size-full flex-col-reverse items-center justify-center rounded-md pt-12 lg:mx-48 lg:my-52 lg:flex-row lg:gap-10 lg:px-10 xl:px-20 2xl:px-32 xl:gap-20  lg:py-20">
           {children}
           <div className="z-10 lg:w-1/2">
             {pathname !== '/auth/forgot-password' ? (
