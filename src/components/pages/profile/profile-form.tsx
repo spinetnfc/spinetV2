@@ -135,7 +135,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 name="fullName"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-sm">First Name</FormLabel>
+                                        <FormLabel className="text-sm">Full Name</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Enter your first name"

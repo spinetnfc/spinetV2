@@ -17,7 +17,11 @@ export default function AddLinkButton({ profileId, profileData }: { profileId: s
 
     return (
         <>
-            <Button variant="outline" size="sm" onClick={() => setShowAddLinkForm(true)} className="flex items-center gap-1">
+            <Button size="sm"
+                onClick={() => setShowAddLinkForm(true)}
+                className="flex items-center gap-1"
+                style={{ backgroundColor: profileData.theme?.color }}
+            >
                 <Plus size={16} />
                 Add Link
             </Button>
