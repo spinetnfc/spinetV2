@@ -8,23 +8,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { X } from "lucide-react"
-import { updateProfile } from "@/lib/api/profile"
 import { toast } from "sonner"
-
-type ServiceType = {
-    name: string
-    description: string
-}
+import { ServiceInput } from "@/types/services"
+import { addService } from "@/lib/api/services"
 
 type AddServiceFormProps = {
     profileId: string
-    existingServices: ServiceType[]
     onSuccess: () => void
     onCancel: () => void
 }
 
-export default function AddServiceForm({ profileId, existingServices, onSuccess, onCancel }: AddServiceFormProps) {
-    const [newService, setNewService] = useState<ServiceType>({
+export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddServiceFormProps) {
+    const [newService, setNewService] = useState<ServiceInput>({
         name: "",
         description: "",
     })
@@ -40,15 +35,8 @@ export default function AddServiceForm({ profileId, existingServices, onSuccess,
 
         try {
             setIsSubmitting(true)
-
-            // Add the new service to existing services
-            const updatedServices = [...existingServices, newService]
-
-            // Call the updateProfile function with the updated services
-            await updateProfile(profileId, {
-                services: updatedServices,
-            })
-
+            const response = await addService(profileId, newService)
+            console.log("Service added response received:", response)
             toast.success("Service added successfully")
             onSuccess()
         } catch (error) {
@@ -60,7 +48,7 @@ export default function AddServiceForm({ profileId, existingServices, onSuccess,
     }
 
     return (
-        <div className="bg-navy rounded-lg p-4 mt-4">
+        <div className="rounded-lg p-4 mt-4">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Add New Service</h3>
                 <button onClick={onCancel} className="text-gray-500">

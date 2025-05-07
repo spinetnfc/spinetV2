@@ -40,7 +40,6 @@ export default function AddServiceButton({
                     <div className="bg-background rounded-lg max-w-md w-full">
                         <AddServiceForm
                             profileId={profileId}
-                            existingServices={profileData.services || []}
                             onSuccess={handleSuccess}
                             onCancel={() => setShowAddForm(false)}
                         />
