@@ -22,11 +22,7 @@ import {
 import useTranslate from "@/hooks/use-translate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { getProfile, ProfileData } from "@/lib/api/profile";
-import SaveButton from "@/components/pages/profile/save-button";
-import { cookies } from "next/headers";
 import { getUserCookieOnServer } from "@/utils/cookies";
 import ProfileForm from "@/components/pages/profile/profile-form";
 import PreferencesForm from "@/components/pages/profile/preferences-form";
@@ -100,40 +96,40 @@ export default async function UpdateProfilePage({
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{fullName}</h1>
                         <p className="text-gray-600 dark:text-gray-300 mt-1">
-                            {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
+                            {profileData.position} {profileData.companyName ? `${t("at")} ${profileData.companyName}` : ""}
                         </p>
                     </div>
                 </div>
 
-                <Tabs defaultValue="personal" className="w-full">
+                <Tabs defaultValue="personal" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
                     <TabsList className="grid w-full grid-cols-4 mb-8">
                         <TabsTrigger
                             value="personal"
                             className="flex items-center gap-[1px] sm:gap-2 text-[9px] xs:text-[11px] sm:text-sm px-0"
                         >
                             <User className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
-                            Information
+                            {t("information")}
                         </TabsTrigger>
                         <TabsTrigger
                             value="security"
                             className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
                         >
                             <Shield className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
-                            Security
+                            {t("security")}
                         </TabsTrigger>
                         <TabsTrigger
                             value="activity"
                             className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
                         >
                             <Activity className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
-                            Activity
+                            {t("activity")}
                         </TabsTrigger>
                         <TabsTrigger
                             value="preferences"
                             className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
                         >
                             <Settings className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
-                            Preferences
+                            {t("preferences")}
                         </TabsTrigger>
                     </TabsList>
 
@@ -155,17 +151,14 @@ export default async function UpdateProfilePage({
                             </div>
 
                             <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">Account Security</h2>
+                                <h2 className="text-lg font-semibold">{t("account-security")}</h2>
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h3 className="font-medium">Change Password</h3>
-                                            <p className="text-sm text-gray-500">
-                                                Update your account password
-                                            </p>
+                                            <h3 className="font-medium">{t("change-password")}</h3>
                                         </div>
                                         <Link href={`/${locale}/auth/forgot-password`}>
-                                            <Button variant="default">Change Password</Button>
+                                            <Button variant="default">{t("change-password")}</Button>
                                         </Link>
                                     </div>
                                     <div className="flex items-center justify-between">
@@ -193,9 +186,9 @@ export default async function UpdateProfilePage({
 
                     <TabsContent value="activity" className="space-y-6">
                         <div className="space-y-4">
-                            <h2 className="text-lg font-semibold">Recent Activity</h2>
+                            <h2 className="text-lg font-semibold"> {t("recent-activity")}</h2>
                             <div className="p-4 border rounded-lg">
-                                <p className="text-center text-gray-500">No recent activity to display.</p>
+                                <p className="text-center text-gray-500">{t("no-recent-activity")}</p>
                             </div>
                         </div>
                     </TabsContent>

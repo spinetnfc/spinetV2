@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { updateProfile } from "@/lib/api/profile"
 import { useTransition } from "react"
+import { FormattedMessage } from "react-intl"
 
 export default function SaveButton({ profileId, sectionName }:
     { profileId: string, sectionName: string }) {
@@ -37,7 +38,7 @@ export default function SaveButton({ profileId, sectionName }:
             onClick={handleSave}
             disabled={isPending}
         >
-            {isPending ? 'Saving...' : 'Save Changes'}
+            {isPending ? <FormattedMessage id="saving" /> : <FormattedMessage id="save-changes" />}
         </Button>
     )
 }

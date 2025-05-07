@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import AddServiceForm from "./add-service-form"
 import type { ProfileData } from "@/lib/api/profile"
+import { FormattedMessage } from "react-intl"
 
 interface AddServiceButtonProps {
     profileId: string
@@ -15,7 +16,7 @@ interface AddServiceButtonProps {
 export default function AddServiceButton({
     profileId,
     profileData,
-    buttonText = "Add Service",
+    buttonText = "add-service",
 }: AddServiceButtonProps) {
     const [showAddForm, setShowAddForm] = useState(false)
 
@@ -32,7 +33,7 @@ export default function AddServiceButton({
                 style={{ backgroundColor: profileData.theme?.color }}
             >
                 <Plus size={16} />
-                {buttonText}
+                <FormattedMessage id={buttonText} />
             </Button>
 
             {showAddForm && (

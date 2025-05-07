@@ -11,6 +11,7 @@ import { X } from "lucide-react"
 import { toast } from "sonner"
 import { ServiceInput } from "@/types/services"
 import { addService } from "@/lib/api/services"
+import { FormattedMessage, useIntl } from "react-intl"
 
 type AddServiceFormProps = {
     profileId: string
@@ -19,6 +20,7 @@ type AddServiceFormProps = {
 }
 
 export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddServiceFormProps) {
+    const { formatMessage } = useIntl();
     const [newService, setNewService] = useState<ServiceInput>({
         name: "",
         description: "",
@@ -50,7 +52,7 @@ export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddSe
     return (
         <div className="rounded-lg p-4 mt-4">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Add New Service</h3>
+                <h3 className="text-lg font-semibold"><FormattedMessage id="add-service" /></h3>
                 <button onClick={onCancel} className="text-gray-500">
                     <X size={20} />
                 </button>
@@ -58,33 +60,38 @@ export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddSe
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <Label htmlFor="serviceName">Service Name</Label>
+                    <Label htmlFor="serviceName"><FormattedMessage id="service-name" /></Label>
                     <Input
                         id="serviceName"
                         value={newService.name}
                         onChange={(e) => setNewService({ ...newService, name: e.target.value })}
-                        placeholder="e.g. Web Development"
+                        placeholder={formatMessage({ id: "e.g. Web Development", defaultMessage: "e.g. Web Development" })}
+
                     />
                 </div>
 
                 <div>
-                    <Label htmlFor="serviceDescription">Description</Label>
+                    <Label htmlFor="serviceDescription"><FormattedMessage id="description" /></Label>
                     <Textarea
                         id="serviceDescription"
                         value={newService.description}
                         onChange={(e) => setNewService({ ...newService, description: e.target.value })}
-                        placeholder="Describe your service..."
+                        placeholder={formatMessage({ id: "describe-service", defaultMessage: "Describe your service" })}
                         className="min-h-[100px]"
                     />
                 </div>
 
                 <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={onCancel}>
-                        Cancel
+                        <FormattedMessage id="cancel" />
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Adding..." : "Add Service"}
-                    </Button>
+                    {isSubmitting ?
+                        <Button type="submit" disabled={isSubmitting}>
+                            <FormattedMessage id="saving" />
+                        </Button> : <Button type="submit" disabled={isSubmitting}>
+                            <FormattedMessage id="save" />
+                        </Button>
+                    }
                 </div>
             </form>
         </div>

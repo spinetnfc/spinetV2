@@ -5,6 +5,7 @@ import { getUserCookieOnServer } from "@/utils/cookies"
 import Link from "next/link"
 import AddLinkButton from "@/components/pages/profile/add-link-button"
 import LinkItem from "@/components/pages/profile/link-item"
+import useTranslate from "@/hooks/use-translate"
 
 // Helper function to get the appropriate icon for a link type
 function getLinkIcon(linkName: string, themeColor: string) {
@@ -44,7 +45,12 @@ function getLinkIcon(linkName: string, themeColor: string) {
     }
 }
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ params }: {
+    params: Promise<{ locale: string }>;
+}) {
+    const { locale } = await params;
+    const { t } = await useTranslate(locale);
+
     // Get user and profile ID from cookies
     const user = await getUserCookieOnServer()
     const profileId = user?.selectedProfile || null
@@ -124,10 +130,10 @@ export default async function ProfilePage() {
                 <div>
                     <h1 className="text-2xl font-bold">{fullName}</h1>
                     <p className="text-gray-500">
-                        {profileData.position} {profileData.companyName ? `at ${profileData.companyName}` : ""}
+                        {profileData.position} {profileData.companyName ? `${t("at")} ${profileData.companyName}` : ""}
                     </p>
                 </div>
-                <Link href={`/profile/update-info`} className="text-primary hover:scale-105 cursor-pointer pt-1">
+                <Link href={`/${locale}/profile/update-info`} className="text-primary hover:scale-105 cursor-pointer pt-1">
                     <Edit size={20} />
                 </Link>
             </div>
@@ -135,7 +141,7 @@ export default async function ProfilePage() {
             {/* Profile sections */}
             <div className="px-6 mt-8 space-y-4">
                 {/* Services */}
-                <Link href="/profile/services" className="block">
+                <Link href={`/${locale}/profile/services`} className="block">
                     <div className="bg-blue-200 dark:bg-navy rounded-lg p-4 hover:bg-blue-300 dark:hover:bg-blue-900 transition-colors">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-3">
@@ -143,14 +149,14 @@ export default async function ProfilePage() {
                                     <Briefcase className="text-white" size={20} />
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-semibold">Services I provide</h2>
+                                    <h2 className="text-lg font-semibold">{t("my-services")}</h2>
                                     <p className="text-gray-500 text-sm">
-                                        1 service
+                                        1 {t("services")}
                                     </p>
                                 </div>
                             </div>
                             <div className="text-gray-500">
-                                <ChevronRight size={20} />
+                                <ChevronRight size={20} className={locale === "ar" ? "transition rotate-180" : ""} />
                             </div>
                         </div>
                     </div>
@@ -158,7 +164,7 @@ export default async function ProfilePage() {
 
                 {/* Personal links section */}
                 <div className="flex justify-between items-center mt-6">
-                    <h2 className="text-xl font-semibold">Personal links</h2>
+                    <h2 className="text-xl font-semibold">{t("personal-links")}</h2>
                     {profileId && <AddLinkButton profileId={profileId} profileData={profileData} />}
                 </div>
 

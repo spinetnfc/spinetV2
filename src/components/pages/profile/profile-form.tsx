@@ -71,7 +71,6 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({ profileData, profileId, sectionName, locale }: ProfileFormProps) {
-    const intl = useIntl();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Initialize form with default values from profileData
@@ -127,7 +126,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                        <h2 className="text-lg font-semibold">Basic Information</h2>
+                        <h2 className="text-lg font-semibold"><FormattedMessage id="basic-information" /></h2>
                         <div className="space-y-4">
                             {/* First Name Field */}
                             <FormField
@@ -135,7 +134,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 name="fullName"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-sm">Full Name</FormLabel>
+                                        <FormLabel className="text-sm"><FormattedMessage id="full-name" /></FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Enter your first name"
@@ -175,7 +174,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 name="birthDate"
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col">
-                                        <FormLabel className="text-sm">Birth Date</FormLabel>
+                                        <FormLabel className="text-sm"><FormattedMessage id="birth-date" /></FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
@@ -216,7 +215,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 name="gender"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-sm">Gender</FormLabel>
+                                        <FormLabel className="text-sm"><FormattedMessage id="gender" /></FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
@@ -228,9 +227,9 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="male">Male</SelectItem>
-                                                <SelectItem value="female">Female</SelectItem>
-                                                <SelectItem value="other">Other</SelectItem>
+                                                <SelectItem value="male"><FormattedMessage id="male" /></SelectItem>
+                                                <SelectItem value="female"><FormattedMessage id="female" /></SelectItem>
+                                                <SelectItem value="other"><FormattedMessage id="other" /></SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -243,10 +242,10 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 name="phoneNumber"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-sm">Phone number</FormLabel>
+                                        <FormLabel className="text-sm"><FormattedMessage id="phone-number" /></FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Enter your phone number"
+                                                // placeholder="Enter your phone number"
                                                 {...field}
                                                 // disabled={profileData.lockedFeatures?.phoneNumber}
                                                 className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
@@ -260,7 +259,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                     </div>
 
                     <div className="space-y-4">
-                        <h2 className="text-lg font-semibold">Professional Information</h2>
+                        <h2 className="text-lg font-semibold"><FormattedMessage id="professional-information" /></h2>
                         <div className="space-y-4">
                             {/* Company Name Field */}
                             <FormField
@@ -268,7 +267,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 name="companyName"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-sm">Company Name</FormLabel>
+                                        <FormLabel className="text-sm"><FormattedMessage id="company-name" /></FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Enter company name"
@@ -288,7 +287,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 name="activitySector"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-sm">Activity Sector</FormLabel>
+                                        <FormLabel className="text-sm"><FormattedMessage id="activity-sector" /></FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Enter activity sector"
@@ -308,7 +307,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 name="position"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-sm">Position</FormLabel>
+                                        <FormLabel className="text-sm"><FormattedMessage id="position" /></FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Enter your position"
@@ -324,7 +323,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
 
                             {/* Profile Type Field (Read-only) */}
                             <div>
-                                <FormLabel className="text-sm">Profile Type</FormLabel>
+                                <FormLabel className="text-sm"><FormattedMessage id="profile-type" /></FormLabel>
                                 <Input
                                     value={profileData.type}
                                     disabled
@@ -335,98 +334,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                     </div>
                 </div>
 
-                {/* Social Links Section */}
-                {profileData.lockedFeatures?.canAddLinks && (
-                    <div className="space-y-4 mt-8">
-                        <h2 className="text-lg font-semibold">Social Links</h2>
-                        <div className="space-y-4">
-                            {fields.length > 0 ? (
-                                fields.map((field, index) => (
-                                    <div key={field.id} className="grid grid-cols-2 gap-4 p-4 border rounded-lg relative">
-                                        <div>
-                                            <FormField
-                                                control={form.control}
-                                                name={`links.${index}.title`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="text-sm">Platform</FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                placeholder="e.g., LinkedIn"
-                                                                {...field}
-                                                                className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-                                        <div>
-                                            <FormField
-                                                control={form.control}
-                                                name={`links.${index}.link`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="text-sm">URL/Username</FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                placeholder="e.g., https://linkedin.com/in/username"
-                                                                {...field}
-                                                                className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-                                        <div className="col-span-2">
-                                            <FormField
-                                                control={form.control}
-                                                name={`links.${index}.name`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="text-sm">Display Name</FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                placeholder="e.g., John Doe"
-                                                                {...field}
-                                                                className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                                            onClick={() => remove(index)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-gray-500">No social links added yet.</p>
-                            )}
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => append({ title: '', link: '', name: '' })}
-                                className="flex items-center gap-2"
-                            >
-                                <Plus className="h-4 w-4" />
-                                Add New Link
-                            </Button>
-                        </div>
-                    </div>
-                )}
-
                 <div className="flex justify-end mt-6">
                     <Button
                         type="submit"
@@ -436,10 +343,10 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                         {isSubmitting ? (
                             <>
                                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                                Saving...
+                                <FormattedMessage id="saving" />
                             </>
                         ) : (
-                            'Save Changes'
+                            <FormattedMessage id="save-changes" />
                         )}
                     </Button>
                 </div>

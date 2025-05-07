@@ -9,6 +9,7 @@ import Link from "next/link"
 import EditLinkForm from "./edit-link-form"
 import DeleteConfirmationModal from "./delete-confirmation-modal"
 import { toast } from "sonner"
+import { FormattedDate, FormattedMessage } from "react-intl"
 
 interface LinkItemProps {
     link: {
@@ -94,14 +95,14 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
                 <span className="font-medium text-primary truncate block">{getDisplayLabel()}</span>
                 {isEmailOrPhone && <p className="text-xs font-medium text-gray-400 truncate">{link.title}</p>}
             </div>
-            <div className="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute end-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="text-primary p-1 hover:text-gray-600 rounded-full">
+                        <button className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
                             <MoreVertical size={20} />
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="start" className="bg-white dark:bg-background">
                         <DropdownMenuItem
                             className="flex items-center gap-2 cursor-pointer"
                             onClick={(e) => {
@@ -110,7 +111,7 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
                                 setShowEditForm(true)
                             }}
                         >
-                            <Edit size={14} /> Edit
+                            <Edit size={14} /> <FormattedMessage id="edit" defaultMessage="Edit" />
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             className="flex items-center gap-2 text-red-500 cursor-pointer"
@@ -120,7 +121,7 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
                                 handleDeleteClick()
                             }}
                         >
-                            <Trash2 size={14} /> Delete
+                            <Trash2 size={14} /> <FormattedMessage id="delete" defaultMessage="Delete" />
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

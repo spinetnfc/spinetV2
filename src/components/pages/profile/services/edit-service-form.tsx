@@ -11,6 +11,7 @@ import { X } from "lucide-react"
 import { toast } from "sonner"
 import type { Service, ServiceInput } from "@/types/services"
 import { updateService } from "@/lib/api/services"
+import { FormattedMessage } from "react-intl"
 
 type EditServiceFormProps = {
     profileId: string
@@ -55,7 +56,7 @@ export default function EditServiceForm({
     return (
         <div className="rounded-lg p-4 mt-4">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Edit Service</h3>
+                <h3 className="text-lg font-semibold"><FormattedMessage id="edit-service" /></h3>
                 <button onClick={onCancel} className="text-gray-500">
                     <X size={20} />
                 </button>
@@ -63,7 +64,7 @@ export default function EditServiceForm({
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <Label htmlFor="serviceName">Service Name</Label>
+                    <Label htmlFor="serviceName"><FormattedMessage id="service-name" /></Label>
                     <Input
                         id="serviceName"
                         value={editedService.name}
@@ -73,7 +74,7 @@ export default function EditServiceForm({
                 </div>
 
                 <div>
-                    <Label htmlFor="serviceDescription">Description</Label>
+                    <Label htmlFor="serviceDescription"><FormattedMessage id="description" /></Label>
                     <Textarea
                         id="serviceDescription"
                         value={editedService.description}
@@ -85,11 +86,15 @@ export default function EditServiceForm({
 
                 <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={onCancel}>
-                        Cancel
+                        <FormattedMessage id="cancel" />
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Updating..." : "Update Service"}
-                    </Button>
+                    {isSubmitting ?
+                        <Button type="submit" disabled={isSubmitting}>
+                            <FormattedMessage id="saving" />
+                        </Button> : <Button type="submit" disabled={isSubmitting}>
+                            <FormattedMessage id="save" />
+                        </Button>
+                    }
                 </div>
             </form>
         </div>

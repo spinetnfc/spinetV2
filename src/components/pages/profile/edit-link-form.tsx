@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X } from "lucide-react"
 import { updateProfile } from "@/lib/api/profile"
 import { toast } from "sonner"
+import { Form } from "react-hook-form"
+import { FormattedMessage } from "react-intl"
 
 type LinkType = {
     name: string
@@ -96,7 +98,7 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
     return (
         <div className="rounded-lg p-4 mt-4">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Edit Link</h3>
+                <h3 className="text-lg font-semibold"><FormattedMessage id="edit-link" /></h3>
                 <button onClick={onCancel} className="text-gray-500">
                     <X size={20} />
                 </button>
@@ -104,7 +106,7 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <Label htmlFor="linkType">Link Type</Label>
+                    <Label htmlFor="linkType"><FormattedMessage id="link-type" /></Label>
                     <Select value={editedLink.name} onValueChange={(value) => setEditedLink({ ...editedLink, name: value })}>
                         <SelectTrigger id="linkType">
                             <SelectValue placeholder="Select link type" />
@@ -120,7 +122,7 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
                 </div>
 
                 <div>
-                    <Label htmlFor="linkTitle">Display Text</Label>
+                    <Label htmlFor="linkTitle"><FormattedMessage id="display-text" /></Label>
                     <Input
                         id="linkTitle"
                         value={editedLink.title}
@@ -131,7 +133,7 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
 
                 {editedLink.name !== "email" && editedLink.name !== "phone" && (
                     <div>
-                        <Label htmlFor="linkUrl">URL</Label>
+                        <Label htmlFor="linkUrl"><FormattedMessage id="url" /></Label>
                         <Input
                             id="linkUrl"
                             value={editedLink.link || ""}
@@ -144,11 +146,15 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
 
                 <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={onCancel}>
-                        Cancel
+                        <FormattedMessage id="cancel" />
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Updating..." : "Update Link"}
-                    </Button>
+                    {isSubmitting ?
+                        <Button type="submit" disabled={isSubmitting}>
+                            <FormattedMessage id="saving" />
+                        </Button> : <Button type="submit" disabled={isSubmitting}>
+                            <FormattedMessage id="save" />
+                        </Button>
+                    }
                 </div>
             </form>
         </div>

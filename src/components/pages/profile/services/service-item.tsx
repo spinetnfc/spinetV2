@@ -8,6 +8,8 @@ import DeleteConfirmationModal from "./delete-confirmation-modal"
 import EditServiceForm from "./edit-service-form"
 import { Service } from "@/types/services"
 import { deleteService } from "@/lib/api/services"
+import { Form } from "react-hook-form"
+import { FormattedMessage } from "react-intl"
 
 interface ServiceItemProps {
     service: Service
@@ -73,25 +75,25 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
             )}
 
             <div className="bg-blue-100 dark:bg-navy rounded-lg p-6 relative group">
-                <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute end-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <button className="text-gray-500 p-1 hover:text-gray-700 bg-white/80 rounded-full">
-                                <MoreVertical size={16} />
+                            <button className="text-primary p-1 hover:text-gray-600 rounded-full">
+                                <MoreVertical size={20} />
                             </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="start" className="bg-white dark:bg-background">
                             <DropdownMenuItem
                                 className="flex items-center gap-2 cursor-pointer"
                                 onClick={() => setShowEditForm(true)}
                             >
-                                <Edit size={14} /> Edit
+                                <Edit size={14} /> <FormattedMessage id="edit" />
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="flex items-center gap-2 text-red-500 cursor-pointer"
                                 onClick={handleDeleteClick}
                             >
-                                <Trash2 size={14} /> Delete
+                                <Trash2 size={14} /> <FormattedMessage id="delete" />
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

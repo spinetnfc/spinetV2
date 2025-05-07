@@ -20,13 +20,13 @@ const UserMenu = ({ locale }: { locale: string }) => {
                 <span className="sr-only">Open user menu</span>
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="start">
             <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => router.push(`/${locale}/profile`)}>
-                Profile
+                <FormattedMessage id="profile" defaultMessage="Profile" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-primary cursor-pointer" onClick={logout}>
-                Sign Out
+                <FormattedMessage id="logout" defaultMessage="Logout" />
             </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>);

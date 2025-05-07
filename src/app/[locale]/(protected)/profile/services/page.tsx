@@ -6,8 +6,16 @@ import ServiceItem from "@/components/pages/profile/services/service-item"
 import AddServiceButton from "@/components/pages/profile/services/add-service-button"
 import { getServices } from "@/lib/api/services"
 import { Service } from "@/types/services"
+import useTranslate from "@/hooks/use-translate"
 
-export default async function ServicesPage() {
+export default async function ServicesPage({
+    params,
+}: {
+    params: Promise<{ locale: string }>;
+}) {
+
+    const { locale } = await params;
+    const { t } = await useTranslate(locale);
     // Get user and profile ID from cookies
     const user = await getUserCookieOnServer()
     const profileId = user?.selectedProfile || null
@@ -51,10 +59,10 @@ export default async function ServicesPage() {
         <div className="min-h-screen w-full py-8">
             {/* Header */}
             <div className="w-full h-32 flex items-center px-6" style={{ backgroundColor: themeColor }}>
-                <Link href="/profile" className="p-2 rounded-full bg-white/20 text-white mr-4">
-                    <ArrowLeft size={24} />
+                <Link href={`/${locale}/profile`} className="p-2 rounded-full bg-white/20 text-white me-4">
+                    <ArrowLeft size={24} className={locale === "ar" ? "transition rotate-180" : ""} />
                 </Link>
-                <h1 className="text-2xl font-bold text-white">My Services</h1>
+                <h1 className="text-2xl font-bold text-white">{t("my-services")}</h1>
             </div>
 
             {/* Content */}
@@ -66,8 +74,8 @@ export default async function ServicesPage() {
                                 <Briefcase className="text-white" size={20} />
                             </div>
                             <div>
-                                <h2 className="text-xl font-semibold">Services by {fullName}</h2>
-                                <p className="text-gray-500">Showcase your professional expertise</p>
+                                <h2 className="text-xl font-semibold">{t("services-by")} {fullName}</h2>
+                                <p className="text-gray-500">{t("Showcase-expertise")}</p>
                             </div>
                         </div>
                         {profileId && <AddServiceButton profileId={profileId} profileData={profileData} />}
@@ -77,16 +85,16 @@ export default async function ServicesPage() {
                     {services.length === 0 ? (
                         <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-lg">
                             <Briefcase className="mx-auto text-gray-400" size={48} />
-                            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">No services yet</h3>
+                            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">{t("No-services-yet")}</h3>
                             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                Add your first service to showcase your expertise
+                                {t("add-first-service-message")}
                             </p>
                             {profileId && (
                                 <div className="w-full flex justify-center mt-6">
                                     <AddServiceButton
                                         profileId={profileId}
                                         profileData={profileData}
-                                        buttonText="Add Your First Service"
+                                        buttonText="add-first-service"
                                     />
                                 </div>
                             )}

@@ -148,7 +148,7 @@ export default function ChangeEmailForm({ user }: { user: User }) {
     return (
         <div className="space-y-4">
             <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Shield className="w-5 h-5" /> Change Email
+                <Shield className="w-5 h-5" /> <FormattedMessage id="change-email" defaultMessage="Change Email" />
             </h2>
 
             {step === 'email' && (
@@ -159,7 +159,9 @@ export default function ChangeEmailForm({ user }: { user: User }) {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>New Email Address</FormLabel>
+                                    <FormLabel>
+                                        <FormattedMessage id="new-email-address" defaultMessage="New Email" />
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             type="email"

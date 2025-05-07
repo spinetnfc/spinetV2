@@ -86,14 +86,14 @@ export default function PreferencesForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                        <h2 className="text-lg font-semibold">Theme Settings</h2>
+                        <h2 className="text-lg font-semibold"><FormattedMessage id='theme-settings' /></h2>
                         <div className="space-y-4">
                             <FormField
                                 control={form.control}
                                 name="themeColor"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Theme Color</FormLabel>
+                                        <FormLabel><FormattedMessage id='theme-color' /></FormLabel>
                                         <FormControl>
                                             <div className="my-3 w-fit xl:w-[90%] grid grid-rows-2 xl:inline-flex space-x-6 space-y-2 grid-flow-col">
                                                 <div
@@ -136,7 +136,7 @@ export default function PreferencesForm({
                     </div>
 
                     <div className="space-y-4">
-                        <h2 className="text-lg font-semibold">Feature Access</h2>
+                        <h2 className="text-lg font-semibold"><FormattedMessage id='feature-access' /></h2>
                         <div className="space-y-2">
                             {Object.entries(profileData.lockedFeatures || {}).map(([feature, isLocked]) =>
                                 feature !== 'excludedLinks' ? (
@@ -157,10 +157,9 @@ export default function PreferencesForm({
                         {isSubmitting ? (
                             <>
                                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                                Saving...
-                            </>
+                                <FormattedMessage id="saving" />                            </>
                         ) : (
-                            'Save Changes'
+                            <FormattedMessage id="save-changes" />
                         )}
                     </Button>
                 </div>
