@@ -71,7 +71,7 @@ export default function ChangeEmailForm({ user }: { user: User }) {
             setStep('otp');
             toast.success('OTP sent to new email address');
         } catch (error: any) {
-            toast.error('Failed to request email change: ' + (error.message || 'Unknown error'));
+            toast.error('Failed to request email change');
             console.error('Email change request error:', error);
         } finally {
             setIsSubmitting(false);
@@ -113,7 +113,7 @@ export default function ChangeEmailForm({ user }: { user: User }) {
             emailForm.reset();
             otpForm.reset();
         } catch (error: any) {
-            toast.error('Failed to verify OTP: ' + (error.message || 'Unknown error'));
+            toast.error('Failed to verify OTP'));
             console.error('OTP verification error:', error);
         } finally {
             setIsSubmitting(false);
