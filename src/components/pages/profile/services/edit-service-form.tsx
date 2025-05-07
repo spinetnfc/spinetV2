@@ -17,17 +17,11 @@ type ServiceType = {
 }
 
 type EditServiceFormProps = {
-    profileId: string
-    existingServices: ServiceType[]
-    serviceIndex: number
     onSuccess: () => void
     onCancel: () => void
 }
 
 export default function EditServiceForm({
-    profileId,
-    existingServices,
-    serviceIndex,
     onSuccess,
     onCancel,
 }: EditServiceFormProps) {
@@ -36,16 +30,6 @@ export default function EditServiceForm({
         description: "",
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
-
-    useEffect(() => {
-        // Initialize form with the service data
-        if (existingServices[serviceIndex]) {
-            setEditedService({
-                name: existingServices[serviceIndex].name,
-                description: existingServices[serviceIndex].description,
-            })
-        }
-    }, [existingServices, serviceIndex])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -57,16 +41,6 @@ export default function EditServiceForm({
 
         try {
             setIsSubmitting(true)
-
-            // Create updated services array
-            const updatedServices = [...existingServices]
-            updatedServices[serviceIndex] = editedService
-
-            // Update profile
-            await updateProfile(profileId, {
-                services: updatedServices,
-            })
-
             onSuccess()
         } catch (error) {
             console.error("Error updating service:", error)

@@ -20,3 +20,17 @@ export const addService = async (profileId: string, service: ServiceInput): Prom
 
     return response.data;
 };
+
+export const deleteService = async (profileId: string, serviceId: string): Promise<{ message: string }> => {
+    if (!profileId || typeof profileId !== 'string') {
+        throw new Error(`Invalid profileId: ${profileId}`);
+    }
+    if (!serviceId || typeof serviceId !== 'string') {
+        throw new Error(`Invalid serviceId: ${serviceId}`);
+    }
+
+    const response = await api.delete(`/profile/${profileId}/service/${serviceId}`);
+    console.log("Service deleted response received:", response.status);
+
+    return response.data;
+}

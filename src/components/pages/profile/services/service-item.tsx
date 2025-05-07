@@ -3,23 +3,19 @@
 import { useState } from "react"
 import { Edit, Trash2, MoreVertical } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
-import { updateProfile, type ProfileData } from "@/lib/api/profile"
 import { toast } from "sonner"
 import DeleteConfirmationModal from "./delete-confirmation-modal"
 import EditServiceForm from "./edit-service-form"
+import { Service } from "@/types/services"
+import { deleteService } from "@/lib/api/services"
 
 interface ServiceItemProps {
-    service: {
-        name: string
-        description: string
-    }
-    index: number
+    service: Service
     profileId: string
-    profileData: ProfileData
     themeColor: string
 }
 
-export default function ServiceItem({ service, index, profileId, profileData, themeColor }: ServiceItemProps) {
+export default function ServiceItem({ profileId, service, themeColor }: ServiceItemProps) {
     const [isDeleting, setIsDeleting] = useState(false)
     const [showEditForm, setShowEditForm] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -31,15 +27,7 @@ export default function ServiceItem({ service, index, profileId, profileData, th
     const handleDeleteConfirm = async () => {
         try {
             setIsDeleting(true)
-
-            // Create a copy of services without the one being deleted
-            const updatedServices = [...(profileData.services || [])].filter((_, i) => i !== index)
-
-            // Update the profile with the new services array
-            await updateProfile(profileId, {
-                services: updatedServices,
-            })
-
+            const response = await deleteService(profileId, service._id)
             toast.success("Service deleted successfully")
             window.location.reload()
         } catch (error) {
@@ -62,9 +50,6 @@ export default function ServiceItem({ service, index, profileId, profileData, th
             <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                 <div className="bg-background rounded-lg max-w-md w-full">
                     <EditServiceForm
-                        profileId={profileId}
-                        existingServices={profileData.services || []}
-                        serviceIndex={index}
                         onSuccess={handleEditSuccess}
                         onCancel={() => setShowEditForm(false)}
                     />

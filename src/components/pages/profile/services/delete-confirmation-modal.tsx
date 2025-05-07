@@ -23,7 +23,7 @@ export default function DeleteConfirmationModal({
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
             <div
-                className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 shadow-lg"
+                className="rounded-lg max-w-md w-full p-6 shadow-lg"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-4">
@@ -46,6 +46,6 @@ export default function DeleteConfirmationModal({
                     </Button>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

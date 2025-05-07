@@ -5,7 +5,7 @@ import { getUserCookieOnServer } from "@/utils/cookies"
 import ServiceItem from "@/components/pages/profile/services/service-item"
 import AddServiceButton from "@/components/pages/profile/services/add-service-button"
 import { getServices } from "@/lib/api/services"
-import { ServiceInput } from "@/types/services"
+import { Service } from "@/types/services"
 
 export default async function ServicesPage() {
     // Get user and profile ID from cookies
@@ -21,9 +21,10 @@ export default async function ServicesPage() {
         throw new Error(`Failed to load profile data: ${err.message}`)
     }
 
-    let services: ServiceInput[] = []
+    let services: Service[] = []
     try {
         services = await getServices(profileId);
+        console.log("services", services)
     } catch (err: any) {
         console.error("Error fetching services:", err);
     }
@@ -96,9 +97,7 @@ export default async function ServicesPage() {
                                 <ServiceItem
                                     key={index}
                                     service={service}
-                                    index={index}
                                     profileId={profileId || ""}
-                                    profileData={profileData}
                                     themeColor={themeColor}
                                 />
                             ))}
