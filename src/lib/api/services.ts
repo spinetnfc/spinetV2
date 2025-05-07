@@ -21,6 +21,20 @@ export const addService = async (profileId: string, service: ServiceInput): Prom
     return response.data;
 };
 
+export const updateService = async (profileId: string, serviceId: string, service: ServiceInput): Promise<{ message: string }> => {
+    if (!profileId || typeof profileId !== 'string') {
+        throw new Error(`Invalid profileId: ${profileId}`);
+    }
+    if (!serviceId || typeof serviceId !== 'string') {
+        throw new Error(`Invalid serviceId: ${serviceId}`);
+    }
+
+    const response = await api.patch(`/profile/${profileId}/service/${serviceId}`, service);
+    console.log("Service updated response received:", response.status);
+
+    return response.data;
+}
+
 export const deleteService = async (profileId: string, serviceId: string): Promise<{ message: string }> => {
     if (!profileId || typeof profileId !== 'string') {
         throw new Error(`Invalid profileId: ${profileId}`);

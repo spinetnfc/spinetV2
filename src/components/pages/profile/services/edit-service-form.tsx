@@ -8,27 +8,27 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { X } from "lucide-react"
-import { updateProfile } from "@/lib/api/profile"
 import { toast } from "sonner"
-
-type ServiceType = {
-    name: string
-    description: string
-}
+import type { Service, ServiceInput } from "@/types/services"
+import { updateService } from "@/lib/api/services"
 
 type EditServiceFormProps = {
+    profileId: string
+    service: Service
     onSuccess: () => void
     onCancel: () => void
 }
 
 export default function EditServiceForm({
+    profileId,
+    service,
     onSuccess,
-    onCancel,
+    onCancel
 }: EditServiceFormProps) {
-    const [editedService, setEditedService] = useState<ServiceType>({
-        name: "",
-        description: "",
-    })
+    const [editedService, setEditedService] = useState<ServiceInput>(() => {
+        const { _id, ...rest } = service;
+        return rest;
+    });
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -41,6 +41,8 @@ export default function EditServiceForm({
 
         try {
             setIsSubmitting(true)
+            const respone = await updateService(profileId, service._id, editedService)
+            console.log("Service updated response received:", respone)
             onSuccess()
         } catch (error) {
             console.error("Error updating service:", error)
@@ -51,7 +53,7 @@ export default function EditServiceForm({
     }
 
     return (
-        <div className="bg-navy rounded-lg p-4 mt-4">
+        <div className="rounded-lg p-4 mt-4">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Edit Service</h3>
                 <button onClick={onCancel} className="text-gray-500">
