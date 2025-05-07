@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { Phone, Mail, Edit, Briefcase, ArrowLeft, Globe, Linkedin, Instagram, Twitter, Github, LinkIcon, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send } from 'lucide-react'
+import { Phone, Mail, Edit, Briefcase, ArrowLeft, Globe, Linkedin, Instagram, Twitter, Github, LinkIcon, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send, ChevronRight } from 'lucide-react'
 import { getProfile, type ProfileData } from "@/lib/api/profile"
 import { getUserCookieOnServer } from "@/utils/cookies"
 import Link from "next/link"
@@ -135,26 +135,26 @@ export default async function ProfilePage() {
             {/* Profile sections */}
             <div className="px-6 mt-8 space-y-4">
                 {/* Services */}
-                <div className="bg-blue-200 dark:bg-navy rounded-lg p-4">
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 rounded-lg" style={{ backgroundColor: themeColor }}>
-                                <Briefcase className="text-white" size={20} />
+                <Link href="/profile/services" className="block">
+                    <div className="bg-blue-200 dark:bg-navy rounded-lg p-4 hover:bg-blue-300 dark:hover:bg-blue-900 transition-colors">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 rounded-lg" style={{ backgroundColor: themeColor }}>
+                                    <Briefcase className="text-white" size={20} />
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-semibold">Services I provide</h2>
+                                    <p className="text-gray-500 text-sm">
+                                        1 service
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-lg font-semibold">Services I provide</h2>
-                                <p className="text-gray-500 text-sm">1 service</p>
+                            <div className="text-gray-500">
+                                <ChevronRight size={20} />
                             </div>
                         </div>
-                        <button className="text-gray-500">
-                            <div className="flex flex-col gap-1">
-                                <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                                <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                                <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                            </div>
-                        </button>
                     </div>
-                </div>
+                </Link>
 
                 {/* Personal links section */}
                 <div className="flex justify-between items-center mt-6">
