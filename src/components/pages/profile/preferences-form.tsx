@@ -95,7 +95,7 @@ export default function PreferencesForm({
                                     <FormItem>
                                         <FormLabel>Theme Color</FormLabel>
                                         <FormControl>
-                                            <div className="my-3 w-fit xl:w-[90%] grid grid-rows-2 xl:inline-flex space-x-6 space-y-2 grid-flow-col ">
+                                            <div className="my-3 w-fit xl:w-[90%] grid grid-rows-2 xl:inline-flex space-x-6 space-y-2 grid-flow-col">
                                                 <div
                                                     className={`picker h-[30px] w-[30px] rounded-full cursor-pointer ${isCustomColor ? 'border-2 border-primary' : ''}`}
                                                     style={{
