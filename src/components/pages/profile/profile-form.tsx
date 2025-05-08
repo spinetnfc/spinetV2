@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { FormattedMessage, useIntl } from 'react-intl';
 import * as z from 'zod';
@@ -39,26 +39,11 @@ import { toast } from "sonner";
 const profileSchema = z.object({
     // Basic Information
     fullName: z.string().min(2, { message: 'First name is required' }),
-    // lastName: z.string().min(2, { message: 'Last name is required' }),
     birthDate: z.date().optional(),
     gender: z.enum(['male', 'female', 'other']).optional(),
-    // phoneNumber: z
-    //     .string()
-    //     .min(1, { message: 'phone-number-required' })
-    //     .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
-    //         message: 'invalid-phone-number',
-    //     }),
-    // Professional Information
     companyName: z.string().min(1, { message: 'Company name is required' }),
     activitySector: z.string().min(1, { message: 'Activity sector is required' }),
-    position: z.string().min(1, { message: 'Position is required' }),
-
-    // Social Links
-    links: z.array(z.object({
-        title: z.string().min(1, { message: 'Platform is required' }),
-        link: z.string().min(1, { message: 'URL is required' }),
-        name: z.string().min(1, { message: 'Display name is required' }),
-    })).optional(),
+    position: z.string().min(1, { message: 'Position is required' })
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -78,21 +63,12 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
         resolver: zodResolver(profileSchema),
         defaultValues: {
             fullName: profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`,
-            // lastName: profileData.lastName || '',
             birthDate: profileData.birthDate ? new Date(profileData.birthDate) : undefined,
             gender: profileData.gender as 'male' | 'female' | 'other' || undefined,
-            // phoneNumber: profileData.phoneNumber || '',
             companyName: profileData.companyName || '',
             activitySector: profileData.activitySector || '',
             position: profileData.position || '',
-            links: profileData.links || [],
         },
-    });
-
-    // Setup field array for social links
-    const { fields, append, remove } = useFieldArray({
-        control: form.control,
-        name: "links",
     });
 
     // Handle form submission
@@ -104,7 +80,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                 ...data,
                 birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
             };
-            // updateProfile(profileId, formattedData);
             console.log('Submitting profile data:', formattedData);
             await updateProfile(profileId, formattedData);
 
@@ -144,27 +119,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 )}
                             />
 
-                            {/* Last Name Field */}
-                            {/* <FormField
-                                control={form.control}
-                                name="lastName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm">Last Name</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter your last name"
-                                                {...field}
-                                                disabled={profileData.lockedFeatures?.lastName}
-                                                className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            /> */}
-
-                            {/* Birth Date Field */}
                             <FormField
                                 control={form.control}
                                 name="birthDate"
@@ -232,25 +186,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                     </FormItem>
                                 )}
                             />
-                            {/* Phone Number Field */}
-                            {/* <FormField
-                                control={form.control}
-                                name="phoneNumber"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-sm"><FormattedMessage id="phone-number" /></FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                // placeholder="Enter your phone number"
-                                                {...field}
-                                                // disabled={profileData.lockedFeatures?.phoneNumber}
-                                                className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            /> */}
                         </div>
                     </div>
 
