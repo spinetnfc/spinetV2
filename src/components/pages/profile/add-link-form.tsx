@@ -138,7 +138,7 @@ export default function AddLinkForm({ profileId, existingLinks, onSuccess, onCan
                     </Button>
                     {isSubmitting ? <Button type="submit" disabled={isSubmitting}>
                         <FormattedMessage id="saving" />
-                    </Button> : <Button type="button" onClick={onCancel}>
+                    </Button> : <Button type="button" onClick={handleSubmit}>
                         <FormattedMessage id="save" />
                     </Button>
                     }

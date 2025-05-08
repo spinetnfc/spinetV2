@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X } from "lucide-react"
 import { updateProfile } from "@/lib/api/profile"
 import { toast } from "sonner"
-import { Form } from "react-hook-form"
 import { FormattedMessage, useIntl } from "react-intl"
 
 type LinkType = {
@@ -47,46 +45,38 @@ const LINK_TYPES = [
 ]
 
 export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSuccess, onCancel }: EditLinkFormProps) {
-    const [editedLink, setEditedLink] = useState<LinkType>({
-        name: "",
-        title: "",
-        link: "",
-    })
+    const [editedLink, setEditedLink] = useState<LinkType | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const intl = useIntl();
+    const intl = useIntl()
 
     useEffect(() => {
-        // Initialize form with the link data
-        if (existingLinks[linkIndex]) {
+        console.log("existingLinks:", existingLinks)
+        console.log("linkIndex:", linkIndex)
+        const linkToEdit = existingLinks[linkIndex]
+        if (linkToEdit) {
             setEditedLink({
-                name: existingLinks[linkIndex].name,
-                title: existingLinks[linkIndex].title,
-                link: existingLinks[linkIndex].link || "",
+                name: linkToEdit.name || "",
+                title: linkToEdit.title || "",
+                link: linkToEdit.link || "",
             })
+        } else {
+            console.error("No link found at index:", linkIndex)
         }
     }, [existingLinks, linkIndex])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (!editedLink.name || !editedLink.title) {
+        if (!editedLink || !editedLink.name || !editedLink.title) {
             toast.error(intl.formatMessage({ id: "Please fill in all required fields" }))
             return
         }
 
         try {
             setIsSubmitting(true)
-
-            // Create updated links array
             const updatedLinks = [...existingLinks]
             updatedLinks[linkIndex] = editedLink
-
-            // Update profile
-            await updateProfile(profileId, {
-                links: updatedLinks,
-            })
-
-            // Success handled by parent component
+            await updateProfile(profileId, { links: updatedLinks })
             onSuccess()
         } catch (error) {
             console.error("Error updating link:", error)
@@ -94,6 +84,10 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
         } finally {
             setIsSubmitting(false)
         }
+    }
+
+    if (!editedLink) {
+        return <div className="text-red-500">Link not found. Please try again.</div>
     }
 
     return (
@@ -149,13 +143,9 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
                     <Button type="button" variant="outline" onClick={onCancel}>
                         <FormattedMessage id="cancel" />
                     </Button>
-                    {isSubmitting ?
-                        <Button type="submit" disabled={isSubmitting}>
-                            <FormattedMessage id="saving" />
-                        </Button> : <Button type="submit" disabled={isSubmitting}>
-                            <FormattedMessage id="save" />
-                        </Button>
-                    }
+                    <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? <FormattedMessage id="saving" /> : <FormattedMessage id="save" />}
+                    </Button>
                 </div>
             </form>
         </div>

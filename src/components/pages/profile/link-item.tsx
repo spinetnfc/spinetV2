@@ -39,7 +39,8 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
     const isClickableLink = link.name !== "email" && link.name !== "phone" && link.link
 
     const getDisplayLabel = () =>
-        link.name.toLowerCase() !== "other" ? link.name.charAt(0).toUpperCase() + link.name.slice(1) : link.title
+        !["email", "phone"].includes(link.name.toLowerCase()) ? link.title.charAt(0).toUpperCase() +
+            link.title.slice(1) : link.name.charAt(0).toUpperCase() + link.name.slice(1)
 
     const handleDeleteClick = () => {
         setShowDeleteModal(true)
