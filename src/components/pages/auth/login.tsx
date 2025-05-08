@@ -21,9 +21,6 @@ import { Input } from '@/components/ui/input';
 import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/authContext'; // Import useAuth
-import { set } from 'date-fns';
-import { Spinnaker } from 'next/font/google';
-import { Spinner } from '@/components/ui/spinner';
 
 // Zod validation schema
 const loginSchema = z.object({
@@ -73,10 +70,10 @@ const LoginForm = ({ locale }: { locale: string }) => {
       document.cookie = `fileApiRefreshToken=${encodeURIComponent(JSON.stringify(user.tokens.fileApiRefreshToken))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
 
       authLogin(user); // Call AuthContext login function
-      toast.success('Login successful');
+      toast.success(intl.formatMessage({ id: "login successful" }));
     } catch (error) {
       console.error('Login error:', error);
-      toast.error('Login failed');
+      toast.error(intl.formatMessage({ id: "login failed" }));
     }
     finally {
       setIsSubmitting(false);

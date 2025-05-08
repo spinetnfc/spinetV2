@@ -9,7 +9,7 @@ import Link from "next/link"
 import EditLinkForm from "./edit-link-form"
 import DeleteConfirmationModal from "./delete-confirmation-modal"
 import { toast } from "sonner"
-import { FormattedDate, FormattedMessage } from "react-intl"
+import { FormattedMessage, useIntl } from "react-intl"
 
 interface LinkItemProps {
     link: {
@@ -28,7 +28,7 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
     const [isDeleting, setIsDeleting] = useState(false)
     const [showEditForm, setShowEditForm] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
-
+    const intl = useIntl()
     const isEmailOrPhone =
         link.name === "email" ||
         link.name === "phone" ||
@@ -55,11 +55,11 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
                 links: updatedLinks,
             })
 
-            toast.success("Link deleted successfully")
+            toast.success(intl.formatMessage({ id: "Link deleted successfully" }))
             window.location.reload()
         } catch (error) {
             console.error("Error deleting link:", error)
-            toast.error("Failed to delete link. Please try again.")
+            toast.error(intl.formatMessage({ id: "Failed to delete link. Please try again." }))
         } finally {
             setIsDeleting(false)
             setShowDeleteModal(false)
@@ -68,7 +68,7 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
 
     const handleEditSuccess = () => {
         setShowEditForm(false)
-        toast.success("Link updated successfully")
+        toast.success(intl.formatMessage({ id: "Link updated successfully" }))
         window.location.reload()
     }
 

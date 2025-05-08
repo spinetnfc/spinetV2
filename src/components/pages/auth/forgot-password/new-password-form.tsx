@@ -51,11 +51,11 @@ const NewPasswordForm = ({ email, sessionId }: Props) => {
     try {
       setIsSubmitting(true);
       const response = await resetPassword(sessionId, data.password);
-      toast.success('Password reset successfully, Proceed to login');
+      toast.success(intl.formatMessage({ id: "Password reset successfully, Proceed to login" }));
       router.push('/auth/login');
 
     } catch (error) {
-      toast.error('Failed to reset password, try again');
+      toast.error(intl.formatMessage({ id: "Failed to reset password, try again" }));
       console.error('Reset password error:', error);
     }
     finally {

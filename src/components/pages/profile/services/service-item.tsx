@@ -9,7 +9,7 @@ import EditServiceForm from "./edit-service-form"
 import { Service } from "@/types/services"
 import { deleteService } from "@/lib/api/services"
 import { Form } from "react-hook-form"
-import { FormattedMessage } from "react-intl"
+import { FormattedMessage, useIntl } from "react-intl"
 
 interface ServiceItemProps {
     service: Service
@@ -21,7 +21,7 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
     const [isDeleting, setIsDeleting] = useState(false)
     const [showEditForm, setShowEditForm] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
-
+    const intl = useIntl()
     const handleDeleteClick = () => {
         setShowDeleteModal(true)
     }
@@ -30,11 +30,11 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
         try {
             setIsDeleting(true)
             const response = await deleteService(profileId, service._id)
-            toast.success("Service deleted successfully")
+            toast.success(intl.formatMessage({ id: "Service deleted successfully" }))
             window.location.reload()
         } catch (error) {
             console.error("Error deleting service:", error)
-            toast.error("Failed to delete service. Please try again.")
+            toast.error(intl.formatMessage({ id: "Failed to delete service. Please try again." }))
         } finally {
             setIsDeleting(false)
             setShowDeleteModal(false)
@@ -43,7 +43,8 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
 
     const handleEditSuccess = () => {
         setShowEditForm(false)
-        toast.success("Service updated successfully")
+        toast.success(intl.formatMessage({ id: "Service updated successfully" })
+        )
         window.location.reload()
     }
 
@@ -78,7 +79,7 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
                 <div className="absolute end-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <button className="text-primary p-1 hover:text-gray-600 rounded-full">
+                            <button className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
                                 <MoreVertical size={20} />
                             </button>
                         </DropdownMenuTrigger>

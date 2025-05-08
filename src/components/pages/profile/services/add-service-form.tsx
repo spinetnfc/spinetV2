@@ -26,12 +26,12 @@ export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddSe
         description: "",
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
-
+    const intl = useIntl()
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (!newService.name || !newService.description) {
-            toast.error("Please fill in all required fields")
+            toast.error(intl.formatMessage({ id: "Please fill in all required fields" }))
             return
         }
 
@@ -39,11 +39,11 @@ export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddSe
             setIsSubmitting(true)
             const response = await addService(profileId, newService)
             console.log("Service added response received:", response)
-            toast.success("Service added successfully")
+            toast.success(intl.formatMessage({ id: "Service added successfully" }))
             onSuccess()
         } catch (error) {
             console.error("Error adding service:", error)
-            toast.error("Failed to add service. Please try again.")
+            toast.error(intl.formatMessage({ id: "Failed to add service. Please try again." }))
         } finally {
             setIsSubmitting(false)
         }

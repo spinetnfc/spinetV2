@@ -11,7 +11,7 @@ import { X } from "lucide-react"
 import { toast } from "sonner"
 import type { Service, ServiceInput } from "@/types/services"
 import { updateService } from "@/lib/api/services"
-import { FormattedMessage } from "react-intl"
+import { FormattedMessage, useIntl } from "react-intl"
 
 type EditServiceFormProps = {
     profileId: string
@@ -31,12 +31,13 @@ export default function EditServiceForm({
         return rest;
     });
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const intl = useIntl()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (!editedService.name || !editedService.description) {
-            toast.error("Please fill in all required fields")
+            toast.error(intl.formatMessage({ id: "Please fill in all required fields" }))
             return
         }
 
@@ -47,7 +48,7 @@ export default function EditServiceForm({
             onSuccess()
         } catch (error) {
             console.error("Error updating service:", error)
-            toast.error("Failed to update service. Please try again.")
+            toast.error(intl.formatMessage({ id: "Failed to update service. Please try again." }))
         } finally {
             setIsSubmitting(false)
         }

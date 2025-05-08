@@ -11,7 +11,7 @@ import { X } from "lucide-react"
 import { updateProfile } from "@/lib/api/profile"
 import { toast } from "sonner"
 import { Form } from "react-hook-form"
-import { FormattedMessage } from "react-intl"
+import { FormattedMessage, useIntl } from "react-intl"
 
 type LinkType = {
     name: string
@@ -53,6 +53,7 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
         link: "",
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const intl = useIntl();
 
     useEffect(() => {
         // Initialize form with the link data
@@ -69,7 +70,7 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
         e.preventDefault()
 
         if (!editedLink.name || !editedLink.title) {
-            toast.error("Please fill in all required fields")
+            toast.error(intl.formatMessage({ id: "Please fill in all required fields" }))
             return
         }
 
@@ -89,7 +90,7 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
             onSuccess()
         } catch (error) {
             console.error("Error updating link:", error)
-            toast.error("Failed to update link. Please try again.")
+            toast.error(intl.formatMessage({ id: "Failed to update link. Please try again." }))
         } finally {
             setIsSubmitting(false)
         }

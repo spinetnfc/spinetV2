@@ -62,14 +62,10 @@ export default function PreferencesForm({
             };
             console.log('Submitting preferences data:', formattedData);
             await updateProfile(profileId, formattedData);
-            toast.success('Preferences updated successfully');
+            toast.success(intl.formatMessage({ id: "Preferences updated successfully" }));
         } catch (error: any) {
             console.error('Preferences update error:', error);
-            const errorMessage =
-                error.response?.data?.message ||
-                error.message ||
-                'Failed to update preferences. Please try again.';
-            toast.error(errorMessage);
+            toast.error(intl.formatMessage({ id: "Failed to update preferences. Please try again." }));
         } finally {
             setIsSubmitting(false);
         }

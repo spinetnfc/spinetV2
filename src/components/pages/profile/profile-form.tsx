@@ -42,12 +42,12 @@ const profileSchema = z.object({
     // lastName: z.string().min(2, { message: 'Last name is required' }),
     birthDate: z.date().optional(),
     gender: z.enum(['male', 'female', 'other']).optional(),
-    phoneNumber: z
-        .string()
-        .min(1, { message: 'phone-number-required' })
-        .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
-            message: 'invalid-phone-number',
-        }),
+    // phoneNumber: z
+    //     .string()
+    //     .min(1, { message: 'phone-number-required' })
+    //     .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
+    //         message: 'invalid-phone-number',
+    //     }),
     // Professional Information
     companyName: z.string().min(1, { message: 'Company name is required' }),
     activitySector: z.string().min(1, { message: 'Activity sector is required' }),
@@ -72,7 +72,7 @@ interface ProfileFormProps {
 
 export default function ProfileForm({ profileData, profileId, sectionName, locale }: ProfileFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const intl = useIntl();
     // Initialize form with default values from profileData
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileSchema),
@@ -81,7 +81,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
             // lastName: profileData.lastName || '',
             birthDate: profileData.birthDate ? new Date(profileData.birthDate) : undefined,
             gender: profileData.gender as 'male' | 'female' | 'other' || undefined,
-            phoneNumber: profileData.phoneNumber || '',
+            // phoneNumber: profileData.phoneNumber || '',
             companyName: profileData.companyName || '',
             activitySector: profileData.activitySector || '',
             position: profileData.position || '',
@@ -104,18 +104,14 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                 ...data,
                 birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
             };
-            updateProfile(profileId, formattedData);
+            // updateProfile(profileId, formattedData);
             console.log('Submitting profile data:', formattedData);
             await updateProfile(profileId, formattedData);
 
-            toast.success("Profile updated successfully");
+            toast.success(intl.formatMessage({ id: "Profile updated successfully" }));
         } catch (error: any) {
             console.error('Profile update error:', error);
-            const errorMessage =
-                error.response?.data?.message ||
-                error.message ||
-                'Failed to update profile. Please try again.';
-            toast.error(errorMessage);
+            toast.error(intl.formatMessage({ id: "Failed to update profile. Please try again." }));
         } finally {
             setIsSubmitting(false);
         }
@@ -237,7 +233,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 )}
                             />
                             {/* Phone Number Field */}
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="phoneNumber"
                                 render={({ field }) => (
@@ -254,7 +250,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
                         </div>
                     </div>
 

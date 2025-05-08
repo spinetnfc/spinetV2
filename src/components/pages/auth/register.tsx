@@ -177,7 +177,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
 
       // Handle successful response
       console.log('Registration response:', response);
-      toast.success("Account registered successfully, Proceeding to login...")
+      toast.success(intl.formatMessage({ id: "Account registered successfully, Proceeding to login..." }))
 
       // Redirect to login page after a short delay to show the success message
       setTimeout(() => {
@@ -185,11 +185,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
       }, 8000);
     } catch (error: any) {
       console.error('Registration error:', error);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        'Registration failed. Please try again.';
-      toast.error("Error: Failed to register");
+      toast.error(intl.formatMessage({ id: "Error: Failed to register" }));
     } finally {
       setIsSubmitting(false);
     }

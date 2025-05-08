@@ -101,6 +101,7 @@ export default async function ProfilePage({ params }: {
                 <div className="absolute -bottom-12 xs:-bottom-14 sm:-bottom-16 left-4 sm:left-8">
                     <div className="relative">
                         <Image
+                            priority
                             src={profilePictureUrl || "/placeholder.svg"}
                             alt={fullName}
                             width={120}

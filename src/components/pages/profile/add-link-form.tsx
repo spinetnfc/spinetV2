@@ -52,12 +52,12 @@ export default function AddLinkForm({ profileId, existingLinks, onSuccess, onCan
         link: "",
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
-
+    const intl = useIntl()
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (!newLink.name || !newLink.title) {
-            toast.error("Please fill in all required fields")
+            toast.error(intl.formatMessage({ id: "Please fill in all required fields" }))
             return
         }
 
@@ -72,11 +72,11 @@ export default function AddLinkForm({ profileId, existingLinks, onSuccess, onCan
                 links: updatedLinks,
             })
 
-            toast.success("Link added successfully")
+            toast.success(intl.formatMessage({ id: "Link added successfully" }))
             onSuccess()
         } catch (error) {
             console.error("Error adding link:", error)
-            toast.error("Failed to add link. Please try again.")
+            toast.error(intl.formatMessage({ id: "Failed to add link. Please try again." }))
         } finally {
             setIsSubmitting(false)
         }

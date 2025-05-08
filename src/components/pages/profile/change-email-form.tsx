@@ -2,7 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import * as z from 'zod';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,7 @@ export default function ChangeEmailForm({ user }: { user: User }) {
     const [sessionID, setSessionID] = useState<string | null>(null);
     const [newEmail, setNewEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const intl = useIntl();
 
     const emailForm = useForm<z.infer<typeof emailSchema>>({
         resolver: zodResolver(emailSchema),
@@ -69,9 +70,9 @@ export default function ChangeEmailForm({ user }: { user: User }) {
             setSessionID(receivedSessionID);
             setNewEmail(data.email);
             setStep('otp');
-            toast.success('OTP sent to new email address');
+            toast.success(intl.formatMessage({ id: "OTP sent to new email address" }));
         } catch (error: any) {
-            toast.error('Failed to request email change');
+            toast.error(intl.formatMessage({ id: "Failed to request email change" }));
             console.error('Email change request error:', error);
         } finally {
             setIsSubmitting(false);
@@ -80,7 +81,7 @@ export default function ChangeEmailForm({ user }: { user: User }) {
 
     const onOtpSubmit = async (data: z.infer<typeof otpSchema>) => {
         if (!sessionID) {
-            toast.error('Session ID is missing. Please try again.');
+            toast.error(intl.formatMessage({ id: "Session ID is missing. Please try again." }));
             setStep('email');
             return;
         }
@@ -106,14 +107,14 @@ export default function ChangeEmailForm({ user }: { user: User }) {
                 console.warn('current-user cookie not found');
             }
 
-            toast.success('Email changed successfully');
+            toast.success(intl.formatMessage({ id: "Email changed successfully" }));
             setStep('email');
             setSessionID(null);
             setNewEmail('');
             emailForm.reset();
             otpForm.reset();
         } catch (error: any) {
-            toast.error('Failed to verify OTP'));
+            toast.error(intl.formatMessage({ id: "Failed to verify OTP" }));
             console.error('OTP verification error:', error);
         } finally {
             setIsSubmitting(false);
@@ -122,7 +123,7 @@ export default function ChangeEmailForm({ user }: { user: User }) {
 
     const handleResendOTP = async () => {
         if (!newEmail) {
-            toast.error('No email address available to resend OTP');
+            toast.error(intl.formatMessage({ id: "No email address available to resend OTP" }));
             setStep('email');
             return;
         }
@@ -138,9 +139,9 @@ export default function ChangeEmailForm({ user }: { user: User }) {
             }
 
             setSessionID(receivedSessionID);
-            toast.success('OTP resent successfully');
+            toast.success(intl.formatMessage({ id: "OTP resent successfully" }));
         } catch (error: any) {
-            toast.error('Failed to resend OTP: ' + (error.message || 'Unknown error'));
+            toast.error(intl.formatMessage({ id: "Failed to resend OTP" }));
             console.error('OTP resend error:', error);
         }
     };

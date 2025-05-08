@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import * as z from 'zod';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,7 @@ type Props = {
 };
 const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const intl = useIntl();
   // OTP Validation Schema
   const otpSchema = z.object({
     otp: z.string().length(5, { message: 'otp-length' }),
@@ -49,11 +50,11 @@ const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
       console.log('Current sessionId before verify:', sessionId);
       const response = await verifyOTP(sessionId, data.otp);
       setSessionId(response.resetSessionId);
-      toast.success('OTP verified successfully');
+      toast.success(intl.formatMessage({ id: "OTP verified successfully" }),);
       setStep('newPassword');
 
     } catch (error) {
-      toast.error('Failed to verify OTP, try again');
+      toast.error(intl.formatMessage({ id: "Failed to verify OTP, try again" }));
       console.error('Forgot password error:', error);
     }
     finally {

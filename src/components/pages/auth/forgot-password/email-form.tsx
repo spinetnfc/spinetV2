@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,6 +27,7 @@ type Props = {
   locale: string;
 };
 const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
+  const intl = useIntl();
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Email Validation Schema
   const emailSchema = z.object({
@@ -45,11 +46,11 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
       if (response.success)
         setEmail(data.email);
       setSessionId(response.confirmationSessionId);
-      toast.success('OTP sent to your email');
+      toast.success(intl.formatMessage({ id: "OTP sent to your email" }));
       setStep('otp');
 
     } catch (error) {
-      toast.error('Failed to send OTP, try again with a valid email');
+      toast.error(intl.formatMessage({ id: "Failed to send OTP, try again with a valid email" }));
       console.error('Forgot password error:', error);
     }
     finally {
