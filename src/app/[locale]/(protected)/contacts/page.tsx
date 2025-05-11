@@ -13,10 +13,7 @@ import { Spinner } from "@/components/ui/spinner"
 export default async function ContactsPage({
     searchParams,
 }: {
-    searchParams?: {
-        query?: string
-        filter?: string
-    }
+    searchParams: Promise<{ query: string; filter: string }>
 }) {
     // Get user and profile data
     const user = await getUserCookieOnServer()
@@ -41,8 +38,7 @@ export default async function ContactsPage({
     }
 
     // Filter contacts based on search query
-    const query = searchParams?.query || ""
-    const filter = searchParams?.filter || "all"
+    const { query = "", filter = "all" } = await searchParams
 
     let filteredContacts = contacts
 
