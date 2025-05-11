@@ -1,17 +1,15 @@
 import { api, ServerApi } from '@/lib/axios';
 import type { ProfileData } from '@/types/profile';
+import type { Contact } from '@/types/contact';
 
-
-export const getProfile = async (userId: string | null): Promise<ProfileData> => {
+export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
     try {
-        // console.log('Fetching profile for userId:', userId);
-
         // Make sure userId is a valid string
-        if (!userId || typeof userId !== 'string') {
-            throw new Error(`Invalid userId: ${userId}`);
+        if (!profileId || typeof profileId !== 'string') {
+            throw new Error(`Invalid profileId: ${profileId}`);
         }
         // Use proper URL format
-        const response = await ServerApi.get(`/profile/${userId}`);
+        const response = await ServerApi.get(`/profile/${profileId}/contacts`);
         return response.data;
     } catch (error) {
         console.error('Profile fetch error:', error);

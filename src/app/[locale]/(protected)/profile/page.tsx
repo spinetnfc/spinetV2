@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { Phone, Mail, Edit, Briefcase, ArrowLeft, Globe, Linkedin, Instagram, Twitter, Github, LinkIcon, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send, ChevronRight } from 'lucide-react'
-import { getProfile, type ProfileData } from "@/lib/api/profile"
+import { getProfile } from "@/lib/api/profile"
+import type { ProfileData } from '@/types/profile';
 import { getUserCookieOnServer } from "@/utils/cookies"
 import Link from "next/link"
 import AddLinkButton from "@/components/pages/profile/add-link-button"
