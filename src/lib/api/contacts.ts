@@ -1,26 +1,19 @@
 import { api, ServerApi } from '@/lib/axios';
 import type { ProfileData } from '@/types/profile';
 import type { Contact } from '@/types/contact';
-import { cookies } from 'next/headers';
+import { withServerCookies } from '@/utils/withServerCookies';
 
 
 
 export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
-    const cookieStore = await cookies();
-    const session = cookieStore.get('spinet-session')?.value;
+    const headers = await withServerCookies();
+
     try {
         if (!profileId || typeof profileId !== 'string') {
             throw new Error(`Invalid profileId: ${profileId}`);
         }
-        const headers = {
-            Cookie: `spinet-session=${session}`,
-        };
-
-        // console.log('Request Headers:', headers);
-
         const response = await ServerApi.get(`/profile/${profileId}/contacts`, {
-            headers,
-            withCredentials: true,
+            headers
         });
         console.log(response.data);
         return response.data;
@@ -29,6 +22,7 @@ export const getContacts = async (profileId: string | null): Promise<Contact[]> 
         throw error;
     }
 };
+
 
 // export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
 //     try {
