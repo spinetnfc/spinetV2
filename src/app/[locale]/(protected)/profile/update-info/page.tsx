@@ -22,7 +22,8 @@ import {
 import useTranslate from "@/hooks/use-translate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { getProfile, ProfileData } from "@/lib/api/profile";
+import { getProfile } from "@/lib/api/profile";
+import type { ProfileData } from "@/types/profile";
 import { getUserCookieOnServer } from "@/utils/cookies";
 import ProfileForm from "@/components/pages/profile/profile-form";
 import PreferencesForm from "@/components/pages/profile/preferences-form";

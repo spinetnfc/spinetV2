@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import AddLinkForm from "./add-link-form"
-import type { ProfileData } from "@/lib/api/profile"
+import type { ProfileData } from "@/types/profile"
 import { Form } from "react-hook-form"
 import { FormattedMessage } from "react-intl"
 
