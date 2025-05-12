@@ -1,6 +1,7 @@
 import { ArrowLeft, Briefcase } from "lucide-react"
 import Link from "next/link"
-import { getProfile, type ProfileData } from "@/lib/api/profile"
+import { getProfile } from "@/lib/api/profile"
+import type { ProfileData } from "@/types/profile"
 import { getUserCookieOnServer } from "@/utils/cookies"
 import ServiceItem from "@/components/pages/profile/services/service-item"
 import AddServiceButton from "@/components/pages/profile/services/add-service-button"
