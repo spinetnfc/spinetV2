@@ -17,7 +17,7 @@ export default async function ContactsPage({
 }) {
     // Get user and profile data
     const user = await getUserCookieOnServer()
-    const profileId = user?.selectedProfile || "1" // Fallback to ID 1 for demo
+    const profileId = user?.selectedProfile || null
 
     // Fetch profile data for the header
     let profileData

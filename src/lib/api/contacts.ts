@@ -1,5 +1,4 @@
 import { api, ServerApi } from '@/lib/axios';
-import type { ProfileData } from '@/types/profile';
 import type { Contact } from '@/types/contact';
 import { withServerCookies } from '@/utils/withServerCookies';
 
@@ -9,10 +8,8 @@ export const getContacts = async (profileId: string | null): Promise<Contact[]> 
         if (!profileId || typeof profileId !== 'string') {
             throw new Error(`Invalid profileId: ${profileId}`);
         }
-
         const response = await ServerApi.get(`/profile/${profileId}/contacts`, { headers });
-
-        console.log("conatcts:::::::::::::::::::", response.data);
+        // console.log("conatcts:::::::::::::::::::", response.data);
         return response.data;
     } catch (error) {
         console.error('Profile fetch error:', error);
@@ -21,32 +18,46 @@ export const getContacts = async (profileId: string | null): Promise<Contact[]> 
 };
 
 
-// export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
-//     try {
-//         if (!profileId || typeof profileId !== 'string') {
-//             throw new Error(`Invalid profileId: ${profileId}`);
-//         }
-
-//         const response = await axios.get(`http://localhost:3001/api/profile/${profileId}/contacts`, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             withCredentials: true, // still good to include
-//         });
-
-//         return response.data;
-//     } catch (error) {
-//         console.error('Profile fetch error:', error);
-//         throw error;
-//     }
-// };
-
-export const updateProfile = async (userId: string, profileData: Partial<ProfileData>): Promise<ProfileData> => {
+export const addContact = async (profileId: string, contact: Contact): Promise<{ message: string }> => {
+    const headers = await withServerCookies();
     try {
-        const response = await api.patch(`/profile/${userId}`, profileData);
+        if (!profileId || typeof profileId !== 'string') {
+            throw new Error(`Invalid profileId: ${profileId}`);
+        }
+        const response = await ServerApi.post(`/profile/${profileId}/contacts`, contact, { headers });
+        console.log("Contact added response received:", response.status);
+
         return response.data;
     } catch (error) {
-        console.error('Profile update error:', error);
+        console.error('Error adding contact:', error);
         throw error;
     }
-};
+}
+
+// export const updateService = async (profileId: string, serviceId: string, service: ServiceInput): Promise<{ message: string }> => {
+//     if (!profileId || typeof profileId !== 'string') {
+//         throw new Error(`Invalid profileId: ${profileId}`);
+//     }
+//     if (!serviceId || typeof serviceId !== 'string') {
+//         throw new Error(`Invalid serviceId: ${serviceId}`);
+//     }
+
+//     const response = await api.patch(`/profile/${profileId}/service/${serviceId}`, service);
+//     console.log("Service updated response received:", response.status);
+
+//     return response.data;
+// }
+
+// export const deleteService = async (profileId: string, serviceId: string): Promise<{ message: string }> => {
+//     if (!profileId || typeof profileId !== 'string') {
+//         throw new Error(`Invalid profileId: ${profileId}`);
+//     }
+//     if (!serviceId || typeof serviceId !== 'string') {
+//         throw new Error(`Invalid serviceId: ${serviceId}`);
+//     }
+
+//     const response = await api.delete(`/profile/${profileId}/service/${serviceId}`);
+//     console.log("Service deleted response received:", response.status);
+
+//     return response.data;
+// }
