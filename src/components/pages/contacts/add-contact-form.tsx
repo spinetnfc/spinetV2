@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { useIntl } from "react-intl"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { useRouter } from "next/navigation"
 
 // Define the contact schema with Zod
 const contactSchema = z.object({
@@ -42,14 +41,13 @@ type LinkType = {
 }
 
 interface AddContactFormProps {
-    createContact: (formData: any) => Promise<{ success: boolean; message: string }>
-    addLink: (existingLinks: any[], newLink: any) => Promise<{ success: boolean; message: string; links?: any[] }>
+    createContact: (formData: FormData) => Promise<any>
     themeColor: string
 }
 
-export default function AddContactForm({ createContact, addLink, themeColor }: AddContactFormProps) {
+export default function AddContactForm({ createContact, themeColor }: AddContactFormProps) {
     const intl = useIntl()
-    const router = useRouter()
+    const formRef = useRef<HTMLFormElement>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [showLinkForm, setShowLinkForm] = useState(false)
     const [links, setLinks] = useState<LinkType[]>([])
@@ -77,23 +75,37 @@ export default function AddContactForm({ createContact, addLink, themeColor }: A
     })
 
     const onSubmit = async (data: ContactFormValues) => {
-        setIsSubmitting(true)
         try {
-            // Call the server action to create the contact
-            const result = await createContact({
-                ...data,
-                tags,
-                links,
-            })
+            setIsSubmitting(true)
 
-            if (result.success) {
-                toast.success(result.message)
+            if (!formRef.current) return
+
+            // Create a FormData object
+            const formData = new FormData(formRef.current)
+
+            // Add the tags and links as JSON strings
+            formData.append("tags", JSON.stringify(tags))
+            formData.append("links", JSON.stringify(links))
+
+            // Add the date as ISO string if it exists
+            if (data.nextActionDate) {
+                formData.set("nextActionDate", data.nextActionDate.toISOString())
+            }
+
+            // Submit the form to the server action
+            const result = await createContact(formData)
+
+            // Only show success and reset form if the server action was successful
+            if (result?.success) {
+                // Show success message
+                toast.success(result.message || "Contact added successfully")
+
+                // Reset form
                 form.reset()
                 setTags([])
                 setLinks([])
-                // Redirect to contacts page after successful submission
-                router.push("/contacts")
-            } else {
+            } else if (result?.message) {
+                // Show error message from server
                 toast.error(result.message)
             }
         } catch (error) {
@@ -118,35 +130,21 @@ export default function AddContactForm({ createContact, addLink, themeColor }: A
         setTags(tags.filter((tag) => tag !== tagToRemove))
     }
 
-    const handleAddLinkSubmit = async () => {
+    const handleAddLinkSubmit = () => {
         if (!newLink.name || !newLink.title) {
             toast.error("Please fill in all required fields")
             return
         }
 
-        try {
-            // Call the server action to add the link
-            const result = await addLink(links, newLink)
-
-            if (result.success) {
-                toast.success(result.message)
-                if (result.links) {
-                    setLinks(result.links)
-                }
-                setShowLinkForm(false)
-                setNewLink({ name: "", title: "", link: "" })
-            } else {
-                toast.error(result.message)
-            }
-        } catch (error) {
-            console.error("Error adding link:", error)
-            toast.error("An unexpected error occurred. Please try again.")
-        }
+        setLinks([...links, newLink])
+        setShowLinkForm(false)
+        setNewLink({ name: "", title: "", link: "" })
+        toast.success("Link added successfully")
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Full Name */}
                     <FormField

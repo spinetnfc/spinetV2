@@ -1,5 +1,5 @@
 import { api, ServerApi } from '@/lib/axios';
-import type { Contact } from '@/types/contact';
+import type { Contact, ContactInput } from '@/types/contact';
 import { withServerCookies } from '@/utils/withServerCookies';
 
 export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
@@ -18,12 +18,13 @@ export const getContacts = async (profileId: string | null): Promise<Contact[]> 
 };
 
 
-export const addContact = async (profileId: string, contact: Contact): Promise<{ message: string }> => {
+export const addContact = async (profileId: string, contact: ContactInput): Promise<{ message: string }> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
             throw new Error(`Invalid profileId: ${profileId}`);
         }
+        console.log("contact:::::::::::::::::::", contact);
         const response = await ServerApi.post(`/profile/${profileId}/contacts`, contact, { headers });
         console.log("Contact added response received:", response.status);
 

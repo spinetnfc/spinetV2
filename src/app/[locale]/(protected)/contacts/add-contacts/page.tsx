@@ -3,11 +3,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { getUserCookieOnServer } from "@/utils/cookies"
 import { getProfile } from "@/lib/api/profile"
+import { addContact } from "@/lib/api/contacts"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import AddContactForm from "@/components/pages/contacts/add-contact-form"
-import { createContactAction, addLinkAction } from "./actions"
+import { redirect } from "next/navigation"
+import type { ContactInput } from "@/types/contact"
 
 export default async function AddContactPage() {
     // Get user and profile data
@@ -27,22 +29,62 @@ export default async function AddContactPage() {
     const profilePictureUrl = profileData?.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
     const themeColor = profileData?.theme?.color || "#3b82f6" // Default to blue if undefined
 
-    // Create a bound version of the createContactAction with the profileId
-    const createContact = async (formData: any) => {
+    // Handle form submission
+    async function createContact(formData: FormData) {
         "use server"
-        if (!profileId) {
-            return { success: false, message: "Profile ID is missing" }
-        }
-        return createContactAction(profileId, formData)
-    }
 
-    // Create a bound version of the addLinkAction with the profileId
-    const addLink = async (existingLinks: any[], newLink: any) => {
-        "use server"
         if (!profileId) {
             return { success: false, message: "Profile ID is missing" }
         }
-        return addLinkAction(profileId, existingLinks, newLink)
+
+        try {
+            // Extract form data
+            const fullName = formData.get("fullName") as string
+            const phoneNumber = formData.get("phoneNumber") as string
+            const email = formData.get("email") as string
+            const position = formData.get("position") as string
+            const companyName = formData.get("companyName") as string
+            const nextAction = formData.get("nextAction") as string
+            const nextActionDateStr = formData.get("nextActionDate") as string
+            const metIn = formData.get("metIn") as string
+            const notes = formData.get("notes") as string
+            const tagsJson = formData.get("tags") as string
+            const linksJson = formData.get("links") as string
+
+            // Parse JSON strings
+            const tags = tagsJson ? JSON.parse(tagsJson) : []
+            const links = linksJson ? JSON.parse(linksJson) : []
+
+            // Parse date if exists
+            const nextActionDate = nextActionDateStr ? new Date(nextActionDateStr) : undefined
+
+            // Create contact object
+            const contactData: ContactInput = {
+                name: fullName,
+                phoneNumber,
+                email,
+                profile: {
+                    position,
+                    compantName: companyName,
+                    type: "personal", // Default type
+                },
+                nextAction,
+                nextActionDate,
+                metIn,
+                notes,
+                tags,
+                links,
+            }
+
+            // Call the external API
+            const result = await addContact(profileId, contactData)
+
+            // Redirect to contacts page after successful submission
+            redirect("/contacts")
+        } catch (error) {
+            console.error("Error creating contact:", error)
+            return { success: false, message: "Failed to add contact. Please try again." }
+        }
     }
 
     return (
@@ -93,27 +135,33 @@ export default async function AddContactPage() {
                     </TabsList>
 
                     <TabsContent value="manual">
-                        <AddContactForm createContact={createContact} addLink={addLink} themeColor={themeColor} />
+                        <Card className="p-4">
+                            <AddContactForm createContact={createContact} themeColor={themeColor} />
+                        </Card>
                     </TabsContent>
 
                     <TabsContent value="scan">
-                        <div className="text-center py-12">
-                            <QrCode size={80} className="mx-auto mb-4 text-gray-400" />
-                            <h3 className="text-lg font-medium mb-2">Scan QR Code</h3>
-                            <p className="text-muted-foreground">
-                                This feature will be available soon. Scan business cards or QR codes to add contacts.
-                            </p>
-                        </div>
+                        <Card className="p-6">
+                            <div className="text-center py-12">
+                                <QrCode size={80} className="mx-auto mb-4 text-gray-400" />
+                                <h3 className="text-lg font-medium mb-2">Scan QR Code</h3>
+                                <p className="text-muted-foreground">
+                                    This feature will be available soon. Scan business cards or QR codes to add contacts.
+                                </p>
+                            </div>
+                        </Card>
                     </TabsContent>
 
                     <TabsContent value="import">
-                        <div className="text-center py-12">
-                            <Upload size={80} className="mx-auto mb-4 text-gray-400" />
-                            <h3 className="text-lg font-medium mb-2">Import Contacts</h3>
-                            <p className="text-muted-foreground">
-                                This feature will be available soon. Import contacts from Google or your phone.
-                            </p>
-                        </div>
+                        <Card className="p-6">
+                            <div className="text-center py-12">
+                                <Upload size={80} className="mx-auto mb-4 text-gray-400" />
+                                <h3 className="text-lg font-medium mb-2">Import Contacts</h3>
+                                <p className="text-muted-foreground">
+                                    This feature will be available soon. Import contacts from Google or your phone.
+                                </p>
+                            </div>
+                        </Card>
                     </TabsContent>
                 </Tabs>
             </div>

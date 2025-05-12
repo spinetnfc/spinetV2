@@ -44,3 +44,24 @@ export type Contact = {
         };
     };
 };
+
+export type ContactInput = {
+    name: string
+    profile: {
+        position?: string
+        compantName?: string
+        type?: string
+    }
+    links?: Array<{
+        name: string
+        title: string
+        link: string
+    }>
+    tags?: string[]
+    nextAction?: string
+    nextActionDate?: Date
+    metIn?: string
+    notes?: string
+    phoneNumber?: string
+    email?: string
+}
