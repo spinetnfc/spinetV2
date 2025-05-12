@@ -6,7 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { FormattedMessage, useIntl } from 'react-intl';
 import * as z from 'zod';
-import { ProfileData, updateProfile } from '@/lib/api/profile';
+import { updateProfile } from '@/lib/api/profile';
+import type { ProfileData } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import {
     Form,

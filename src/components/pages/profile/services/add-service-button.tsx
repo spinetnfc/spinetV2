@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import AddServiceForm from "./add-service-form"
-import type { ProfileData } from "@/lib/api/profile"
+import type { ProfileData } from "@/types/profile"
 import { FormattedMessage } from "react-intl"
 
 interface AddServiceButtonProps {
