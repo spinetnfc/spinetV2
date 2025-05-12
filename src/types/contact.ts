@@ -19,7 +19,7 @@ export type Contact = {
         lastName: string;
         birthDate: string; // or Date
         gender: "male" | "female" | string;
-        companyName: string; // Typo?
+        companyName: string;
         activitySector: string;
         position: string;
         profilePicture: string;
@@ -46,35 +46,49 @@ export type Contact = {
 };
 
 export type ContactInput = {
-    name?: string;
+    name: string;
     description?: string;
-    type?: string; // Optional, defaults to "manual"
+    type?: string;
     profile: {
-        fullName: string; // Typically required
-        firstName?: string;
-        lastName?: string;
+        fullName: string;
+        type?: "professional" | string;
+        groupId?: string;
+        theme?: {
+            color?: string;
+        };
+        birthDate?: string;
+        gender?: "male" | "female" | string;
         companyName?: string;
+        activitySector?: string;
         position?: string;
-        sector?: string;
-        bio?: string;
-        links?: Array<{
-            name: string;
-            title: string;
-            link: string;
-        }>;
-        tags?: string[];
         profilePicture?: string;
-        logo?: string;
+        profileCover?: string;
+        links?: Array<{
+            name?: string;
+            title?: string;
+            link?: string;
+        }>;
+        lockedFeatures?: {
+            profileCover?: boolean;
+            logo?: boolean;
+            qrCodeLogo?: boolean;
+            displayLogo?: boolean;
+            companyName?: boolean;
+            activitySector?: boolean;
+            position?: boolean;
+            theme?: boolean;
+            canAddLinks?: boolean;
+            canAddServices?: boolean;
+            excludedLinks?: string[];
+        };
     };
     leadCaptions?: {
         metIn?: string;
-        longitude?: number;
-        latitude?: number;
-        date?: string; // ISO date string (e.g., "2025-05-15T00:00:00.000Z")
+        date?: string;
         tags?: string[];
         nextAction?: string;
-        dateOfNextAction?: string; // ISO date string or "yyyy-MM-dd"
+        dateOfNextAction?: string;
         notes?: string;
     };
-    teams?: string[]; // Array of team IDs (MongoDB ObjectIds)
+    teams?: string[];
 };

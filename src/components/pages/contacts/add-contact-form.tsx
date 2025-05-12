@@ -33,9 +33,13 @@ const contactSchema = z.object({
         .string()
         .optional()
         .refine(
-            (val) => !val || /^\+?[1-9]\d{1,14}$/.test(val),
+            (val) =>
+                !val ||
+                /^\+?[1-9]\d{1,14}$/.test(val) || // E.164 format
+                /^0\d{9}$/.test(val), // Local format: starts with 0 and has 10 digits
             { message: "Invalid phone number" }
         ),
+
     email: z.string().email({ message: "Invalid email address" }).optional().or(z.literal("")),
     position: z.string().optional(),
     companyName: z.string().optional(),
@@ -99,10 +103,10 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
             // Add phoneNumber and email to links
             const formLinks = [...links];
             if (data.phoneNumber) {
-                formLinks.push({ name: "phone number", title: "Phone Number", link: data.phoneNumber });
+                formLinks.push({ title: "phone", name: "Phone Number", link: data.phoneNumber });
             }
             if (data.email) {
-                formLinks.push({ name: "email", title: "Email", link: data.email });
+                formLinks.push({ title: "email", name: "Email", link: data.email });
             }
 
             // Add tags and links as JSON strings

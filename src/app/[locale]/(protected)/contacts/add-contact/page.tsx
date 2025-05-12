@@ -8,37 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddContactForm from "@/components/pages/contacts/add-contact-form";
 import { format, parse } from "date-fns";
-
-// Define ContactInput type to match the Contact model and controller
-interface ContactInput {
-    name?: string;
-    description?: string;
-    type: string;
-    leadCaptions?: {
-        metIn?: string;
-        longitude?: number;
-        latitude?: number;
-        date?: string;
-        tags?: string[];
-        nextAction?: string;
-        dateOfNextAction?: string;
-        notes?: string;
-    };
-    profile: {
-        fullName: string;
-        firstName?: string;
-        lastName?: string;
-        companyName?: string;
-        position?: string;
-        sector?: string;
-        bio?: string;
-        links?: { name: string; title: string; link: string }[];
-        tags?: string[];
-        profilePicture?: string;
-        logo?: string;
-    };
-    teams?: string[];
-}
+import type { ContactInput } from "@/types/contact";
 
 export default async function AddContactPage() {
     // Get user and profile data
@@ -73,8 +43,6 @@ export default async function AddContactPage() {
         try {
             // Extract form data
             const fullName = formData.get("fullName") as string;
-            const firstName = formData.get("firstName") as string;
-            const lastName = formData.get("lastName") as string;
             const phoneNumber = formData.get("phoneNumber") as string;
             const email = formData.get("email") as string;
             const position = formData.get("position") as string;
@@ -117,17 +85,13 @@ export default async function AddContactPage() {
 
             // Create contact object
             const contactData: ContactInput = {
-                name: fullName, // Use fullName as the contact name
-                description: notes, // Use notes as description
+                name: fullName,
                 type: "manual",
                 profile: {
                     fullName,
-                    firstName: firstName || undefined,
-                    lastName: lastName || undefined,
                     companyName: companyName || undefined,
                     position: position || undefined,
                     links: links.length > 0 ? links : undefined,
-                    tags: tags.length > 0 ? tags : undefined,
                 },
                 leadCaptions: {
                     metIn: metIn || undefined,
@@ -144,17 +108,17 @@ export default async function AddContactPage() {
             // Return success
             return { success: true, message: "Contact added successfully" };
         } catch (error: any) {
-            console.error("Error creating contact:", {
-                message: error.message,
-                response: error.response
-                    ? {
-                        status: error.response.status,
-                        statusText: error.response.statusText,
-                        data: error.response.data,
-                    }
-                    : "No response data available",
-                stack: error.stack,
-            });
+            // console.error("Error creating contact:", {
+            //     message: error.message,
+            //     response: error.response
+            //         ? {
+            //             status: error.response.status,
+            //             statusText: error.response.statusText,
+            //             data: error.response.data,
+            //         }
+            //         : "No response data available",
+            //     stack: error.stack,
+            // });
             return {
                 success: false,
                 message: error.response?.data?.message || error.message || "Failed to add contact. Please try again.",
