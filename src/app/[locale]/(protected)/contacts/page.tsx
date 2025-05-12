@@ -1,14 +1,14 @@
-import { Bell, Menu } from 'lucide-react'
+import { Bell, Menu, Plus } from 'lucide-react'
 import Image from "next/image"
 import { getUserCookieOnServer } from "@/utils/cookies"
 import { getProfile } from "@/lib/api/profile"
 import SearchInput from "@/components/pages/contacts/search-input"
 import FilterTabs from "@/components/pages/contacts/filter-tabs"
 import ContactItem from "@/components/pages/contacts/contact-item"
-import AddContactButton from "@/components/pages/contacts/add-contact-button"
 import { getContacts } from "@/lib/api/contacts"
 import type { Contact } from "@/types/contact"
 import { Spinner } from "@/components/ui/spinner"
+import Link from 'next/link'
 
 export default async function ContactsPage({
     searchParams,
@@ -46,7 +46,7 @@ export default async function ContactsPage({
         filteredContacts = filteredContacts.filter(
             (contact) =>
                 contact.name.toLowerCase().includes(query.toLowerCase()) ||
-                (contact.profile.compantName && contact.profile.compantName.toLowerCase().includes(query.toLowerCase())) ||
+                (contact.profile.companyName && contact.profile.companyName.toLowerCase().includes(query.toLowerCase())) ||
                 (contact.profile.position && contact.profile.position.toLowerCase().includes(query.toLowerCase())),
         )
     }
@@ -103,7 +103,10 @@ export default async function ContactsPage({
 
             {/* Add contact button */}
             <div className="flex justify-end px-4 mt-4">
-                <AddContactButton themeColor={themeColor} />
+                <Link href="/contacts/add-contact" className={`flex items-center gap-2 font-medium`} style={{ color: themeColor }}>
+                    <Plus size={20} />
+                    Add contact
+                </Link>
             </div>
 
             {/* Contact list */}

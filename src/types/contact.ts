@@ -19,7 +19,7 @@ export type Contact = {
         lastName: string;
         birthDate: string; // or Date
         gender: "male" | "female" | string;
-        compantName: string; // Typo?
+        companyName: string; // Typo?
         activitySector: string;
         position: string;
         profilePicture: string;
@@ -46,22 +46,35 @@ export type Contact = {
 };
 
 export type ContactInput = {
-    name: string
+    name?: string;
+    description?: string;
+    type?: string; // Optional, defaults to "manual"
     profile: {
-        position?: string
-        compantName?: string
-        type?: string
-    }
-    links?: Array<{
-        name: string
-        title: string
-        link: string
-    }>
-    tags?: string[]
-    nextAction?: string
-    nextActionDate?: Date
-    metIn?: string
-    notes?: string
-    phoneNumber?: string
-    email?: string
-}
+        fullName: string; // Typically required
+        firstName?: string;
+        lastName?: string;
+        companyName?: string;
+        position?: string;
+        sector?: string;
+        bio?: string;
+        links?: Array<{
+            name: string;
+            title: string;
+            link: string;
+        }>;
+        tags?: string[];
+        profilePicture?: string;
+        logo?: string;
+    };
+    leadCaptions?: {
+        metIn?: string;
+        longitude?: number;
+        latitude?: number;
+        date?: string; // ISO date string (e.g., "2025-05-15T00:00:00.000Z")
+        tags?: string[];
+        nextAction?: string;
+        dateOfNextAction?: string; // ISO date string or "yyyy-MM-dd"
+        notes?: string;
+    };
+    teams?: string[]; // Array of team IDs (MongoDB ObjectIds)
+};
