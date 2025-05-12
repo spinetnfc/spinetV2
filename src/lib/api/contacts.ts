@@ -1,3 +1,5 @@
+"use server"
+
 import { api, ServerApi } from '@/lib/axios';
 import type { ProfileData } from '@/types/profile';
 import type { Contact } from '@/types/contact';
@@ -29,7 +31,7 @@ export const getContacts = async (profileId: string | null): Promise<Contact[]> 
             },
         });
 
-        console.log(response.data);
+        console.log("conatcts:::::::::::::::::::", response.data);
         return response.data;
     } catch (error) {
         console.error('Profile fetch error:', error);
