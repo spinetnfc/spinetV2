@@ -6,7 +6,7 @@ import SearchInput from "@/components/pages/contacts/search-input";
 import FilterTabs from "@/components/pages/contacts/filter-tabs";
 import ContactItem from "@/components/pages/contacts/contact-item";
 import { getContacts } from "@/lib/api/contacts";
-import type { ContactInput } from "@/types/contact";
+import type { Contact } from "@/types/contact";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 
@@ -28,7 +28,7 @@ export default async function ContactsPage({
     }
 
     // Fetch contacts data
-    let contacts: ContactInput[] = [];
+    let contacts: Contact[] = [];
     try {
         contacts = await getContacts(profileId);
         console.log("contactsData", JSON.stringify(contacts, null, 2));
@@ -82,7 +82,7 @@ export default async function ContactsPage({
         <div className="min-h-screen py-16">
 
             {/* Search */}
-            <div className="px-4 py-2">
+            <div className="px-2 xs:px-4 py-2">
                 <SearchInput />
             </div>
 

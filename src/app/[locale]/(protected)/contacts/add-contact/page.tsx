@@ -86,7 +86,7 @@ export default async function AddContactPage() {
                 name: fullName, // Derive from fullName
                 description: notes || undefined,
                 type: "manual",
-                Profile: {
+                profile: {
                     fullName,
                     companyName: companyName || undefined,
                     position: position || undefined,

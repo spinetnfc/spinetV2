@@ -2,7 +2,7 @@ import { api, ServerApi } from '@/lib/axios';
 import type { Contact, ContactInput } from '@/types/contact';
 import { withServerCookies } from '@/utils/withServerCookies';
 
-export const getContacts = async (profileId: string | null): Promise<ContactInput[]> => {
+export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {

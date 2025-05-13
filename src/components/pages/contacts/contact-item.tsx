@@ -2,10 +2,10 @@
 
 import { MoreVertical, Mail, Phone } from "lucide-react"
 import ContactAvatar from "./contact-avatar"
-import type { ContactInput } from "@/types/contact"
+import type { Contact } from "@/types/contact"
 
 type ContactItemProps = {
-    contact: ContactInput
+    contact: Contact
     themeColor: string
 }
 
