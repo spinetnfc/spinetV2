@@ -1,6 +1,4 @@
-"use client"
-
-import { MoreVertical, Mail, Phone } from "lucide-react"
+import { MoreVertical } from "lucide-react"
 import ContactAvatar from "./contact-avatar"
 import type { Contact } from "@/types/contact"
 

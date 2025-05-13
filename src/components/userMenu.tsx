@@ -25,6 +25,10 @@ const UserMenu = ({ locale }: { locale: string }) => {
                 <FormattedMessage id="profile" defaultMessage="Profile" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => router.push(`/${locale}/contacts`)}>
+                <FormattedMessage id="contacts" defaultMessage="Contacts" />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem className="text-primary cursor-pointer" onClick={logout}>
                 <FormattedMessage id="logout" defaultMessage="Logout" />
             </DropdownMenuItem>

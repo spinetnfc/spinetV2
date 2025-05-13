@@ -49,16 +49,16 @@ export const addContact = async (profileId: string, contact: ContactInput): Prom
 //     return response.data;
 // }
 
-// export const deleteService = async (profileId: string, serviceId: string): Promise<{ message: string }> => {
-//     if (!profileId || typeof profileId !== 'string') {
-//         throw new Error(`Invalid profileId: ${profileId}`);
-//     }
-//     if (!serviceId || typeof serviceId !== 'string') {
-//         throw new Error(`Invalid serviceId: ${serviceId}`);
-//     }
+export const deleteService = async (profileId: string, contactId: string): Promise<{ message: string }> => {
+    if (!profileId || typeof profileId !== 'string') {
+        throw new Error(`Invalid profileId: ${profileId}`);
+    }
+    if (!contactId || typeof contactId !== 'string') {
+        throw new Error(`Invalid contactId: ${contactId}`);
+    }
 
-//     const response = await api.delete(`/profile/${profileId}/service/${serviceId}`);
-//     console.log("Service deleted response received:", response.status);
+    const response = await ServerApi.delete(`/profile/${profileId}/contact/${contactId}`);
+    console.log("Service deleted response received:", response.status);
 
-//     return response.data;
-// }
+    return response.data;
+}
