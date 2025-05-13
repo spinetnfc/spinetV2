@@ -46,13 +46,14 @@ export type Contact = {
 };
 
 export type ContactInput = {
+    _id?: string; // Optional, for existing contacts
     name: string; // Required, derived from profile.fullName
     description?: string;
     type?: "scan" | "manual" | "exchange" | "spinet" | "phone";
-    profile:
+    Profile:
     | {
+        id?: string; // Optional, for existing profiles
         fullName: string; // Required
-        status?: string; // Required by previous schema (professional, employee, company, student, none)
         theme?: { color?: string };
         firstName?: string;
         lastName?: string;
@@ -69,9 +70,6 @@ export type ContactInput = {
             link: string; // Required
         }>;
     }
-    | {
-        id: string; // For existing profiles
-    };
     leadCaptions?: {
         metIn?: string;
         longitude?: number;

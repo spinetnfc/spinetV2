@@ -2,19 +2,19 @@
 
 import { MoreVertical, Mail, Phone } from "lucide-react"
 import ContactAvatar from "./contact-avatar"
-import type { Contact } from "@/types/contact"
+import type { ContactInput } from "@/types/contact"
 
 type ContactItemProps = {
-    contact: Contact
+    contact: ContactInput
     themeColor: string
 }
 
 export default function ContactItem({ contact, themeColor }: ContactItemProps) {
-    const name = contact.name ?? "Unnamed Contact"
-    const profile = contact.profile ?? {}
+    const name = contact.name
+    const Profile = contact.Profile ?? {}
 
-    const position = profile.position?.trim()
-    const companyName = profile.companyName?.trim()
+    const position = Profile.position?.trim()
+    const companyName = Profile.companyName?.trim()
 
     const hasPositionOrCompany = Boolean(position || companyName)
 
@@ -23,7 +23,7 @@ export default function ContactItem({ contact, themeColor }: ContactItemProps) {
             <div className="flex items-center gap-3">
                 <ContactAvatar
                     name={name}
-                    profilePicture={profile.profilePicture ?? ""}
+                    profilePicture={Profile.profilePicture ?? ""}
                     color={themeColor}
                 />
                 <div>
@@ -39,17 +39,6 @@ export default function ContactItem({ contact, themeColor }: ContactItemProps) {
             </div>
 
             <div className="flex items-center gap-2">
-                {/* Optional email/phone rendering */}
-                {/* {profile.email && (
-                    <a href={`mailto:${profile.email}`} className="p-2 text-gray-400">
-                        <Mail size={20} />
-                    </a>
-                )}
-                {profile.phone && (
-                    <a href={`tel:${profile.phone}`} className="p-2 text-gray-400">
-                        <Phone size={20} />
-                    </a>
-                )} */}
                 <button className="p-2">
                     <MoreVertical size={20} className="text-gray-400" />
                 </button>

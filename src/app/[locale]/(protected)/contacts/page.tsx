@@ -1,64 +1,82 @@
-import { Bell, Menu, Plus } from 'lucide-react'
-import Image from "next/image"
-import { getUserCookieOnServer } from "@/utils/cookies"
-import { getProfile } from "@/lib/api/profile"
-import SearchInput from "@/components/pages/contacts/search-input"
-import FilterTabs from "@/components/pages/contacts/filter-tabs"
-import ContactItem from "@/components/pages/contacts/contact-item"
-import { getContacts } from "@/lib/api/contacts"
-import type { Contact } from "@/types/contact"
-import { Spinner } from "@/components/ui/spinner"
-import Link from 'next/link'
+import { Bell, Menu, Plus } from "lucide-react";
+import Image from "next/image";
+import { getUserCookieOnServer } from "@/utils/cookies";
+import { getProfile } from "@/lib/api/profile";
+import SearchInput from "@/components/pages/contacts/search-input";
+import FilterTabs from "@/components/pages/contacts/filter-tabs";
+import ContactItem from "@/components/pages/contacts/contact-item";
+import { getContacts } from "@/lib/api/contacts";
+import type { ContactInput } from "@/types/contact";
+import { Spinner } from "@/components/ui/spinner";
+import Link from "next/link";
 
 export default async function ContactsPage({
     searchParams,
 }: {
-    searchParams: Promise<{ query: string; filter: string }>
+    searchParams: Promise<{ query: string; filter: string }>;
 }) {
     // Get user and profile data
-    const user = await getUserCookieOnServer()
-    const profileId = user?.selectedProfile || null
+    const user = await getUserCookieOnServer();
+    const profileId = user?.selectedProfile || null;
 
     // Fetch profile data for the header
-    let profileData
+    let profileData;
     try {
-        profileData = await getProfile(profileId)
+        profileData = await getProfile(profileId);
     } catch (error) {
-        console.error("Error fetching profile:", error)
+        console.error("Error fetching profile:", error);
     }
 
     // Fetch contacts data
-    let contacts: Contact[] = []
+    let contacts: ContactInput[] = [];
     try {
-        contacts = await getContacts(profileId)
-        console.log("contactsData", contacts)
+        contacts = await getContacts(profileId);
+        console.log("contactsData", JSON.stringify(contacts, null, 2));
     } catch (error) {
-        console.error("Error fetching contacts:", error)
-        // Continue with empty contacts array instead of throwing
+        console.error("Error fetching contacts:", error);
+        // Continue with empty contacts array
     }
 
     // Filter contacts based on search query
-    const { query = "", filter = "all" } = await searchParams
+    const { query = "", filter = "all" } = await searchParams;
 
-    let filteredContacts = contacts
+    let filteredContacts = contacts;
 
     if (query) {
-        filteredContacts = filteredContacts.filter(
-            (contact) =>
+        filteredContacts = filteredContacts.filter((contact) => {
+            // Handle id-only profile
+            if ("id" in contact.Profile) {
+                return contact.name.toLowerCase().includes(query.toLowerCase());
+            }
+            // Detailed profile
+            return (
                 contact.name.toLowerCase().includes(query.toLowerCase()) ||
-                (contact.profile.companyName && contact.profile.companyName.toLowerCase().includes(query.toLowerCase())) ||
-                (contact.profile.position && contact.profile.position.toLowerCase().includes(query.toLowerCase())),
-        )
+                (contact.Profile.companyName &&
+                    contact.Profile.companyName.toLowerCase().includes(query.toLowerCase())) ||
+                (contact.Profile.position &&
+                    contact.Profile.position.toLowerCase().includes(query.toLowerCase()))
+            );
+        });
     }
 
     if (filter !== "all") {
-        filteredContacts = filteredContacts.filter((contact) => contact.profile.type === filter)
+        filteredContacts = filteredContacts.filter((contact) => {
+            // Handle id-only profile
+            if ("id" in contact.Profile) {
+                return false; // Skip id-only profiles for type filtering
+            }
+            return contact.type === filter;
+        });
     }
 
     // Get user name and profile picture
-    const fullName = profileData ? `${profileData.firstName} ${profileData.lastName}` : "User"
-    const profilePictureUrl = profileData?.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
-    const themeColor = profileData?.theme?.color || "#3b82f6" // Default to blue if undefined
+    const fullName = profileData
+        ? `${profileData.firstName} ${profileData.lastName}`
+        : "User";
+    const profilePictureUrl = profileData?.profilePicture
+        ? `/api/files/${profileData.profilePicture}`
+        : "/img/user.png";
+    const themeColor = profileData?.theme?.color || "#3b82f6"; // Default to blue
 
     return (
         <div className="min-h-screen pb-20">
@@ -103,7 +121,11 @@ export default async function ContactsPage({
 
             {/* Add contact button */}
             <div className="flex justify-end px-4 mt-4">
-                <Link href="/contacts/add-contact" className={`flex items-center gap-2 font-medium`} style={{ color: themeColor }}>
+                <Link
+                    href="/contacts/add-contact"
+                    className="flex items-center gap-2 font-medium"
+                    style={{ color: themeColor }}
+                >
                     <Plus size={20} />
                     Add contact
                 </Link>
@@ -112,11 +134,17 @@ export default async function ContactsPage({
             {/* Contact list */}
             <div className="px-4 mt-2">
                 {filteredContacts.length > 0 ? (
-                    filteredContacts.map((contact: Contact) => <ContactItem key={contact.name} contact={contact} themeColor={themeColor} />)
+                    filteredContacts.map((contact) => (
+                        <ContactItem
+                            key={contact._id}
+                            contact={contact}
+                            themeColor={themeColor}
+                        />
+                    ))
                 ) : (
                     <p className="text-center py-8 text-gray-500">No contacts found</p>
                 )}
             </div>
         </div>
-    )
+    );
 }
