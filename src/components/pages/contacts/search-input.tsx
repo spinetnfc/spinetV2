@@ -28,12 +28,12 @@ export default function SearchInput() {
     }, [inputValue, pathname, replace, searchParams])
 
     return (
-        <div className="relative w-full">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+        <div className="relative w-full max-w-[500px] rounded-full border border-azure">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none ">
+                <Search className="h-5 w-5 " />
             </div>
             <input
-                className="w-full py-3 pl-10 pr-4 rounded-lg text-gray-500 focus:outline-none"
+                className="w-full py-3 pl-10 pr-4 rounded-lg focus:outline-none "
                 placeholder="Search for names, tags..."
                 onChange={(e) => setInputValue(e.target.value)}
                 value={inputValue}

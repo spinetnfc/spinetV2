@@ -79,34 +79,7 @@ export default async function ContactsPage({
     const themeColor = profileData?.theme?.color || "#3b82f6"; // Default to blue
 
     return (
-        <div className="min-h-screen pb-20">
-            {/* Header */}
-            <header className="flex items-center justify-between p-4">
-                <button>
-                    <Menu size={24} />
-                </button>
-                <h1 className="text-xl font-medium">{fullName}</h1>
-                <div className="flex items-center gap-4">
-                    <button>
-                        <Bell size={24} />
-                    </button>
-                    <div className="relative">
-                        <Image
-                            src={profilePictureUrl || "/placeholder.svg"}
-                            alt={fullName}
-                            width={40}
-                            height={40}
-                            className="rounded-md"
-                        />
-                        <div
-                            className="absolute -bottom-1 -right-1 text-xs px-1 rounded text-white"
-                            style={{ backgroundColor: themeColor }}
-                        >
-                            90%
-                        </div>
-                    </div>
-                </div>
-            </header>
+        <div className="min-h-screen py-16">
 
             {/* Search */}
             <div className="px-4 py-2">
@@ -114,7 +87,7 @@ export default async function ContactsPage({
             </div>
 
             {/* Filter */}
-            <div className="px-4 mt-2">
+            <div className="px-2 xs:px-4 mt-2">
                 <h2 className="text-xl mb-2">Filter</h2>
                 <FilterTabs themeColor={themeColor} />
             </div>

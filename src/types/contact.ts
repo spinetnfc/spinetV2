@@ -52,7 +52,8 @@ export type ContactInput = {
     type?: "scan" | "manual" | "exchange" | "spinet" | "phone";
     Profile:
     | {
-        id?: string; // Optional, for existing profiles
+        _id?: string; // Optional, for existing profiles
+        type?: string
         fullName: string; // Required
         theme?: { color?: string };
         firstName?: string;

@@ -22,22 +22,22 @@ const filterOptions: FilterOption[] = [
     {
         value: "scanned",
         label: "Scanned",
-        icon: <Scan size={18} />,
+        icon: <Scan className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
     },
     {
         value: "manual",
         label: "Manual",
-        icon: <Users size={18} />,
+        icon: <Users className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
     },
     {
         value: "exchange",
         label: "Exchange",
-        icon: <ArrowLeftRight size={18} />,
+        icon: <ArrowLeftRight className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
     },
     {
         value: "phone",
-        label: "Phone contact",
-        icon: <Phone size={18} />,
+        label: "Phone",
+        icon: <Phone className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
     },
 ]
 
@@ -61,19 +61,19 @@ export default function FilterTabs({ themeColor }: FilterTabsProps) {
     }
 
     return (
-        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+        <div className="flex gap-1 sm:gap-2 overflow-x-auto pb-2 no-scrollbar">
             {filterOptions.map((option) => (
                 <button
                     key={option.value}
                     onClick={() => handleFilterChange(option.value)}
                     className={cn(
-                        "flex items-center gap-1.5 px-3 py-2 rounded-full text-sm whitespace-nowrap border",
-                        currentFilter === option.value ? "text-white border-transparent" : "bg-white text-gray-700 border-gray-200",
+                        "flex items-center gap-0.5 sm:gap-1.5 px-1.5 py-0.5 xs:px-2 xs:py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] xs:text-xs sm:text-sm whitespace-nowrap border",
+                        currentFilter === option.value ? "border-transparent" : " border-gray-200",
                     )}
                     style={currentFilter === option.value ? { backgroundColor: themeColor } : {}}
                 >
                     {option.icon}
-                    {option.label}
+                    <span className="truncate max-w-[60px] sm:max-w-none">{option.label}</span>
                 </button>
             ))}
         </div>
