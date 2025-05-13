@@ -35,11 +35,9 @@ const contactSchema = z.object({
         .refine(
             (val) =>
                 !val ||
-                /^\+?[1-9]\d{1,14}$/.test(val) || // E.164 format
-                /^0\d{9}$/.test(val), // Local format: starts with 0 and has 10 digits
-            { message: "Invalid phone number" }
+                /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(val),
+            { message: "Invalid phone number format" }
         ),
-
     email: z.string().email({ message: "Invalid email address" }).optional().or(z.literal("")),
     position: z.string().optional(),
     companyName: z.string().optional(),
@@ -52,7 +50,6 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 type LinkType = {
-    name: string;
     title: string;
     link: string;
 };
@@ -71,7 +68,6 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
     const [tags, setTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState("");
     const [newLink, setNewLink] = useState<LinkType>({
-        name: "",
         title: "",
         link: "",
     });
@@ -103,10 +99,32 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
             // Add phoneNumber and email to links
             const formLinks = [...links];
             if (data.phoneNumber) {
-                formLinks.push({ title: "phone", name: "Phone Number", link: data.phoneNumber });
+                formLinks.push({ title: "phone", link: data.phoneNumber });
             }
             if (data.email) {
-                formLinks.push({ title: "email", name: "Email", link: data.email });
+                formLinks.push({ title: "Email", link: data.email });
+            }
+
+            // Validate links
+            for (const link of formLinks) {
+                if (!link.title || !link.link) {
+                    toast.error(`Incomplete link: ${link.title || "Unknown"}`);
+                    setIsSubmitting(false);
+                    return;
+                }
+                if (
+                    link.title === "Phone Number" &&
+                    !/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(link.link)
+                ) {
+                    toast.error("Invalid phone number format");
+                    setIsSubmitting(false);
+                    return;
+                }
+                if (link.title === "Email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(link.link)) {
+                    toast.error("Invalid email format");
+                    setIsSubmitting(false);
+                    return;
+                }
             }
 
             // Add tags and links as JSON strings
@@ -118,10 +136,16 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                 formData.set("dateOfNextAction", format(data.dateOfNextAction, "yyyy-MM-dd"));
             }
 
-            // Submit the form to the server action
+            // Log form data for debugging
+            console.log("Form data submitted:", {
+                ...Object.fromEntries(formData.entries()),
+                tags,
+                links: formLinks,
+            });
+
+            // Submit the form
             const result = await createContact(formData);
 
-            // Handle the server response
             if (result?.success) {
                 toast.success(result.message || "Contact added successfully");
                 form.reset();
@@ -139,7 +163,7 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                     ? {
                         status: error.response.status,
                         statusText: error.response.statusText,
-                        data: error.response.data,
+                        data: JSON.stringify(error.response.data, null, 2),
                     }
                     : "No response data available",
                 stack: error.stack,
@@ -169,14 +193,13 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
     };
 
     const handleAddLinkSubmit = () => {
-        if (!newLink.name || !newLink.title || !newLink.link) {
+        if (!newLink.title || !newLink.link) {
             toast.error("Please fill in all required fields");
             return;
         }
-
         setLinks([...links, newLink]);
         setShowLinkForm(false);
-        setNewLink({ name: "", title: "", link: "" });
+        setNewLink({ title: "", link: "" });
         toast.success("Link added successfully");
     };
 
@@ -377,13 +400,10 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         <div className="mt-2 space-y-2">
                             {links.map((link, index) => (
                                 <div key={index} className="flex items-center gap-2 p-2 border rounded-md">
-                                    <LinkIcon
-                                        className="h-4 w-4 text-gray-500"
-                                        aria-label="Link icon"
-                                    />
+                                    <LinkIcon className="h-4 w-4 text-gray-500" aria-label="Link icon" />
                                     <div className="flex-1">
                                         <div className="font-medium">{link.title}</div>
-                                        <div className="text-sm text-muted-foreground">{link.name}</div>
+                                        <div className="text-sm text-muted-foreground">{link.link}</div>
                                     </div>
                                     <Button
                                         type="button"
@@ -414,48 +434,12 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
 
                             <div className="space-y-4">
                                 <div>
-                                    <Label htmlFor="linkType">Link Type*</Label>
-                                    <select
-                                        id="linkType"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        value={newLink.name}
-                                        onChange={(e) =>
-                                            setNewLink({ ...newLink, name: e.target.value })
-                                        }
-                                    >
-                                        <option value="">Select link type</option>
-                                        {[
-                                            "website",
-                                            "linkedin",
-                                            "instagram",
-                                            "twitter",
-                                            "github",
-                                            "facebook",
-                                            "location",
-                                            "order now",
-                                            "play store",
-                                            "app store",
-                                            "whatsapp",
-                                            "telegram",
-                                            "viber",
-                                            "other",
-                                        ].map((type) => (
-                                            <option key={type} value={type}>
-                                                {type.charAt(0).toUpperCase() + type.slice(1)}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
                                     <Label htmlFor="linkTitle">Display Text*</Label>
                                     <Input
                                         id="linkTitle"
                                         value={newLink.title}
-                                        onChange={(e) =>
-                                            setNewLink({ ...newLink, title: e.target.value })
-                                        }
-                                        placeholder="e.g. My Website"
+                                        onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
+                                        placeholder="e.g. Phone Number"
                                     />
                                 </div>
 
@@ -464,19 +448,13 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                                     <Input
                                         id="linkUrl"
                                         value={newLink.link || ""}
-                                        onChange={(e) =>
-                                            setNewLink({ ...newLink, link: e.target.value })
-                                        }
+                                        onChange={(e) => setNewLink({ ...newLink, link: e.target.value })}
                                         placeholder="https:// or phone number"
                                     />
                                 </div>
 
                                 <div className="flex justify-end gap-2">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => setShowLinkForm(false)}
-                                    >
+                                    <Button type="button" variant="outline" onClick={() => setShowLinkForm(false)}>
                                         Cancel
                                     </Button>
                                     <Button type="button" onClick={handleAddLinkSubmit}>

@@ -48,7 +48,7 @@ export default async function AddContactPage() {
             const position = formData.get("position") as string;
             const companyName = formData.get("companyName") as string;
             const nextAction = formData.get("nextAction") as string;
-            const nextActionDateStr = formData.get("nextActionDate") as string;
+            const nextActionDateStr = formData.get("dateOfNextAction") as string;
             const metIn = formData.get("metIn") as string;
             const notes = formData.get("notes") as string;
             const tagsJson = formData.get("tags") as string;
@@ -63,12 +63,11 @@ export default async function AddContactPage() {
             const tags = tagsJson ? JSON.parse(tagsJson) : [];
             let links = linksJson ? JSON.parse(linksJson) : [];
 
-            // Add phoneNumber and email to links
-            if (phoneNumber) {
-                links.push({ name: "phone number", title: "phone number", link: phoneNumber });
-            }
-            if (email) {
-                links.push({ name: "email", title: "email", link: email });
+            // Validate links
+            for (const link of links) {
+                if (!link.title || !link.link) {
+                    return { success: false, message: `Incomplete link: ${link.title || "Unknown"}` };
+                }
             }
 
             // Parse date if exists
@@ -78,14 +77,14 @@ export default async function AddContactPage() {
                     const parsedDate = parse(nextActionDateStr, "yyyy-MM-dd", new Date());
                     dateOfNextAction = format(parsedDate, "yyyy-MM-dd");
                 } catch (error) {
-                    console.error("Invalid date format for nextActionDateStr:", nextActionDateStr);
-                    dateOfNextAction = undefined;
+                    console.error("Invalid date format for dateOfNextAction:", nextActionDateStr);
                 }
             }
 
             // Create contact object
             const contactData: ContactInput = {
-                name: fullName,
+                name: fullName, // Derive from fullName
+                description: notes || undefined,
                 type: "manual",
                 profile: {
                     fullName,
@@ -102,23 +101,26 @@ export default async function AddContactPage() {
                 },
             };
 
+            // Log contact data for debugging
+            console.log("Contact data sent:", JSON.stringify(contactData, null, 2));
+
             // Call the external API
             const result = await addContact(profileId, contactData);
 
-            // Return success
             return { success: true, message: "Contact added successfully" };
         } catch (error: any) {
-            // console.error("Error creating contact:", {
-            //     message: error.message,
-            //     response: error.response
-            //         ? {
-            //             status: error.response.status,
-            //             statusText: error.response.statusText,
-            //             data: error.response.data,
-            //         }
-            //         : "No response data available",
-            //     stack: error.stack,
-            // });
+            console.error("Error creating contact:", {
+                message: error.message,
+                response: error.response
+                    ? {
+                        status: error.response.status,
+                        statusText: error.response.statusText,
+                        data: JSON.stringify(error.response.data, null, 2),
+                    }
+                    : "No response data available",
+                stack: error.stack,
+                formData: Object.fromEntries(formData.entries()),
+            });
             return {
                 success: false,
                 message: error.response?.data?.message || error.message || "Failed to add contact. Please try again.",
