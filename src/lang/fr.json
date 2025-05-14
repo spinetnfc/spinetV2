@@ -397,5 +397,6 @@
   "url-placeholder": "https:// ou numéro de téléphone",
   "close-link-form": "Fermer le formulaire de lien",
   "Failed to add contact": "Échec de l'ajout du contact",
-  "An unexpected error occurred. Please try again.": "Une erreur inattendue s'est produite. Veuillez réessayer."
+  "An unexpected error occurred. Please try again.": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+  "step-of": "Étape {step} sur {totalSteps}"
 }

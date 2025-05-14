@@ -21,6 +21,8 @@ export interface CalendarProps {
   selected?: Date;
   onSelect?: (date: Date | undefined) => void;
   mode?: 'single'; // Support single mode
+  restrictFutureDates?: boolean; // Restrict dates after today
+  restrictPastDates?: boolean; // Restrict dates before today
 }
 
 function Calendar({
@@ -30,20 +32,24 @@ function Calendar({
   selected,
   onSelect,
   mode = 'single',
+  restrictFutureDates = false,
+  restrictPastDates = false,
 }: CalendarProps) {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = React.useState<Date>(
     selected ? new Date(selected) : new Date(),
   );
 
-  // Ensure currentMonth doesn't exceed today
+  // Restrict currentMonth based on restrictFutureDates and restrictPastDates
   React.useEffect(() => {
-    if (currentMonth > today) {
+    if (restrictFutureDates && currentMonth > today) {
+      setCurrentMonth(new Date(today));
+    } else if (restrictPastDates && currentMonth < today) {
       setCurrentMonth(new Date(today));
     }
   }, [currentMonth]);
 
-  // Month and year options
+  // Month and year options, filtered based on restrictions
   const months = [
     'January',
     'February',
@@ -59,12 +65,15 @@ function Calendar({
     'December',
   ].filter((_, index) =>
     currentMonth.getFullYear() === today.getFullYear()
-      ? index <= today.getMonth()
+      ? (restrictFutureDates ? index <= today.getMonth() : true) &&
+      (restrictPastDates ? index >= today.getMonth() : true)
       : true,
   );
 
   const years = Array.from({ length: 121 }, (_, i) => today.getFullYear() - 120 + i).filter(
-    (year) => year <= today.getFullYear(),
+    (year) =>
+      (restrictFutureDates ? year <= today.getFullYear() : true) &&
+      (restrictPastDates ? year >= today.getFullYear() : true),
   );
 
   // Navigation handlers
@@ -72,7 +81,8 @@ function Calendar({
     setCurrentMonth((prev) => {
       const newDate = new Date(prev);
       newDate.setMonth(prev.getMonth() - 1);
-      return newDate;
+      // Prevent going before current month if restrictPastDates is true
+      return restrictPastDates && newDate < today ? new Date(today) : newDate;
     });
   };
 
@@ -80,8 +90,8 @@ function Calendar({
     setCurrentMonth((prev) => {
       const newDate = new Date(prev);
       newDate.setMonth(prev.getMonth() + 1);
-      // Prevent going beyond current month
-      return newDate > today ? new Date(today) : newDate;
+      // Prevent going beyond current month if restrictFutureDates is true
+      return restrictFutureDates && newDate > today ? new Date(today) : newDate;
     });
   };
 
@@ -89,10 +99,11 @@ function Calendar({
     setCurrentMonth((prev) => {
       const newDate = new Date(prev);
       const newMonthIndex = months.indexOf(month);
-      // Only set month if it's valid (not after current month in current year)
+      // Restrict month selection based on both props
       if (
         newDate.getFullYear() === today.getFullYear() &&
-        newMonthIndex > today.getMonth()
+        ((restrictFutureDates && newMonthIndex > today.getMonth()) ||
+          (restrictPastDates && newMonthIndex < today.getMonth()))
       ) {
         return new Date(today);
       }
@@ -105,13 +116,20 @@ function Calendar({
     setCurrentMonth((prev) => {
       const newDate = new Date(prev);
       const newYear = parseInt(year);
-      // Cap at current year
-      if (newYear > today.getFullYear()) {
+      // Restrict year selection based on both props
+      if (
+        (restrictFutureDates && newYear > today.getFullYear()) ||
+        (restrictPastDates && newYear < today.getFullYear())
+      ) {
         return new Date(today);
       }
       newDate.setFullYear(newYear);
-      // If current year, ensure month doesn't exceed current month
-      if (newYear === today.getFullYear() && newDate.getMonth() > today.getMonth()) {
+      // If current year, ensure month respects restrictions
+      if (
+        newYear === today.getFullYear() &&
+        ((restrictFutureDates && newDate.getMonth() > today.getMonth()) ||
+          (restrictPastDates && newDate.getMonth() < today.getMonth()))
+      ) {
         newDate.setMonth(today.getMonth());
       }
       return newDate;
@@ -154,7 +172,11 @@ function Calendar({
 
   // Handle day selection
   const handleDayClick = (date: Date) => {
-    if (onSelect && date <= today) {
+    if (
+      onSelect &&
+      (!restrictFutureDates || date <= today) &&
+      (!restrictPastDates || date >= today)
+    ) {
       onSelect(date);
     }
   };
@@ -174,6 +196,11 @@ function Calendar({
             buttonVariants(),
             'h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-[-5px]',
             classNames?.nav_button_previous,
+            // Disable previous button if current month is today and restrictPastDates is true
+            restrictPastDates &&
+            currentMonth.getFullYear() === today.getFullYear() &&
+            currentMonth.getMonth() === today.getMonth() &&
+            'opacity-30 pointer-events-none',
           )}
           onClick={goToPreviousMonth}
         >
@@ -220,7 +247,8 @@ function Calendar({
             buttonVariants(),
             'h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-[-5px]',
             classNames?.nav_button_next,
-            // Disable next button if current month is the current month/year
+            // Disable next button if current month is today and restrictFutureDates is true
+            restrictFutureDates &&
             currentMonth.getFullYear() === today.getFullYear() &&
             currentMonth.getMonth() === today.getMonth() &&
             'opacity-30 pointer-events-none',
@@ -260,6 +288,7 @@ function Calendar({
                   date.getMonth() === today.getMonth() &&
                   date.getFullYear() === today.getFullYear();
                 const isFuture = date > today;
+                const isPast = date < today;
 
                 return (
                   <td
@@ -279,18 +308,19 @@ function Calendar({
                         'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
                         isToday && !isSelected && 'bg-accent text-accent-foreground',
                         isOutside && 'text-muted-foreground opacity-50',
-                        isFuture && 'text-muted-foreground opacity-50',
+                        restrictFutureDates && isFuture && 'text-muted-foreground opacity-50',
+                        restrictPastDates && isPast && 'text-muted-foreground opacity-50',
                         classNames?.day,
                         {
                           'day_selected': isSelected,
                           'day_today': isToday && !isSelected,
                           'day_outside': isOutside,
-                          'day_disabled': isFuture,
+                          'day_disabled': (restrictFutureDates && isFuture) || (restrictPastDates && isPast),
                         },
                       )}
                       onClick={() => handleDayClick(date)}
                       aria-selected={isSelected}
-                      disabled={isFuture}
+                      disabled={(restrictFutureDates && isFuture) || (restrictPastDates && isPast)}
                     >
                       {date.getDate()}
                     </button>

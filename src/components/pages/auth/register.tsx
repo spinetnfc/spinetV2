@@ -310,6 +310,7 @@ const RegisterForm = ({ locale }: { locale: string }) => {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
+                          restrictFutureDates={true}
                         />
                       </PopoverContent>
                     </Popover>
