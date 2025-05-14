@@ -248,7 +248,6 @@ export default function EditContactForm({
         setLinks([...links, newLink]);
         setShowLinkForm(false);
         setNewLink({ title: "", link: "" });
-        toast.success(intl.formatMessage({ id: "Link added successfully" }));
     };
 
     return (
