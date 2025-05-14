@@ -16,13 +16,13 @@ type SearchParams = {
 }
 
 type ContactsPageProps = {
-    params: { locale: string }
+    params: Promise<{ locale: string }>
     searchParams: SearchParams
 }
 
 export default async function ContactsPage({ params, searchParams }: ContactsPageProps) {
-    const { locale } = params
-    const { t } = await useTranslate(locale)
+    const { locale } = await params;
+    const { t } = await useTranslate(locale);
 
     // Get user and profile data
     const user = await getUserCookieOnServer();

@@ -8,7 +8,9 @@ import { format, parse } from "date-fns";
 import type { ContactInput } from "@/types/contact";
 import useTranslate from "@/hooks/use-translate";
 
-export default async function AddContactPage({ params }: { params: { locale: string } }) {
+export default async function AddContactPage({ params }: {
+    params: Promise<{ locale: string }>;
+}) {
 
     const { locale } = await params;
     const { t } = await useTranslate(locale);
