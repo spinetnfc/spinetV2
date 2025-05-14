@@ -5,8 +5,8 @@ import { getProfile } from "@/lib/api/profile";
 import SearchInput from "@/components/pages/contacts/search-input";
 import FilterTabs from "@/components/pages/contacts/filter-tabs";
 import ContactItem from "@/components/pages/contacts/contact-item";
-import { getContacts } from "@/lib/api/contacts";
-import type { Contact } from "@/types/contact";
+import { deleteContact, getContacts, updateContact } from "@/lib/api/contacts";
+import type { Contact, ContactInput } from "@/types/contact";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 
@@ -77,6 +77,37 @@ export default async function ContactsPage({
         ? `/api/files/${profileData.profilePicture}`
         : "/img/user.png";
     const themeColor = profileData?.theme?.color || "#3b82f6"; // Default to blue
+
+    const removeContact = async (contactId: string) => {
+        "use server"
+        if (!profileId) {
+            return { success: false, message: "Profile ID is missing" };
+        }
+        try {
+            // Implement the logic to remove the contact
+            console.log("Removing contact:", contactId)
+            const response = await deleteContact(profileId, contactId)
+            return { success: true, message: response.message }
+        } catch (error) {
+            console.error("Error removing contact:", error)
+            return { success: false, message: "Error removing contact" }
+        }
+    }
+    const editContact = async (contactId: string, updatedContact: ContactInput) => {
+        "use server"
+        if (!profileId) {
+            return { success: false, message: "Profile ID is missing" };
+        }
+        try {
+            console.log("Updating contact:", contactId)
+            const response = await updateContact(profileId, contactId, updatedContact)
+            return { success: true, message: response.message }
+        } catch (error) {
+            console.error("Error updating contact:", error)
+            return { success: false, message: "Error updating contact" }
+        }
+    }
+
 
     return (
         <div className="min-h-screen py-16">

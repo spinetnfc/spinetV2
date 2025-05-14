@@ -25,7 +25,7 @@ interface LinkItemProps {
     icon: React.ReactNode
 }
 
-export default function LinkItem({ link, index, profileId, profileData, themeColor, icon }: LinkItemProps) {
+export default function LinkItem({ link, index, profileId, profileData, icon }: LinkItemProps) {
     const [isDeleting, setIsDeleting] = useState(false)
     const [showEditForm, setShowEditForm] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
