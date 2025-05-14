@@ -8,7 +8,7 @@ import { useState } from "react";
 import EditContactForm from "./edit-contact-form";
 import { toast } from "sonner";
 import { FormattedMessage, useIntl } from "react-intl";
-import { getUserFromCookie } from "@/utils/cookies";
+import { getUserFromCookie } from "@/utils/cookie";
 
 type ContactItemProps = {
     contact: Contact;

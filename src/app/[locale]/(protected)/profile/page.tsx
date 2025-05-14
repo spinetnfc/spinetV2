@@ -2,7 +2,7 @@ import Image from "next/image"
 import { Phone, Mail, Edit, Briefcase, ArrowLeft, Globe, Linkedin, Instagram, Twitter, Github, LinkIcon, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send, ChevronRight } from 'lucide-react'
 import { getProfile } from "@/lib/api/profile"
 import type { ProfileData } from '@/types/profile';
-import { getUserCookieOnServer } from "@/utils/cookies"
+import { getUserCookieOnServer } from "@/utils/server-cookie"
 import Link from "next/link"
 import AddLinkButton from "@/components/pages/profile/add-link-button"
 import LinkItem from "@/components/pages/profile/link-item"

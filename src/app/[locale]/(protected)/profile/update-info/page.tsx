@@ -24,7 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { getProfile } from "@/lib/api/profile";
 import type { ProfileData } from "@/types/profile";
-import { getUserCookieOnServer } from "@/utils/cookies";
+import { getUserCookieOnServer } from "@/utils/server-cookie";
 import ProfileForm from "@/components/pages/profile/profile-form";
 import PreferencesForm from "@/components/pages/profile/preferences-form";
 import ChangeEmailForm from "@/components/pages/profile/change-email-form";

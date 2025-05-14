@@ -42,15 +42,28 @@ export const updateContact = async (profileId: string, contactId: string, contac
             throw new Error(`Invalid profileId: ${profileId}`);
         }
         console.log("contact:::::::::::::::::::", JSON.stringify(contact, null, 2));
-        const response = await ServerApi.patch(`/profile/${profileId}/contacts`, contact, { headers });
+        const response = await ServerApi.patch(`/profile/${profileId}/contact/${contactId}`, contact, { headers });
         console.log("Contact updated, response received:", response.status);
-
         return response.data;
-    } catch (error) {
-        console.error('Error updating contact:', error);
+    } catch (error: any) {
+        console.error("Error updating contact:", {
+            message: error.message,
+            response: error.response
+                ? {
+                    status: error.response.status,
+                    statusText: error.response.statusText,
+                    data: error.response.data,
+                }
+                : "No response data available",
+            stack: error.stack,
+        });
+        // Log validations separately to avoid truncation
+        if (error.response?.data?.validations) {
+            console.error("Validation errors:", error.response.data.validations);
+        }
         throw error;
     }
-}
+};
 
 export const deleteContact = async (profileId: string, contactId: string): Promise<{ message: string }> => {
     const headers = await withServerCookies();
@@ -66,7 +79,7 @@ export const deleteContact = async (profileId: string, contactId: string): Promi
 
         return response.data;
     } catch (error) {
-        console.error('Error adding contact:', error);
+        console.error('Error deleting contact:', error);
         throw error;
     }
 }

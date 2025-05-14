@@ -1,7 +1,7 @@
 import { Bell, Menu, QrCode, Upload } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { getUserCookieOnServer } from "@/utils/cookies";
+import { getUserCookieOnServer } from "@/utils/server-cookie";
 import { getProfile } from "@/lib/api/profile";
 import { addContact } from "@/lib/api/contacts";
 import { Button } from "@/components/ui/button";

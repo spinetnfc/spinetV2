@@ -112,13 +112,36 @@ export default function EditContactForm({
         try {
             setIsSubmitting(true);
 
-            // Construct ContactInput payload
-            const formLinks = [...links];
+            // Construct links, avoiding duplicates
+            const formLinks = [...links].map(({ title, link }) => ({
+                title,
+                link,
+            }));
             if (data.phoneNumber) {
-                formLinks.push({ title: "phone", link: data.phoneNumber });
+                const existingPhoneIndex = formLinks.findIndex((link) =>
+                    ["phone", "phone number", "mobile"].some((t) => link.title.toLowerCase().includes(t))
+                );
+                if (existingPhoneIndex >= 0) {
+                    formLinks[existingPhoneIndex] = {
+                        title: "phone",
+                        link: data.phoneNumber,
+                    };
+                } else {
+                    formLinks.push({ title: "phone", link: data.phoneNumber });
+                }
             }
             if (data.email) {
-                formLinks.push({ title: "Email", link: data.email });
+                const existingEmailIndex = formLinks.findIndex((link) =>
+                    ["email", "e-mail"].some((t) => link.title.toLowerCase().includes(t))
+                );
+                if (existingEmailIndex >= 0) {
+                    formLinks[existingEmailIndex] = {
+                        title: "Email",
+                        link: data.email,
+                    };
+                } else {
+                    formLinks.push({ title: "Email", link: data.email });
+                }
             }
 
             // Validate links
@@ -148,19 +171,20 @@ export default function EditContactForm({
                 type: contact.type,
                 profile: {
                     fullName: data.fullName,
-                    position: data.position,
-                    companyName: data.companyName,
+                    position: data.position || undefined,
+                    companyName: data.companyName || undefined,
                     profilePicture: contact.Profile?.profilePicture,
                     links: formLinks.length > 0 ? formLinks : undefined,
                 },
                 leadCaptions: {
-                    metIn: data.metIn,
+                    metIn: data.metIn || undefined,
+                    date: contact.leadCaptions?.date || new Date().toISOString(),
                     tags: tags.length > 0 ? tags : undefined,
-                    nextAction: data.nextAction,
+                    nextAction: data.nextAction || undefined,
                     dateOfNextAction: data.dateOfNextAction
                         ? format(data.dateOfNextAction, "yyyy-MM-dd")
                         : undefined,
-                    notes: data.notes,
+                    notes: data.notes || undefined,
                 },
             };
 

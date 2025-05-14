@@ -1,6 +1,6 @@
 import { Bell, Menu, Plus } from "lucide-react";
 import Image from "next/image";
-import { getUserCookieOnServer } from "@/utils/cookies";
+import { getUserCookieOnServer } from "@/utils/server-cookie";
 import { getProfile } from "@/lib/api/profile";
 import SearchInput from "@/components/pages/contacts/search-input";
 import FilterTabs from "@/components/pages/contacts/filter-tabs";
@@ -31,7 +31,7 @@ export default async function ContactsPage({
     let contacts: Contact[] = [];
     try {
         contacts = await getContacts(profileId);
-        console.log("contactsData", JSON.stringify(contacts, null, 2));
+        // console.log("contactsData", JSON.stringify(contacts, null, 2));
     } catch (error) {
         console.error("Error fetching contacts:", error);
         // Continue with empty contacts array
@@ -143,6 +143,8 @@ export default async function ContactsPage({
                             key={contact._id}
                             contact={contact}
                             themeColor={themeColor}
+                            removeContact={removeContact}
+                            editContact={editContact}
                         />
                     ))
                 ) : (
