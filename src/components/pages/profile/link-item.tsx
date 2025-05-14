@@ -107,9 +107,7 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
                     <DropdownMenuContent align="start" className="bg-white dark:bg-background">
                         <DropdownMenuItem
                             className="flex items-center gap-2 cursor-pointer"
-                            onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
+                            onClick={() => {
                                 setShowEditForm(true)
                             }}
                         >
@@ -117,9 +115,7 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             className="flex items-center gap-2 text-red-500 cursor-pointer"
-                            onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
+                            onClick={() => {
                                 handleDeleteClick()
                             }}
                         >
