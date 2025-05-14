@@ -8,7 +8,7 @@ import { updateProfile } from "@/lib/api/profile"
 import type { ProfileData } from "@/types/profile"
 import Link from "next/link"
 import EditLinkForm from "./edit-link-form"
-import DeleteConfirmationModal from "./delete-confirmation-modal"
+import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
 
@@ -140,6 +140,7 @@ export default function LinkItem({ link, index, profileId, profileData, themeCol
                     onConfirm={handleDeleteConfirm}
                     itemName={link.name}
                     isDeleting={isDeleting}
+                    message="delete-link-message"
                 />
             )}
 
