@@ -1,16 +1,17 @@
-import { Bell, Menu, QrCode, Upload } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { Edit, QrCode, Upload } from "lucide-react";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import { getProfile } from "@/lib/api/profile";
 import { addContact } from "@/lib/api/contacts";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddContactForm from "@/components/pages/contacts/add-contact-form";
 import { format, parse } from "date-fns";
 import type { ContactInput } from "@/types/contact";
+import useTranslate from "@/hooks/use-translate";
 
-export default async function AddContactPage() {
+export default async function AddContactPage({ params }: { params: { locale: string } }) {
+
+    const { locale } = await params;
+    const { t } = await useTranslate(locale);
     // Get user and profile data
     const user = await getUserCookieOnServer();
     const profileId = user?.selectedProfile || null;
@@ -129,8 +130,8 @@ export default async function AddContactPage() {
     }
 
     return (
-        <div className="min-h-screen pb-20">
-            {/* Header */}
+        <div className="min-h-screen py-16">
+            {/* Header
             <header className="flex items-center justify-between p-4">
                 <Link href="/contacts">
                     <Button variant="ghost" size="icon">
@@ -158,31 +159,34 @@ export default async function AddContactPage() {
                         </div>
                     </div>
                 </div>
-            </header>
+            </header> */}
 
             {/* Main content */}
             <div className="px-4 py-2 max-w-4xl mx-auto">
-                <Tabs defaultValue="manual" className="w-full">
+                <Tabs defaultValue="manual" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
                     <TabsList className="grid w-full grid-cols-3 mb-4">
-                        <TabsTrigger value="manual">Manual</TabsTrigger>
-                        <TabsTrigger value="scan">
-                            <QrCode size={16} className="mr-2" />
-                            Scan
+                        <TabsTrigger value="manual" className="text-xs sm:text-sm">
+                            <Edit size={16} className="me-0.5 sm:me-2" />
+                            {t("manual")}
                         </TabsTrigger>
-                        <TabsTrigger value="import">
-                            <Upload size={16} className="mr-2" />
-                            Import
+                        <TabsTrigger value="scan" className="text-xs sm:text-sm">
+                            <QrCode size={16} className="me-0.5 sm:me-2" />
+                            {t("scan")}
+                        </TabsTrigger>
+                        <TabsTrigger value="import" className="text-xs sm:text-sm">
+                            <Upload size={16} className="me-0.5 sm:me-2" />
+                            {t("import")}
                         </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="manual">
-                        <AddContactForm createContact={createContact} themeColor={themeColor} />
+                        <AddContactForm createContact={createContact} themeColor={themeColor} locale={locale} />
                     </TabsContent>
 
                     <TabsContent value="scan">
                         <div className="text-center py-12">
                             <QrCode size={80} className="mx-auto mb-4 text-gray-400" />
-                            <h3 className="text-lg font-medium mb-2">Scan QR Code</h3>
+                            <h3 className="text-lg font-medium mb-2">{t("scan-qr-code")}</h3>
                             <p className="text-muted-foreground">
                                 This feature will be available soon. Scan business cards or QR codes to add contacts.
                             </p>
@@ -192,7 +196,7 @@ export default async function AddContactPage() {
                     <TabsContent value="import">
                         <div className="text-center py-12">
                             <Upload size={80} className="mx-auto mb-4 text-gray-400" />
-                            <h3 className="text-lg font-medium mb-2">Import Contacts</h3>
+                            <h3 className="text-lg font-medium mb-2">{t("import-contacts")}</h3>
                             <p className="text-muted-foreground">
                                 This feature will be available soon. Import contacts from Google or your phone.
                             </p>

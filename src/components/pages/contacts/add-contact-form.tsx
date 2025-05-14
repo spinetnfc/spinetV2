@@ -16,7 +16,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { useIntl } from "react-intl";
+import { useIntl, FormattedMessage } from "react-intl";
 import {
     Form,
     FormControl,
@@ -25,6 +25,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { useRouter } from "next/navigation";
 
 // Define the contact schema with Zod
 const contactSchema = z.object({
@@ -57,10 +58,12 @@ type LinkType = {
 interface AddContactFormProps {
     createContact: (formData: FormData) => Promise<any>;
     themeColor: string;
+    locale: string;
 }
 
-export default function AddContactForm({ createContact, themeColor }: AddContactFormProps) {
+export default function AddContactForm({ createContact, themeColor, locale }: AddContactFormProps) {
     const intl = useIntl();
+    const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showLinkForm, setShowLinkForm] = useState(false);
@@ -108,20 +111,23 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
             // Validate links
             for (const link of formLinks) {
                 if (!link.title || !link.link) {
-                    toast.error(`Incomplete link: ${link.title || "Unknown"}`);
+                    toast.error(intl.formatMessage({ id: "Incomplete link" }, { title: link.title || "Unknown" }));
                     setIsSubmitting(false);
                     return;
                 }
                 if (
-                    link.title === "Phone Number" &&
+                    ["phone", "phone number", "mobile"].some((t) => link.title.toLowerCase().includes(t)) &&
                     !/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(link.link)
                 ) {
-                    toast.error("Invalid phone number format");
+                    toast.error(intl.formatMessage({ id: "Invalid phone number format" }));
                     setIsSubmitting(false);
                     return;
                 }
-                if (link.title === "Email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(link.link)) {
-                    toast.error("Invalid email format");
+                if (
+                    ["email", "e-mail"].some((t) => link.title.toLowerCase().includes(t)) &&
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(link.link)
+                ) {
+                    toast.error(intl.formatMessage({ id: "Invalid email format" }));
                     setIsSubmitting(false);
                     return;
                 }
@@ -147,14 +153,15 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
             const result = await createContact(formData);
 
             if (result?.success) {
-                toast.success(result.message || "Contact added successfully");
+                toast.success(intl.formatMessage({ id: "Contact added successfully" }));
                 form.reset();
                 setTags([]);
                 setLinks([]);
                 setTagInput("");
                 setShowLinkForm(false);
+                router.push(`/${locale}/contacts`);
             } else {
-                toast.error(result?.message || "Failed to add contact");
+                toast.error(intl.formatMessage({ id: "Failed to add contact" }));
             }
         } catch (error: any) {
             console.error("Error submitting form:", {
@@ -171,7 +178,7 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
             toast.error(
                 error.response?.data?.message ||
                 error.message ||
-                "An unexpected error occurred. Please try again."
+                intl.formatMessage({ id: "An unexpected error occurred. Please try again." })
             );
         } finally {
             setIsSubmitting(false);
@@ -194,13 +201,13 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
 
     const handleAddLinkSubmit = () => {
         if (!newLink.title || !newLink.link) {
-            toast.error("Please fill in all required fields");
+            toast.error(intl.formatMessage({ id: "Please fill in all required fields" }));
             return;
         }
         setLinks([...links, newLink]);
         setShowLinkForm(false);
         setNewLink({ title: "", link: "" });
-        toast.success("Link added successfully");
+        toast.success(intl.formatMessage({ id: "Link added successfully" }));
     };
 
     return (
@@ -213,9 +220,11 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         name="fullName"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Full Name*</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage id="full-name" />
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="John Doe" {...field} />
+                                    <Input placeholder={intl.formatMessage({ id: "full-name-placeholder" })} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -228,9 +237,11 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         name="phoneNumber"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Phone Number</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage id="phone-number" />
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="+1 234 567 8900" {...field} />
+                                    <Input placeholder={intl.formatMessage({ id: "phone-number-placeholder" })} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -243,9 +254,11 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage id="email" />
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="john@example.com" type="email" {...field} />
+                                    <Input type="email" placeholder={intl.formatMessage({ id: "email-placeholder" })} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -258,9 +271,11 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         name="position"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Position</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage id="position" />
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="CEO" {...field} />
+                                    <Input placeholder={intl.formatMessage({ id: "position-placeholder" })} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -273,9 +288,11 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         name="companyName"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Company Name</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage id="company-name" />
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Acme Inc." {...field} />
+                                    <Input placeholder={intl.formatMessage({ id: "company-name-placeholder" })} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -288,9 +305,11 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         name="metIn"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Met In (Location)</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage id="met-in" />
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Conference in New York" {...field} />
+                                    <Input placeholder={intl.formatMessage({ id: "met-in-placeholder" })} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -303,9 +322,11 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         name="nextAction"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Next Action</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage id="next-action" />
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Follow up call" {...field} />
+                                    <Input placeholder={intl.formatMessage({ id: "next-action-placeholder" })} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -318,7 +339,9 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                         name="dateOfNextAction"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <FormLabel>Date of Next Action</FormLabel>
+                                <FormLabel>
+                                    <FormattedMessage id="date-of-next-action" />
+                                </FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -329,7 +352,7 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                                                     !field.value && "text-muted-foreground"
                                                 )}
                                             >
-                                                {field.value ? format(field.value, "yyyy-MM-dd") : <span>Pick a date</span>}
+                                                {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                             </Button>
                                         </FormControl>
@@ -350,12 +373,14 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
 
                 {/* Tags */}
                 <div>
-                    <Label htmlFor="tags">Tags</Label>
+                    <Label htmlFor="tags">
+                        <FormattedMessage id="tags" />
+                    </Label>
                     <div className="flex items-center mt-1 mb-2">
                         <Tag className="mr-2 h-4 w-4" />
                         <Input
                             id="tags"
-                            placeholder="Add tags and press Enter"
+                            placeholder={intl.formatMessage({ id: "add-tags-placeholder" })}
                             value={tagInput}
                             onChange={(e) => setTagInput(e.target.value)}
                             onKeyDown={handleAddTag}
@@ -369,7 +394,7 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveTag(tag)}
-                                        aria-label={`Remove ${tag} tag`}
+                                        aria-label={intl.formatMessage({ id: "remove-tag" }, { tag })}
                                     >
                                         <X className="h-3 w-3" />
                                     </button>
@@ -382,7 +407,9 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                 {/* Links */}
                 <div>
                     <div className="flex justify-between items-center">
-                        <Label>Links</Label>
+                        <Label>
+                            <FormattedMessage id="links" />
+                        </Label>
                         <Button
                             type="button"
                             variant="outline"
@@ -392,7 +419,7 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                             style={{ color: themeColor, borderColor: themeColor }}
                         >
                             <Plus className="h-4 w-4" />
-                            Add Link
+                            <FormattedMessage id="add-link" />
                         </Button>
                     </div>
 
@@ -410,7 +437,7 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => setLinks(links.filter((_, i) => i !== index))}
-                                        aria-label={`Remove ${link.title} link`}
+                                        aria-label={intl.formatMessage({ id: "remove-link" }, { title: link.title })}
                                     >
                                         <X className="h-4 w-4" />
                                     </Button>
@@ -422,11 +449,13 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                     {showLinkForm && (
                         <div className="mt-2 border rounded-md p-4">
                             <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-semibold">Add Link</h3>
+                                <h3 className="text-lg font-semibold">
+                                    <FormattedMessage id="add-link" />
+                                </h3>
                                 <button
                                     onClick={() => setShowLinkForm(false)}
                                     className="text-gray-500"
-                                    aria-label="Close link form"
+                                    aria-label={intl.formatMessage({ id: "close-link-form" })}
                                 >
                                     <X size={20} />
                                 </button>
@@ -434,31 +463,35 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
 
                             <div className="space-y-4">
                                 <div>
-                                    <Label htmlFor="linkTitle">Display Text*</Label>
+                                    <Label htmlFor="linkTitle">
+                                        <FormattedMessage id="display-text" />
+                                    </Label>
                                     <Input
                                         id="linkTitle"
                                         value={newLink.title}
                                         onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
-                                        placeholder="e.g. Phone Number"
+                                        placeholder={intl.formatMessage({ id: "display-text-placeholder" })}
                                     />
                                 </div>
 
                                 <div>
-                                    <Label htmlFor="linkUrl">URL*</Label>
+                                    <Label htmlFor="linkUrl">
+                                        <FormattedMessage id="url" />
+                                    </Label>
                                     <Input
                                         id="linkUrl"
                                         value={newLink.link || ""}
                                         onChange={(e) => setNewLink({ ...newLink, link: e.target.value })}
-                                        placeholder="https:// or phone number"
+                                        placeholder={intl.formatMessage({ id: "url-placeholder" })}
                                     />
                                 </div>
 
                                 <div className="flex justify-end gap-2">
                                     <Button type="button" variant="outline" onClick={() => setShowLinkForm(false)}>
-                                        Cancel
+                                        <FormattedMessage id="cancel" />
                                     </Button>
                                     <Button type="button" onClick={handleAddLinkSubmit}>
-                                        Save
+                                        <FormattedMessage id="save" />
                                     </Button>
                                 </div>
                             </div>
@@ -472,10 +505,12 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                     name="notes"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Notes</FormLabel>
+                            <FormLabel>
+                                <FormattedMessage id="notes" />
+                            </FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder="Add any additional notes about this contact"
+                                    placeholder={intl.formatMessage({ id: "notes-placeholder" })}
                                     className="min-h-[100px]"
                                     {...field}
                                 />
@@ -492,7 +527,7 @@ export default function AddContactForm({ createContact, themeColor }: AddContact
                     disabled={isSubmitting}
                     style={{ backgroundColor: themeColor }}
                 >
-                    {isSubmitting ? "Saving..." : "Save Contact"}
+                    {isSubmitting ? <FormattedMessage id="saving" /> : <FormattedMessage id="save" />}
                 </Button>
             </form>
         </Form>
