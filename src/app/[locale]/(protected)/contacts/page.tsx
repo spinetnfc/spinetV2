@@ -1,5 +1,4 @@
-import { Bell, Menu, Plus } from "lucide-react";
-import Image from "next/image";
+import { Plus } from "lucide-react";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import { getProfile } from "@/lib/api/profile";
 import SearchInput from "@/components/pages/contacts/search-input";
@@ -9,12 +8,22 @@ import { deleteContact, getContacts, updateContact } from "@/lib/api/contacts";
 import type { Contact, ContactInput } from "@/types/contact";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
+import useTranslate from "@/hooks/use-translate";
 
-export default async function ContactsPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ query: string; filter: string }>;
-}) {
+type SearchParams = {
+    query?: string
+    filter?: string
+}
+
+type ContactsPageProps = {
+    params: { locale: string }
+    searchParams: SearchParams
+}
+
+export default async function ContactsPage({ params, searchParams }: ContactsPageProps) {
+    const { locale } = params
+    const { t } = await useTranslate(locale)
+
     // Get user and profile data
     const user = await getUserCookieOnServer();
     const profileId = user?.selectedProfile || null;
@@ -119,7 +128,7 @@ export default async function ContactsPage({
 
             {/* Filter */}
             <div className="px-2 xs:px-4 mt-2">
-                <h2 className="text-xl mb-2">Filter</h2>
+                <h2 className="text-xl mb-2">{t("filter")}</h2>
                 <FilterTabs themeColor={themeColor} />
             </div>
 
@@ -127,11 +136,11 @@ export default async function ContactsPage({
             <div className="flex justify-end px-4 mt-4">
                 <Link
                     href="/contacts/add-contact"
-                    className="flex items-center gap-2 font-medium"
-                    style={{ color: themeColor }}
+                    className="flex items-center gap-1 px-2 py-1 rounded  text-sm"
+                    style={{ backgroundColor: themeColor }}
                 >
                     <Plus size={20} />
-                    Add contact
+                    {t("add-contact")}
                 </Link>
             </div>
 
@@ -148,7 +157,7 @@ export default async function ContactsPage({
                         />
                     ))
                 ) : (
-                    <p className="text-center py-8 text-gray-500">No contacts found</p>
+                    <p className="text-center py-8 text-gray-500">{t("no-contacts-found")}</p>
                 )}
             </div>
         </div>

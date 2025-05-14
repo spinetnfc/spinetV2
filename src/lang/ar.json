@@ -347,5 +347,13 @@
   "Failed to update service. Please try again.": "فشل في تحديث الخدمة. الرجاء المحاولة مرة أخرى.",
   "Failed to delete service. Please try again.": "فشل في حذف الخدمة. الرجاء المحاولة مرة أخرى.",
   "Service deleted successfully": "تم حذف الخدمة بنجاح",
-  "Service updated successfully": "تم تحديث الخدمة بنجاح"
+  "Service updated successfully": "تم تحديث الخدمة بنجاح",
+  "filter": "تصفية",
+  "no-contacts-found": "لم يتم العثور على جهات اتصال",
+  "search-placeholder": "ابحث عن الأسماء، العلامات...",
+  "all": "الكل",
+  "scanned": "ممسوح",
+  "manual": "يدوي",
+  "exchange": "تبادل",
+  "phone": "هاتف"
 }

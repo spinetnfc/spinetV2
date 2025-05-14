@@ -5,12 +5,12 @@ import type React from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Scan, Users, ArrowLeftRight, Phone } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { FormattedMessage } from "react-intl"
 
 type FilterType = "all" | "scanned" | "manual" | "exchange" | "phone"
 
 interface FilterOption {
     value: FilterType
-    label: string
     icon: React.ReactNode
 }
 
@@ -21,22 +21,18 @@ interface FilterTabsProps {
 const filterOptions: FilterOption[] = [
     {
         value: "scanned",
-        label: "Scanned",
         icon: <Scan className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
     },
     {
         value: "manual",
-        label: "Manual",
         icon: <Users className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
     },
     {
         value: "exchange",
-        label: "Exchange",
         icon: <ArrowLeftRight className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
     },
     {
         value: "phone",
-        label: "Phone",
         icon: <Phone className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
     },
 ]
@@ -73,7 +69,9 @@ export default function FilterTabs({ themeColor }: FilterTabsProps) {
                     style={currentFilter === option.value ? { backgroundColor: themeColor } : {}}
                 >
                     {option.icon}
-                    <span className="truncate max-w-[60px] sm:max-w-none">{option.label}</span>
+                    <span className="truncate max-w-[60px] sm:max-w-none">
+                        <FormattedMessage id={option.value} />
+                    </span>
                 </button>
             ))}
         </div>

@@ -347,5 +347,13 @@
   "Failed to update service. Please try again.": "Failed to update service. Please try again.",
   "Service deleted successfully": "Service deleted successfully",
   "Failed to delete service. Please try again.": "Failed to delete service. Please try again.",
-  "Service updated successfully": "Service updated successfully"
+  "Service updated successfully": "Service updated successfully",
+  "filter": "Filter",
+  "no-contacts-found": "No contacts found",
+  "search-placeholder": "Search for names, tags...",
+  "all": "All",
+  "scanned": "Scanned",
+  "manual": "Manual",
+  "exchange": "Exchange",
+  "phone": "Phone"
 }
