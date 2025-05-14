@@ -1,5 +1,5 @@
 export type Contact = {
-    _id?: string; // Optional, for existing contacts
+    _id: string;
     name: string; // Required, derived from profile.fullName
     description?: string;
     type?: "scan" | "manual" | "exchange" | "spinet" | "phone";

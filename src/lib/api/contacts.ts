@@ -35,7 +35,7 @@ export const addContact = async (profileId: string, contact: ContactInput): Prom
     }
 }
 
-export const updateContact = async (profileId: string, contact: ContactInput): Promise<{ message: string }> => {
+export const updateContact = async (profileId: string, contactId: string, contact: ContactInput): Promise<{ message: string }> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
@@ -43,16 +43,16 @@ export const updateContact = async (profileId: string, contact: ContactInput): P
         }
         console.log("contact:::::::::::::::::::", JSON.stringify(contact, null, 2));
         const response = await ServerApi.patch(`/profile/${profileId}/contacts`, contact, { headers });
-        console.log("Contact added response received:", response.status);
+        console.log("Contact updated, response received:", response.status);
 
         return response.data;
     } catch (error) {
-        console.error('Error adding contact:', error);
+        console.error('Error updating contact:', error);
         throw error;
     }
 }
 
-export const deleteService = async (profileId: string, contactId: string): Promise<{ message: string }> => {
+export const deleteContact = async (profileId: string, contactId: string): Promise<{ message: string }> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
