@@ -3,9 +3,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Upload, Smartphone, User } from 'lucide-react';
@@ -46,8 +44,6 @@ interface ImportContactsProps {
 export default function ImportContacts({ createContact, themeColor, locale }: ImportContactsProps) {
     const intl = useIntl();
     const [importSource, setImportSource] = useState<'phone' | 'google' | 'file' | null>(null);
-    const [contacts, setContacts] = useState<Contact[]>([]);
-    const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
     const [isImporting, setIsImporting] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [importProgress, setImportProgress] = useState(0);
@@ -59,7 +55,6 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
     useEffect(() => {
         const isSupported = !!navigator.contacts && typeof navigator.contacts.select === 'function';
         setIsApiSupported(isSupported);
-        // Enhanced debug toast
         const userAgent = navigator.userAgent;
         const chromeVersion = userAgent.match(/Chrome\/([\d.]+)/)?.[1] || 'Unknown';
         const androidVersion = userAgent.match(/Android\s([\d.]+)/)?.[1] || 'Unknown';
@@ -145,14 +140,54 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
 
             if (parsedContacts.length === 0) {
                 toast.error(intl.formatMessage({ id: 'no-contacts-found', defaultMessage: 'No valid contacts found in the file.' }));
-            } else {
-                setContacts(parsedContacts);
-                setImportSource('file');
-                toast.success(intl.formatMessage(
-                    { id: 'contacts-imported', defaultMessage: '{count} contacts imported successfully' },
-                    { count: parsedContacts.length }
-                ));
+                setImportSource(null);
+                return;
             }
+
+            setIsAdding(true);
+            setAddProgress(0);
+            const total = parsedContacts.length;
+            let completed = 0;
+
+            for (const contact of parsedContacts) {
+                const formData = new FormData();
+                formData.append('fullName', contact.fullName);
+                if (contact.phoneNumber) formData.append('phoneNumber', contact.phoneNumber);
+                if (contact.email) formData.append('email', contact.email);
+                if (contact.companyName) formData.append('companyName', contact.companyName);
+                if (contact.position) formData.append('position', contact.position);
+                formData.append('tags', JSON.stringify([]));
+                formData.append('links', JSON.stringify([
+                    ...(contact.phoneNumber ? [{ title: 'phone', link: contact.phoneNumber }] : []),
+                    ...(contact.email ? [{ title: 'Email', link: contact.email }] : []),
+                ]));
+
+                try {
+                    const result = await createContact(formData);
+                    if (result.success) {
+                        toast.success(intl.formatMessage(
+                            { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
+                            { name: contact.fullName }
+                        ));
+                    } else {
+                        toast.error(intl.formatMessage(
+                            { id: 'contact-add-failed', defaultMessage: 'Failed to add contact {name}: {message}' },
+                            { name: contact.fullName, message: result.message }
+                        ));
+                    }
+                } catch (error) {
+                    toast.error(intl.formatMessage(
+                        { id: 'contact-add-error', defaultMessage: 'Error adding contact {name}' },
+                        { name: contact.fullName }
+                    ));
+                }
+
+                completed += 1;
+                setAddProgress((completed / total) * 100);
+            }
+
+            setAddProgress(100);
+            toast.success(intl.formatMessage({ id: 'all-contacts-added', defaultMessage: 'All selected contacts added' }));
         } catch (error) {
             if (progressInterval) {
                 clearInterval(progressInterval);
@@ -165,6 +200,8 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             ));
         } finally {
             setIsImporting(false);
+            setIsAdding(false);
+            setImportSource(null);
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
@@ -207,8 +244,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 });
             }, 200);
 
-            // Simplified API call to test minimal functionality
-            const properties: string[] = ['name'];
+            const properties: string[] = ['name', 'tel', 'email'];
             const options = { multiple: true };
             const phoneContacts = await navigator.contacts.select(properties, options);
 
@@ -218,22 +254,67 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             }
             setImportProgress(100);
 
+            if (phoneContacts.length === 0) {
+                toast.error(intl.formatMessage({ id: 'no-contacts-selected', defaultMessage: 'No contacts were selected.' }));
+                setImportSource(null);
+                return;
+            }
+
+            setIsAdding(true);
+            setAddProgress(0);
+            const total = phoneContacts.length;
+            let completed = 0;
+
             const mappedContacts: Contact[] = phoneContacts
                 .filter(contact => contact.name?.[0])
                 .map((contact, index) => ({
                     id: `${index}-${contact.name![0]}-${Date.now()}`,
                     fullName: contact.name![0],
-                    phoneNumber: undefined,
-                    email: undefined,
+                    phoneNumber: contact.tel?.[0] ?? undefined,
+                    email: contact.email?.[0] ?? undefined,
                     companyName: undefined,
                     position: undefined,
                 }));
 
-            setContacts(mappedContacts);
-            toast.success(intl.formatMessage(
-                { id: 'contacts-imported', defaultMessage: '{count} contacts imported successfully' },
-                { count: mappedContacts.length }
-            ));
+            for (const contact of mappedContacts) {
+                const formData = new FormData();
+                formData.append('fullName', contact.fullName);
+                if (contact.phoneNumber) formData.append('phoneNumber', contact.phoneNumber);
+                if (contact.email) formData.append('email', contact.email);
+                if (contact.companyName) formData.append('companyName', contact.companyName);
+                if (contact.position) formData.append('position', contact.position);
+                formData.append('tags', JSON.stringify([]));
+                formData.append('links', JSON.stringify([
+                    ...(contact.phoneNumber ? [{ title: 'phone', link: contact.phoneNumber }] : []),
+                    ...(contact.email ? [{ title: 'Email', link: contact.email }] : []),
+                ]));
+
+                try {
+                    const result = await createContact(formData);
+                    if (result.success) {
+                        toast.success(intl.formatMessage(
+                            { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
+                            { name: contact.fullName }
+                        ));
+                    } else {
+                        toast.error(intl.formatMessage(
+                            { id: 'contact-add-failed', defaultMessage: 'Failed to add contact {name}: {message}' },
+                            { name: contact.fullName, message: result.message }
+                        ));
+                    }
+                } catch (error) {
+                    toast.error(intl.formatMessage(
+                        { id: 'contact-add-error', defaultMessage: 'Error adding contact {name}' },
+                        { name: contact.fullName }
+                    ));
+                }
+
+                completed += 1;
+                setAddProgress((completed / total) * 100);
+            }
+
+            setAddProgress(100);
+            toast.success(intl.formatMessage({ id: 'all-contacts-added', defaultMessage: 'All selected contacts added' }));
         } catch (error: unknown) {
             if (progressInterval) {
                 clearInterval(progressInterval);
@@ -241,7 +322,6 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             }
             setImportProgress(100);
             const err = error as Error;
-            // Debug toast to log exact error
             toast.info(`Contacts API Error: ${err.name || 'Unknown'}, Message: ${err.message || 'No message'}`);
             if (err.name === 'SecurityError') {
                 toast.error(intl.formatMessage({ id: 'permission-denied', defaultMessage: 'Permission to access contacts was denied.' }));
@@ -264,80 +344,15 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             }
         } finally {
             setIsImporting(false);
+            setIsAdding(false);
+            setImportSource(null);
         }
     };
 
     // Handle import button click
     const handleImport = (source: 'phone' | 'google' | 'file') => {
         setImportSource(source);
-        setContacts([]);
-        setSelectedContactIds([]);
         fetchContacts(source);
-    };
-
-    // Handle contact selection
-    const handleSelectContact = (id: string) => {
-        setSelectedContactIds(prev =>
-            prev.includes(id) ? prev.filter(contactId => contactId !== id) : [...prev, id]
-        );
-    };
-
-    // Handle adding selected contacts
-    const handleAddContacts = async () => {
-        if (selectedContactIds.length === 0) {
-            toast.error(intl.formatMessage({ id: 'select-contacts', defaultMessage: 'Please select at least one contact' }));
-            return;
-        }
-
-        setIsAdding(true);
-        setAddProgress(0);
-        const total = selectedContactIds.length;
-        let completed = 0;
-
-        for (const id of selectedContactIds) {
-            const contact = contacts.find(c => c.id === id);
-            if (!contact) continue;
-
-            const formData = new FormData();
-            formData.append('fullName', contact.fullName);
-            if (contact.phoneNumber) formData.append('phoneNumber', contact.phoneNumber);
-            if (contact.email) formData.append('email', contact.email);
-            if (contact.companyName) formData.append('companyName', contact.companyName);
-            if (contact.position) formData.append('position', contact.position);
-            formData.append('tags', JSON.stringify([]));
-            formData.append('links', JSON.stringify([
-                ...(contact.phoneNumber ? [{ title: 'phone', link: contact.phoneNumber }] : []),
-                ...(contact.email ? [{ title: 'Email', link: contact.email }] : []),
-            ]));
-
-            try {
-                const result = await createContact(formData);
-                if (result.success) {
-                    toast.success(intl.formatMessage(
-                        { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
-                        { name: contact.fullName }
-                    ));
-                } else {
-                    toast.error(intl.formatMessage(
-                        { id: 'contact-add-failed', defaultMessage: 'Failed to add contact {name}: {message}' },
-                        { name: contact.fullName, message: result.message }
-                    ));
-                }
-            } catch (error) {
-                toast.error(intl.formatMessage(
-                    { id: 'contact-add-error', defaultMessage: 'Error adding contact {name}' },
-                    { name: contact.fullName }
-                ));
-            }
-
-            completed += 1;
-            setAddProgress((completed / total) * 100);
-        }
-
-        setIsAdding(false);
-        setAddProgress(100);
-        setSelectedContactIds([]);
-        toast.success(intl.formatMessage({ id: 'all-contacts-added', defaultMessage: 'All selected contacts added' }));
     };
 
     return (
@@ -398,6 +413,9 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             />
                         </p>
                     )}
+                </div>
+            ) : (
+                <div className="text-center">
                     {isImporting && (
                         <div className="mt-6">
                             <Progress value={importProgress} className="w-full" />
@@ -410,88 +428,27 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             </p>
                         </div>
                     )}
-                </div>
-            ) : (
-                <div>
-                    <h3 className="text-lg font-medium mb-4">
-                        <FormattedMessage
-                            id="imported-contacts"
-                            defaultMessage="Imported Contacts from {source}"
-                            values={{ source: importSource === 'phone' ? 'Phone' : importSource === 'file' ? 'File' : 'Google' }}
-                        />
-                    </h3>
-                    {contacts.length === 0 && !isImporting ? (
-                        <p className="text-muted-foreground">
-                            <FormattedMessage id="no-contacts" defaultMessage="No contacts found." />
-                        </p>
-                    ) : (
-                        <>
-                            <ScrollArea className="h-[400px] border rounded-md p-4">
-                                {contacts.map(contact => (
-                                    <div
-                                        key={contact.id}
-                                        className="flex items-center gap-3 p-2 border-b last:border-b-0"
-                                    >
-                                        <Checkbox
-                                            checked={selectedContactIds.includes(contact.id)}
-                                            onCheckedChange={() => handleSelectContact(contact.id)}
-                                            disabled={isAdding}
-                                        />
-                                        <div className="flex-1">
-                                            <div className="font-medium">{contact.fullName}</div>
-                                            {contact.email && (
-                                                <div className="text-sm text-muted-foreground">{contact.email}</div>
-                                            )}
-                                            {contact.phoneNumber && (
-                                                <div className="text-sm text-muted-foreground">{contact.phoneNumber}</div>
-                                            )}
-                                            {(contact.companyName || contact.position) && (
-                                                <div className="text-sm text-muted-foreground">
-                                                    {contact.position} {contact.companyName ? `@ ${contact.companyName}` : ''}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </ScrollArea>
-                            <div className="mt-4 flex justify-between items-center">
-                                <p className="text-sm text-muted-foreground">
-                                    <FormattedMessage
-                                        id="selected-contacts"
-                                        defaultMessage="{count} contact(s) selected"
-                                        values={{ count: selectedContactIds.length }}
-                                    />
-                                </p>
-                                <Button
-                                    onClick={handleAddContacts}
-                                    disabled={isAdding || selectedContactIds.length === 0}
-                                    style={{ backgroundColor: themeColor }}
-                                >
-                                    <FormattedMessage id="add-selected" defaultMessage="Add Selected Contacts" />
-                                </Button>
-                            </div>
-                            {isAdding && (
-                                <div className="mt-4">
-                                    <Progress value={addProgress} className="w-full" />
-                                    <p className="text-sm text-muted-foreground mt-2">
-                                        <FormattedMessage
-                                            id="adding-progress"
-                                            defaultMessage="Adding contacts... {progress}%"
-                                            values={{ progress: Math.round(addProgress) }}
-                                        />
-                                    </p>
-                                </div>
-                            )}
-                        </>
+                    {isAdding && (
+                        <div className="mt-6">
+                            <Progress value={addProgress} className="w-full" />
+                            <p className="text-sm text-muted-foreground mt-2">
+                                <FormattedMessage
+                                    id="adding-progress"
+                                    defaultMessage="Adding contacts... {progress}%"
+                                    values={{ progress: Math.round(addProgress) }}
+                                />
+                            </p>
+                        </div>
                     )}
-                    <Button
-                        variant="outline"
-                        onClick={() => setImportSource(null)}
-                        className="mt-4"
-                        disabled={isAdding || isImporting}
-                    >
-                        <FormattedMessage id="back" defaultMessage="Back" />
-                    </Button>
+                    {!isImporting && !isAdding && (
+                        <Button
+                            variant="outline"
+                            onClick={() => setImportSource(null)}
+                            className="mt-4"
+                        >
+                            <FormattedMessage id="back" defaultMessage="Back" />
+                        </Button>
+                    )}
                 </div>
             )}
         </div>
