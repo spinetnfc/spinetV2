@@ -56,7 +56,9 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
 
     // Check if Web Contacts API is supported
     useEffect(() => {
-        setIsApiSupported(!!navigator.contacts && typeof navigator.contacts.select === 'function');
+        const isSupported = !!navigator.contacts && typeof navigator.contacts.select === 'function';
+        setIsApiSupported(isSupported);
+        toast.info(`Web Contacts API: ${isSupported ? 'Supported' : 'Not supported'}. HTTPS: ${window.location.protocol === 'https:' ? 'Yes' : 'No'}`);
     }, []);
 
     // Parse vCard file
@@ -110,7 +112,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         setIsImporting(true);
         setImportProgress(0);
 
-        let progressInterval: NodeJS.Timeout | undefined = undefined; // Declare at function scope
+        let progressInterval: NodeJS.Timeout | undefined = undefined;
         try {
             progressInterval = setInterval(() => {
                 setImportProgress(prev => {
@@ -173,14 +175,17 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         }
 
         if (!navigator.contacts || typeof navigator.contacts.select !== 'function') {
-            toast.error(intl.formatMessage({ id: 'api-not-supported', defaultMessage: 'Contact import is not supported in this browser.' }));
+            toast.error(intl.formatMessage({
+                id: 'api-not-supported',
+                defaultMessage: 'Phone contact import requires HTTPS and a supported browser (e.g., Chrome on Android). Try importing a vCard file.'
+            }));
             return;
         }
 
         setIsImporting(true);
         setImportProgress(0);
 
-        let progressInterval: NodeJS.Timeout | undefined = undefined; // Declare at function scope
+        let progressInterval: NodeJS.Timeout | undefined = undefined;
         try {
             progressInterval = setInterval(() => {
                 setImportProgress(prev => {
@@ -226,10 +231,17 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             }
             setImportProgress(100);
             const err = error as Error;
+            // Debug toast to log exact error
+            toast.info(`Contacts API Error: ${err.name || 'Unknown'}, Message: ${err.message || 'No message'}`);
             if (err.name === 'SecurityError') {
                 toast.error(intl.formatMessage({ id: 'permission-denied', defaultMessage: 'Permission to access contacts was denied.' }));
             } else if (err.name === 'NotAllowedError') {
                 toast.error(intl.formatMessage({ id: 'permission-not-allowed', defaultMessage: 'Contact access permission is not allowed.' }));
+            } else if (err.message === 'Unable to open contacts selector') {
+                toast.error(intl.formatMessage({
+                    id: 'selector-failed',
+                    defaultMessage: 'Unable to open contacts selector. Ensure HTTPS is used and permissions are granted in Chrome settings.'
+                }));
             } else {
                 toast.error(intl.formatMessage(
                     { id: 'import-failed', defaultMessage: 'Failed to import contacts: {message}' },
@@ -368,7 +380,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                         <p className="text-sm text-red-500 mt-4">
                             <FormattedMessage
                                 id="api-not-supported"
-                                defaultMessage="Phone contact import is not supported in this browser. Try importing a vCard file or use Chrome on Android."
+                                defaultMessage="Phone contact import requires HTTPS and a supported browser (e.g., Chrome on Android). Try importing a vCard file."
                             />
                         </p>
                     )}
