@@ -17,7 +17,7 @@ type SearchParams = {
 
 type ContactsPageProps = {
     params: Promise<{ locale: string }>
-    searchParams: SearchParams
+    searchParams: Promise<SearchParams>
 }
 
 export default async function ContactsPage({ params, searchParams }: ContactsPageProps) {
