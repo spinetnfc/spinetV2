@@ -23,6 +23,7 @@ interface ContactsManager {
 
 interface NavigatorExtended extends Navigator {
     contacts?: ContactsManager;
+    userAgent: string;
 }
 
 declare const navigator: NavigatorExtended;
@@ -58,7 +59,15 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
     useEffect(() => {
         const isSupported = !!navigator.contacts && typeof navigator.contacts.select === 'function';
         setIsApiSupported(isSupported);
-        toast.info(`Web Contacts API: ${isSupported ? 'Supported' : 'Not supported'}. HTTPS: ${window.location.protocol === 'https:' ? 'Yes' : 'No'}`);
+        // Enhanced debug toast
+        const userAgent = navigator.userAgent;
+        const chromeVersion = userAgent.match(/Chrome\/([\d.]+)/)?.[1] || 'Unknown';
+        const androidVersion = userAgent.match(/Android\s([\d.]+)/)?.[1] || 'Unknown';
+        toast.info(
+            `Web Contacts API: ${isSupported ? 'Supported' : 'Not supported'}. ` +
+            `HTTPS: ${window.location.protocol === 'https:' ? 'Yes' : 'No'}. ` +
+            `Chrome: ${chromeVersion}, Android: ${androidVersion}`
+        );
     }, []);
 
     // Parse vCard file
@@ -198,7 +207,8 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 });
             }, 200);
 
-            const properties: string[] = ['name', 'tel', 'email'];
+            // Simplified API call to test minimal functionality
+            const properties: string[] = ['name'];
             const options = { multiple: true };
             const phoneContacts = await navigator.contacts.select(properties, options);
 
@@ -213,8 +223,8 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 .map((contact, index) => ({
                     id: `${index}-${contact.name![0]}-${Date.now()}`,
                     fullName: contact.name![0],
-                    phoneNumber: contact.tel?.[0] ?? undefined,
-                    email: contact.email?.[0] ?? undefined,
+                    phoneNumber: undefined,
+                    email: undefined,
                     companyName: undefined,
                     position: undefined,
                 }));
@@ -240,7 +250,11 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             } else if (err.message === 'Unable to open contacts selector') {
                 toast.error(intl.formatMessage({
                     id: 'selector-failed',
-                    defaultMessage: 'Unable to open contacts selector. Ensure HTTPS is used and permissions are granted in Chrome settings.'
+                    defaultMessage: 'Unable to open contacts selector. Ensure HTTPS is used, Chrome permissions are granted, and try again.'
+                }));
+                toast.warning(intl.formatMessage({
+                    id: 'check-permissions',
+                    defaultMessage: 'Go to Android Settings > Apps > Chrome > Permissions and ensure Contacts access is enabled.'
                 }));
             } else {
                 toast.error(intl.formatMessage(
