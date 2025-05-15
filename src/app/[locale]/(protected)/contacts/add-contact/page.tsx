@@ -2,8 +2,9 @@ import { Edit, QrCode, Upload } from "lucide-react";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import { getProfile } from "@/lib/api/profile";
 import { addContact } from "@/lib/api/contacts";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AddContactForm from "@/components/pages/contacts/add-contact-form";
+import ImportContacts from "@/components/pages/contacts/import-contacts";
 import { format, parse } from "date-fns";
 import type { ContactInput } from "@/types/contact";
 import useTranslate from "@/hooks/use-translate";
@@ -11,7 +12,6 @@ import useTranslate from "@/hooks/use-translate";
 export default async function AddContactPage({ params }: {
     params: Promise<{ locale: string }>;
 }) {
-
     const { locale } = await params;
     const { t } = await useTranslate(locale);
     // Get user and profile data
@@ -133,37 +133,6 @@ export default async function AddContactPage({ params }: {
 
     return (
         <div className="min-h-screen py-16">
-            {/* Header
-            <header className="flex items-center justify-between p-4">
-                <Link href="/contacts">
-                    <Button variant="ghost" size="icon">
-                        <Menu size={24} />
-                    </Button>
-                </Link>
-                <h1 className="text-xl font-medium">Add Contact</h1>
-                <div className="flex items-center gap-4">
-                    <button>
-                        <Bell size={24} />
-                    </button>
-                    <div className="relative">
-                        <Image
-                            src={profilePictureUrl}
-                            alt={fullName}
-                            width={40}
-                            height={40}
-                            className="rounded-md"
-                        />
-                        <div
-                            className="absolute -bottom-1 -right-1 text-xs px-1 rounded text-white"
-                            style={{ backgroundColor: themeColor }}
-                        >
-                            90%
-                        </div>
-                    </div>
-                </div>
-            </header> */}
-
-            {/* Main content */}
             <div className="px-4 py-2 max-w-4xl mx-auto">
                 <Tabs defaultValue="manual" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
                     <TabsList className="grid w-full grid-cols-3 mb-4">
@@ -196,13 +165,7 @@ export default async function AddContactPage({ params }: {
                     </TabsContent>
 
                     <TabsContent value="import">
-                        <div className="text-center py-12">
-                            <Upload size={80} className="mx-auto mb-4 text-gray-400" />
-                            <h3 className="text-lg font-medium mb-2">{t("import-contacts")}</h3>
-                            <p className="text-muted-foreground">
-                                This feature will be available soon. Import contacts from Google or your phone.
-                            </p>
-                        </div>
+                        <ImportContacts createContact={createContact} themeColor={themeColor} locale={locale} />
                     </TabsContent>
                 </Tabs>
             </div>
