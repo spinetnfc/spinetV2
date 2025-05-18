@@ -34,7 +34,7 @@ export default function SearchInput() {
                 <Search className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <input
-                className="w-full py-2.5 px-3 sm:px-4 rounded-lg focus:outline-none text-sm sm:text-base"
+                className="w-full py-2.5 ps-8 pe-3 sm:ps-10 sm:pe-4 rounded-lg focus:outline-none text-sm sm:text-base"
                 placeholder={t.formatMessage({ id: "search-placeholder" })}
                 onChange={(e) => setInputValue(e.target.value)}
                 value={inputValue}
