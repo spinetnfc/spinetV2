@@ -33,7 +33,7 @@ interface GoogleAccounts {
             client_id: string;
             scope: string;
             callback: (response: { access_token: string; error?: string }) => void;
-        }) => { requestAccessToken: () => void };
+        }) => { requestAccessToken: (config?: { callback: (response: { access_token: string; error?: string }) => void }) => void };
     };
 }
 
@@ -90,6 +90,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         const userAgent = navigator.userAgent;
         const chromeVersion = userAgent.match(/Chrome\/([\d.]+)/)?.[1] || 'Unknown';
         const androidVersion = userAgent.match(/Android\s([\d.]+)/)?.[1] || 'Unknown';
+        console.log('Web Contacts API:', isSupported ? 'Supported' : 'Not supported', 'HTTPS:', window.location.protocol === 'https:', 'Chrome:', chromeVersion, 'Android:', androidVersion);
         toast.info(
             `Web Contacts API: ${isSupported ? 'Supported' : 'Not supported'}. ` +
             `HTTPS: ${window.location.protocol === 'https:' ? 'Yes' : 'No'}. ` +
@@ -101,6 +102,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         script.src = 'https://accounts.google.com/gsi/client';
         script.async = true;
         script.onload = () => {
+            console.log('GIS Script Loaded:', !!window.google?.accounts);
             if (window.google?.accounts) {
                 const client = window.google.accounts.oauth2.initTokenClient({
                     client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
@@ -108,7 +110,9 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                     callback: () => { }, // Dummy callback, handled in fetchContacts
                 });
                 setGoogleTokenClient(client);
+                console.log('Google Token Client Initialized');
             } else {
+                console.error('GIS Script Failed: window.google.accounts not available');
                 toast.error(intl.formatMessage({
                     id: 'google-api-load-failed',
                     defaultMessage: 'Failed to load Google API. Please try again.',
@@ -116,6 +120,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             }
         };
         script.onerror = () => {
+            console.error('GIS Script Load Error');
             toast.error(intl.formatMessage({
                 id: 'google-api-load-failed',
                 defaultMessage: 'Failed to load Google API. Please try again.',
@@ -128,7 +133,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 document.body.removeChild(script);
             }
         };
-    }, [intl]);
+    }, []);
 
     // Parse vCard file
     const parseVCard = (content: string): Contact[] => {
@@ -291,6 +296,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         }
 
         if (source === 'google' && !googleTokenClient) {
+            console.error('Google Token Client Not Initialized');
             toast.error(intl.formatMessage({
                 id: 'google-api-not-loaded',
                 defaultMessage: 'Google API not loaded. Please try again.',
@@ -355,11 +361,8 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                     }
                     const timeout = setTimeout(() => {
                         reject(new Error('Token retrieval timed out'));
-                    }, 10000); // 10s timeout
-                    googleTokenClient.requestAccessToken();
-                    window.google.accounts.oauth2.initTokenClient({
-                        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
-                        scope: 'https://www.googleapis.com/auth/contacts.readonly',
+                    }, 15000); // 15s timeout
+                    googleTokenClient.requestAccessToken({
                         callback: (response) => {
                             clearTimeout(timeout);
                             console.log('Google Token Response:', response);
@@ -368,9 +371,10 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             } else {
                                 resolve(response.access_token);
                             }
-                        },
+                        }
                     });
                 }).catch(err => {
+                    console.error('Token Retrieval Error:', err);
                     throw new Error(`Failed to retrieve Google access token: ${err.message}`);
                 });
 
@@ -534,7 +538,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 } else if (err.message.includes('Failed to retrieve Google access token')) {
                     toast.error(intl.formatMessage({
                         id: 'google-token-failed',
-                        defaultMessage: 'Failed to retrieve Google access token. Please try again.',
+                        defaultMessage: 'Failed to retrieve Google access token. Ensure your account is a tester in Google Cloud Console and try again.',
                     }));
                 } else if (err.message.includes('parse People API response')) {
                     toast.error(intl.formatMessage({
