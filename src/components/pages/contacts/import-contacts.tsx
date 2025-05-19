@@ -128,7 +128,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 document.body.removeChild(script);
             }
         };
-    }, []);
+    }, [intl]);
 
     // Parse vCard file
     const parseVCard = (content: string): Contact[] => {
@@ -181,7 +181,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         setIsImporting(true);
         setImportProgress(0);
 
-        let progressInterval: NodeJS.Timeout | undefined = undefined;
+        let progressInterval: NodeJS.Timeout | undefined;
         try {
             progressInterval = setInterval(() => {
                 setImportProgress(prev => {
@@ -301,7 +301,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         setIsImporting(true);
         setImportProgress(0);
 
-        let progressInterval: NodeJS.Timeout | undefined = undefined;
+        let progressInterval: NodeJS.Timeout | undefined;
         try {
             progressInterval = setInterval(() => {
                 setImportProgress(prev => {
@@ -349,12 +349,20 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 }
             } else if (source === 'google') {
                 const accessToken = await new Promise<string>((resolve, reject) => {
-                    googleTokenClient!.requestAccessToken();
-                    window.google!.accounts.oauth2.initTokenClient({
+                    if (!googleTokenClient || !window.google) {
+                        reject(new Error('Google token client not initialized'));
+                        return;
+                    }
+                    const timeout = setTimeout(() => {
+                        reject(new Error('Token retrieval timed out'));
+                    }, 10000); // 10s timeout
+                    googleTokenClient.requestAccessToken();
+                    window.google.accounts.oauth2.initTokenClient({
                         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
                         scope: 'https://www.googleapis.com/auth/contacts.readonly',
                         callback: (response) => {
-                            console.log('Google Token Response:', response); // Debug log
+                            clearTimeout(timeout);
+                            console.log('Google Token Response:', response);
                             if (response.error) {
                                 reject(new Error(response.error));
                             } else {
@@ -362,6 +370,8 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             }
                         },
                     });
+                }).catch(err => {
+                    throw new Error(`Failed to retrieve Google access token: ${err.message}`);
                 });
 
                 if (progressInterval) {
@@ -380,18 +390,19 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                         headers: { Authorization: `Bearer ${accessToken}` },
                     });
 
-                    console.log('People API Response Status:', response.status); // Debug log
+                    console.log('People API Response Status:', response.status);
                     if (!response.ok) {
-                        const errorData = await response.json();
-                        console.error('Google API Error:', errorData); // Debug log
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error('Google API Error:', errorData);
                         throw new Error(errorData.error?.message || 'Failed to fetch Google Contacts');
                     }
 
                     let data: PeopleResponse;
                     try {
                         data = await response.json();
-                        console.log('People API Data:', data); // Debug log
+                        console.log('People API Data:', data);
                     } catch (parseError) {
+                        console.error('Parse Error:', parseError);
                         throw new Error('Failed to parse People API response');
                     }
 
@@ -487,7 +498,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             }
             setImportProgress(100);
             const err = error as Error;
-            console.error('Import Error:', err); // Debug log
+            console.error('Import Error:', err);
             toast.info(`Import Error: ${err.name || 'Unknown'}, Message: ${err.message || 'No message'}`);
             if (source === 'phone') {
                 if (err.name === 'SecurityError') {
@@ -519,6 +530,11 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                     toast.error(intl.formatMessage({
                         id: 'google-quota-exceeded',
                         defaultMessage: 'Google API quota exceeded. Please try again later.',
+                    }));
+                } else if (err.message.includes('Failed to retrieve Google access token')) {
+                    toast.error(intl.formatMessage({
+                        id: 'google-token-failed',
+                        defaultMessage: 'Failed to retrieve Google access token. Please try again.',
                     }));
                 } else if (err.message.includes('parse People API response')) {
                     toast.error(intl.formatMessage({
