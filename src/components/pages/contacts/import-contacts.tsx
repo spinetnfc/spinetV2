@@ -349,11 +349,8 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 }
             } else if (source === 'google') {
                 const accessToken = await new Promise<string>((resolve, reject) => {
-                    if (!googleTokenClient) {
-                        reject(new Error('Google token client not initialized'));
-                        return;
-                    }
-                    const client = window.google!.accounts.oauth2.initTokenClient({
+                    googleTokenClient!.requestAccessToken();
+                    window.google!.accounts.oauth2.initTokenClient({
                         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
                         scope: 'https://www.googleapis.com/auth/contacts.readonly',
                         callback: (response) => {
@@ -365,7 +362,6 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             }
                         },
                     });
-                    client.requestAccessToken();
                 });
 
                 if (progressInterval) {
@@ -379,7 +375,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 const maxIterations = 10; // Prevent infinite loops
 
                 do {
-                    const url = `https://people.googleapis.com/v1/people:searchContacts?query=&readMask=names,phoneNumbers,emailAddresses&pageSize=1000${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
+                    const url = `https://people.googleapis.com/v1/people:searchContacts?query=&readMask=names,phoneNumbers,emailAddresses${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
                     const response = await fetch(url, {
                         headers: { Authorization: `Bearer ${accessToken}` },
                     });
@@ -415,7 +411,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 setImportProgress(100);
 
                 if (allContacts.length === 0) {
-                    toast.error(intl.formatMessage({ id: 'no-contacts-found', defaultMessage: 'No valid contacts found.' }));
+                    toast.error(intl.formatMessage({ id: 'no-google-contacts', defaultMessage: 'No Google contacts to import.' }));
                     setImportSource(null);
                     return;
                 }
@@ -517,17 +513,17 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 if (err.message.includes('invalid_scope') || err.message.includes('access_denied')) {
                     toast.error(intl.formatMessage({
                         id: 'google-auth-failed',
-                        defaultMessage: 'Failed to authenticate with Google. Please grant permission to access contacts.',
+                        defaultMessage: 'Failed to authenticate with Google. Ensure your account is added as a tester in Google Cloud Console and grant permission to access contacts.',
                     }));
                 } else if (err.message.includes('quota')) {
                     toast.error(intl.formatMessage({
                         id: 'google-quota-exceeded',
                         defaultMessage: 'Google API quota exceeded. Please try again later.',
                     }));
-                } else if (err.message.includes('token client not initialized') || err.message.includes('Failed to retrieve Google access token')) {
+                } else if (err.message.includes('parse People API response')) {
                     toast.error(intl.formatMessage({
-                        id: 'google-token-failed',
-                        defaultMessage: 'Failed to retrieve Google access token. Please try again.',
+                        id: 'google-parse-failed',
+                        defaultMessage: 'Failed to parse Google API response. Please try again.',
                     }));
                 } else {
                     toast.error(intl.formatMessage(
