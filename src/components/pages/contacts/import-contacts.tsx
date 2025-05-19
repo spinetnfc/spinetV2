@@ -105,9 +105,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 const client = window.google.accounts.oauth2.initTokenClient({
                     client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
                     scope: 'https://www.googleapis.com/auth/contacts.readonly',
-                    callback: (response) => {
-                        // Handled in fetchContacts
-                    },
+                    callback: () => { }, // Dummy callback, handled in fetchContacts
                 });
                 setGoogleTokenClient(client);
             } else {
@@ -351,11 +349,15 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 }
             } else if (source === 'google') {
                 const accessToken = await new Promise<string>((resolve, reject) => {
-                    googleTokenClient!.requestAccessToken();
-                    window.google!.accounts.oauth2.initTokenClient({
+                    if (!googleTokenClient) {
+                        reject(new Error('Google token client not initialized'));
+                        return;
+                    }
+                    const client = window.google!.accounts.oauth2.initTokenClient({
                         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
                         scope: 'https://www.googleapis.com/auth/contacts.readonly',
                         callback: (response) => {
+                            console.log('Google Token Response:', response); // Debug log
                             if (response.error) {
                                 reject(new Error(response.error));
                             } else {
@@ -363,30 +365,53 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             }
                         },
                     });
+                    client.requestAccessToken();
                 });
+
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                    progressInterval = undefined;
+                }
 
                 let allContacts: Person[] = [];
                 let nextPageToken: string | undefined;
+                let iterationCount = 0;
+                const maxIterations = 10; // Prevent infinite loops
+
                 do {
                     const url = `https://people.googleapis.com/v1/people:searchContacts?query=&readMask=names,phoneNumbers,emailAddresses&pageSize=1000${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
                     const response = await fetch(url, {
                         headers: { Authorization: `Bearer ${accessToken}` },
                     });
 
+                    console.log('People API Response Status:', response.status); // Debug log
                     if (!response.ok) {
                         const errorData = await response.json();
+                        console.error('Google API Error:', errorData); // Debug log
                         throw new Error(errorData.error?.message || 'Failed to fetch Google Contacts');
                     }
 
-                    const data: PeopleResponse = await response.json();
+                    let data: PeopleResponse;
+                    try {
+                        data = await response.json();
+                        console.log('People API Data:', data); // Debug log
+                    } catch (parseError) {
+                        throw new Error('Failed to parse People API response');
+                    }
+
                     allContacts = allContacts.concat(data.connections || []);
                     nextPageToken = data.nextPageToken;
-                } while (nextPageToken);
+                    iterationCount++;
+                } while (nextPageToken && iterationCount < maxIterations);
 
-                if (progressInterval) {
-                    clearInterval(progressInterval);
-                    progressInterval = undefined;
+                if (iterationCount >= maxIterations) {
+                    console.warn('Max iterations reached in pagination');
+                    toast.warning(intl.formatMessage({
+                        id: 'google-pagination-limit',
+                        defaultMessage: 'Reached pagination limit. Some contacts may not be imported.',
+                    }));
                 }
+
                 setImportProgress(100);
 
                 if (allContacts.length === 0) {
@@ -466,6 +491,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             }
             setImportProgress(100);
             const err = error as Error;
+            console.error('Import Error:', err); // Debug log
             toast.info(`Import Error: ${err.name || 'Unknown'}, Message: ${err.message || 'No message'}`);
             if (source === 'phone') {
                 if (err.name === 'SecurityError') {
@@ -497,6 +523,11 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                     toast.error(intl.formatMessage({
                         id: 'google-quota-exceeded',
                         defaultMessage: 'Google API quota exceeded. Please try again later.',
+                    }));
+                } else if (err.message.includes('token client not initialized') || err.message.includes('Failed to retrieve Google access token')) {
+                    toast.error(intl.formatMessage({
+                        id: 'google-token-failed',
+                        defaultMessage: 'Failed to retrieve Google access token. Please try again.',
                     }));
                 } else {
                     toast.error(intl.formatMessage(
