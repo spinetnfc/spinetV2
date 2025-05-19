@@ -26,6 +26,37 @@ interface NavigatorExtended extends Navigator {
 
 declare const navigator: NavigatorExtended;
 
+// Google Identity Services
+interface GoogleAccounts {
+    oauth2: {
+        initTokenClient: (config: {
+            client_id: string;
+            scope: string;
+            callback: (response: { access_token: string; error?: string }) => void;
+        }) => { requestAccessToken: () => void };
+    };
+}
+
+declare global {
+    interface Window {
+        google?: { accounts: GoogleAccounts };
+    }
+}
+
+// People API response
+interface Person {
+    resourceName: string;
+    names?: { displayName: string }[];
+    phoneNumbers?: { value: string }[];
+    emailAddresses?: { value: string }[];
+}
+
+interface PeopleResponse {
+    connections: Person[];
+    nextPageToken?: string;
+    totalItems: number;
+}
+
 interface Contact {
     id: string;
     fullName: string;
@@ -50,8 +81,9 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
     const [addProgress, setAddProgress] = useState(0);
     const [isApiSupported, setIsApiSupported] = useState<boolean | null>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
+    const [googleTokenClient, setGoogleTokenClient] = useState<ReturnType<GoogleAccounts['oauth2']['initTokenClient']> | null>(null);
 
-    // Check if Web Contacts API is supported
+    // Check Web Contacts API and load Google Identity Services
     useEffect(() => {
         const isSupported = !!navigator.contacts && typeof navigator.contacts.select === 'function';
         setIsApiSupported(isSupported);
@@ -63,6 +95,41 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             `HTTPS: ${window.location.protocol === 'https:' ? 'Yes' : 'No'}. ` +
             `Chrome: ${chromeVersion}, Android: ${androidVersion}`
         );
+
+        // Load Google Identity Services script
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.onload = () => {
+            if (window.google?.accounts) {
+                const client = window.google.accounts.oauth2.initTokenClient({
+                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
+                    scope: 'https://www.googleapis.com/auth/contacts.readonly',
+                    callback: (response) => {
+                        // Handled in fetchContacts
+                    },
+                });
+                setGoogleTokenClient(client);
+            } else {
+                toast.error(intl.formatMessage({
+                    id: 'google-api-load-failed',
+                    defaultMessage: 'Failed to load Google API. Please try again.',
+                }));
+            }
+        };
+        script.onerror = () => {
+            toast.error(intl.formatMessage({
+                id: 'google-api-load-failed',
+                defaultMessage: 'Failed to load Google API. Please try again.',
+            }));
+        };
+        document.body.appendChild(script);
+
+        return () => {
+            if (document.body.contains(script)) {
+                document.body.removeChild(script);
+            }
+        };
     }, []);
 
     // Parse vCard file
@@ -208,22 +275,27 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         }
     };
 
-    // Fetch contacts from phone using Web Contacts API
+    // Fetch contacts from phone or Google
     const fetchContacts = async (source: 'phone' | 'google' | 'file') => {
-        if (source === 'google') {
-            toast.error(intl.formatMessage({ id: 'source-not-supported', defaultMessage: 'Google contacts import is not supported yet.' }));
-            return;
-        }
-
         if (source === 'file') {
             fileInputRef.current?.click();
             return;
         }
 
-        if (!navigator.contacts || typeof navigator.contacts.select !== 'function') {
+        if (source === 'phone') {
+            if (!navigator.contacts || typeof navigator.contacts.select !== 'function') {
+                toast.error(intl.formatMessage({
+                    id: 'api-not-supported',
+                    defaultMessage: 'Phone contact import requires HTTPS and a supported browser (e.g., Chrome on Android). Try importing a vCard file.',
+                }));
+                return;
+            }
+        }
+
+        if (source === 'google' && !googleTokenClient) {
             toast.error(intl.formatMessage({
-                id: 'api-not-supported',
-                defaultMessage: 'Phone contact import requires HTTPS and a supported browser (e.g., Chrome on Android). Try importing a vCard file.'
+                id: 'google-api-not-loaded',
+                defaultMessage: 'Google API not loaded. Please try again.',
             }));
             return;
         }
@@ -244,37 +316,109 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 });
             }, 200);
 
-            const properties: string[] = ['name', 'tel', 'email'];
-            const options = { multiple: true };
-            const phoneContacts = await navigator.contacts.select(properties, options);
+            let mappedContacts: Contact[] = [];
 
-            if (progressInterval) {
-                clearInterval(progressInterval);
-                progressInterval = undefined;
-            }
-            setImportProgress(100);
+            if (source === 'phone') {
+                const properties: string[] = ['name', 'tel', 'email'];
+                const options = { multiple: true };
+                if (navigator.contacts) {
+                    const phoneContacts = await navigator.contacts.select(properties, options);
 
-            if (phoneContacts.length === 0) {
-                toast.error(intl.formatMessage({ id: 'no-contacts-selected', defaultMessage: 'No contacts were selected.' }));
-                setImportSource(null);
-                return;
+                    if (progressInterval) {
+                        clearInterval(progressInterval);
+                        progressInterval = undefined;
+                    }
+                    setImportProgress(100);
+
+                    if (phoneContacts.length === 0) {
+                        toast.error(intl.formatMessage({ id: 'no-contacts-selected', defaultMessage: 'No contacts were selected.' }));
+                        setImportSource(null);
+                        return;
+                    }
+
+                    mappedContacts = phoneContacts
+                        .filter(contact => contact.name?.[0])
+                        .map((contact, index) => ({
+                            id: `${index}-${contact.name![0]}-${Date.now()}`,
+                            fullName: contact.name![0],
+                            phoneNumber: contact.tel?.[0] ?? undefined,
+                            email: contact.email?.[0] ?? undefined,
+                            companyName: undefined,
+                            position: undefined,
+                        }));
+                } else {
+                    throw new Error('Web Contacts API not available');
+                }
+            } else if (source === 'google') {
+                const accessToken = await new Promise<string>((resolve, reject) => {
+                    googleTokenClient!.requestAccessToken();
+                    window.google!.accounts.oauth2.initTokenClient({
+                        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
+                        scope: 'https://www.googleapis.com/auth/contacts.readonly',
+                        callback: (response) => {
+                            if (response.error) {
+                                reject(new Error(response.error));
+                            } else {
+                                resolve(response.access_token);
+                            }
+                        },
+                    });
+                });
+
+                let allContacts: Person[] = [];
+                let nextPageToken: string | undefined;
+                do {
+                    const url = `https://people.googleapis.com/v1/people:searchContacts?query=&readMask=names,phoneNumbers,emailAddresses&pageSize=1000${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
+                    const response = await fetch(url, {
+                        headers: { Authorization: `Bearer ${accessToken}` },
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error?.message || 'Failed to fetch Google Contacts');
+                    }
+
+                    const data: PeopleResponse = await response.json();
+                    allContacts = allContacts.concat(data.connections || []);
+                    nextPageToken = data.nextPageToken;
+                } while (nextPageToken);
+
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                    progressInterval = undefined;
+                }
+                setImportProgress(100);
+
+                if (allContacts.length === 0) {
+                    toast.error(intl.formatMessage({ id: 'no-contacts-found', defaultMessage: 'No valid contacts found.' }));
+                    setImportSource(null);
+                    return;
+                }
+
+                if (allContacts.length > 3000) {
+                    toast.warning(intl.formatMessage({
+                        id: 'google-import-limit',
+                        defaultMessage: 'Google Contacts import is limited to 3,000 contacts. Only the first 3,000 will be imported.',
+                    }));
+                    allContacts = allContacts.slice(0, 3000);
+                }
+
+                mappedContacts = allContacts
+                    .filter(person => person.names?.[0]?.displayName)
+                    .map((person, index) => ({
+                        id: `${index}-${person.names![0].displayName}-${Date.now()}`,
+                        fullName: person.names![0].displayName,
+                        phoneNumber: person.phoneNumbers?.[0]?.value ?? undefined,
+                        email: person.emailAddresses?.[0]?.value ?? undefined,
+                        companyName: undefined,
+                        position: undefined,
+                    }));
             }
 
             setIsAdding(true);
             setAddProgress(0);
-            const total = phoneContacts.length;
+            const total = mappedContacts.length;
             let completed = 0;
-
-            const mappedContacts: Contact[] = phoneContacts
-                .filter(contact => contact.name?.[0])
-                .map((contact, index) => ({
-                    id: `${index}-${contact.name![0]}-${Date.now()}`,
-                    fullName: contact.name![0],
-                    phoneNumber: contact.tel?.[0] ?? undefined,
-                    email: contact.email?.[0] ?? undefined,
-                    companyName: undefined,
-                    position: undefined,
-                }));
 
             for (const contact of mappedContacts) {
                 const formData = new FormData();
@@ -322,25 +466,44 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             }
             setImportProgress(100);
             const err = error as Error;
-            toast.info(`Contacts API Error: ${err.name || 'Unknown'}, Message: ${err.message || 'No message'}`);
-            if (err.name === 'SecurityError') {
-                toast.error(intl.formatMessage({ id: 'permission-denied', defaultMessage: 'Permission to access contacts was denied.' }));
-            } else if (err.name === 'NotAllowedError') {
-                toast.error(intl.formatMessage({ id: 'permission-not-allowed', defaultMessage: 'Contact access permission is not allowed.' }));
-            } else if (err.message === 'Unable to open contacts selector') {
-                toast.error(intl.formatMessage({
-                    id: 'selector-failed',
-                    defaultMessage: 'Unable to open contacts selector. Ensure HTTPS is used, Chrome permissions are granted, and try again.'
-                }));
-                toast.warning(intl.formatMessage({
-                    id: 'check-permissions',
-                    defaultMessage: 'Go to Android Settings > Apps > Chrome > Permissions and ensure Contacts access is enabled.'
-                }));
-            } else {
-                toast.error(intl.formatMessage(
-                    { id: 'import-failed', defaultMessage: 'Failed to import contacts: {message}' },
-                    { message: err.message || 'Unknown error' }
-                ));
+            toast.info(`Import Error: ${err.name || 'Unknown'}, Message: ${err.message || 'No message'}`);
+            if (source === 'phone') {
+                if (err.name === 'SecurityError') {
+                    toast.error(intl.formatMessage({ id: 'permission-denied', defaultMessage: 'Permission to access contacts was denied.' }));
+                } else if (err.name === 'NotAllowedError') {
+                    toast.error(intl.formatMessage({ id: 'permission-not-allowed', defaultMessage: 'Contact access permission is not allowed.' }));
+                } else if (err.message === 'Unable to open contacts selector') {
+                    toast.error(intl.formatMessage({
+                        id: 'selector-failed',
+                        defaultMessage: 'Unable to open contacts selector. Ensure HTTPS is used, Chrome permissions are granted, and try again.',
+                    }));
+                    toast.warning(intl.formatMessage({
+                        id: 'check-permissions',
+                        defaultMessage: 'Go to Android Settings > Apps > Chrome > Permissions and ensure Contacts access is enabled.',
+                    }));
+                } else {
+                    toast.error(intl.formatMessage(
+                        { id: 'import-failed', defaultMessage: 'Failed to import contacts: {message}' },
+                        { message: err.message || 'Unknown error' }
+                    ));
+                }
+            } else if (source === 'google') {
+                if (err.message.includes('invalid_scope') || err.message.includes('access_denied')) {
+                    toast.error(intl.formatMessage({
+                        id: 'google-auth-failed',
+                        defaultMessage: 'Failed to authenticate with Google. Please grant permission to access contacts.',
+                    }));
+                } else if (err.message.includes('quota')) {
+                    toast.error(intl.formatMessage({
+                        id: 'google-quota-exceeded',
+                        defaultMessage: 'Google API quota exceeded. Please try again later.',
+                    }));
+                } else {
+                    toast.error(intl.formatMessage(
+                        { id: 'import-failed', defaultMessage: 'Failed to import contacts: {message}' },
+                        { message: err.message || 'Unknown error' }
+                    ));
+                }
             }
         } finally {
             setIsImporting(false);
