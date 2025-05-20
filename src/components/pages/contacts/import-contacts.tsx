@@ -5,8 +5,9 @@ import { useIntl, FormattedMessage } from 'react-intl';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Upload, Smartphone, User, Check, CheckSquare, Square } from 'lucide-react';
+import { Upload, Smartphone, User, Check } from 'lucide-react';
 
 // Custom TypeScript declarations for Web Contacts API
 interface ContactProperties {
@@ -636,15 +637,14 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                         {googleContacts.map(contact => (
                             <div
                                 key={contact.id}
-                                className="flex items-center gap-2 py-2 border-b last:border-b-0 cursor-pointer"
-                                onClick={() => toggleGoogleContactSelection(contact.id)}
+                                className="flex items-center gap-2 py-2 border-b last:border-b-0"
                             >
-                                {selectedGoogleContacts.includes(contact.id) ? (
-                                    <CheckSquare size={20} className="text-green-500" />
-                                ) : (
-                                    <Square size={20} className="text-gray-400" />
-                                )}
-                                <div className="text-left">
+                                <Checkbox
+                                    checked={selectedGoogleContacts.includes(contact.id)}
+                                    onCheckedChange={() => toggleGoogleContactSelection(contact.id)}
+                                    className="size-5"
+                                />
+                                <div className="text-left flex-1">
                                     <p className="font-medium">{contact.fullName}</p>
                                     {contact.phoneNumber && <p className="text-sm text-muted-foreground">{contact.phoneNumber}</p>}
                                     {contact.email && <p className="text-sm text-muted-foreground">{contact.email}</p>}
