@@ -298,7 +298,6 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         });
     };
 
-
     // Handle Google contact selection
     const toggleGoogleContactSelection = (contactId: string) => {
         setSelectedGoogleContacts(prev =>
@@ -375,6 +374,15 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         setImportSource(null);
     };
 
+    // Add a "Select All" functionality to the Google contacts selection UI
+    const selectAllGoogleContacts = () => {
+        if (selectedGoogleContacts.length === googleContacts.length) {
+            setSelectedGoogleContacts([]);
+        } else {
+            setSelectedGoogleContacts(googleContacts.map(contact => contact.id));
+        }
+    };
+
     // Fetch contacts from phone or Google
     const fetchContacts = async (source: 'phone' | 'google' | 'file') => {
         if (source === 'file') {
@@ -382,15 +390,112 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             return;
         }
 
-        if (source === 'phone' && (!navigator.contacts || typeof navigator.contacts.select !== 'function')) {
-            toast.error(intl.formatMessage({
-                id: 'api-not-supported',
-                defaultMessage: 'Phone contact import requires HTTPS and a supported browser (e.g., Chrome on Android). Try importing a vCard file.',
-            }));
-            return;
-        }
+        if (source === 'phone') {
+            if (!navigator.contacts || typeof navigator.contacts.select !== 'function') {
+                toast.error(intl.formatMessage({
+                    id: 'api-not-supported',
+                    defaultMessage: 'Phone contact import requires HTTPS and a supported browser (e.g., Chrome on Android). Try importing a vCard file.',
+                }));
+                return;
+            }
 
-        if (source === 'google') {
+            setIsImporting(true);
+            setImportProgress(0);
+
+            let progressInterval: NodeJS.Timeout | undefined;
+            try {
+                progressInterval = setInterval(() => {
+                    setImportProgress(prev => {
+                        const next = prev + 5;
+                        return Math.min(next, 80);
+                    });
+                }, 200);
+
+                const properties: string[] = ['name', 'tel', 'email'];
+                const options = { multiple: true };
+                const phoneContacts = await navigator.contacts.select(properties, options);
+
+                clearInterval(progressInterval);
+                setImportProgress(100);
+
+                if (phoneContacts.length === 0) {
+                    toast.error(intl.formatMessage({
+                        id: 'no-contacts-selected',
+                        defaultMessage: 'No contacts were selected.',
+                    }));
+                    setImportSource(null);
+                    return;
+                }
+
+                const mappedContacts = phoneContacts
+                    .filter(contact => contact.name?.[0])
+                    .map((contact, index) => ({
+                        id: `${index}-${contact.name![0]}-${Date.now()}`,
+                        fullName: contact.name![0],
+                        phoneNumber: contact.tel?.[0] ?? undefined,
+                        email: contact.email?.[0] ?? undefined,
+                        companyName: undefined,
+                        position: undefined,
+                    }));
+
+                setIsAdding(true);
+                setAddProgress(0);
+                const total = mappedContacts.length;
+                let completed = 0;
+
+                for (const contact of mappedContacts) {
+                    const formData = new FormData();
+                    formData.append('fullName', contact.fullName);
+                    if (contact.phoneNumber) formData.append('phoneNumber', contact.phoneNumber);
+                    if (contact.email) formData.append('email', contact.email);
+                    formData.append('tags', JSON.stringify([]));
+                    formData.append('links', JSON.stringify([
+                        ...(contact.phoneNumber ? [{ title: 'phone', link: contact.phoneNumber }] : []),
+                        ...(contact.email ? [{ title: 'Email', link: contact.email }] : []),
+                    ]));
+
+                    try {
+                        const result = await createContact(formData);
+                        if (result.success) {
+                            toast.success(intl.formatMessage(
+                                { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
+                                { name: contact.fullName }
+                            ));
+                        } else {
+                            toast.error(intl.formatMessage(
+                                { id: 'contact-add-failed', defaultMessage: 'Failed to add contact {name}: {message}' },
+                                { name: contact.fullName, message: result.message }
+                            ));
+                        }
+                    } catch (error) {
+                        toast.error(intl.formatMessage(
+                            { id: 'contact-add-error', defaultMessage: 'Error adding contact {name}' },
+                            { name: contact.fullName }
+                        ));
+                    }
+
+                    completed += 1;
+                    setAddProgress((completed / total) * 100);
+                }
+
+                setAddProgress(100);
+                toast.success(intl.formatMessage({
+                    id: 'all-contacts-added',
+                    defaultMessage: 'All selected contacts added',
+                }));
+            } catch (error) {
+                clearInterval(progressInterval);
+                setImportProgress(100);
+                toast.error(intl.formatMessage(
+                    { id: 'phone-import-failed', defaultMessage: 'Failed to import phone contacts: {message}' },
+                    { message: (error as Error).message || 'Unknown error' }
+                ));
+            } finally {
+                setIsImporting(false);
+                setIsAdding(false);
+                setImportSource(null);
+            }
+        } else if (source === 'google') {
             if (!googleApiLoaded) {
                 toast.error(intl.formatMessage({
                     id: 'google-api-not-loaded',
@@ -406,190 +511,99 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 }));
                 return;
             }
-        }
 
-        setIsImporting(true);
-        setImportProgress(0);
+            setIsImporting(true);
+            setImportProgress(0);
 
-        let progressInterval: NodeJS.Timeout | undefined;
-        try {
-            progressInterval = setInterval(() => {
+            let progressInterval = setInterval(() => {
                 setImportProgress(prev => {
                     const next = prev + 5;
                     return Math.min(next, 80);
                 });
             }, 200);
 
-            let mappedContacts: Contact[] = [];
+            try {
+                // Get access token
+                const accessToken = await getGoogleAccessToken();
+                setImportProgress(60);
 
-            if (source === 'phone') {
-                const properties: string[] = ['name', 'tel', 'email'];
-                const options = { multiple: true };
-                if (navigator.contacts) {
-                    const phoneContacts = await navigator.contacts.select(properties, options);
+                // Automatically continue to fetch contacts after getting token
+                let allContacts: Person[] = [];
+                let nextPageToken: string | undefined;
 
-                    clearInterval(progressInterval);
-                    setImportProgress(100);
+                do {
+                    const url = `https://people.googleapis.com/v1/people/me/connections?personFields=names,phoneNumbers,emailAddresses${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
+                    const response = await fetch(url, {
+                        headers: { Authorization: `Bearer ${accessToken}` },
+                    });
 
-                    if (phoneContacts.length === 0) {
-                        toast.error(intl.formatMessage({ id: 'no-contacts-selected', defaultMessage: 'No contacts were selected.' }));
-                        setImportSource(null);
-                        return;
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Google API error:', response.status, errorText);
+                        throw new Error(`Failed to fetch Google Contacts: ${response.status} ${response.statusText}`);
                     }
 
-                    mappedContacts = phoneContacts
-                        .filter(contact => contact.name?.[0])
-                        .map((contact, index) => ({
-                            id: `${index}-${contact.name![0]}-${Date.now()}`,
-                            fullName: contact.name![0],
-                            phoneNumber: contact.tel?.[0] ?? undefined,
-                            email: contact.email?.[0] ?? undefined,
-                            companyName: undefined,
-                            position: undefined,
-                        }));
-
-                    setIsAdding(true);
-                    setAddProgress(0);
-                    const total = mappedContacts.length;
-                    let completed = 0;
-
-                    for (const contact of mappedContacts) {
-                        const formData = new FormData();
-                        formData.append('fullName', contact.fullName);
-                        if (contact.phoneNumber) formData.append('phoneNumber', contact.phoneNumber);
-                        if (contact.email) formData.append('email', contact.email);
-                        formData.append('tags', JSON.stringify([]));
-                        formData.append('links', JSON.stringify([
-                            ...(contact.phoneNumber ? [{ title: 'phone', link: contact.phoneNumber }] : []),
-                            ...(contact.email ? [{ title: 'Email', link: contact.email }] : []),
-                        ]));
-
-                        try {
-                            const result = await createContact(formData);
-                            if (result.success) {
-                                toast.success(intl.formatMessage(
-                                    { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
-                                    { name: contact.fullName }
-                                ));
-                            } else {
-                                toast.error(intl.formatMessage(
-                                    { id: 'contact-add-failed', defaultMessage: 'Failed to add contact {name}: {message}' },
-                                    { name: contact.fullName, message: result.message }
-                                ));
-                            }
-                        } catch (error) {
-                            toast.error(intl.formatMessage(
-                                { id: 'contact-add-error', defaultMessage: 'Error adding contact {name}' },
-                                { name: contact.fullName }
-                            ));
-                        }
-
-                        completed += 1;
-                        setAddProgress((completed / total) * 100);
+                    const data: PeopleResponse = await response.json();
+                    if (data.connections) {
+                        allContacts = allContacts.concat(data.connections);
                     }
+                    nextPageToken = data.nextPageToken;
+                    setImportProgress(80 + (allContacts.length / (data.totalItems || 100)) * 20);
+                } while (nextPageToken);
 
-                    setAddProgress(100);
-                    toast.success(intl.formatMessage({ id: 'all-contacts-added', defaultMessage: 'All selected contacts added' }));
-                } else {
-                    throw new Error('Web Contacts API not available');
-                }
-            } else if (source === 'google') {
-                try {
-                    // Get access token with better error handling
-                    const accessToken = await getGoogleAccessToken();
-                    setImportProgress(60);
+                clearInterval(progressInterval);
+                setImportProgress(100);
 
-                    // Automatically continue to fetch contacts after getting token
-                    let allContacts: Person[] = [];
-                    let nextPageToken: string | undefined;
-
-                    do {
-                        const url = `https://people.googleapis.com/v1/people/me/connections?personFields=names,phoneNumbers,emailAddresses${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
-                        const response = await fetch(url, {
-                            headers: { Authorization: `Bearer ${accessToken}` },
-                        });
-
-                        if (!response.ok) {
-                            const errorText = await response.text();
-                            console.error('Google API error:', response.status, errorText);
-                            throw new Error(`Failed to fetch Google Contacts: ${response.status} ${response.statusText}`);
-                        }
-
-                        const data: PeopleResponse = await response.json();
-                        if (data.connections) {
-                            allContacts = allContacts.concat(data.connections);
-                        }
-                        nextPageToken = data.nextPageToken;
-                        setImportProgress(80 + (allContacts.length / (data.totalItems || 100)) * 20);
-                    } while (nextPageToken);
-
-                    clearInterval(progressInterval);
-                    setImportProgress(100);
-
-                    if (allContacts.length === 0) {
-                        toast.error(intl.formatMessage({
-                            id: 'no-google-contacts',
-                            defaultMessage: 'No Google contacts found to import.'
-                        }));
-                        setImportSource(null);
-                        return;
-                    }
-
-                    const mappedContacts = allContacts
-                        .filter(person => person.names?.[0]?.displayName)
-                        .map((person, index) => ({
-                            id: `${index}-${person.names![0].displayName}-${Date.now()}`,
-                            fullName: person.names![0].displayName,
-                            phoneNumber: person.phoneNumbers?.[0]?.value ?? undefined,
-                            email: person.emailAddresses?.[0]?.value ?? undefined,
-                            companyName: undefined,
-                            position: undefined,
-                        }));
-
-                    setGoogleContacts(mappedContacts);
-
-                    // Pre-select all contacts by default
-                    setSelectedGoogleContacts(mappedContacts.map(contact => contact.id));
-
-                    toast.success(intl.formatMessage({
-                        id: 'contacts-loaded',
-                        defaultMessage: 'Found {count} contacts. Select the ones you want to import.',
-                        // values: { count: mappedContacts.length }
+                if (allContacts.length === 0) {
+                    toast.error(intl.formatMessage({
+                        id: 'no-google-contacts',
+                        defaultMessage: 'No Google contacts found to import.',
                     }));
-                } catch (error) {
-                    console.error('Google OAuth error:', error);
-
-                    // Better error handling
-                    if ((error as Error).message === 'Authentication was canceled') {
-                        toast.info(intl.formatMessage({
-                            id: 'auth-canceled',
-                            defaultMessage: 'Authentication was canceled. Please try again.'
-                        }));
-                    } else {
-                        throw error; // Re-throw to be caught by the outer catch block
-                    }
+                    setImportSource(null);
+                    return;
                 }
-            }
-        } catch (error) {
-            clearInterval(progressInterval);
-            setImportProgress(100);
-            toast.error(intl.formatMessage(
-                { id: 'import-failed', defaultMessage: 'Failed to import contacts: {message}' },
-                { message: (error as Error).message || 'Unknown error' }
-            ));
-        } finally {
-            setIsImporting(false);
-            if (source !== 'google' || googleContacts.length === 0) {
-                setImportSource(null);
-            }
-        }
-    };
 
-    const selectAllGoogleContacts = () => {
-        if (selectedGoogleContacts.length === googleContacts.length) {
-            setSelectedGoogleContacts([]);
-        } else {
-            setSelectedGoogleContacts(googleContacts.map(contact => contact.id));
+                const mappedContacts = allContacts
+                    .filter(person => person.names?.[0]?.displayName)
+                    .map((person, index) => ({
+                        id: `${index}-${person.names![0].displayName}-${Date.now()}`,
+                        fullName: person.names![0].displayName,
+                        phoneNumber: person.phoneNumbers?.[0]?.value ?? undefined,
+                        email: person.emailAddresses?.[0]?.value ?? undefined,
+                        companyName: undefined,
+                        position: undefined,
+                    }));
+
+                setGoogleContacts(mappedContacts);
+
+                // Pre-select all contacts by default
+                setSelectedGoogleContacts(mappedContacts.map(contact => contact.id));
+
+                toast.success(intl.formatMessage({
+                    id: 'contacts-loaded',
+                    defaultMessage: 'Found {count} contacts. Select the ones you want to import.',
+                    // values: { count: mappedContacts.length }
+                }));
+            } catch (error) {
+                clearInterval(progressInterval);
+                setImportProgress(100);
+                console.error('Google import error:', error);
+
+                // Better error handling
+                if ((error as Error).message === 'Authentication was canceled') {
+                    toast.info(intl.formatMessage({
+                        id: 'auth-canceled',
+                        defaultMessage: 'Authentication was canceled. Please try again.',
+                    }));
+                } else {
+                    toast.error(intl.formatMessage(
+                        { id: 'import-failed', defaultMessage: 'Failed to import contacts: {message}' },
+                        { message: (error as Error).message || 'Unknown error' }
+                    ));
+                }
+            } finally {
+                setIsImporting(false);
+            }
         }
     };
 
@@ -649,14 +663,14 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                         className="hidden"
                         onChange={handleFileUpload}
                     />
-                    {isApiSupported === false && (
+                    {/* {isApiSupported === false && (
                         <p className="text-sm text-red-500 mt-4">
                             <FormattedMessage
                                 id='api-not-supported'
                                 defaultMessage='Phone contact import requires HTTPS and a supported browser (e.g., Chrome on Android). Try importing a vCard file.'
                             />
                         </p>
-                    )}
+                    )} */}
                 </div>
             ) : googleContacts.length > 0 && importSource === 'google' && !isAdding ? (
                 <div className="text-center">
@@ -666,7 +680,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                     <div className="flex items-center justify-between mb-2 px-4">
                         <div className="flex items-center gap-2">
                             <Checkbox
-                                checked={selectedGoogleContacts.length === googleContacts.length && googleContacts.length > 0}
+                                checked={selectedGoogleContacts.length === googleContacts.length}
                                 onCheckedChange={selectAllGoogleContacts}
                                 className="size-5"
                             />
@@ -680,7 +694,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                                 defaultMessage="{selected} of {total} selected"
                                 values={{
                                     selected: selectedGoogleContacts.length,
-                                    total: googleContacts.length
+                                    total: googleContacts.length,
                                 }}
                             />
                         </span>
@@ -709,7 +723,6 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             onClick={handleConfirmGoogleSelection}
                             style={{ backgroundColor: themeColor }}
                             className="flex items-center gap-2"
-                            disabled={selectedGoogleContacts.length === 0}
                         >
                             <Check size={20} />
                             <FormattedMessage id="confirm-selection" defaultMessage="Confirm Selection" />
