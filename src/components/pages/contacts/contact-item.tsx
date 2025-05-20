@@ -47,7 +47,6 @@ export default function ContactItem({ contact, themeColor, editContact, removeCo
             const response = await removeContact(contactId);
             if (response.success) {
                 toast.success(intl.formatMessage({ id: "Contact deleted successfully" }));
-                window.location.reload();
             } else {
                 throw new Error(response.message);
             }

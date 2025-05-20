@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Upload, Smartphone, User } from 'lucide-react';
+import { Upload, Smartphone, User, Check, CheckSquare, Square } from 'lucide-react';
 
 // Custom TypeScript declarations for Web Contacts API
 interface ContactProperties {
@@ -82,6 +82,8 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
     const [isApiSupported, setIsApiSupported] = useState<boolean | null>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [googleApiLoaded, setGoogleApiLoaded] = useState(false);
+    const [googleContacts, setGoogleContacts] = useState<Contact[]>([]);
+    const [selectedGoogleContacts, setSelectedGoogleContacts] = useState<string[]>([]);
 
     // Check Web Contacts API and load Google Identity Services
     useEffect(() => {
@@ -289,6 +291,82 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
         });
     };
 
+    // Handle Google contact selection
+    const toggleGoogleContactSelection = (contactId: string) => {
+        setSelectedGoogleContacts(prev =>
+            prev.includes(contactId)
+                ? prev.filter(id => id !== contactId)
+                : [...prev, contactId]
+        );
+    };
+
+    // Handle confirm selection for Google contacts
+    const handleConfirmGoogleSelection = async () => {
+        if (selectedGoogleContacts.length === 0) {
+            toast.error(intl.formatMessage({
+                id: 'no-contacts-selected',
+                defaultMessage: 'No contacts were selected.',
+            }));
+            setGoogleContacts([]);
+            setSelectedGoogleContacts([]);
+            setImportSource(null);
+            return;
+        }
+
+        setIsAdding(true);
+        setAddProgress(0);
+        const selectedContacts = googleContacts.filter(contact =>
+            selectedGoogleContacts.includes(contact.id)
+        );
+        const total = selectedContacts.length;
+        let completed = 0;
+
+        for (const contact of selectedContacts) {
+            const formData = new FormData();
+            formData.append('fullName', contact.fullName);
+            if (contact.phoneNumber) formData.append('phoneNumber', contact.phoneNumber);
+            if (contact.email) formData.append('email', contact.email);
+            formData.append('tags', JSON.stringify([]));
+            formData.append('links', JSON.stringify([
+                ...(contact.phoneNumber ? [{ title: 'phone', link: contact.phoneNumber }] : []),
+                ...(contact.email ? [{ title: 'Email', link: contact.email }] : []),
+            ]));
+
+            try {
+                const result = await createContact(formData);
+                if (result.success) {
+                    toast.success(intl.formatMessage(
+                        { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
+                        { name: contact.fullName }
+                    ));
+                } else {
+                    toast.error(intl.formatMessage(
+                        { id: 'contact-add-failed', defaultMessage: 'Failed to add contact {name}: {message}' },
+                        { name: contact.fullName, message: result.message }
+                    ));
+                }
+            } catch (error) {
+                toast.error(intl.formatMessage(
+                    { id: 'contact-add-error', defaultMessage: 'Error adding contact {name}' },
+                    { name: contact.fullName }
+                ));
+            }
+
+            completed += 1;
+            setAddProgress((completed / total) * 100);
+        }
+
+        setAddProgress(100);
+        toast.success(intl.formatMessage({
+            id: 'all-contacts-added',
+            defaultMessage: 'All selected contacts added',
+        }));
+        setGoogleContacts([]);
+        setSelectedGoogleContacts([]);
+        setIsAdding(false);
+        setImportSource(null);
+    };
+
     // Fetch contacts from phone or Google
     const fetchContacts = async (source: 'phone' | 'google' | 'file') => {
         if (source === 'file') {
@@ -360,6 +438,49 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             companyName: undefined,
                             position: undefined,
                         }));
+
+                    setIsAdding(true);
+                    setAddProgress(0);
+                    const total = mappedContacts.length;
+                    let completed = 0;
+
+                    for (const contact of mappedContacts) {
+                        const formData = new FormData();
+                        formData.append('fullName', contact.fullName);
+                        if (contact.phoneNumber) formData.append('phoneNumber', contact.phoneNumber);
+                        if (contact.email) formData.append('email', contact.email);
+                        formData.append('tags', JSON.stringify([]));
+                        formData.append('links', JSON.stringify([
+                            ...(contact.phoneNumber ? [{ title: 'phone', link: contact.phoneNumber }] : []),
+                            ...(contact.email ? [{ title: 'Email', link: contact.email }] : []),
+                        ]));
+
+                        try {
+                            const result = await createContact(formData);
+                            if (result.success) {
+                                toast.success(intl.formatMessage(
+                                    { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
+                                    { name: contact.fullName }
+                                ));
+                            } else {
+                                toast.error(intl.formatMessage(
+                                    { id: 'contact-add-failed', defaultMessage: 'Failed to add contact {name}: {message}' },
+                                    { name: contact.fullName, message: result.message }
+                                ));
+                            }
+                        } catch (error) {
+                            toast.error(intl.formatMessage(
+                                { id: 'contact-add-error', defaultMessage: 'Error adding contact {name}' },
+                                { name: contact.fullName }
+                            ));
+                        }
+
+                        completed += 1;
+                        setAddProgress((completed / total) * 100);
+                    }
+
+                    setAddProgress(100);
+                    toast.success(intl.formatMessage({ id: 'all-contacts-added', defaultMessage: 'All selected contacts added' }));
                 } else {
                     throw new Error('Web Contacts API not available');
                 }
@@ -417,6 +538,8 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             companyName: undefined,
                             position: undefined,
                         }));
+
+                    setGoogleContacts(mappedContacts);
                 } catch (error) {
                     console.error('Google OAuth error:', error);
                     clearInterval(progressInterval);
@@ -424,49 +547,6 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                     throw error;
                 }
             }
-
-            setIsAdding(true);
-            setAddProgress(0);
-            const total = mappedContacts.length;
-            let completed = 0;
-
-            for (const contact of mappedContacts) {
-                const formData = new FormData();
-                formData.append('fullName', contact.fullName);
-                if (contact.phoneNumber) formData.append('phoneNumber', contact.phoneNumber);
-                if (contact.email) formData.append('email', contact.email);
-                formData.append('tags', JSON.stringify([]));
-                formData.append('links', JSON.stringify([
-                    ...(contact.phoneNumber ? [{ title: 'phone', link: contact.phoneNumber }] : []),
-                    ...(contact.email ? [{ title: 'Email', link: contact.email }] : []),
-                ]));
-
-                try {
-                    const result = await createContact(formData);
-                    if (result.success) {
-                        toast.success(intl.formatMessage(
-                            { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
-                            { name: contact.fullName }
-                        ));
-                    } else {
-                        toast.error(intl.formatMessage(
-                            { id: 'contact-add-failed', defaultMessage: 'Failed to add contact {name}: {message}' },
-                            { name: contact.fullName, message: result.message }
-                        ));
-                    }
-                } catch (error) {
-                    toast.error(intl.formatMessage(
-                        { id: 'contact-add-error', defaultMessage: 'Error adding contact {name}' },
-                        { name: contact.fullName }
-                    ));
-                }
-
-                completed += 1;
-                setAddProgress((completed / total) * 100);
-            }
-
-            setAddProgress(100);
-            toast.success(intl.formatMessage({ id: 'all-contacts-added', defaultMessage: 'All selected contacts added' }));
         } catch (error) {
             clearInterval(progressInterval);
             setImportProgress(100);
@@ -476,8 +556,9 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             ));
         } finally {
             setIsImporting(false);
-            setIsAdding(false);
-            setImportSource(null);
+            if (source !== 'google' || googleContacts.length === 0) {
+                setImportSource(null);
+            }
         }
     };
 
@@ -545,6 +626,52 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                             />
                         </p>
                     )}
+                </div>
+            ) : googleContacts.length > 0 && importSource === 'google' && !isAdding ? (
+                <div className="text-center">
+                    <h3 className="text-lg font-medium mb-4">
+                        <FormattedMessage id="select-google-contacts" defaultMessage="Select Google Contacts to Import" />
+                    </h3>
+                    <div className="max-h-96 overflow-y-auto border rounded-md p-4">
+                        {googleContacts.map(contact => (
+                            <div
+                                key={contact.id}
+                                className="flex items-center gap-2 py-2 border-b last:border-b-0 cursor-pointer"
+                                onClick={() => toggleGoogleContactSelection(contact.id)}
+                            >
+                                {selectedGoogleContacts.includes(contact.id) ? (
+                                    <CheckSquare size={20} className="text-green-500" />
+                                ) : (
+                                    <Square size={20} className="text-gray-400" />
+                                )}
+                                <div className="text-left">
+                                    <p className="font-medium">{contact.fullName}</p>
+                                    {contact.phoneNumber && <p className="text-sm text-muted-foreground">{contact.phoneNumber}</p>}
+                                    {contact.email && <p className="text-sm text-muted-foreground">{contact.email}</p>}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex justify-center gap-4 mt-4">
+                        <Button
+                            onClick={handleConfirmGoogleSelection}
+                            style={{ backgroundColor: themeColor }}
+                            className="flex items-center gap-2"
+                        >
+                            <Check size={20} />
+                            <FormattedMessage id="confirm-selection" defaultMessage="Confirm Selection" />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setGoogleContacts([]);
+                                setSelectedGoogleContacts([]);
+                                setImportSource(null);
+                            }}
+                        >
+                            <FormattedMessage id="cancel" defaultMessage="Cancel" />
+                        </Button>
+                    </div>
                 </div>
             ) : (
                 <div className="text-center">
