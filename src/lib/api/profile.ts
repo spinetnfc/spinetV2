@@ -15,7 +15,6 @@ export const viewProfile = async (profileId: string | null, userId: string | nul
         }
         // Use proper URL format
         const response = await ServerApi.get(`/profile/${profileId}/view/${userId}`, { headers });
-        console.log('Profile view response:', response.data);
         return response.data;
     } catch (error) {
         console.error('Profile fetch error:', error);

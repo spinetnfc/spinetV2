@@ -27,7 +27,6 @@ import type { ProfileData } from "@/types/profile"
 import { viewProfile } from "@/lib/api/profile"
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 
-
 export default async function ProfilePage({
     params,
 }: {
@@ -144,8 +143,11 @@ export default async function ProfilePage({
         <>
             {/* Mobile Layout (default) */}
             <div className="sm:hidden">
+                {/* Banner - Moved from layout */}
+                <div className="w-full h-60 bg-[url('/img/spinet-banner.jpg')] bg-cover bg-center dark:bg-neutral-100"></div>
+
                 {/* Profile Image */}
-                <div className="relative w-32 h-32 xs:w-40 xs:h-40 mx-auto -top-16 xs:-top-20 bg-neutral-50 rounded-full">
+                <div className="relative w-32 h-32 xs:w-40 xs:h-40 mx-auto -mt-16 xs:-mt-20 bg-neutral-50 rounded-full">
                     <Image
                         src={profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"}
                         alt="Profile picture"
@@ -184,11 +186,15 @@ export default async function ProfilePage({
                             <div className="w-full px-6 mt-6 grid grid-cols-2 gap-3">
                                 <button className="border-2 border-azure hover:opacity-80 text-azure text-lg font-medium w-fit xs:w-full mx-auto flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer">
                                     <UserPlus className="h-8 w-8 xs:h-5 xs:w-5" />
-                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">{t("add-contact")}</span>
+                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">
+                                        {t("add-contact")}
+                                    </span>
                                 </button>
                                 <button className="bg-azure hover:bg-azure/70 text-white text-lg font-medium w-fit xs:w-full mx-auto flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer">
                                     <Send className="h-8 w-8 xs:h-5 xs:w-5" />
-                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">{t("send-message")}</span>
+                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">
+                                        {t("send-message")}
+                                    </span>
                                 </button>
                             </div>
 
@@ -220,7 +226,7 @@ export default async function ProfilePage({
             </div>
 
             {/* Desktop Layout */}
-            <div className="hidden sm:block max-w-4xl mx-auto px-4 mb-8">
+            <div className="hidden sm:block max-w-4xl mx-auto px-4 mb-8 pt-12">
                 {/* Banner and Profile Card */}
                 <div className="bg-gray-200 dark:bg-navy rounded-3xl shadow-xl overflow-hidden mt-8">
                     {/* Banner */}
