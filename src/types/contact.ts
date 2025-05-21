@@ -5,6 +5,7 @@ export type Contact = {
     type?: "scan" | "manual" | "exchange" | "spinet" | "phone";
     Profile:
     | {
+        _id: string;
         fullName: string; // Required
         theme?: { color?: string };
         firstName?: string;

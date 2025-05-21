@@ -10,6 +10,7 @@ import DeleteConfirmationModal from "@/components/delete-confirmation-modal";
 import { toast } from "sonner";
 import { FormattedMessage, useIntl } from "react-intl";
 import { getUserFromCookie } from "@/utils/cookie";
+import Link from "next/link";
 
 type ContactItemProps = {
     contact: Contact;
@@ -87,7 +88,7 @@ export default function ContactItem({ contact, themeColor, editContact, removeCo
                     message="delete-contact-message"
                 />
             )}
-            <div className="flex items-center justify-between py-4 border-b border-gray-100 group">
+            <Link href={`/public-profile/${contact.Profile._id}`} className="flex items-center justify-between py-4 border-b border-gray-100 group">
                 <div className="flex items-center gap-3">
                     <ContactAvatar
                         name={name}
@@ -133,7 +134,7 @@ export default function ContactItem({ contact, themeColor, editContact, removeCo
                         </DropdownMenu>
                     </div>
                 </div>
-            </div>
+            </Link>
         </>
     );
 }

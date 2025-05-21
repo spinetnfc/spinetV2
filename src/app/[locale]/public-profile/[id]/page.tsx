@@ -22,87 +22,52 @@ import Telegram from "@/components/icons/telegram"
 import Viber from "@/components/icons/viber"
 import Tiktok from "@/components/icons/tiktok"
 import { EmailLink } from "@/components/pages/profile/email-link-wrapper"
-import useTranslate from '@/hooks/use-translate';
+import useTranslate from "@/hooks/use-translate"
+import type { ProfileData } from "@/types/profile"
+import { viewProfile } from "@/lib/api/profile"
+import { getUserCookieOnServer } from "@/utils/server-cookie"
 
-export default async function ProfilePage({ params }: {
-    params: Promise<{ locale: string }>;
+export default async function ProfilePage({
+    params,
+}: {
+    params: Promise<{ id: string; locale: string }>
 }) {
-    const { locale } = await params;
-    const { t } = await useTranslate(locale);
+    const { id, locale } = await params
+    const user = await getUserCookieOnServer()
+    const { t } = await useTranslate(locale)
+    let profileData: ProfileData | null
+    try {
+        profileData = await viewProfile(id, user?._id ?? null)
+        console.log("profileData", profileData)
+    } catch (err: any) {
+        console.error("Error fetching profile:", err)
+        throw new Error(`Failed to load profile data: ${err.message}`)
+    }
 
-    const links = [
-        {
-            href: "mailto:contact@spinetnfc.com", // Default fallback for SSR
-            label: "Email",
-            iconType: "email",
-            email: "contact@spinetnfc.com",
-            isEmail: true,
-        },
-        {
-            href: "https://www.instagram.com/spinet.nfc/",
-            label: "Instagram",
-            iconType: "instagram",
-        },
-        {
-            href: "https://play.google.com/store/apps/details?id=com.spinet.spinetnfc",
-            label: "Play Store",
-            iconType: "playStore",
-        },
-        {
-            href: "https://apps.apple.com/app/spinet-nfc/id1606369890",
-            label: "App Store",
-            iconType: "appStore",
-        },
-        {
-            href: "https://spinet-nfc.youcan.store/",
-            label: "Order now",
-            iconType: "store",
-        },
-        {
-            href: "https://www.linkedin.com/company/sarl-spinet-nfc/",
-            label: "LinkedIn",
-            iconType: "linkedin",
-        },
-        {
-            href: "https://www.google.com/maps/place/Itihad.group,+15+Rue+Zareb+MEDJADJ,+martitimes/data=!4m2!3m1!1s0x128e534c5e1df32d:0x8e6b7c61def6e281?entry=gps&lucs=karto&g_ep=CAESCTExLjYwLjcwMxgAIIgnKgVrYXJ0b0ICRFo%3D",
-            label: "location",
-            iconType: "location",
-        },
-        {
-            href: "https://spinetnfc.com/",
-            label: "Website",
-            iconType: "globe",
-        },
-        {
-            href: "https://www.facebook.com/spinetnfc/",
-            label: "Facebook",
-            iconType: "facebook",
-        },
-        {
-            href: "tel:+2130556565198",
-            label: "Phone",
-            iconType: "phone",
-            phoneNumber: "+2130556565198",
-        },
-        {
-            href: "https://wa.me/2130556565198",
-            label: "WhatsApp",
-            iconType: "whatsapp",
-            phoneNumber: "+2130556565198",
-        },
-        {
-            href: "https://t.me/+2130556565198",
-            label: "Telegram",
-            iconType: "telegram",
-            phoneNumber: "+2130556565198",
-        },
-        {
-            href: "viber://chat?number=+2130556565198",
-            label: "Viber",
-            iconType: "viber",
-            phoneNumber: "+2130556565198",
-        },
-    ]
+    if (!profileData) {
+        throw new Error("Profile data not found")
+    }
+
+    const fullName = profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`
+    const position = profileData?.position
+    const company = profileData?.companyName
+    const themeColor = profileData?.theme?.color || "text-azure" // Default to azure if undefined
+
+    // Replace the hardcoded links array with dynamic links from profileData
+    const links = profileData.links.map((link) => {
+        const iconType = link.title.toLowerCase()
+        const isEmail = iconType === "email"
+        const isPhone = ["phone", "whatsapp", "telegram", "viber"].includes(iconType)
+
+        return {
+            href: link.link,
+            label: link.title,
+            iconType: iconType,
+            email: isEmail ? link.link : undefined,
+            isEmail: isEmail,
+            phoneNumber: isPhone ? link.link : undefined,
+        }
+    })
 
     // Function to render the appropriate icon based on iconType
     const renderIcon = (iconType: string) => {
@@ -123,9 +88,9 @@ export default async function ProfilePage({ params }: {
                 return <Phone className="w-5 h-5 text-azure" />
             case "github":
                 return <Github className="w-5 h-5 text-azure" />
-            case "playStore":
+            case "playstore":
                 return <PlayStoreIcon className="w-5 h-5 text-azure" />
-            case "appStore":
+            case "appstore":
                 return <AppStoreIcon className="w-5 h-5 text-azure" />
             case "store":
                 return <Store className="w-5 h-5 text-azure" />
@@ -153,14 +118,7 @@ export default async function ProfilePage({ params }: {
     // Render a single link
     const renderLink = (link: any, index: number) => {
         if (link.isEmail && link.email) {
-            return (
-                <EmailLink
-                    key={index}
-                    email={link.email}
-                    label={link.label}
-                    icon={renderIcon(link.iconType)}
-                />
-            )
+            return <EmailLink key={index} email={link.email} label={link.label} icon={renderIcon(link.iconType)} />
         }
 
         return (
@@ -188,7 +146,7 @@ export default async function ProfilePage({ params }: {
                 {/* Profile Image */}
                 <div className="relative w-32 h-32 xs:w-40 xs:h-40 mx-auto -top-16 xs:-top-20 bg-neutral-50 rounded-full">
                     <Image
-                        src="/img/user.png"
+                        src={profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"}
                         alt="Profile picture"
                         fill
                         className="rounded-full object-cover border-4 border-neutral-50"
@@ -207,8 +165,10 @@ export default async function ProfilePage({ params }: {
                     <div className="max-w-md mx-auto sm:border sm:bg-gray-100 sm:dark:bg-navy rounded-3xl sm:shadow-xl overflow-hidden">
                         <div className="flex flex-col items-center sm:pt-8 pb-6">
                             {/* Name and Title */}
-                            <h1 className="text-xl font-bold">Spinet NFC</h1>
-                            <p className="text-sm text-gray-500">Company at SPINET</p>
+                            <h1 className="text-xl font-bold">{fullName}</h1>
+                            <p className="text-sm text-gray-500">
+                                {position} {company && "at"} {company}
+                            </p>
 
                             {/* Contact Buttons */}
                             <div className="w-full px-6 mt-6 space-y-3">{links.map((link, index) => renderLink(link, index))}</div>
@@ -257,10 +217,23 @@ export default async function ProfilePage({ params }: {
                 {/* Banner and Profile Card */}
                 <div className="bg-gray-200 dark:bg-navy rounded-3xl shadow-xl overflow-hidden mt-8">
                     {/* Banner */}
-                    <div className="relative h-48 bg-[url('/img/spinet-banner.jpg')] bg-cover bg-center">
+                    <div
+                        className="relative h-48 bg-cover bg-center"
+                        style={
+                            profileData.profileCover
+                                ? { backgroundImage: `url(/api/files/${profileData.profileCover})` }
+                                : { backgroundImage: `url('/img/spinet-banner.jpg')` }
+                        }
+                    >
                         {/* Profile Image */}
                         <div className="absolute start-8 bottom-0 transform translate-y-1/2 w-32 h-32 bg-white rounded-full border-4 border-white">
-                            <Image priority src="/img/user.png" alt="Profile picture" fill className="rounded-full object-cover" />
+                            <Image
+                                priority
+                                src={profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"}
+                                alt="Profile picture"
+                                fill
+                                className="rounded-full object-cover"
+                            />
                             <div className="absolute -bottom-2 right-0 bg-white border border-gray-300 h-8 w-8 p-[1px] flex items-center justify-center rounded-md">
                                 <Image
                                     src="/img/spinet-logo.svg"
@@ -277,8 +250,10 @@ export default async function ProfilePage({ params }: {
                     <div className="pt-20 px-8 pb-8">
                         {/* Name and Title */}
                         <div className="mb-6">
-                            <h1 className="text-2xl font-bold">Spinet NFC</h1>
-                            <p className="text-gray-500">Company at SPINET</p>
+                            <h1 className="text-xl font-bold">{fullName}</h1>
+                            <p className="text-sm text-gray-500">
+                                {position} {company && "at"} {company}
+                            </p>
                         </div>
 
                         {/* Links Grid */}
@@ -322,4 +297,3 @@ export default async function ProfilePage({ params }: {
         </>
     )
 }
-

@@ -2,7 +2,6 @@ import { match } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
 import { i18n } from '../i18n-config';
 import type { I18nConfig } from '../i18n-config';
 
@@ -42,7 +41,7 @@ async function attemptTokenRefresh(request: NextRequest): Promise<boolean> {
 
     // Get the refresh token from cookies
     const refreshToken = request.cookies.get('fileApiRefreshToken')?.value;
-    
+
     if (!refreshToken) {
       return false;
     }
@@ -61,35 +60,35 @@ async function attemptTokenRefresh(request: NextRequest): Promise<boolean> {
     }
 
     const data = await response.json();
-    
+
     if (data.success) {
       // Get the user data from the current-user cookie
       try {
         const user = JSON.parse(decodeURIComponent(userCookie));
-        
+
         // Update cookies with new tokens
         const response = NextResponse.next();
-        
+
         // Set the new file API tokens
         response.cookies.set('fileApiToken', user.tokens.fileApiToken, {
           path: '/',
           maxAge: 60 * 60 * 24 * 7, // 7 days
           sameSite: 'lax',
         });
-        
+
         response.cookies.set('fileApiRefreshToken', user.tokens.fileApiRefreshToken, {
           path: '/',
           maxAge: 60 * 60 * 24 * 7, // 7 days
           sameSite: 'lax',
         });
-        
+
         return true;
       } catch (error) {
         console.error('Error parsing user cookie:', error);
         return false;
       }
     }
-    
+
     return false;
   } catch (error) {
     console.error('Token refresh error:', error);
@@ -164,21 +163,21 @@ export async function middleware(request: NextRequest) {
   // Authentication logic - only apply to protected routes
   if (!isPublic) {
     const token = request.cookies.get('current-user')?.value;
-    
+
     if (!token) {
       // Check if we have a refresh token and try to refresh
       const refreshToken = request.cookies.get('fileApiRefreshToken')?.value;
-      
+
       if (refreshToken) {
         // Attempt to refresh the token
         const refreshed = await attemptTokenRefresh(request);
-        
+
         if (refreshed) {
           // If token refresh was successful, continue to the requested page
           return response;
         }
       }
-      
+
       // If no refresh token or refresh failed, redirect to login
       const localePart = nextLocale || defaultLocale;
       const redirectUrl = new URL(`/${localePart}/auth/login`, request.url);
