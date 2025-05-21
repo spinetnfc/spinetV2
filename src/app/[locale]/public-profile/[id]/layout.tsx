@@ -3,8 +3,8 @@ import { ReactNode } from 'react';
 import ProfileLayout from '@/components/layouts/public-profile-layout';
 
 export const metadata = {
-    title: 'Shop',
-    description: 'Shop',
+    title: 'Public Profile',
+    description: 'View other users public profile',
 };
 
 const PublicProfileLayout = async ({
