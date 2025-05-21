@@ -171,7 +171,13 @@ export default async function ProfilePage({
                             </p>
 
                             {/* Contact Buttons */}
-                            <div className="w-full px-6 mt-6 space-y-3">{links.map((link, index) => renderLink(link, index))}</div>
+                            <div className="w-full px-6 mt-6 space-y-3">
+                                {links.length > 0 ? (
+                                    links.map((link, index) => renderLink(link, index))
+                                ) : (
+                                    <div className="text-center py-4 text-gray-500">This profile does not contain any links</div>
+                                )}
+                            </div>
 
                             {/* Action Buttons */}
                             <div className="w-full px-6 mt-6 grid grid-cols-2 gap-3">
@@ -257,7 +263,13 @@ export default async function ProfilePage({
                         </div>
 
                         {/* Links Grid */}
-                        <div className="grid grid-cols-2 gap-3 mb-6">{links.map((link, index) => renderLink(link, index))}</div>
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                            {links.length > 0 ? (
+                                links.map((link, index) => renderLink(link, index))
+                            ) : (
+                                <div className="col-span-2 text-center py-4 text-gray-500">This profile does not contain any links</div>
+                            )}
+                        </div>
 
                         {/* Action Buttons */}
                         <div className="grid grid-cols-2 gap-4 mt-6">
