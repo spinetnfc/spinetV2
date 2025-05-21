@@ -17,9 +17,10 @@ type ContactItemProps = {
     themeColor: string;
     editContact: (contactId: string, contact: ContactInput) => Promise<{ success: boolean; message: string }>;
     removeContact: (contactId: string) => Promise<{ success: boolean; message: string }>;
+    locale: string;
 };
 
-export default function ContactItem({ contact, themeColor, editContact, removeContact }: ContactItemProps) {
+export default function ContactItem({ contact, themeColor, editContact, removeContact, locale }: ContactItemProps) {
     const profileId = getUserFromCookie().selectedProfile || null;
     const [showEditForm, setShowEditForm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -88,7 +89,7 @@ export default function ContactItem({ contact, themeColor, editContact, removeCo
                     message="delete-contact-message"
                 />
             )}
-            <Link href={`/public-profile/${contact.Profile._id}`} className="flex items-center justify-between py-4 border-b border-gray-100 group">
+            <Link href={`/${locale}/public-profile/${contact.Profile._id}`} className="flex items-center justify-between py-4 border-b border-gray-100 group">
                 <div className="flex items-center gap-3">
                     <ContactAvatar
                         name={name}

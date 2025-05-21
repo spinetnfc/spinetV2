@@ -154,6 +154,7 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
                             themeColor={themeColor}
                             removeContact={removeContact}
                             editContact={editContact}
+                            locale={locale}
                         />
                     ))
                 ) : (

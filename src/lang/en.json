@@ -425,5 +425,8 @@
   "phone-import-failed": "Failed to import phone contacts: {message}",
   "importing-progress": "Importing contacts... {progress}%",
   "adding-progress": "Adding contacts... {progress}%",
-  "back": "Back"
+  "back": "Back",
+  "no-links": "This profile does not contain any links",
+  "from-play-store": "From Play Store",
+  "from-app-store": "From App Store"
 }

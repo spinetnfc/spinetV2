@@ -27,6 +27,7 @@ import type { ProfileData } from "@/types/profile"
 import { viewProfile } from "@/lib/api/profile"
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 
+
 export default async function ProfilePage({
     params,
 }: {
@@ -167,7 +168,7 @@ export default async function ProfilePage({
                             {/* Name and Title */}
                             <h1 className="text-xl font-bold">{fullName}</h1>
                             <p className="text-sm text-gray-500">
-                                {position} {company && "at"} {company}
+                                {position} {company && t("at")} {company}
                             </p>
 
                             {/* Contact Buttons */}
@@ -175,7 +176,7 @@ export default async function ProfilePage({
                                 {links.length > 0 ? (
                                     links.map((link, index) => renderLink(link, index))
                                 ) : (
-                                    <div className="text-center py-4 text-gray-500">This profile does not contain any links</div>
+                                    <div className="text-center py-4 text-gray-500">{t("no-links")}</div>
                                 )}
                             </div>
 
@@ -183,30 +184,30 @@ export default async function ProfilePage({
                             <div className="w-full px-6 mt-6 grid grid-cols-2 gap-3">
                                 <button className="border-2 border-azure hover:opacity-80 text-azure text-lg font-medium w-fit xs:w-full mx-auto flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer">
                                     <UserPlus className="h-8 w-8 xs:h-5 xs:w-5" />
-                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">Ajouter contact</span>
+                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">{t("add-contact")}</span>
                                 </button>
                                 <button className="bg-azure hover:bg-azure/70 text-white text-lg font-medium w-fit xs:w-full mx-auto flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer">
                                     <Send className="h-8 w-8 xs:h-5 xs:w-5" />
-                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">Envoyer message</span>
+                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">{t("send-message")}</span>
                                 </button>
                             </div>
 
                             <div className="flex-col justify-center items-center mt-6">
-                                <h2 className="text-center text-2xl font-semibold">Download App</h2>
+                                <h2 className="text-center text-2xl font-semibold">{t("download-app")}</h2>
                                 <div className="flex flex-col xs:flex-row gap-2 xs:gap-10 mt-4">
                                     <Link
                                         href="https://play.google.com/store/apps/details?id=com.spinet.spinetnfc&hl=en"
                                         className="flex items-center gap-1 text-azure font-medium"
                                     >
                                         <PlayStoreIcon className="w-8 h-8" />
-                                        <span className="truncate">From Play Store</span>
+                                        <span className="truncate">{t("from-play-store")}</span>
                                     </Link>
                                     <Link
                                         href="https://apps.apple.com/fr/app/spinet-nfc/id1606369890"
                                         className="flex items-center gap-1 text-azure font-medium"
                                     >
                                         <AppStoreIcon className="w-8 h-8" />
-                                        <span className="truncate">From App Store</span>
+                                        <span className="truncate">{t("from-app-store")}</span>
                                     </Link>
                                 </div>
                             </div>
@@ -258,7 +259,7 @@ export default async function ProfilePage({
                         <div className="mb-6">
                             <h1 className="text-xl font-bold">{fullName}</h1>
                             <p className="text-sm text-gray-500">
-                                {position} {company && "at"} {company}
+                                {position} {company && t("at")} {company}
                             </p>
                         </div>
 
@@ -267,7 +268,7 @@ export default async function ProfilePage({
                             {links.length > 0 ? (
                                 links.map((link, index) => renderLink(link, index))
                             ) : (
-                                <div className="col-span-2 text-center py-4 text-gray-500">This profile does not contain any links</div>
+                                <div className="col-span-2 text-center py-4 text-gray-500">{t("no-links")}</div>
                             )}
                         </div>
 
@@ -287,21 +288,21 @@ export default async function ProfilePage({
 
                 {/* Download App Section (Outside Card) */}
                 <div className="mt-8 text-center">
-                    <h2 className="text-2xl font-semibold mb-4">Download App</h2>
+                    <h2 className="text-2xl font-semibold mb-4">{t("download-app")}</h2>
                     <div className="flex justify-center gap-10">
                         <Link
                             href="https://play.google.com/store/apps/details?id=com.spinet.spinetnfc&hl=en"
                             className="flex items-center gap-2 text-azure font-medium"
                         >
                             <PlayStoreIcon className="w-8 h-8" />
-                            From Play Store
+                            {t("from-play-store")}
                         </Link>
                         <Link
                             href="https://apps.apple.com/fr/app/spinet-nfc/id1606369890"
                             className="flex items-center gap-2 text-azure font-medium"
                         >
                             <AppStoreIcon className="w-8 h-8" />
-                            From App Store
+                            {t("from-app-store")}
                         </Link>
                     </div>
                 </div>

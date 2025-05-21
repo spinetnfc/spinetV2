@@ -425,5 +425,8 @@
   "phone-import-failed": "فشل استيراد جهات الاتصال من الهاتف: {message}",
   "importing-progress": "جارٍ استيراد جهات الاتصال... {progress}%",
   "adding-progress": "جارٍ إضافة جهات الاتصال... {progress}%",
-  "back": "رجوع"
+  "back": "رجوع",
+  "no-links": "هذا الملف الشخصي لا يحتوي على أي روابط",
+  "from-play-store": "من متجر بلاي",
+  "from-app-store": "من متجر التطبيقات"
 }
