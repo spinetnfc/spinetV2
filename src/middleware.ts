@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/auth/login", "/auth/register", "/auth/forgot-password"];
+// Routes that don't require authentication
+const PUBLIC_PATHS = ["/","/auth/login", "/auth/register", "/download-app"];
 const SUPPORTED_LOCALES = ["en", "fr", "ar"];
 const DEFAULT_LOCALE = "en";
 
@@ -21,8 +22,16 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Get path without locale for route checking
+  const pathWithoutLocale = pathname.slice(`/${currentLocale}`.length) || '/';
+
+  // Skip auth check for forgot-password route
+  if (pathWithoutLocale.includes("/auth/forgot-password")) {
+    return NextResponse.next();
+  }
+
   // Check if it's a public route
-  const isPublicRoute = PUBLIC_PATHS.some(path => pathname.includes(path));
+  const isPublicRoute = PUBLIC_PATHS.some(path => pathWithoutLocale.includes(path));
   if (isPublicRoute) {
     return NextResponse.next();
   }

@@ -44,7 +44,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
 
   // Handle redirection for authenticated users
   useEffect(() => {
-    if (mounted && isAuthenticated && pathname !== '/auth/forgot-password') {
+    if (mounted && isAuthenticated && !pathname?.includes('/auth/forgot-password')) {
       const localeParam = params.locale;
       const locale =
         typeof localeParam === 'string'
@@ -75,7 +75,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   }
 
   // Show loading spinner while redirecting
-  if (isAuthenticated && pathname !== '/auth/forgot-password') {
+  if (isAuthenticated && !pathname?.includes('/auth/forgot-password')) {
     return (
       <div className="relative flex w-full flex-col items-center justify-center min-h-screen">
         <Spinner size="xxl" />
@@ -115,7 +115,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
         <div className="flex size-full flex-col-reverse items-center justify-center rounded-md pt-12 lg:mx-48 lg:my-52 lg:flex-row lg:gap-10 lg:px-10 xl:px-20 2xl:px-32 xl:gap-20  lg:py-20">
           {children}
           <div className="z-10 lg:w-1/2">
-            {pathname !== '/auth/forgot-password' ? (
+            {!pathname?.includes('/auth/forgot-password') ? (
               <img
                 src="/img/authentication.png"
                 alt="auth illustration"
@@ -125,7 +125,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
               <AuthenticationImage
                 className={cn('text-white', {
                   'text-navy dark:text-white lg:text-white':
-                    pathname === '/auth/forgot-password',
+                    pathname?.includes('/auth/forgot-password'),
                 })}
               />
             )}
