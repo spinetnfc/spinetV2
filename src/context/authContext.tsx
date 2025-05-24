@@ -103,6 +103,7 @@ export function AuthProvider({
 
     const logout = useCallback(async () => {
         try {
+            router.replace(`/${getLocale()}`);
             await signOut();
         } catch (error) {
             console.error("Logout error:", error);

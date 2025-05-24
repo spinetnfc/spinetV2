@@ -1,14 +1,13 @@
-import { ReactNode } from 'react';
+import { getServerSession, getLocaleFromCookies } from '@/lib/auth/server';
+import { redirect } from 'next/navigation';
+import { AuthLayout } from '@/components/layouts/auth-layout';
+import type { ReactNode } from 'react';
 
-import { AuthLayout as AuthLayoutComponent } from '@/components/layouts/auth-layout';
+export default async function Layout({ children }: { children: ReactNode }) {
+  // We'll let the client-side AuthLayout handle the forgot-password logic
+  // Server-side will only handle initial auth state
+  const session = await getServerSession();
+  const locale = await getLocaleFromCookies();
 
-export const metadata = {
-  title: 'Authentification',
-  description: 'Authentification for Spinet NFC application',
-};
-
-const AuthLayout = ({ children }: { children: ReactNode }) => {
-  return <AuthLayoutComponent>{children}</AuthLayoutComponent>;
-};
-
-export default AuthLayout;
+  return <AuthLayout>{children}</AuthLayout>;
+}
