@@ -102,23 +102,30 @@ export function AuthProvider({
     }, [router, getLocale]);
 
     const logout = useCallback(async () => {
-        try {
-            router.replace(`/${getLocale()}`);
-            await signOut();
-        } catch (error) {
-            console.error("Logout error:", error);
-        } finally {
-            setUser(null);
+        setIsLoading(true);
+        const currentLocale = getLocale();
 
+        try {
+            // First clear all auth state
+            setUser(null);
             clearCookie('spinet-session');
             clearCookie('current-user');
             clearCookie('fileApiToken');
             clearCookie('fileApiRefreshToken');
 
-            router.refresh();
-            router.push(`/${getLocale()}/auth/login`);
+            // Then notify the server
+            await signOut();
+
+            // Force a full page reload to clear all client state
+            window.location.href = `/${currentLocale}`;
+        } catch (error) {
+            console.error("Logout error:", error);
+            // Even if the server logout fails, we still want to clear local state
+            window.location.href = `/${currentLocale}`;
+        } finally {
+            setIsLoading(false);
         }
-    }, [router, getLocale]);
+    }, [getLocale]);
 
     const refreshUserToken = useCallback(async (): Promise<boolean> => {
         try {
