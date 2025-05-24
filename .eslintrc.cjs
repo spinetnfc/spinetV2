@@ -10,7 +10,12 @@ module.exports = {
     'public/mockServiceWorker.js',
     'generators/*',
   ],
-  extends: ['eslint:recommended', 'next/core-web-vitals'],
+  extends: [
+    'next/core-web-vitals',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+  ],
+  plugins: ['@typescript-eslint'],
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
@@ -31,7 +36,6 @@ module.exports = {
         'plugin:import/errors',
         'plugin:import/warnings',
         'plugin:import/typescript',
-        'plugin:@typescript-eslint/recommended',
         'plugin:react/recommended',
         'plugin:react-hooks/recommended',
         'plugin:jsx-a11y/recommended',
@@ -124,8 +128,9 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': ['off'],
         '@typescript-eslint/explicit-module-boundary-types': ['off'],
         '@typescript-eslint/no-empty-function': ['off'],
-        '@typescript-eslint/no-explicit-any': ['off'],
+        '@typescript-eslint/no-explicit-any': ['warn'],
         'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+        'react/display-name': 'off',
       },
     },
     {
