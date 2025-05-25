@@ -4,7 +4,7 @@ import { Edit, MoreVertical, Trash2 } from "lucide-react";
 import ContactAvatar from "./contact-avatar";
 import type { Contact, ContactInput } from "@/types/contact";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditContactForm from "./edit-contact-form";
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal";
 import { toast } from "sonner";
@@ -21,7 +21,7 @@ type ContactItemProps = {
 };
 
 export default function ContactItem({ contact, themeColor, editContact, removeContact, locale }: ContactItemProps) {
-    const profileId = getUserFromCookie().selectedProfile || null;
+    const [profileId, setProfileId] = useState<string | null>(null);
     const [showEditForm, setShowEditForm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -33,6 +33,10 @@ export default function ContactItem({ contact, themeColor, editContact, removeCo
     const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : "";
     const hasPositionOrCompany = position !== "" || companyName !== "";
 
+    useEffect(() => {
+        const user = getUserFromCookie();
+        setProfileId(user?.selectedProfile ?? null);
+    }, []);
     const handleEditSuccess = () => {
         setShowEditForm(false);
         toast.success(intl.formatMessage({ id: "Contact updated successfully" }));

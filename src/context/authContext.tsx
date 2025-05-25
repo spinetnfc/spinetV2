@@ -134,6 +134,7 @@ export function AuthProvider({
                 // The token has been refreshed in cookies by the server
                 return true;
             }
+            console.log("Token refresh failed:", result);
             return false;
         } catch (error: any) {
             console.error("Token refresh failed:", error);
@@ -156,7 +157,7 @@ export function AuthProvider({
                     // Schedule next refresh if successful
                     scheduleRefresh();
                 }
-            }, 23 * 60 * 60 * 1000); // 23 hours
+            }, 23 * 60 * 60 * 1000);
         };
 
         scheduleRefresh();

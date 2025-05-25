@@ -20,7 +20,7 @@ const UserMenu = ({ locale }: { locale: string }) => {
                 <span className="sr-only">Open user menu</span>
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
+        <DropdownMenuContent align="end">
             <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => router.push(`/${locale}/profile`)}>
                 <FormattedMessage id="profile" defaultMessage="Profile" />
             </DropdownMenuItem>

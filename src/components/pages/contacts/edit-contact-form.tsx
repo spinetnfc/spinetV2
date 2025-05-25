@@ -58,7 +58,7 @@ type LinkType = {
 };
 
 interface EditContactFormProps {
-    profileId: string;
+    profileId: string | null;
     contact: Contact;
     onSuccess: () => void;
     onCancel: () => void;

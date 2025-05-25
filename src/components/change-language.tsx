@@ -2,9 +2,9 @@ import { Check } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { Link } from '@/components//ui/link';
-import ArabicIcon from '@/components/icons/arabic-icon';
-import EnglishIcon from '@/components/icons/english-icon';
-import FrenchIcon from '@/components/icons/french-icon';
+// import ArabicIcon from '@/components/icons/arabic-icon';
+// import EnglishIcon from '@/components/icons/english-icon';
+// import FrenchIcon from '@/components/icons/french-icon';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,7 +58,7 @@ function ChangeLanguage({ locale }: Props) {
           )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className='bg-white dark:bg-main p-0'>
+      <DropdownMenuContent align="end" className='bg-white dark:bg-main p-0'>
         <Link
           href={newPathName(pathname, 'en')}
           className="flex w-full h-8 px-1 cursor-pointer  flex-row items-center justify-between transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-navy"
