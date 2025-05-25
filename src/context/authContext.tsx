@@ -130,8 +130,8 @@ export function AuthProvider({
         try {
             const result = await refreshToken();
             if (result.message === "token refreshed") {
+                console.log("Token refreshed successfully");
                 // The token has been refreshed in cookies by the server
-                // We don't need to update the user state as it hasn't changed
                 return true;
             }
             return false;
@@ -150,14 +150,26 @@ export function AuthProvider({
         let refreshTimeout: NodeJS.Timeout;
 
         const scheduleRefresh = () => {
-            refreshTimeout = setTimeout(refreshUserToken, 55 * 60 * 1000); // 55 minutes
+            refreshTimeout = setTimeout(async () => {
+                const success = await refreshUserToken();
+                if (success) {
+                    // Schedule next refresh if successful
+                    scheduleRefresh();
+                }
+            }, 23 * 60 * 60 * 1000); // 23 hours
         };
 
         scheduleRefresh();
 
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'visible') {
-                refreshUserToken();
+                refreshUserToken().then(success => {
+                    if (success) {
+                        // Clear existing timeout and reschedule
+                        clearTimeout(refreshTimeout);
+                        scheduleRefresh();
+                    }
+                });
             }
         };
 
