@@ -252,7 +252,7 @@ export default function EditContactForm({
 
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center overflow-y-auto md:items-center">
-            <div className="bg-background rounded-lg max-w-full w-full h-fit p-4 md:max-w-md md:h-auto md:min-h-0">
+            <div className="bg-background rounded-lg max-w-full max-h-[calc(100vh-40px)] overflow-y-auto w-full h-fit p-4 md:max-w-md md:h-auto md:min-h-0">
                 <div className="rounded-lg p-4">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-semibold">
