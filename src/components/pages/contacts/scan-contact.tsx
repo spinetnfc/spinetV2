@@ -173,13 +173,7 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
 
     return (
         <div className="py-6 px-4 max-w-4xl mx-auto">
-            <video
-                ref={videoRef}
-                className={`w-full max-w-md mx-auto rounded-md ${isScanning ? '' : 'hidden'}`}
-                autoPlay
-                muted
-                playsInline
-            />
+
             {!scannedUrl && !isScanning && !isProcessing ? (
                 <div className="text-center">
                     <QrCode size={80} className="mx-auto mb-4 text-gray-400" />
@@ -250,7 +244,7 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
                                         qrScanner.stop();
                                     }
                                 }}
-                                className="mt-4"
+                                className="my-4"
                             >
                                 <FormattedMessage id="cancel" defaultMessage="Cancel" />
                             </Button>
@@ -270,6 +264,13 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
                     )}
                 </div>
             )}
+            <video
+                ref={videoRef}
+                className={`w-full max-w-md mx-auto rounded-md ${isScanning ? 'opacity-100' : 'opacity-0'}`}
+                autoPlay
+                muted
+                playsInline
+            />
         </div>
     );
 }
