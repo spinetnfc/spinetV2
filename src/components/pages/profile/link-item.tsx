@@ -100,11 +100,15 @@ export default function LinkItem({ link, index, profileId, profileData, icon }: 
             <div className="absolute end-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
+                        <button
+                            onClick={(e) => { e.preventDefault(), e.stopPropagation(); }}
+                            className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
                             <MoreVertical size={20} />
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="bg-white dark:bg-background">
+                    <DropdownMenuContent align="start" className="bg-white dark:bg-background"
+                        onClick={(e) => { e.preventDefault(), e.stopPropagation(); }}
+                    >
                         <DropdownMenuItem
                             className="flex items-center gap-2 cursor-pointer"
                             onClick={() => {
