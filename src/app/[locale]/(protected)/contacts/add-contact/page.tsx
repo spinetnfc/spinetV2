@@ -1,6 +1,6 @@
 import { Edit, QrCode, Upload } from "lucide-react";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
-import { getProfile } from "@/lib/api/profile";
+import { getProfile, viewProfile } from "@/lib/api/profile";
 import { addContact } from "@/lib/api/contacts";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AddContactForm from "@/components/pages/contacts/add-contact-form";
@@ -8,7 +8,8 @@ import ImportContacts from "@/components/pages/contacts/import-contacts";
 import { format, parse } from "date-fns";
 import type { ContactInput } from "@/types/contact";
 import useTranslate from "@/hooks/use-translate";
-
+import { ProfileData } from "@/types/profile";
+import ScanContact from "@/components/pages/contacts/scan-contact";
 export default async function AddContactPage({ params }: {
     params: Promise<{ locale: string }>;
 }) {
@@ -35,6 +36,20 @@ export default async function AddContactPage({ params }: {
         : "/img/user.png";
     const themeColor = profileData?.theme?.color || "#3b82f6"; // Default to blue
 
+    const getProfileData = async (profileId: string, userId = user?._id): Promise<ProfileData | null> => {
+        "use server";
+
+        try {
+            if (userId) {
+                const profileData = await viewProfile(profileId, userId);
+                return profileData;
+            }
+            return null;
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+            return null;
+        }
+    }
     // Handle form submission
     async function createContact(formData: FormData) {
         "use server";
@@ -155,14 +170,9 @@ export default async function AddContactPage({ params }: {
                     </TabsContent>
 
                     <TabsContent value="scan">
-                        <div className="text-center py-12">
-                            <QrCode size={80} className="mx-auto mb-4 text-gray-400" />
-                            <h3 className="text-lg font-medium mb-2">{t("scan-qr-code")}</h3>
-                            <p className="text-muted-foreground">
-                                This feature will be available soon. Scan business cards or QR codes to add contacts.
-                            </p>
-                        </div>
+                        <ScanContact themeColor={themeColor} locale={locale} />
                     </TabsContent>
+
 
                     <TabsContent value="import">
                         <ImportContacts createContact={createContact} themeColor={themeColor} locale={locale} />
