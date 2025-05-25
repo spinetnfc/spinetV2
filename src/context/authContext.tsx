@@ -32,7 +32,6 @@ function clearCookie(name: string) {
 }
 
 interface RefreshTokenResponse {
-    user: User;
     message: string;
 }
 
@@ -129,21 +128,10 @@ export function AuthProvider({
 
     const refreshUserToken = useCallback(async (): Promise<boolean> => {
         try {
-            const result = await refreshToken() as RefreshTokenResponse;
-            if (result.user) {
-                setUser(result.user);
-
-                setSecureCookie(
-                    'fileApiToken',
-                    result.user.tokens.fileApiToken,
-                    60 * 60 * 24 * 7
-                );
-                setSecureCookie(
-                    'fileApiRefreshToken',
-                    result.user.tokens.fileApiRefreshToken,
-                    60 * 60 * 24 * 7
-                );
-
+            const result = await refreshToken();
+            if (result.message === "token refreshed") {
+                // The token has been refreshed in cookies by the server
+                // We don't need to update the user state as it hasn't changed
                 return true;
             }
             return false;
