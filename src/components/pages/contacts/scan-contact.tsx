@@ -27,6 +27,7 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
 
     // Initialize QR scanner
     useEffect(() => {
+        console.log('useEffect running, videoRef:', videoRef.current);
         if (videoRef.current) {
             const scanner = new QrScanner(
                 videoRef.current,
@@ -37,11 +38,15 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
                     highlightCodeOutline: true,
                 }
             );
+            console.log('QR Scanner initialized:', scanner);
             setQrScanner(scanner);
+        } else {
+            console.error('Video element not found');
         }
 
         return () => {
             if (qrScanner) {
+                console.log('Destroying QR scanner');
                 qrScanner.destroy();
             }
         };
@@ -52,15 +57,24 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
         if (scannedUrl) {
             const timeout = setTimeout(() => {
                 try {
-                    // Extract profile-link from URL
-                    const url = new URL(scannedUrl, window.location.origin);
+                    // Parse the scanned URL
+                    const url = new URL(scannedUrl);
                     const pathSegments = url.pathname.split('/').filter(segment => segment);
-                    const profileLink = pathSegments[pathSegments.length - 1] || '';
-                    if (!profileLink) {
-                        throw new Error('Invalid profile link');
+
+                    // Check if the URL follows the expected format (e.g., /redirect/profileLink)
+                    if (pathSegments.length < 2 || pathSegments[0] !== 'redirect') {
+                        throw new Error('Invalid URL format. Expected /redirect/<profileLink>');
                     }
+
+                    const profileLink = pathSegments[1];
+                    if (!profileLink) {
+                        throw new Error('Profile link is missing');
+                    }
+
+                    // Redirect to the profile page
                     router.push(`/${locale}/public-profile/${profileLink}`);
                 } catch (error) {
+                    console.error('Redirect error:', error);
                     toast.error(intl.formatMessage({
                         id: 'invalid-url',
                         defaultMessage: 'Invalid profile URL: {message}',
@@ -85,10 +99,11 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
 
         try {
             // Validate as a URL
-            new URL(data, window.location.origin);
+            new URL(data);
             setScannedUrl(data);
             setProgress(100);
         } catch (error) {
+            console.error('QR scan error:', error);
             toast.error(intl.formatMessage({
                 id: 'scan-failed',
                 defaultMessage: 'Failed to process QR code: {message}',
@@ -118,6 +133,7 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
             const result = await QrScanner.scanImage(file);
             await handleQrScan(result);
         } catch (error) {
+            console.error('Image upload error:', error);
             toast.error(intl.formatMessage({
                 id: 'scan-failed',
                 defaultMessage: 'Failed to process QR code: {message}',
@@ -132,6 +148,7 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
 
     // Start QR code scanning
     const startScanning = async () => {
+        console.log('startScanning called', { qrScanner, videoRef: videoRef.current });
         if (!qrScanner || !videoRef.current) {
             toast.error(intl.formatMessage({
                 id: 'scanner-not-ready',
@@ -143,7 +160,9 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
         setIsScanning(true);
         try {
             await qrScanner.start();
+            console.log('Camera started successfully');
         } catch (error) {
+            console.error('Camera access error:', error);
             setIsScanning(false);
             toast.error(intl.formatMessage({
                 id: 'camera-access-failed',
@@ -154,6 +173,13 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
 
     return (
         <div className="py-6 px-4 max-w-4xl mx-auto">
+            <video
+                ref={videoRef}
+                className={`w-full max-w-md mx-auto rounded-md ${isScanning ? '' : 'hidden'}`}
+                autoPlay
+                muted
+                playsInline
+            />
             {!scannedUrl && !isScanning && !isProcessing ? (
                 <div className="text-center">
                     <QrCode size={80} className="mx-auto mb-4 text-gray-400" />
@@ -213,7 +239,6 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
                 <div className="text-center">
                     {isScanning && (
                         <div className="mt-6">
-                            <video ref={videoRef} className="w-full max-w-md mx-auto rounded-md" autoPlay muted playsInline />
                             <p className="text-sm text-muted-foreground mt-2">
                                 <FormattedMessage id="scanning" defaultMessage="Scanning for QR code..." />
                             </p>
