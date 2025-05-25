@@ -114,13 +114,19 @@ export default function ContactItem({ contact, themeColor, editContact, removeCo
 
                 <div className="relative">
                     <div className="absolute end-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <DropdownMenu>
+                        <DropdownMenu >
                             <DropdownMenuTrigger asChild>
-                                <button className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
-                                    <MoreVertical size={20} />
+                                <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}
+                                    className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
+                                    <MoreVertical size={20} className="bg-red-400" />
                                 </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="bg-white dark:bg-background">
+                            <DropdownMenuContent align="start" className="bg-white dark:bg-background"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                }}
+                            >
                                 <DropdownMenuItem
                                     className="flex items-center gap-2 cursor-pointer"
                                     onClick={() => setShowEditForm(true)}
@@ -139,7 +145,7 @@ export default function ContactItem({ contact, themeColor, editContact, removeCo
                         </DropdownMenu>
                     </div>
                 </div>
-            </Link>
+            </Link >
         </>
     );
 }
