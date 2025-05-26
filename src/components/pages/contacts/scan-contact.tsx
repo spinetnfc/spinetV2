@@ -243,6 +243,7 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
                                     if (qrScanner) {
                                         qrScanner.stop();
                                     }
+
                                 }}
                                 className="my-4"
                             >

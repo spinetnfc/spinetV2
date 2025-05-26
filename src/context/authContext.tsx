@@ -138,9 +138,7 @@ export function AuthProvider({
             return false;
         } catch (error: any) {
             console.error("Token refresh failed:", error);
-            if (error.response?.status === 401) {
-                logout();
-            }
+            logout();
             return false;
         }
     }, [logout]);
@@ -157,7 +155,7 @@ export function AuthProvider({
                     // Schedule next refresh if successful
                     scheduleRefresh();
                 }
-            }, 23 * 60 * 60 * 1000);
+            }, 50 * 60 * 1000); //55m
         };
 
         scheduleRefresh();
