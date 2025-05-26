@@ -9,6 +9,7 @@ import type { Contact, ContactInput } from "@/types/contact";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import useTranslate from "@/hooks/use-translate";
+import ContactList from "@/components/pages/contacts/contact-list";
 
 type SearchParams = {
     query?: string
@@ -93,7 +94,6 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
             return { success: false, message: "Profile ID is missing" };
         }
         try {
-            // Implement the logic to remove the contact
             console.log("Removing contact:", contactId)
             const response = await deleteContact(profileId, contactId)
             return { success: true, message: response.message }
@@ -136,7 +136,7 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
             <div className="flex justify-end px-4 mt-4">
                 <Link
                     href="/contacts/add-contact"
-                    className="flex items-center gap-1 px-2 py-1 rounded  text-sm"
+                    className="flex items-center gap-1 px-2 py-1 rounded text-sm"
                     style={{ backgroundColor: themeColor }}
                 >
                     <Plus size={20} />
@@ -145,22 +145,13 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
             </div>
 
             {/* Contact list */}
-            <div className="px-4 mt-2">
-                {filteredContacts.length > 0 ? (
-                    filteredContacts.map((contact) => (
-                        <ContactItem
-                            key={contact._id}
-                            contact={contact}
-                            themeColor={themeColor}
-                            removeContact={removeContact}
-                            editContact={editContact}
-                            locale={locale}
-                        />
-                    ))
-                ) : (
-                    <p className="text-center py-8 text-gray-500">{t("no-contacts-found")}</p>
-                )}
-            </div>
+            <ContactList
+                filteredContacts={filteredContacts}
+                themeColor={themeColor}
+                removeContact={removeContact}
+                editContact={editContact}
+                locale={locale}
+            />
         </div>
     );
 }

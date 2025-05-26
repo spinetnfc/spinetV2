@@ -51,7 +51,7 @@ export default async function ProfilePage({
     const fullName = profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`
     const position = profileData?.position
     const company = profileData?.companyName
-    const themeColor = profileData?.theme?.color || "text-azure" // Default to azure if undefined
+    const themeColor = profileData?.theme?.color || "azure" // Default to azure if undefined
 
     // Replace the hardcoded links array with dynamic links from profileData
     const links = profileData.links.map((link) => {

@@ -75,7 +75,7 @@ export const deleteContact = async (profileId: string, contactId: string): Promi
             throw new Error(`Invalid contactId: ${contactId}`);
         }
         const response = await ServerApi.delete(`/profile/${profileId}/contact/${contactId}`, { headers });
-        console.log("Service deleted response received:", response.status);
+        console.log("Contact deleted response received:", response.status);
 
         return response.data;
     } catch (error) {
@@ -83,3 +83,24 @@ export const deleteContact = async (profileId: string, contactId: string): Promi
         throw error;
     }
 }
+export const deleteContacts = async (profileId: string, contacts: string[]): Promise<{ message: string }> => {
+    const headers = await withServerCookies();
+    try {
+        if (!profileId || typeof profileId !== 'string') {
+            throw new Error(`Invalid profileId: ${profileId}`);
+        }
+        if (contacts.length === 0) {
+            throw new Error(`no contacts to delete`);
+        }
+        const response = await ServerApi.post(`/profile/${profileId}/contacts/delete}`, { headers });
+        console.log("Contacts deleted response received:", response.status);
+
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting contacts:', error);
+        throw error;
+    }
+        }
+    
+
+
