@@ -8,6 +8,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useIntl } from "react-intl";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+
 
 interface ContactListProps {
     filteredContacts: Contact[];
@@ -90,18 +93,33 @@ export default function ContactList({
 
             {/* Contact List */}
             <div className="px-4 mt-2">
-                {localContacts.length > 0 && (
-                    <div className="flex items-center gap-2 mb-4">
-                        <Checkbox
-                            checked={selectedContacts.length === localContacts.length}
-                            onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
-                        />
-                        <FormattedMessage
-                            id="select-all-contacts"
-                            defaultMessage="Select all contacts"
-                        />
-                    </div>
-                )}
+
+                {/* Add contact button */}
+                <div className="flex justify-between mt-4">
+                    {localContacts.length > 0 && (
+                        <div className="flex items-center gap-2">
+                            <Checkbox
+                                checked={selectedContacts.length === localContacts.length}
+                                onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                            />
+                            <FormattedMessage
+                                id="select-all-contacts"
+                                defaultMessage="Select all contacts"
+                            />
+                        </div>
+                    )}
+                    <Button asChild
+                        className="flex items-center gap-1"
+                        style={{ backgroundColor: themeColor }}
+                    >
+                        <Link
+                            href="/contacts/add-contact"
+                        >
+                            <Plus size={20} />
+                            <FormattedMessage id="add-contact" defaultMessage="Add contact" />
+                        </Link>
+                    </Button>
+                </div>
 
                 {localContacts.length > 0 ? (
                     localContacts.map((contact) => (

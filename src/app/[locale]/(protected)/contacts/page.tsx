@@ -1,13 +1,9 @@
-import { Plus } from "lucide-react";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import { getProfile } from "@/lib/api/profile";
 import SearchInput from "@/components/pages/contacts/search-input";
 import FilterTabs from "@/components/pages/contacts/filter-tabs";
-import ContactItem from "@/components/pages/contacts/contact-item";
 import { deleteContact, deleteContacts, getContacts, updateContact } from "@/lib/api/contacts";
 import type { Contact, ContactInput } from "@/types/contact";
-import { Spinner } from "@/components/ui/spinner";
-import Link from "next/link";
 import useTranslate from "@/hooks/use-translate";
 import ContactList from "@/components/pages/contacts/contact-list";
 
@@ -145,18 +141,6 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
             <div className="px-2 xs:px-4 mt-2">
                 <h2 className="text-xl mb-2">{t("filter")}</h2>
                 <FilterTabs themeColor={themeColor} />
-            </div>
-
-            {/* Add contact button */}
-            <div className="flex justify-end px-4 mt-4">
-                <Link
-                    href="/contacts/add-contact"
-                    className="flex items-center gap-1 px-2 py-1 rounded text-sm"
-                    style={{ backgroundColor: themeColor }}
-                >
-                    <Plus size={20} />
-                    {t("add-contact")}
-                </Link>
             </div>
 
             {/* Contact list */}
