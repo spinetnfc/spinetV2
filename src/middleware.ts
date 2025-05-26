@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Routes that don't require authentication
-const PUBLIC_PATHS = ["/","/auth/login", "/auth/register", "/download-app"];
+const PUBLIC_PATHS = ["/", "/auth/login", "/auth/register", "/download-app"];
+const AUTH_PATHS = ["/auth/refresh", "/auth/forgot-password"];
 const SUPPORTED_LOCALES = ["en", "fr", "ar"];
 const DEFAULT_LOCALE = "en";
 
@@ -10,6 +11,11 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const pathnameSegments = pathname.split("/");
   const currentLocale = pathnameSegments[1];
+
+  // Skip middleware for API routes including auth refresh
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
 
   // Handle locale routing
   if (!SUPPORTED_LOCALES.includes(currentLocale)) {
@@ -25,8 +31,8 @@ export async function middleware(request: NextRequest) {
   // Get path without locale for route checking
   const pathWithoutLocale = pathname.slice(`/${currentLocale}`.length) || '/';
 
-  // Skip auth check for forgot-password route
-  if (pathWithoutLocale.includes("/auth/forgot-password")) {
+  // Skip auth check for auth-related routes
+  if (AUTH_PATHS.some(path => pathWithoutLocale.includes(path))) {
     return NextResponse.next();
   }
 
@@ -51,12 +57,11 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder files
      */
-    '/((?!api|_next/static|_next/image|images|favicon.ico|.*\\.[\\w]+$).*)'
+    '/((?!_next/static|_next/image|images|favicon.ico|.*\\.[\\w]+$).*)'
   ]
 };

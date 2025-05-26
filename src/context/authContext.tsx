@@ -126,47 +126,70 @@ export function AuthProvider({
         }
     }, [getLocale]);
 
-    const refreshUserToken = useCallback(async (): Promise<boolean> => {
-        try {
-            const result = await refreshToken();
-            if (result.message === "token refreshed") {
-                console.log("Token refreshed successfully");
-                // The token has been refreshed in cookies by the server
-                return true;
+    const refreshUserToken = useCallback(async (retryCount = 3, delay = 1000): Promise<boolean> => {
+        for (let i = 0; i < retryCount; i++) {
+            try {
+                const result = await refreshToken();
+                if (result.message === "token refreshed") {
+                    console.log("Token refreshed successfully");
+                    return true;
+                }
+                console.log("Token refresh failed:", result);
+                return false;
+            } catch (error: any) {
+                if (i === retryCount - 1) {
+                    console.error("Token refresh failed after all retries:", error);
+                    logout();
+                    return false;
+                }
+                console.warn(`Token refresh attempt ${i + 1} failed, retrying in ${delay}ms:`, error);
+                await new Promise(resolve => setTimeout(resolve, delay));
             }
-            console.log("Token refresh failed:", result);
-            return false;
-        } catch (error: any) {
-            console.error("Token refresh failed:", error);
-            logout();
-            return false;
         }
+        return false;
     }, [logout]);
 
     useEffect(() => {
         if (!user) return;
 
         let refreshTimeout: NodeJS.Timeout;
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
+        const INITIAL_REFRESH_INTERVAL = 10 * 1000; // 1 minutes
+        const MAX_REFRESH_INTERVAL = 60 * 60 * 1000; // 1 hour
 
-        const scheduleRefresh = () => {
+        const scheduleRefresh = (interval: number) => {
             refreshTimeout = setTimeout(async () => {
                 const success = await refreshUserToken();
                 if (success) {
-                    // Schedule next refresh if successful
-                    scheduleRefresh();
+                    // Reset retry count on success
+                    retryCount = 0;
+                    // Schedule next refresh with normal interval
+                    scheduleRefresh(INITIAL_REFRESH_INTERVAL);
+                } else if (retryCount < MAX_RETRIES) {
+                    // Exponential backoff for retry
+                    retryCount++;
+                    const backoffInterval = Math.min(
+                        interval * Math.pow(2, retryCount),
+                        MAX_REFRESH_INTERVAL
+                    );
+                    console.warn(`Scheduling retry ${retryCount} in ${backoffInterval}ms`);
+                    scheduleRefresh(backoffInterval);
                 }
-            }, 50 * 60 * 1000); //55m
+            }, interval);
         };
 
-        scheduleRefresh();
+        // Initial schedule
+        scheduleRefresh(INITIAL_REFRESH_INTERVAL);
 
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'visible') {
                 refreshUserToken().then(success => {
                     if (success) {
-                        // Clear existing timeout and reschedule
+                        // Clear existing timeout and reschedule with reset retry count
                         clearTimeout(refreshTimeout);
-                        scheduleRefresh();
+                        retryCount = 0;
+                        scheduleRefresh(INITIAL_REFRESH_INTERVAL);
                     }
                 });
             }
