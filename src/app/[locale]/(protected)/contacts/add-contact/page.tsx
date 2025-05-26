@@ -38,17 +38,18 @@ export default async function AddContactPage({ params }: {
 
     const getProfileData = async (profileId: string, userId = user?._id): Promise<ProfileData | null> => {
         "use server";
-
-        try {
-            if (userId) {
+        if (userId && profileId) {
+            try {
                 const profileData = await viewProfile(profileId, userId);
                 return profileData;
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+                return null;
             }
-            return null;
-        } catch (error) {
-            console.error("Error fetching profile:", error);
-            return null;
         }
+        console.error("Profile ID or User ID is missing");
+        return null;
+
     }
     // Handle form submission
     async function createContact(formData: FormData) {
@@ -170,7 +171,7 @@ export default async function AddContactPage({ params }: {
                     </TabsContent>
 
                     <TabsContent value="scan">
-                        <ScanContact themeColor={themeColor} locale={locale} />
+                        <ScanContact themeColor={themeColor} locale={locale} getProfileData={getProfileData} createContact={createContact} />
                     </TabsContent>
 
 

@@ -7,16 +7,19 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { QrCode, Upload } from 'lucide-react';
 import QrScanner from 'qr-scanner';
-import { useRouter } from 'next/navigation';
+import { ProfileData } from '@/types/profile';
+import { getUserFromCookie } from '@/utils/cookie';
 
 interface ScanContactProps {
     themeColor: string;
     locale: string;
+    getProfileData: (profileId: string, userId: string) => Promise<ProfileData | null>;
+    createContact: (contact: FormData) => Promise<{ success: boolean; message: any; }>;
 }
 
-export default function ScanContact({ themeColor, locale }: ScanContactProps) {
+export default function ScanContact({ themeColor, locale, getProfileData, createContact }: ScanContactProps) {
     const intl = useIntl();
-    const router = useRouter();
+    const user = getUserFromCookie();
     const [isScanning, setIsScanning] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -53,40 +56,72 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
         }
     }, []);
 
-    // Handle redirect after scanning
     useEffect(() => {
-        if (scannedUrl) {
-            const timeout = setTimeout(() => {
+        const scanContact = async () => {
+            if (scannedUrl && user?._id) {
                 try {
                     // Parse the scanned URL
                     const url = new URL(scannedUrl);
                     const pathSegments = url.pathname.split('/').filter(segment => segment);
 
-                    // Check if the URL follows the expected format (e.g., /redirect/profileLink)
-                    if (pathSegments.length < 2 || pathSegments[0] !== 'redirect') {
-                        throw new Error('Invalid URL format. Expected /redirect/<profileLink>');
+                    // Check if the URL follows the expected format (e.g., /public-profile/profileLink)
+                    if (pathSegments.length < 2 || pathSegments[1] !== 'public-profile') {
+                        throw new Error(`Invalid URL format. Expected /public-profile/<profileLink> ${url}`);
                     }
 
-                    const profileLink = pathSegments[1];
+                    const profileLink = pathSegments[2];
                     if (!profileLink) {
                         throw new Error('Profile link is missing');
                     }
 
-                    // Redirect to the profile page
-                    router.push(`/${locale}/public-profile/${profileLink}`);
+                    // Get profile data
+                    const profileData = await getProfileData(profileLink, user._id);
+                    if (!profileData) {
+                        throw new Error('Failed to fetch profile data');
+                    }
+
+                    // Create contact from profile data
+                    const formData = new FormData();
+                    formData.append('fullName', profileData.fullName);
+                    if (profileData.phoneNumber) formData.append('phoneNumber', profileData.phoneNumber);
+                    if (profileData.companyName) formData.append('companyName', profileData.companyName);
+                    if (profileData.position) formData.append('position', profileData.position);
+                    formData.append('tags', JSON.stringify([]));
+
+                    // Add links from profile data
+                    const links = [
+                        ...(profileData.phoneNumber ? [{ title: 'phone', link: profileData.phoneNumber }] : []),
+                        ...profileData.links.filter(link => link.title.toLowerCase() === 'email')
+                    ];
+                    formData.append('links', JSON.stringify(links));
+
+                    const result = await createContact(formData);
+                    if (result.success) {
+                        toast.success(intl.formatMessage(
+                            { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
+                            { name: profileData.fullName }
+                        ));
+                    } else {
+                        toast.error(intl.formatMessage(
+                            { id: 'contact-add-failed', defaultMessage: 'Failed to add contact: {message}' },
+                            { message: result.message }
+                        ));
+                    }
+
                 } catch (error) {
-                    console.error('Redirect error:', error);
+                    console.error('Contact creation error:', error);
                     toast.error(intl.formatMessage({
                         id: 'invalid-url',
                         defaultMessage: 'Invalid profile URL: {message}',
                     }, { message: (error as Error).message || 'Unknown error' }));
+                } finally {
                     setScannedUrl(null);
                 }
-            }, 5000);
+            }
+        };
 
-            return () => clearTimeout(timeout);
-        }
-    }, [scannedUrl, locale, router, intl]);
+        scanContact();
+    }, [scannedUrl, user?._id, getProfileData, createContact, intl]);
 
     // Handle QR code scan result
     const handleQrScan = async (data: string) => {
@@ -117,7 +152,39 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
         }
     };
 
+    // Handle redirect after scanning
+    // useEffect(() => {
+    //     if (scannedUrl) {
+    //         try {
+    //             // Parse the scanned URL
+    //             const url = new URL(scannedUrl);
+    //             const pathSegments = url.pathname.split('/').filter(segment => segment);
+
+    //             // Check if the URL follows the expected format (e.g., /redirect/profileLink)
+    //             if (pathSegments.length < 2 || pathSegments[0] !== 'redirect') {
+    //                 throw new Error('Invalid URL format. Expected /redirect/<profileLink>');
+    //             }
+
+    //             const profileLink = pathSegments[1];
+    //             if (!profileLink) {
+    //                 throw new Error('Profile link is missing');
+    //             }
+
+    //             // Redirect to the profile page
+    //             router.push(`/${locale}/public-profile/${profileLink}`);
+    //         } catch (error) {
+    //             console.error('Redirect error:', error);
+    //             toast.error(intl.formatMessage({
+    //                 id: 'invalid-url',
+    //                 defaultMessage: 'Invalid profile URL: {message}',
+    //             }, { message: (error as Error).message || 'Unknown error' }));
+    //             setScannedUrl(null);
+    //         }
+    //     }
+    // }, [scannedUrl]);
+
     // Handle QR code image upload
+
     const handleQrImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
