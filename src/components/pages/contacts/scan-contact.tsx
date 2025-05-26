@@ -40,16 +40,17 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
             );
             console.log('QR Scanner initialized:', scanner);
             setQrScanner(scanner);
+
+            // Cleanup function
+            return () => {
+                if (scanner) {
+                    console.log('Destroying QR scanner');
+                    scanner.destroy();
+                }
+            };
         } else {
             console.error('Video element not found');
         }
-
-        return () => {
-            if (qrScanner) {
-                console.log('Destroying QR scanner');
-                qrScanner.destroy();
-            }
-        };
     }, []);
 
     // Handle redirect after scanning
@@ -89,10 +90,13 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
 
     // Handle QR code scan result
     const handleQrScan = async (data: string) => {
-        setIsScanning(false);
         if (qrScanner) {
             qrScanner.stop();
+            // Remove any highlight elements that might remain
+            const highlightElements = document.querySelectorAll('.qr-scanner-highlight');
+            highlightElements.forEach(el => el.remove());
         }
+        setIsScanning(false);
 
         setIsProcessing(true);
         setProgress(50);
@@ -242,8 +246,10 @@ export default function ScanContact({ themeColor, locale }: ScanContactProps) {
                                     setIsScanning(false);
                                     if (qrScanner) {
                                         qrScanner.stop();
+                                        // Remove any highlight elements that might remain
+                                        const highlightElements = document.querySelectorAll('.qr-scanner-highlight');
+                                        highlightElements.forEach(el => el.remove());
                                     }
-
                                 }}
                                 className="my-4"
                             >
