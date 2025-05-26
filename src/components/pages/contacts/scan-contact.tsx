@@ -76,6 +76,7 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
 
                     // Get profile data
                     const profileData = await getProfileData(profileLink, user._id);
+                    console.log('profileData:::::::::::', profileData);
                     if (!profileData) {
                         throw new Error('Failed to fetch profile data');
                     }
@@ -85,12 +86,13 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
 
                     // Add links
                     const formLinks = [];
-                    if (profileData.phoneNumber) {
-                        formLinks.push({ title: "phone", link: profileData.phoneNumber });
-                    }
                     const emailLink = profileData.links.find(link => link.title.toLowerCase() === 'email');
                     if (emailLink) {
                         formLinks.push({ title: "Email", link: emailLink.link });
+                    }
+                    const phoneNumber = profileData.links.find(link => link.title.toLowerCase() === 'phone');
+                    if (phoneNumber) {
+                        formLinks.push({ title: "Phone", link: phoneNumber.link });
                     }
                     // Add all other links from profile
                     profileData.links.forEach(link => {
