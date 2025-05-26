@@ -83,7 +83,7 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
                     const formData = new FormData();
                     formData.append("fullName", profileData.fullName);
 
-                    // Add links exactly like in add-contact-form
+                    // Add links
                     const formLinks = [];
                     if (profileData.phoneNumber) {
                         formLinks.push({ title: "phone", link: profileData.phoneNumber });
@@ -92,10 +92,23 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
                     if (emailLink) {
                         formLinks.push({ title: "Email", link: emailLink.link });
                     }
+                    // Add all other links from profile
+                    profileData.links.forEach(link => {
+                        if (link.title.toLowerCase() !== 'email' && link.title.toLowerCase() !== 'phone') {
+                            formLinks.push({ title: link.title, link: link.link });
+                        }
+                    });
 
                     // Add tags and links as JSON strings
                     formData.append("tags", JSON.stringify([]));
                     formData.append("links", JSON.stringify(formLinks));
+
+                    // Log form data for debugging
+                    console.log("Form data submitted:", {
+                        ...Object.fromEntries(formData.entries()),
+                        tags: [],
+                        links: formLinks,
+                    });
 
                     const result = await createContact(formData);
                     if (result.success) {
@@ -160,39 +173,6 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
             setIsProcessing(false);
         }
     };
-
-    // Handle redirect after scanning
-    // useEffect(() => {
-    //     if (scannedUrl) {
-    //         try {
-    //             // Parse the scanned URL
-    //             const url = new URL(scannedUrl);
-    //             const pathSegments = url.pathname.split('/').filter(segment => segment);
-
-    //             // Check if the URL follows the expected format (e.g., /redirect/profileLink)
-    //             if (pathSegments.length < 2 || pathSegments[0] !== 'redirect') {
-    //                 throw new Error('Invalid URL format. Expected /redirect/<profileLink>');
-    //             }
-
-    //             const profileLink = pathSegments[1];
-    //             if (!profileLink) {
-    //                 throw new Error('Profile link is missing');
-    //             }
-
-    //             // Redirect to the profile page
-    //             router.push(`/${locale}/public-profile/${profileLink}`);
-    //         } catch (error) {
-    //             console.error('Redirect error:', error);
-    //             toast.error(intl.formatMessage({
-    //                 id: 'invalid-url',
-    //                 defaultMessage: 'Invalid profile URL: {message}',
-    //             }, { message: (error as Error).message || 'Unknown error' }));
-    //             setScannedUrl(null);
-    //         }
-    //     }
-    // }, [scannedUrl]);
-
-    // Handle QR code image upload
 
     const handleQrImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
