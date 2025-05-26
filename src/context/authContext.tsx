@@ -155,24 +155,17 @@ export function AuthProvider({
         let refreshTimeout: NodeJS.Timeout;
         let retryCount = 0;
         const MAX_RETRIES = 3;
-        const INITIAL_REFRESH_INTERVAL = 10 * 1000; // 1 minutes
-        const MAX_REFRESH_INTERVAL = 60 * 60 * 1000; // 1 hour
+        const REFRESH_INTERVAL = 23 * 60 * 60 * 1000; //23h
 
         const scheduleRefresh = (interval: number) => {
             refreshTimeout = setTimeout(async () => {
                 const success = await refreshUserToken();
                 if (success) {
-                    // Reset retry count on success
                     retryCount = 0;
-                    // Schedule next refresh with normal interval
-                    scheduleRefresh(INITIAL_REFRESH_INTERVAL);
+                    scheduleRefresh(REFRESH_INTERVAL);
                 } else if (retryCount < MAX_RETRIES) {
-                    // Exponential backoff for retry
                     retryCount++;
-                    const backoffInterval = Math.min(
-                        interval * Math.pow(2, retryCount),
-                        MAX_REFRESH_INTERVAL
-                    );
+                    const backoffInterval = interval * Math.pow(2, retryCount);
                     console.warn(`Scheduling retry ${retryCount} in ${backoffInterval}ms`);
                     scheduleRefresh(backoffInterval);
                 }
@@ -180,16 +173,15 @@ export function AuthProvider({
         };
 
         // Initial schedule
-        scheduleRefresh(INITIAL_REFRESH_INTERVAL);
+        scheduleRefresh(REFRESH_INTERVAL);
 
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'visible') {
                 refreshUserToken().then(success => {
                     if (success) {
-                        // Clear existing timeout and reschedule with reset retry count
                         clearTimeout(refreshTimeout);
                         retryCount = 0;
-                        scheduleRefresh(INITIAL_REFRESH_INTERVAL);
+                        scheduleRefresh(REFRESH_INTERVAL);
                     }
                 });
             }
