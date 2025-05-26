@@ -109,7 +109,6 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
                             { message: result.message }
                         ));
                     }
-
                 } catch (error) {
                     console.error('Contact creation error:', error);
                     toast.error(intl.formatMessage({
@@ -117,6 +116,14 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
                         defaultMessage: 'Invalid profile URL: {message}',
                     }, { message: (error as Error).message || 'Unknown error' }));
                 } finally {
+                    // Clean up scanner resources
+                    if (qrScanner) {
+                        qrScanner.stop();
+                        // Remove any highlight elements that might remain
+                        const highlightElements = document.querySelectorAll('.qr-scanner-highlight');
+                        highlightElements.forEach(el => el.remove());
+                    }
+                    setIsScanning(false);
                     setScannedUrl(null);
                 }
             }
