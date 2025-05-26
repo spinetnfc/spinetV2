@@ -80,20 +80,22 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
                         throw new Error('Failed to fetch profile data');
                     }
 
-                    // Create contact from profile data
                     const formData = new FormData();
-                    formData.append('fullName', profileData.fullName);
-                    if (profileData.phoneNumber) formData.append('phoneNumber', profileData.phoneNumber);
-                    if (profileData.companyName) formData.append('companyName', profileData.companyName);
-                    if (profileData.position) formData.append('position', profileData.position);
-                    formData.append('tags', JSON.stringify([]));
+                    formData.append("fullName", profileData.fullName);
 
-                    // Add links from profile data
-                    const links = [
-                        ...(profileData.phoneNumber ? [{ title: 'phone', link: profileData.phoneNumber }] : []),
-                        ...profileData.links.filter(link => link.title.toLowerCase() === 'email')
-                    ];
-                    formData.append('links', JSON.stringify(links));
+                    // Add links exactly like in add-contact-form
+                    const formLinks = [];
+                    if (profileData.phoneNumber) {
+                        formLinks.push({ title: "phone", link: profileData.phoneNumber });
+                    }
+                    const emailLink = profileData.links.find(link => link.title.toLowerCase() === 'email');
+                    if (emailLink) {
+                        formLinks.push({ title: "Email", link: emailLink.link });
+                    }
+
+                    // Add tags and links as JSON strings
+                    formData.append("tags", JSON.stringify([]));
+                    formData.append("links", JSON.stringify(formLinks));
 
                     const result = await createContact(formData);
                     if (result.success) {
