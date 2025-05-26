@@ -92,7 +92,7 @@ export const deleteContacts = async (profileId: string, contacts: string[]): Pro
         if (contacts.length === 0) {
             throw new Error(`no contacts to delete`);
         }
-        const response = await ServerApi.post(`/profile/${profileId}/contacts/delete}`, { headers });
+        const response = await ServerApi.post(`/profile/${profileId}/contacts/delete`, contacts,{ headers });
         console.log("Contacts deleted response received:", response.status);
 
         return response.data;

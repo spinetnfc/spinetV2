@@ -6,23 +6,32 @@ import { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useIntl } from "react-intl";
 
 interface ContactListProps {
     filteredContacts: Contact[];
     themeColor: string;
     removeContact: (contactId: string) => Promise<{ success: boolean; message: string }>;
+    removeContacts: (contacts: string[]) => Promise<{ success: boolean; message: string }>;
     editContact: (contactId: string, updatedContact: ContactInput) => Promise<{ success: boolean; message: string }>;
     locale: string;
+    onContactsDeleted?: (deletedContactIds: string[]) => void;
 }
 
 export default function ContactList({
     filteredContacts,
     themeColor,
     removeContact,
+    removeContacts,
     editContact,
     locale,
+    onContactsDeleted
 }: ContactListProps) {
     const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [localContacts, setLocalContacts] = useState<Contact[]>(filteredContacts);
+    const intl = useIntl();
 
     const handleContactSelect = (contactId: string, checked: boolean) => {
         setSelectedContacts(prev => {
@@ -33,9 +42,35 @@ export default function ContactList({
         });
     };
 
-    const handleBulkDelete = () => {
-        // Empty function for now - will be implemented later
-        console.log("Deleting contacts:", selectedContacts);
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedContacts(localContacts.map(contact => contact._id));
+        } else {
+            setSelectedContacts([]);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        try {
+            setIsDeleting(true);
+            const response = await removeContacts(selectedContacts);
+            if (response.success) {
+                // Update local state to remove deleted contacts
+                setLocalContacts(prev => prev.filter(contact => !selectedContacts.includes(contact._id)));
+                // Clear selection
+                setSelectedContacts([]);
+                // Notify parent component
+                onContactsDeleted?.(selectedContacts);
+                toast.success(intl.formatMessage({ id: "Contacts deleted successfully" }));
+            } else {
+                throw new Error(response.message);
+            }
+        } catch (error) {
+            console.error("Error deleting contact:", error);
+            toast.error(intl.formatMessage({ id: "Failed to delete contact. Please try again." }));
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     return (
@@ -44,9 +79,9 @@ export default function ContactList({
             {selectedContacts.length > 0 && (
                 <Button
                     onClick={handleBulkDelete}
-                    className="fixed bottom-4 right-4 z-100 flex items-center gap-2"
+                    className="fixed bottom-4 end-4 z-100 flex items-center gap-2"
                     variant="destructive"
-
+                    disabled={isDeleting}
                 >
                     <Trash2 size={20} />
                     <FormattedMessage id="delete" defaultMessage="Delete" /> ({selectedContacts.length})
@@ -55,8 +90,21 @@ export default function ContactList({
 
             {/* Contact List */}
             <div className="px-4 mt-2">
-                {filteredContacts.length > 0 ? (
-                    filteredContacts.map((contact) => (
+                {localContacts.length > 0 && (
+                    <div className="flex items-center gap-2 mb-4">
+                        <Checkbox
+                            checked={selectedContacts.length === localContacts.length}
+                            onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                        />
+                        <FormattedMessage
+                            id="select-all-contacts"
+                            defaultMessage="Select all contacts"
+                        />
+                    </div>
+                )}
+
+                {localContacts.length > 0 ? (
+                    localContacts.map((contact) => (
                         <div key={contact._id} className="flex items-center gap-4">
                             <Checkbox
                                 checked={selectedContacts.includes(contact._id)}
@@ -74,7 +122,9 @@ export default function ContactList({
                         </div>
                     ))
                 ) : (
-                    <p className="text-center py-8 text-gray-500"><FormattedMessage id="no-contacts-found" defaultMessage="No contacts found" /></p>
+                    <p className="text-center py-8 text-gray-500">
+                        <FormattedMessage id="no-contacts-found" defaultMessage="No contacts found" />
+                    </p>
                 )}
             </div>
         </div>
