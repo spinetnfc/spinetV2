@@ -428,5 +428,7 @@
   "back": "رجوع",
   "no-links": "هذا الملف الشخصي لا يحتوي على أي روابط",
   "from-play-store": "من متجر بلاي",
-  "from-app-store": "من متجر التطبيقات"
+  "from-app-store": "من متجر التطبيقات",
+  "select-all-contacts": "تحديد كل جهات الاتصال",
+  "Contacts deleted successfully": "تم حذف جهات الاتصال بنجاح"
 }

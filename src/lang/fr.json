@@ -428,5 +428,7 @@
   "back": "Retour",
   "no-links": "Aucun lien trouvé pour ce profile",
   "from-play-store": "Depuis le Play Store",
-  "from-app-store": "Depuis l'App Store"
+  "from-app-store": "Depuis l'App Store",
+  "select-all-contacts": "Sélectionner tous les contacts",
+  "Contacts deleted successfully": "Contacts supprimés avec succès"
 }
