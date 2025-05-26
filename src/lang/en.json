@@ -430,5 +430,16 @@
   "from-play-store": "From Play Store",
   "from-app-store": "From App Store",
   "Contacts deleted successfully": "Contacts deleted successfully",
-  "select-all-contacts": "Select all contacts"
+  "select-all-contacts": "Select all contacts",
+  "invalid-url": "Invalid profile URL: {message}",
+  "scan-failed": "Failed to process QR code: {message}",
+  "scanner-not-ready": "Scanner not ready. Please try again.",
+  "camera-access-failed": "Failed to access camera: {message}",
+  "scan-qr-code-description": "Use your camera to scan a QR code or upload an image containing a QR code.",
+  "start-scanning": "Start Scanning",
+  "upload-image": "Upload Image",
+  "scanned-profile-link": "Scanned Profile Link",
+  "redirecting": "Redirecting to profile in 5 seconds...",
+  "scanning": "Scanning for QR code...",
+  "processing-progress": "Processing QR code... {progress}%"
 }
