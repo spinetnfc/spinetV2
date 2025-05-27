@@ -7,217 +7,182 @@ import {
     useState,
     useMemo,
     useCallback,
+    useRef,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { signOut, refreshToken } from "@/lib/api/auth";
-import type { User } from '@/types/user';
+
+export interface User {
+    _id: string;
+    email: string;
+    fullName: string;
+    firstName: string;
+    lastName: string;
+    birthDate: string;
+    gender: string;
+    companyName: string;
+    activitySector: string;
+    position: string;
+    phoneNumber: string;
+    website: string;
+    language: string;
+    theme: { color: string };
+    Pro: { company: boolean; freeTrail: boolean };
+    createdAt: string;
+    selectedProfile: string;
+    tokens: {
+        fileApiToken: string;
+        fileApiRefreshToken: string;
+    };
+}
 
 interface AuthContextType {
     user: User | null;
     login: (user: User) => void;
-    logout: () => Promise<void>;
+    logout: () => void;
     isAuthenticated: boolean;
     isLoading: boolean;
     refreshUserToken: () => Promise<boolean>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const defaultContextValue: AuthContextType = {
+    user: null,
+    login: () => { },
+    logout: () => { },
+    isAuthenticated: false,
+    isLoading: true,
+    refreshUserToken: async () => false,
+};
 
-function setSecureCookie(name: string, value: string, maxAge: number) {
-    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`;
+const AuthContext = createContext<AuthContextType>(defaultContextValue);
+
+// Efficient cookie parsing with caching
+function getUserFromCookie(): User | null {
+    const cookieCache = (getUserFromCookie as any).cache;
+    if (cookieCache) return cookieCache;
+
+    const cookie = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("current-user="));
+    if (!cookie) return null;
+
+    try {
+        const json = decodeURIComponent(cookie.split("=")[1]);
+        const user = JSON.parse(json);
+        (getUserFromCookie as any).cache = user;
+        return user;
+    } catch (err) {
+        console.error("Error parsing current-user cookie:", err);
+        return null;
+    }
 }
 
-function clearCookie(name: string) {
-    document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`;
-}
-
-interface RefreshTokenResponse {
-    message: string;
-}
-
-export function AuthProvider({
-    children,
-    initialUser = null,
-}: {
-    children: React.ReactNode;
-    initialUser?: User | null;
-}) {
-    const [user, setUser] = useState<User | null>(initialUser);
-    const [isLoading, setIsLoading] = useState(!initialUser);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
+    const localeRef = useRef<string>("en"); // Cache locale
 
-    const getLocale = useCallback(() => {
+    // Compute locale only when pathname changes
+    useEffect(() => {
+        const supportedLocales = ["fr", "ar", "en"];
         const parts = pathname?.split("/") || [];
-        return ["fr", "ar", "en"].includes(parts[1]) ? parts[1] : "en";
+        const localeCandidate = parts[1] || "en";
+        localeRef.current = supportedLocales.includes(localeCandidate)
+            ? localeCandidate
+            : "en";
     }, [pathname]);
 
+    // Hydrate user from cookie
     useEffect(() => {
-        if (initialUser) return;
+        const userFromCookie = getUserFromCookie();
+        setUser(userFromCookie);
+        setIsLoading(false);
+        // Clear cache on unmount to ensure fresh cookie read on next load
+        return () => {
+            (getUserFromCookie as any).cache = null;
+        };
+    }, []);
 
-        try {
-            const cookie = document.cookie
-                .split("; ")
-                .find((row) => row.startsWith("current-user="));
-
-            if (cookie) {
-                const userData = JSON.parse(decodeURIComponent(cookie.split("=")[1]));
-                setUser(userData);
-            }
-        } catch (err) {
-            console.error("Error reading user cookie:", err);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [initialUser]);
-
+    // Stable login function
     const login = useCallback((userData: User) => {
         setUser(userData);
+        document.cookie = `current-user=${encodeURIComponent(
+            JSON.stringify(userData)
+        )}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+        (getUserFromCookie as any).cache = userData; // Update cache
+        router.push(`/${localeRef.current}`);
+    }, [router]);
 
-        // Set session cookie
-        setSecureCookie('spinet-session', userData._id, 60 * 60 * 24 * 7);
-
-        // Set user data
-        setSecureCookie(
-            'current-user',
-            JSON.stringify(userData),
-            60 * 60 * 24 * 7
-        );
-
-        // Set API tokens
-        setSecureCookie(
-            'fileApiToken',
-            userData.tokens.fileApiToken,
-            60 * 60 * 24 * 7
-        );
-        setSecureCookie(
-            'fileApiRefreshToken',
-            userData.tokens.fileApiRefreshToken,
-            60 * 60 * 24 * 7
-        );
-
-        router.refresh();
-        router.push(`/${getLocale()}`);
-    }, [router, getLocale]);
-
+    // Stable logout function
     const logout = useCallback(async () => {
-        setIsLoading(true);
-        const currentLocale = getLocale();
-
+        setUser(null);
+        document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
+        document.cookie = `fileApiToken=; path=/; max-age=0; SameSite=Lax`;
+        document.cookie = `fileApiRefreshToken=; path=/; max-age=0; SameSite=Lax`;
+        (getUserFromCookie as any).cache = null; // Clear cache
         try {
-            // First clear all auth state
-            setUser(null);
-            clearCookie('spinet-session');
-            clearCookie('current-user');
-            clearCookie('fileApiToken');
-            clearCookie('fileApiRefreshToken');
-
-            // Then notify the server
             await signOut();
-
-            // Force a full page reload to clear all client state
-            window.location.href = `/${currentLocale}`;
-        } catch (error) {
-            console.error("Logout error:", error);
-            // Even if the server logout fails, we still want to clear local state
-            window.location.href = `/${currentLocale}`;
         } finally {
-            setIsLoading(false);
+            router.push(`/${localeRef.current}/auth/login`);
         }
-    }, [getLocale]);
+    }, [router]);
 
-    const refreshUserToken = useCallback(async (retryCount = 3, delay = 1000): Promise<boolean> => {
-        for (let i = 0; i < retryCount; i++) {
-            try {
-                const result = await refreshToken();
-                if (result.message === "token refreshed") {
-                    console.log("Token refreshed successfully");
-                    return true;
-                }
-                console.log("Token refresh failed:", result);
-                return false;
-            } catch (error: any) {
-                if (i === retryCount - 1) {
-                    console.error("Token refresh failed after all retries:", error);
-                    logout();
-                    return false;
-                }
-                console.warn(`Token refresh attempt ${i + 1} failed, retrying in ${delay}ms:`, error);
-                await new Promise(resolve => setTimeout(resolve, delay));
+    // Stable refresh token function
+    const refreshUserToken = useCallback(async (): Promise<boolean> => {
+        try {
+            const result = await refreshToken();
+            console.log("Token refreshed:", result);
+            return true;
+        } catch (error: any) {
+            console.error("Failed to refresh token:", error);
+            if (error.response?.status === 406) {
+                logout();
             }
+            return false;
         }
-        return false;
     }, [logout]);
 
+    // Token refresh on focus or navigation
     useEffect(() => {
         if (!user) return;
 
-        let refreshTimeout: NodeJS.Timeout;
-        let retryCount = 0;
-        const MAX_RETRIES = 3;
-        const REFRESH_INTERVAL = 23 * 60 * 60 * 1000; //23h
+        const handleFocus = () => refreshUserToken();
+        window.addEventListener("focus", handleFocus);
 
-        const scheduleRefresh = (interval: number) => {
-            refreshTimeout = setTimeout(async () => {
-                const success = await refreshUserToken();
-                if (success) {
-                    retryCount = 0;
-                    scheduleRefresh(REFRESH_INTERVAL);
-                } else if (retryCount < MAX_RETRIES) {
-                    retryCount++;
-                    const backoffInterval = interval * Math.pow(2, retryCount);
-                    console.warn(`Scheduling retry ${retryCount} in ${backoffInterval}ms`);
-                    scheduleRefresh(backoffInterval);
-                }
-            }, interval);
-        };
+        // Refresh on navigation (optional, depending on needs)
+        const handleRouteChange = () => refreshUserToken();
 
-        // Initial schedule
-        scheduleRefresh(REFRESH_INTERVAL);
-
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible') {
-                refreshUserToken().then(success => {
-                    if (success) {
-                        clearTimeout(refreshTimeout);
-                        retryCount = 0;
-                        scheduleRefresh(REFRESH_INTERVAL);
-                    }
-                });
-            }
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
+        // Fallback interval for long sessions (e.g., 1 hour)
+        const refreshInterval = setInterval(refreshUserToken, 60 * 60 * 1000);
 
         return () => {
-            clearTimeout(refreshTimeout);
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener("focus", handleFocus);
+            clearInterval(refreshInterval);
         };
     }, [user, refreshUserToken]);
 
+    const isAuthenticated = !!user;
+
+    // Memoized context value with stable function references
     const contextValue = useMemo(
         () => ({
             user,
             login,
             logout,
-            isAuthenticated: !!user,
+            isAuthenticated,
             isLoading,
             refreshUserToken,
         }),
-        [user, login, logout, isLoading, refreshUserToken]
+        [user, isAuthenticated, isLoading, login, logout, refreshUserToken]
     );
 
-    return (
-        <AuthContext.Provider value={contextValue}>
-            {children}
-        </AuthContext.Provider>
-    );
-}
+    return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+};
 
-export function useAuth() {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth must be used within AuthProvider");
-    }
-    return context;
-}
+export const useAuth = () => {
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+    return ctx;
+};
