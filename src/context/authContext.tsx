@@ -57,26 +57,6 @@ const defaultContextValue: AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>(defaultContextValue);
 
-// function getUserFromCookie(): User | null {
-//     const cookieCache = (getUserFromCookie as any).cache;
-//     if (cookieCache) return cookieCache;
-
-//     const cookie = document.cookie
-//         .split("; ")
-//         .find((row) => row.startsWith("current-user="));
-//     if (!cookie) return null;
-
-//     try {
-//         const json = decodeURIComponent(cookie.split("=")[1]);
-//         const user = JSON.parse(json);
-//         (getUserFromCookie as any).cache = user;
-//         return user;
-//     } catch (err) {
-//         console.error("Error parsing current-user cookie:", err);
-//         return null;
-//     }
-// }
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);

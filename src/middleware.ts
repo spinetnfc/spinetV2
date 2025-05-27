@@ -181,7 +181,6 @@ export async function middleware(request: NextRequest) {
       // If no refresh token or refresh failed, redirect to login
       const localePart = nextLocale || defaultLocale;
       const redirectUrl = new URL(`/${localePart}/auth/login`, request.url);
-      redirectUrl.searchParams.set('redirectTo', pathname);
       return NextResponse.redirect(redirectUrl);
     }
   }

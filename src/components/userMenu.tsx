@@ -1,4 +1,4 @@
-import { Link, User2 } from "lucide-react";
+import { User2 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
     DropdownMenu,

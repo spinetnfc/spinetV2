@@ -3,13 +3,16 @@
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-import { PanelLeft } from 'lucide-react';
+import { LogOut, PanelLeft } from 'lucide-react';
 import Logo from '@/components/logo';
 import LogoSpinet from '@/components/logo-spinet';
 import { SideNavigationItem } from '@/types/layout-types';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
+import ThemeSwitch from './theme-switch';
+import ChangeLanguage from './change-language';
+import { useAuth } from '@/context/authContext';
 
 type Props = {
   navigation: SideNavigationItem[];
@@ -20,6 +23,8 @@ type Props = {
 
 function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const pathname = usePathname();
+  const { logout } = useAuth();
+
   // const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -70,7 +75,18 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
             })}
           </nav>
 
-          {/* Expand/Collapse sidebar*/}
+          <div className={`flex flex-col gap-2 justify-between ms-3 ${!isExpanded && "hidden"}`}>
+            <ThemeSwitch locale={locale} />
+            <div className="w-fit">
+              <ChangeLanguage locale={locale} />
+            </div>
+            <Button variant="destructive" size="icon" onClick={logout}>
+              <LogOut size={20} />
+            </Button>
+          </div>
+
+
+          {/* footer */}
           <Button
             size="icon"
             variant="outline"
