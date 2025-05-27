@@ -113,7 +113,7 @@ export default function ContactList({
                         style={{ backgroundColor: themeColor }}
                     >
                         <Link
-                            href="/contacts/add-contact"
+                            href="./contacts/add-contact"
                         >
                             <Plus size={20} />
                             <FormattedMessage id="add-contact" defaultMessage="Add contact" />

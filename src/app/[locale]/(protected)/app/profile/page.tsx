@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { Phone, Mail, Edit, Briefcase, ArrowLeft, Globe, Linkedin, Instagram, Twitter, Github, LinkIcon, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send, ChevronRight } from 'lucide-react'
+import { Edit, Briefcase, Globe, Linkedin, Instagram, Twitter, Github, LinkIcon, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send, ChevronRight } from 'lucide-react'
 import { getProfile } from "@/lib/api/profile"
 import type { ProfileData } from '@/types/profile';
 import { getUserCookieOnServer } from "@/utils/server-cookie"
@@ -11,10 +11,6 @@ import useTranslate from "@/hooks/use-translate"
 // Helper function to get the appropriate icon for a link type
 function getLinkIcon(linkName: string, themeColor: string) {
     switch (linkName.toLowerCase()) {
-        case "email":
-            return <Mail style={{ color: themeColor }} size={24} />
-        case "phone":
-            return <Phone style={{ color: themeColor }} size={24} />
         case "website":
             return <Globe style={{ color: themeColor }} size={24} />
         case "linkedin":
@@ -91,11 +87,6 @@ export default async function ProfilePage({ params }: {
                             : { backgroundColor: themeColor }
                     }
                 >
-                    <div className="absolute top-4 left-4">
-                        <button className="p-2 rounded-full bg-white/20 text-white">
-                            <ArrowLeft size={24} />
-                        </button>
-                    </div>
                 </div>
 
                 {/* Profile picture */}
@@ -112,19 +103,6 @@ export default async function ProfilePage({ params }: {
                     </div>
                 </div>
 
-                {/* Contact buttons */}
-                <div className="absolute right-6 bottom-6 flex gap-3">
-                    {phone && (
-                        <a href={`tel:${phone}`} className="p-4 rounded-full text-white" style={{ backgroundColor: themeColor }}>
-                            <Phone size={20} />
-                        </a>
-                    )}
-                    {email && (
-                        <a href={`mailto:${email}`} className="p-4 rounded-full text-white" style={{ backgroundColor: themeColor }}>
-                            <Mail size={20} />
-                        </a>
-                    )}
-                </div>
             </div>
 
             {/* Profile info */}
@@ -135,7 +113,7 @@ export default async function ProfilePage({ params }: {
                         {profileData.position} {profileData.companyName ? `${t("at")} ${profileData.companyName}` : ""}
                     </p>
                 </div>
-                <Link href={`/${locale}/profile/update-info`} className="text-primary hover:scale-105 cursor-pointer pt-1">
+                <Link href={`./profile/update-info`} className="text-primary hover:scale-105 cursor-pointer pt-1">
                     <Edit size={20} />
                 </Link>
             </div>
@@ -143,7 +121,7 @@ export default async function ProfilePage({ params }: {
             {/* Profile sections */}
             <div className="px-6 mt-8 space-y-4">
                 {/* Services */}
-                <Link href={`/${locale}/profile/services`} className="block">
+                <Link href={`./profile/services`} className="block">
                     <div className="bg-blue-200 dark:bg-navy rounded-lg p-4 hover:bg-blue-300 dark:hover:bg-blue-900 transition-colors">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-3">

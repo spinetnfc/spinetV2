@@ -1,4 +1,4 @@
-import { Edit, QrCode, Upload } from "lucide-react";
+import { ArrowLeft, Edit, QrCode, Upload } from "lucide-react";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import { getProfile, viewProfile } from "@/lib/api/profile";
 import { addContact } from "@/lib/api/contacts";
@@ -10,6 +10,7 @@ import type { ContactInput } from "@/types/contact";
 import useTranslate from "@/hooks/use-translate";
 import { ProfileData } from "@/types/profile";
 import ScanContact from "@/components/pages/contacts/scan-contact";
+import Link from "next/link";
 export default async function AddContactPage({ params }: {
     params: Promise<{ locale: string }>;
 }) {
@@ -148,7 +149,12 @@ export default async function AddContactPage({ params }: {
     }
 
     return (
-        <div className="min-h-screen py-16">
+        <div className="min-h-screen">
+            <div className="w-full flex items-center m-6">
+                <Link href={`./`} className="p-2 rounded-full bg-white/20 text-white me-4">
+                    <ArrowLeft size={24} className={locale === "ar" ? "transition rotate-180" : ""} />
+                </Link>
+            </div>
             <div className="px-4 py-2 max-w-4xl mx-auto">
                 <Tabs defaultValue="manual" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
                     <TabsList className="grid w-full grid-cols-3 mb-4">

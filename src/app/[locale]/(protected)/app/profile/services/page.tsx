@@ -44,23 +44,12 @@ export default async function ServicesPage({
     const fullName = profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`
     const themeColor = profileData.theme?.color || "#3b82f6" // Default to blue if undefined
 
-    // Get services or provide empty array if none exist
-    // const services = [
-    //     {
-    //         name: "web development",
-    //         description: "We support businesses utilizing the power of the web",
-    //     },
-    //     {
-    //         name: "mobile app development",
-    //         description: "Native and cross-platform mobile applications for iOS and Android",
-    //     },
-    // ]
 
     return (
-        <div className="min-h-screen w-full py-8">
+        <div className="min-h-screen w-full">
             {/* Header */}
             <div className="w-full h-32 flex items-center px-6" style={{ backgroundColor: themeColor }}>
-                <Link href={`/${locale}/profile`} className="p-2 rounded-full bg-white/20 text-white me-4">
+                <Link href={`./`} className="p-2 rounded-full bg-white/20 text-white me-4">
                     <ArrowLeft size={24} className={locale === "ar" ? "transition rotate-180" : ""} />
                 </Link>
                 <h1 className="text-2xl font-bold text-white">{t("my-services")}</h1>
