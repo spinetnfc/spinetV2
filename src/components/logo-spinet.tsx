@@ -24,7 +24,7 @@ const Logo = ({
         return (
             <NextLink className="flex items-center text-white" href={`/${locale}`}>
                 <Image
-                    src="/img/logo-spinet.svg" // Default fallback
+                    src={parentDarkMode == true ? "/img/logo-spinet-dark.svg" : "/img/logo-spinet.svg"}
                     alt="Logo"
                     width={160}
                     height={160}

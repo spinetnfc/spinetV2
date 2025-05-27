@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LogOut, PanelLeft } from 'lucide-react';
 import Logo from '@/components/logo';
 import LogoSpinet from '@/components/logo-spinet';
@@ -13,26 +13,32 @@ import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } 
 import ThemeSwitch from './theme-switch';
 import ChangeLanguage from './change-language';
 import { useAuth } from '@/context/authContext';
+import { useTheme } from 'next-themes';
 
 type Props = {
   navigation: SideNavigationItem[];
   locale: string;
   isExpanded: boolean;
-  setIsExpanded: (value: boolean) => void
+  setIsExpanded: (value: boolean) => void;
 };
 
 function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const { theme, setTheme } = useTheme(); // Use setTheme for control if needed
+  const [isDark, setIsDark] = useState(theme === 'dark');
 
-  // const [isExpanded, setIsExpanded] = useState(false);
+  // Sync isDark with theme changes
+  useEffect(() => {
+    setIsDark(theme === 'dark');
+  }, [theme]);
 
   return (
     <>
-      {/* desktop sidebar*/}
+      {/* desktop sidebar */}
       <aside
         className={cn(
-          'hidden sm:flex h-full flex-col bg-background fixed top-0 transition-all duration-800 ease-in-out overflow-x-hidden', // Added overflow-x-hidden
+          'hidden sm:flex h-full flex-col bg-background fixed top-0 transition-all duration-800 ease-in-out overflow-x-hidden',
           locale === 'ar' ? 'right-0' : 'left-0',
           isExpanded ? 'w-60' : 'w-16'
         )}
@@ -40,14 +46,18 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
         <div className="flex flex-col h-full overflow-auto">
           {/* logo */}
           <div className={cn(
-            'flex shrink-0 items-center justify-center border-b border-gray-300 h-20 overflow-hidden', // Added overflow-hidden
+            'flex shrink-0 items-center justify-center border-b border-gray-300 h-20 overflow-hidden',
             isExpanded ? 'w-full' : 'w-16'
           )}>
-            {isExpanded ? <LogoSpinet locale={locale} /> : <Logo locale={locale} />}
+            {!isDark ? (
+              isExpanded ? <LogoSpinet locale={locale} parentDarkMode={false} /> : <Logo locale={locale} />
+            ) : (
+              isExpanded ? <LogoSpinet locale={locale} parentDarkMode={true} /> : <Logo locale={locale} />
+            )}
           </div>
 
           {/* navigation */}
-          <nav className={`flex flex-col ${isExpanded ? "items-center" : "items-start"} gap-4 px-2 py-4 flex-1 overflow-x-hidden`}> {/* Added overflow-x-hidden */}
+          <nav className={`flex flex-col ${isExpanded ? "items-center" : "items-start"} gap-4 px-2 py-4 flex-1 overflow-x-hidden`}>
             {navigation.map((item) => {
               const isActive = pathname.endsWith(item.to);
               return (
@@ -84,9 +94,6 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
               <LogOut size={20} />
             </Button>
           </div>
-
-
-          {/* footer */}
           <Button
             size="icon"
             variant="outline"
@@ -98,7 +105,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
         </div>
       </aside>
 
-      {/*mobile drawer*/}
+      {/* mobile drawer */}
       <Drawer>
         <DrawerTrigger asChild>
           <Button
@@ -127,7 +134,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
           <aside className="flex h-full flex-col overflow-auto">
             <nav className="flex flex-col items-center gap-4 px-2 pb-4">
               <div className="flex h-20 w-full shrink-0 items-center justify-center border-b border-gray-300">
-                <LogoSpinet locale={locale} />
+                {isDark ? <LogoSpinet locale={locale} parentDarkMode={true} /> : <LogoSpinet locale={locale} parentDarkMode={false} />}
               </div>
               {navigation.map((item) => {
                 const isActive = pathname.endsWith(item.to);
@@ -154,6 +161,15 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                 );
               })}
             </nav>
+            <div className={`flex flex-col gap-2 justify-between ms-3 ${!isExpanded && "hidden"}`}>
+              <ThemeSwitch locale={locale} />
+              <div className="w-fit">
+                <ChangeLanguage locale={locale} />
+              </div>
+              <Button variant="destructive" size="icon" onClick={logout}>
+                <LogOut size={20} />
+              </Button>
+            </div>
           </aside>
         </DrawerContent>
       </Drawer>
