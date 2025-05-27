@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { signOut, refreshToken } from "@/lib/api/auth";
+import { getUserFromCookie } from "@/utils/cookie";
 
 export interface User {
     _id: string;
@@ -56,35 +57,34 @@ const defaultContextValue: AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>(defaultContextValue);
 
-// Efficient cookie parsing with caching
-function getUserFromCookie(): User | null {
-    const cookieCache = (getUserFromCookie as any).cache;
-    if (cookieCache) return cookieCache;
+// function getUserFromCookie(): User | null {
+//     const cookieCache = (getUserFromCookie as any).cache;
+//     if (cookieCache) return cookieCache;
 
-    const cookie = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("current-user="));
-    if (!cookie) return null;
+//     const cookie = document.cookie
+//         .split("; ")
+//         .find((row) => row.startsWith("current-user="));
+//     if (!cookie) return null;
 
-    try {
-        const json = decodeURIComponent(cookie.split("=")[1]);
-        const user = JSON.parse(json);
-        (getUserFromCookie as any).cache = user;
-        return user;
-    } catch (err) {
-        console.error("Error parsing current-user cookie:", err);
-        return null;
-    }
-}
+//     try {
+//         const json = decodeURIComponent(cookie.split("=")[1]);
+//         const user = JSON.parse(json);
+//         (getUserFromCookie as any).cache = user;
+//         return user;
+//     } catch (err) {
+//         console.error("Error parsing current-user cookie:", err);
+//         return null;
+//     }
+// }
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
-    const localeRef = useRef<string>("en"); // Cache locale
+    const localeRef = useRef<string>("en"); // cache locale
 
-    // Compute locale only when pathname changes
+    // compute locale when pathname changes
     useEffect(() => {
         const supportedLocales = ["fr", "ar", "en"];
         const parts = pathname?.split("/") || [];
@@ -94,18 +94,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             : "en";
     }, [pathname]);
 
-    // Hydrate user from cookie
+    // hydrate user from cookie
     useEffect(() => {
         const userFromCookie = getUserFromCookie();
         setUser(userFromCookie);
         setIsLoading(false);
-        // Clear cache on unmount to ensure fresh cookie read on next load
+        // clear cache on unmount to ensure fresh cookie read on next load
         return () => {
             (getUserFromCookie as any).cache = null;
         };
     }, []);
 
-    // Stable login function
     const login = useCallback((userData: User) => {
         setUser(userData);
         document.cookie = `current-user=${encodeURIComponent(
@@ -115,7 +114,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push(`/${localeRef.current}`);
     }, [router]);
 
-    // Stable logout function
     const logout = useCallback(async () => {
         setUser(null);
         document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
@@ -129,7 +127,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [router]);
 
-    // Stable refresh token function
     const refreshUserToken = useCallback(async (): Promise<boolean> => {
         try {
             const result = await refreshToken();
@@ -144,18 +141,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [logout]);
 
-    // Token refresh on focus or navigation
+    // ttoken refresh on focus or navigation
     useEffect(() => {
         if (!user) return;
 
         const handleFocus = () => refreshUserToken();
         window.addEventListener("focus", handleFocus);
 
-        // Refresh on navigation (optional, depending on needs)
+        // refresh on navigation (optional, depending on needs)
         const handleRouteChange = () => refreshUserToken();
 
-        // Fallback interval for long sessions (e.g., 1 hour)
-        const refreshInterval = setInterval(refreshUserToken, 60 * 60 * 1000);
+        // fallback interval for long sessions 23hrs
+        const refreshInterval = setInterval(refreshUserToken, 23 * 60 * 60 * 1000);
 
         return () => {
             window.removeEventListener("focus", handleFocus);
@@ -165,7 +162,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const isAuthenticated = !!user;
 
-    // Memoized context value with stable function references
+    // memoized context value
     const contextValue = useMemo(
         () => ({
             user,
