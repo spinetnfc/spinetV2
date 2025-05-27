@@ -25,11 +25,7 @@ const Layout = ({
     { name: 'Offers', to: `/app/offers`, icon: Package },
     { name: 'Leads', to: `/app/leads`, icon: Target },
     { name: 'Redirections', to: `/app/redirections`, icon: ArrowRightLeft },
-    {
-      name: 'Users',
-      to: `/app/users`,
-      icon: User,
-    },
+    { name: 'Users', to: `/app/users`, icon: User },
     { name: 'Groups', to: `/app/groups`, icon: Users },
     { name: 'Settings', to: `/app/settings`, icon: Settings },
   ].filter(Boolean) as SideNavigationItem[];
@@ -40,12 +36,12 @@ const Layout = ({
       <div
         className={cn(
           "flex w-full flex-col transition-all duration-800 ease-in-out",
-          "sm:gap-4 sm:py-4",
+          "sm:gap-4",
           isExpanded ? "sm:ps-60" : "sm:ps-16"
         )}
       >
-        <Header locale={locale} />
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+        {/* <Header locale={locale} /> */}
+        <main className="grid flex-1 items-start gap-4 md:gap-8">
           {children}
         </main>
       </div>

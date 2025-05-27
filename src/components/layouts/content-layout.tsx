@@ -1,19 +1,29 @@
-import { ReactNode } from 'react';
+"use client"
+import enMessages from '@/lang/en.json';
+import arMessages from '@/lang/ar.json';
+import frMessages from '@/lang/fr.json';
+import { IntlProvider } from "react-intl";
+// import NavBar from '../pages/landing-page/hero-section/nav-bar';
+// import { useState } from 'react';
 
-type ContentLayoutProps = {
-  children: ReactNode;
-  title: string;
+const messagesMap = {
+  en: enMessages,
+  ar: arMessages,
+  fr: frMessages,
 };
 
-export const ContentLayout = ({ children, title }: ContentLayoutProps) => {
+interface ProfileLayoutProps {
+  children: React.ReactNode;
+  locale: string;
+}
+
+export default function ProfileLayout({ children, locale }: ProfileLayoutProps) {
+  const messages = messagesMap[locale as keyof typeof messagesMap];
+  // const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
-    <div className="py-6">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-        <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
-      </div>
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:px-8">
-        {children}
-      </div>
-    </div>
-  );
-};
+    <IntlProvider locale={locale} messages={messages}>
+      {/* <NavBar locale={locale} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} /> */}
+      {children}
+    </IntlProvider>
+  )
+}

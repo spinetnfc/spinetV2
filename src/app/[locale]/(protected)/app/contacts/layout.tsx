@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import PublicProfileLayout from "@/components/layouts/profile-layout"
+import ContentLayout from "@/components/layouts/content-layout"
 
 export const metadata: Metadata = {
     title: "Contacts",
@@ -15,8 +15,8 @@ export default async function ProfileLayout({
 }) {
     const { locale } = await params;
     return (
-        <PublicProfileLayout locale={locale}>
+        <ContentLayout locale={locale}>
             {children}
-        </PublicProfileLayout>
+        </ContentLayout>
     )
 } 
