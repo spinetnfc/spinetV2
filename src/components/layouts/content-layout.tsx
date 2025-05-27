@@ -10,12 +10,12 @@ const messagesMap = {
   fr: frMessages,
 };
 
-interface ProfileLayoutProps {
+interface ContentLayoutProps {
   children: React.ReactNode;
   locale: string;
 }
 
-export default function ContentLayout({ children, locale }: ProfileLayoutProps) {
+export default function ContentLayout({ children, locale }: ContentLayoutProps) {
   const messages = messagesMap[locale as keyof typeof messagesMap];
   return (
     <IntlProvider locale={locale} messages={messages}>
