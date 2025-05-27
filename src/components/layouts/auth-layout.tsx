@@ -52,7 +52,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
           : Array.isArray(localeParam)
             ? localeParam[0]
             : 'en';
-      router.push(`/${locale}`);
+      router.push(`/${locale}/app`);
     }
   }, [mounted, isAuthenticated, pathname, router, params.locale]);
 
