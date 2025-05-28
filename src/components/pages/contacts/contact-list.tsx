@@ -10,27 +10,26 @@ import { toast } from "sonner";
 import { useIntl } from "react-intl";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { removeContacts } from "@/actions/contacts";
+import { useAuth } from "@/context/authContext";
+import DeleteConfirmationModal from "@/components/delete-confirmation-modal";
 
 
 interface ContactListProps {
     filteredContacts: Contact[];
     themeColor: string;
-    removeContact: (contactId: string) => Promise<{ success: boolean; message: string }>;
-    removeContacts: (contacts: string[]) => Promise<{ success: boolean; message: string }>;
     locale: string;
-    onContactsDeleted?: (deletedContactIds: string[]) => void;
 }
 
 export default function ContactList({
     filteredContacts,
     themeColor,
-    removeContact,
-    removeContacts,
     locale,
-    onContactsDeleted
 }: ContactListProps) {
+    const profileId = useAuth().user.selectedProfile;
     const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [localContacts, setLocalContacts] = useState<Contact[]>(filteredContacts);
     const intl = useIntl();
 
@@ -50,18 +49,19 @@ export default function ContactList({
             setSelectedContacts([]);
         }
     };
-
+    const handleDelete = (contactId: string) => {
+        setLocalContacts(prev => prev.filter(contact => contact._id !== contactId));
+    }
     const handleBulkDelete = async () => {
         try {
             setIsDeleting(true);
-            const response = await removeContacts(selectedContacts);
+            const response = await removeContacts(profileId, selectedContacts);
             if (response.success) {
                 // Update local state to remove deleted contacts
                 setLocalContacts(prev => prev.filter(contact => !selectedContacts.includes(contact._id)));
                 // Clear selection
                 setSelectedContacts([]);
                 // Notify parent component
-                onContactsDeleted?.(selectedContacts);
                 toast.success(intl.formatMessage({ id: "Contacts deleted successfully" }));
             } else {
                 throw new Error(response.message);
@@ -71,15 +71,26 @@ export default function ContactList({
             toast.error(intl.formatMessage({ id: "Failed to delete contact. Please try again." }));
         } finally {
             setIsDeleting(false);
+            setShowDeleteModal(false);
         }
     };
 
     return (
         <div className="relative">
+            {showDeleteModal && (
+                <DeleteConfirmationModal
+                    isOpen={showDeleteModal}
+                    onClose={() => setShowDeleteModal(false)}
+                    onConfirm={handleBulkDelete}
+                    itemName={"contacts"}
+                    isDeleting={isDeleting}
+                    message="delete-contacts-message"
+                />
+            )}
             {/* Bulk Delete Button */}
             {selectedContacts.length > 0 && (
                 <Button
-                    onClick={handleBulkDelete}
+                    onClick={() => setShowDeleteModal(true)}
                     className="fixed bottom-4 end-4 z-100 flex items-center gap-2"
                     variant="destructive"
                     disabled={isDeleting}
@@ -130,8 +141,8 @@ export default function ContactList({
                                 <ContactItem
                                     contact={contact}
                                     themeColor={themeColor}
-                                    removeContact={removeContact}
                                     locale={locale}
+                                    onDelete={handleDelete}
                                 />
                             </div>
                         </div>

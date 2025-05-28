@@ -85,35 +85,6 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
     const themeColor = profileData?.theme?.color || "#3b82f6"; // Default to blue
 
 
-    const removeContact = async (contactId: string) => {
-        "use server"
-        if (!profileId) {
-            return { success: false, message: "Profile ID is missing" };
-        }
-        try {
-            console.log("Removing contact:", contactId)
-            const response = await deleteContact(profileId, contactId)
-            return { success: true, message: response.message }
-        } catch (error) {
-            console.error("Error removing contact:", error)
-            return { success: false, message: "Error removing contact" }
-        }
-    }
-
-    const removeContacts = async (contacts: string[]) => {
-        "use server"
-        if (!profileId) {
-            return { success: false, message: "Profile ID is missing" };
-        }
-        try {
-            console.log("Removing multiple contacts")
-            const response = await deleteContacts(profileId, contacts)
-            return { success: true, message: response.message }
-        } catch (error) {
-            console.error("Error removing contact:", error)
-            return { success: false, message: "Error removing contact" }
-        }
-    }
 
     return (
         <div className="min-h-screen py-16">
@@ -133,8 +104,6 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
             <ContactList
                 filteredContacts={filteredContacts}
                 themeColor={themeColor}
-                removeContact={removeContact}
-                removeContacts={removeContacts}
                 locale={locale}
             />
         </div>

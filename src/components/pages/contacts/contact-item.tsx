@@ -4,23 +4,24 @@ import { Edit, MoreVertical, Trash2 } from "lucide-react";
 import ContactAvatar from "./contact-avatar";
 import type { Contact, ContactInput } from "@/types/contact";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import EditContactForm from "./edit-contact-form";
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal";
 import { toast } from "sonner";
 import { FormattedMessage, useIntl } from "react-intl";
-import { getUserFromCookie } from "@/utils/cookie";
 import Link from "next/link";
+import { useAuth } from "@/context/authContext";
+import { removeContact } from "@/actions/contacts";
 
 type ContactItemProps = {
     contact: Contact;
     themeColor: string;
-    removeContact: (contactId: string) => Promise<{ success: boolean; message: string }>;
     locale: string;
+    onDelete: (contactId: string) => void;
 };
 
-export default function ContactItem({ contact, themeColor, removeContact, locale }: ContactItemProps) {
-    const [profileId, setProfileId] = useState<string | null>(null);
+export default function ContactItem({ contact, themeColor, locale, onDelete }: ContactItemProps) {
+    const profileId = useAuth().user.selectedProfile;
     const [showEditForm, setShowEditForm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -32,10 +33,6 @@ export default function ContactItem({ contact, themeColor, removeContact, locale
     const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : "";
     const hasPositionOrCompany = position !== "" || companyName !== "";
 
-    useEffect(() => {
-        const user = getUserFromCookie();
-        setProfileId(user?.selectedProfile ?? null);
-    }, []);
     const handleEditSuccess = () => {
         setShowEditForm(false);
         toast.success(intl.formatMessage({ id: "Contact updated successfully" }));
@@ -49,7 +46,7 @@ export default function ContactItem({ contact, themeColor, removeContact, locale
     const handleDeleteConfirm = async () => {
         try {
             setIsDeleting(true);
-            const response = await removeContact(contactId);
+            const response = await removeContact(profileId, contactId);
             if (response.success) {
                 toast.success(intl.formatMessage({ id: "Contact deleted successfully" }));
             } else {
@@ -61,6 +58,7 @@ export default function ContactItem({ contact, themeColor, removeContact, locale
         } finally {
             setIsDeleting(false);
             setShowDeleteModal(false);
+            onDelete(contactId);
         }
     };
 

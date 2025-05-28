@@ -23,6 +23,7 @@
   "delete-link-message": "Êtes-vous sûr de vouloir supprimer ce lien ? Cette action ne peut pas être annulée.",
   "delete-service-message": "Êtes-vous sûr de vouloir supprimer ce service ? Cette action ne peut pas être annulée.",
   "delete-contact-message": "Êtes-vous sûr de vouloir supprimer ce contact ? Cette action ne peut pas être annulée.",
+  "delete-contacts-message": "Êtes-vous sûr de vouloir supprimer ces contacts ? Cette action ne peut pas être annulée.",
   "deleting": "Suppression...",
   "url": "Lien",
   "edit": "Modifier",
