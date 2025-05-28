@@ -12,6 +12,25 @@ interface ProfileFormValues {
     position: string;
 }
 
+export async function updatePreferencesAction(profileId: string, themeColor: string) {
+    try {
+        // Format data for API
+        const data = {
+            theme: { color: themeColor },
+        };
+
+        await updateProfile(profileId, data);
+
+        return { success: true };
+    } catch (error: any) {
+        console.error('Server updatePreferencesAction error:', error);
+        return {
+            success: false,
+            message: error?.message || 'Failed to update preferences',
+        };
+    }
+}
+
 export async function updateProfileAction(profileId: string, data: ProfileFormValues) {
     try {
         const formattedData = {
