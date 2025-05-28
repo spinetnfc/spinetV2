@@ -60,11 +60,9 @@ type LinkType = {
 };
 
 interface EditContactFormProps {
-    // profileId: string | null;
     contact: Contact;
     onSuccess: () => void;
     onCancel: () => void;
-    // editContact: (contactId: string, contact: ContactInput) => Promise<{ success: boolean; message: string }>;
 }
 
 export default function EditContactForm({

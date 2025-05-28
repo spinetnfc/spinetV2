@@ -9,16 +9,18 @@ import { QrCode, Upload } from 'lucide-react';
 import QrScanner from 'qr-scanner';
 import { ProfileData } from '@/types/profile';
 import { getUserFromCookie } from '@/utils/cookie';
+import { useAuth } from '@/context/authContext';
+import { createContact } from '@/actions/contacts';
 
 interface ScanContactProps {
     themeColor: string;
     locale: string;
     getProfileData: (profileId: string, userId: string) => Promise<ProfileData | null>;
-    createContact: (contact: FormData) => Promise<{ success: boolean; message: any; }>;
 }
 
-export default function ScanContact({ themeColor, locale, getProfileData, createContact }: ScanContactProps) {
+export default function ScanContact({ themeColor, locale, getProfileData }: ScanContactProps) {
     const intl = useIntl();
+    const profileId = useAuth().user.selectedProfile;;
     const user = getUserFromCookie();
     const [isScanning, setIsScanning] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -65,11 +67,11 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
                     const pathSegments = url.pathname.split('/').filter(segment => segment);
 
                     // Check if the URL follows the expected format (e.g., /public-profile/profileLink)
-                    if (pathSegments.length < 2 || pathSegments[1] !== 'public-profile') {
+                    if (pathSegments.length < 1 || pathSegments[0] !== 'public-profile') {
                         throw new Error(`Invalid URL format. Expected /public-profile/<profileLink> ${url}`);
                     }
 
-                    const profileLink = pathSegments[2];
+                    const profileLink = pathSegments[1];
                     if (!profileLink) {
                         throw new Error('Profile link is missing');
                     }
@@ -112,7 +114,7 @@ export default function ScanContact({ themeColor, locale, getProfileData, create
                         links: formLinks,
                     });
 
-                    const result = await createContact(formData);
+                    const result = await createContact(profileId, formData);
                     if (result.success) {
                         toast.success(intl.formatMessage(
                             { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },

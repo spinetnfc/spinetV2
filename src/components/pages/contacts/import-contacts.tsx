@@ -7,6 +7,8 @@ import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { Upload, Smartphone, User, Check } from 'lucide-react';
+import { useAuth } from '@/context/authContext';
+import { createContact } from '@/actions/contacts';
 
 // Custom TypeScript declarations for Web Contacts API
 interface ContactProperties {
@@ -67,13 +69,13 @@ interface Contact {
 }
 
 interface ImportContactsProps {
-    createContact: (formData: FormData) => Promise<{ success: boolean; message: string }>;
     themeColor: string;
     locale: string;
 }
 
-export default function ImportContacts({ createContact, themeColor, locale }: ImportContactsProps) {
+export default function ImportContacts({ themeColor, locale }: ImportContactsProps) {
     const intl = useIntl();
+    const profileId = useAuth().user.selectedProfile;
     const [importSource, setImportSource] = useState<'phone' | 'google' | 'file' | null>(null);
     const [isImporting, setIsImporting] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
@@ -211,7 +213,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                 ]));
 
                 try {
-                    const result = await createContact(formData);
+                    const result = await createContact(profileId, formData);
                     if (result.success) {
                         toast.success(intl.formatMessage(
                             { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
@@ -340,7 +342,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
             ]));
 
             try {
-                const result = await createContact(formData);
+                const result = await createContact(profileId, formData);
                 if (result.success) {
                     toast.success(intl.formatMessage(
                         { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
@@ -455,7 +457,7 @@ export default function ImportContacts({ createContact, themeColor, locale }: Im
                     ]));
 
                     try {
-                        const result = await createContact(formData);
+                        const result = await createContact(profileId, formData);
                         if (result.success) {
                             toast.success(intl.formatMessage(
                                 { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },

@@ -26,6 +26,8 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
+import { createContact } from "@/actions/contacts";
+import { useAuth } from "@/context/authContext";
 
 // Define the contact schema with Zod
 const contactSchema = z.object({
@@ -56,13 +58,13 @@ type LinkType = {
 };
 
 interface AddContactFormProps {
-    createContact: (formData: FormData) => Promise<any>;
     themeColor: string;
     locale: string;
 }
 
-export default function AddContactForm({ createContact, themeColor, locale }: AddContactFormProps) {
+export default function AddContactForm({ themeColor, locale }: AddContactFormProps) {
     const intl = useIntl();
+    const profileId = useAuth().user.selectedProfile;;
     const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,7 +152,7 @@ export default function AddContactForm({ createContact, themeColor, locale }: Ad
             });
 
             // Submit the form
-            const result = await createContact(formData);
+            const result = await createContact(profileId, formData);
 
             if (result?.success) {
                 toast.success(intl.formatMessage({ id: "Contact added successfully" }));
