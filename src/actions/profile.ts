@@ -2,6 +2,7 @@
 
 import { format } from 'date-fns';
 import { updateProfile } from '@/lib/api/profile';
+import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';
 
 interface ProfileFormValues {
     fullName: string;
@@ -44,5 +45,25 @@ export async function updateProfileAction(profileId: string, data: ProfileFormVa
     } catch (error) {
         console.error('[Server Action] Failed to update profile:', error);
         return { success: false, message: 'Failed to update profile' };
+    }
+}
+
+export async function requestEmailChangeAction(userId: string, oldEmail: string, newEmail: string) {
+    try {
+        const response = await requestEmailChange(userId, oldEmail, newEmail);
+        return { success: true, data: response };
+    } catch (error) {
+        console.error('Error in requestEmailChangeAction:', error);
+        return { success: false, error: 'Failed to request email change.' };
+    }
+}
+
+export async function verifyEmailChangeOTPAction(userId: string, sessionId: string, otp: string) {
+    try {
+        const response = await verifyEmailChangeOTP(userId, sessionId, otp);
+        return { success: true, data: response };
+    } catch (error) {
+        console.error('Error in verifyEmailChangeOTPAction:', error);
+        return { success: false, error: 'Failed to verify OTP.' };
     }
 }

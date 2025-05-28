@@ -20,7 +20,7 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';
+import { requestEmailChangeAction, verifyEmailChangeOTPAction } from '@/actions/profile';
 import { toast } from 'sonner';
 import { Shield } from 'lucide-react';
 import { User } from '@/types/user';
@@ -59,10 +59,10 @@ export default function ChangeEmailForm({ user }: { user: User }) {
         try {
             setIsSubmitting(true);
             console.log('Requesting email change:', { userId: user._id, oldEmail: user.email, newEmail: data.email });
-            const response = await requestEmailChange(user._id, user.email, data.email);
-            console.log('Email change response:', response);
+            const response = await requestEmailChangeAction(user._id, user.email, data.email);
+            if (!response.success) throw new Error(response.error);
+            const receivedSessionID = response.data.restSessionId || response.data.restSessionID;
 
-            const receivedSessionID = response.restSessionId || response.restSessionID;
             if (!receivedSessionID) {
                 throw new Error('No sessionID received from API');
             }
@@ -89,7 +89,8 @@ export default function ChangeEmailForm({ user }: { user: User }) {
         try {
             setIsSubmitting(true);
             console.log('Verifying OTP:', { userId: user._id, sessionID, otp: data.otp });
-            const response = await verifyEmailChangeOTP(user._id, sessionID, data.otp);
+            const response = await verifyEmailChangeOTPAction(user._id, sessionID, data.otp);
+            if (!response.success) throw new Error(response.error);
             console.log('OTP verification response:', response);
 
             // Update current-user cookie with new email
@@ -130,10 +131,11 @@ export default function ChangeEmailForm({ user }: { user: User }) {
 
         try {
             console.log('Resending OTP:', { userId: user._id, oldEmail: user.email, newEmail });
-            const response = await requestEmailChange(user._id, user.email, newEmail);
-            console.log('Resend OTP response:', response);
+            const response = await requestEmailChangeAction(user._id, user.email, newEmail);
+            if (!response.success) throw new Error(response.error);
 
-            const receivedSessionID = response.restSessionId || response.restSessionID;
+            const receivedSessionID = response.data.restSessionId || response.data.restSessionID;
+
             if (!receivedSessionID) {
                 throw new Error('No sessionID received from API');
             }
