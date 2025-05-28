@@ -1,3 +1,4 @@
+"use server";
 import { deleteContact, deleteContacts, updateContact } from "@/lib/api/contacts";
 import { ContactInput } from "@/types/contact";
 

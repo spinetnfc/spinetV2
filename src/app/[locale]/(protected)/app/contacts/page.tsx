@@ -84,20 +84,6 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
         : "/img/user.png";
     const themeColor = profileData?.theme?.color || "#3b82f6"; // Default to blue
 
-    const editContact = async (contactId: string, updatedContact: ContactInput) => {
-        "use server"
-        if (!profileId) {
-            return { success: false, message: "Profile ID is missing" };
-        }
-        try {
-            console.log("Updating contact:", contactId)
-            const response = await updateContact(profileId, contactId, updatedContact)
-            return { success: true, message: response.message }
-        } catch (error) {
-            console.error("Error updating contact:", error)
-            return { success: false, message: "Error updating contact" }
-        }
-    }
 
     const removeContact = async (contactId: string) => {
         "use server"
@@ -148,7 +134,6 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
                 filteredContacts={filteredContacts}
                 themeColor={themeColor}
                 removeContact={removeContact}
-                editContact={editContact}
                 removeContacts={removeContacts}
                 locale={locale}
             />

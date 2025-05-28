@@ -12,33 +12,35 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import { signOut, refreshToken } from "@/lib/api/auth";
 import { getUserFromCookie } from "@/utils/cookie";
+import type { User } from "@/types/user";
 
-export interface User {
-    _id: string;
-    email: string;
-    fullName: string;
-    firstName: string;
-    lastName: string;
-    birthDate: string;
-    gender: string;
-    companyName: string;
-    activitySector: string;
-    position: string;
-    phoneNumber: string;
-    website: string;
-    language: string;
-    theme: { color: string };
-    Pro: { company: boolean; freeTrail: boolean };
-    createdAt: string;
-    selectedProfile: string;
+// Define a default user to avoid null
+const defaultUser: User = {
+    _id: "",
+    email: "",
+    fullName: "",
+    firstName: "",
+    lastName: "",
+    birthDate: "",
+    gender: "",
+    companyName: "",
+    activitySector: "",
+    position: "",
+    phoneNumber: "",
+    website: "",
+    language: "",
+    theme: { color: "" },
+    Pro: { company: true, freeTrail: true },
+    createdAt: "",
+    selectedProfile: "",
     tokens: {
-        fileApiToken: string;
-        fileApiRefreshToken: string;
-    };
-}
+        fileApiToken: "",
+        fileApiRefreshToken: ""
+    }
+};
 
 interface AuthContextType {
-    user: User | null;
+    user: User;
     login: (user: User) => void;
     logout: () => void;
     isAuthenticated: boolean;
@@ -47,7 +49,7 @@ interface AuthContextType {
 }
 
 const defaultContextValue: AuthContextType = {
-    user: null,
+    user: defaultUser,
     login: () => { },
     logout: () => { },
     isAuthenticated: false,
@@ -58,13 +60,13 @@ const defaultContextValue: AuthContextType = {
 const AuthContext = createContext<AuthContextType>(defaultContextValue);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User>(defaultUser);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
-    const localeRef = useRef<string>("en"); // cache locale
+    const localeRef = useRef<string>("en");
 
-    // compute locale when pathname changes
+    // Compute locale when pathname changes
     useEffect(() => {
         const supportedLocales = ["fr", "ar", "en"];
         const parts = pathname?.split("/") || [];
@@ -74,12 +76,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             : "en";
     }, [pathname]);
 
-    // hydrate user from cookie
+    // Hydrate user from cookie and logout if null/undefined
     useEffect(() => {
         const userFromCookie = getUserFromCookie();
-        setUser(userFromCookie);
-        setIsLoading(false);
-        // clear cache on unmount to ensure fresh cookie read on next load
+        if (!userFromCookie) {
+            logout(); // Trigger logout if no valid user
+        } else {
+            setUser(userFromCookie);
+            setIsLoading(false);
+        }
+        // Clear cache on unmount
         return () => {
             (getUserFromCookie as any).cache = null;
         };
@@ -90,16 +96,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         document.cookie = `current-user=${encodeURIComponent(
             JSON.stringify(userData)
         )}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-        (getUserFromCookie as any).cache = userData; // Update cache
+        (getUserFromCookie as any).cache = userData;
         router.push(`/${localeRef.current}`);
     }, [router]);
 
     const logout = useCallback(async () => {
-        setUser(null);
+        setUser(defaultUser); // Set to defaultUser instead of null
         document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
         document.cookie = `fileApiToken=; path=/; max-age=0; SameSite=Lax`;
         document.cookie = `fileApiRefreshToken=; path=/; max-age=0; SameSite=Lax`;
-        (getUserFromCookie as any).cache = null; // Clear cache
+        (getUserFromCookie as any).cache = null;
         try {
             await signOut();
         } finally {
@@ -121,17 +127,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [logout]);
 
-    // ttoken refresh on focus or navigation
+    // Token refresh on focus or navigation
     useEffect(() => {
-        if (!user) return;
+        if (user._id === "") return; // Skip if default user (not authenticated)
 
         const handleFocus = () => refreshUserToken();
         window.addEventListener("focus", handleFocus);
 
-        // refresh on navigation (optional, depending on needs)
-        const handleRouteChange = () => refreshUserToken();
-
-        // fallback interval for long sessions 23hrs
         const refreshInterval = setInterval(refreshUserToken, 23 * 60 * 60 * 1000);
 
         return () => {
@@ -140,9 +142,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, [user, refreshUserToken]);
 
-    const isAuthenticated = !!user;
+    const isAuthenticated = user._id !== ""; // Check if not default user
 
-    // memoized context value
     const contextValue = useMemo(
         () => ({
             user,

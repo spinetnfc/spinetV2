@@ -17,7 +17,6 @@ interface ContactListProps {
     themeColor: string;
     removeContact: (contactId: string) => Promise<{ success: boolean; message: string }>;
     removeContacts: (contacts: string[]) => Promise<{ success: boolean; message: string }>;
-    editContact: (contactId: string, updatedContact: ContactInput) => Promise<{ success: boolean; message: string }>;
     locale: string;
     onContactsDeleted?: (deletedContactIds: string[]) => void;
 }
@@ -27,7 +26,6 @@ export default function ContactList({
     themeColor,
     removeContact,
     removeContacts,
-    editContact,
     locale,
     onContactsDeleted
 }: ContactListProps) {
@@ -133,7 +131,6 @@ export default function ContactList({
                                     contact={contact}
                                     themeColor={themeColor}
                                     removeContact={removeContact}
-                                    editContact={editContact}
                                     locale={locale}
                                 />
                             </div>

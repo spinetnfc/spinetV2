@@ -26,6 +26,8 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import type { Contact, ContactInput } from "@/types/contact";
+import { editContact } from "@/actions/contacts"
+import { useAuth } from "@/context/authContext";
 
 // Define the contact schema with Zod
 const contactSchema = z.object({
@@ -58,20 +60,22 @@ type LinkType = {
 };
 
 interface EditContactFormProps {
-    profileId: string | null;
+    // profileId: string | null;
     contact: Contact;
     onSuccess: () => void;
     onCancel: () => void;
-    editContact: (contactId: string, contact: ContactInput) => Promise<{ success: boolean; message: string }>;
+    // editContact: (contactId: string, contact: ContactInput) => Promise<{ success: boolean; message: string }>;
 }
 
 export default function EditContactForm({
-    profileId,
+    // profileId,
     contact,
     onSuccess,
     onCancel,
-    editContact,
+    // editContact,
 }: EditContactFormProps) {
+    const { user } = useAuth();
+    const profileId = user.selectedProfile;
     const intl = useIntl();
     const formRef = useRef<HTMLFormElement>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -191,7 +195,7 @@ export default function EditContactForm({
             // Log payload for debugging
             console.log("Edit contact payload:", JSON.stringify(editedContact, null, 2));
 
-            const result = await editContact(contact._id, editedContact);
+            const result = await editContact(profileId, contact._id, editedContact);
 
             if (result.success) {
                 toast.success(intl.formatMessage({ id: "Contact updated successfully" }));

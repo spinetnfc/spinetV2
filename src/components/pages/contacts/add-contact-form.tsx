@@ -159,7 +159,7 @@ export default function AddContactForm({ createContact, themeColor, locale }: Ad
                 setLinks([]);
                 setTagInput("");
                 setShowLinkForm(false);
-                router.push(`/${locale}/contacts`);
+                router.push(`/${locale}/app/contacts`);
             } else {
                 toast.error(intl.formatMessage({ id: "Failed to add contact" }));
             }

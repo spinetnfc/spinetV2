@@ -15,12 +15,11 @@ import Link from "next/link";
 type ContactItemProps = {
     contact: Contact;
     themeColor: string;
-    editContact: (contactId: string, contact: ContactInput) => Promise<{ success: boolean; message: string }>;
     removeContact: (contactId: string) => Promise<{ success: boolean; message: string }>;
     locale: string;
 };
 
-export default function ContactItem({ contact, themeColor, editContact, removeContact, locale }: ContactItemProps) {
+export default function ContactItem({ contact, themeColor, removeContact, locale }: ContactItemProps) {
     const [profileId, setProfileId] = useState<string | null>(null);
     const [showEditForm, setShowEditForm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -70,11 +69,9 @@ export default function ContactItem({ contact, themeColor, editContact, removeCo
             <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                 <div className="bg-background rounded-lg max-w-md w-full">
                     <EditContactForm
-                        profileId={profileId}
                         contact={contact}
                         onSuccess={handleEditSuccess}
                         onCancel={() => setShowEditForm(false)}
-                        editContact={editContact}
                     />
                 </div>
             </div>

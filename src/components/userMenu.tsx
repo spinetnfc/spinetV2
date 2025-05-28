@@ -21,11 +21,11 @@ const UserMenu = ({ locale }: { locale: string }) => {
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-            <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => router.push(`/${locale}/profile`)}>
+            <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => router.push(`/${locale}/app/profile`)}>
                 <FormattedMessage id="profile" defaultMessage="Profile" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => router.push(`/${locale}/contacts`)}>
+            <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => router.push(`/${locale}/app/contacts`)}>
                 <FormattedMessage id="contacts" defaultMessage="Contacts" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
