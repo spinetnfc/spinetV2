@@ -1,4 +1,4 @@
-import { api, ServerApi } from '@/lib/axios';
+import { ServerApi } from '@/lib/axios';
 import type { ProfileData } from '@/types/profile';
 import { withServerCookies } from '@/utils/withServerCookies';
 
@@ -34,8 +34,9 @@ export const getProfile = async (profileId: string | null): Promise<ProfileData>
 };
 
 export const updateProfile = async (userId: string, profileData: Partial<ProfileData>): Promise<ProfileData> => {
+    const headers = await withServerCookies();
     try {
-        const response = await api.patch(`/profile/${userId}`, profileData);
+        const response = await ServerApi.patch(`/profile/${userId}`, profileData, { headers });
         return response.data;
     } catch (error) {
         console.error('Profile update error:', error);

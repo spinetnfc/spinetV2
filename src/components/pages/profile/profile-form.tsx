@@ -1,14 +1,12 @@
-'use client'
+'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { FormattedMessage, useIntl } from 'react-intl';
 import * as z from 'zod';
-import { updateProfile } from '@/lib/api/profile';
-import type { ProfileData } from '@/types/profile';
-import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+
 import {
     Form,
     FormControl,
@@ -31,26 +29,26 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
-import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { toast } from "sonner";
 
-// Define the validation schema
+import { updateProfileAction } from '@/actions/profile';
+import { Button } from '../../ui/button';
+
+// Validation schema
 const profileSchema = z.object({
-    // Basic Information
     fullName: z.string().min(2, { message: 'First name is required' }),
     birthDate: z.date().optional(),
     gender: z.enum(['male', 'female', 'other']).optional(),
     companyName: z.string().min(1, { message: 'Company name is required' }),
     activitySector: z.string().min(1, { message: 'Activity sector is required' }),
-    position: z.string().min(1, { message: 'Position is required' })
+    position: z.string().min(1, { message: 'Position is required' }),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface ProfileFormProps {
-    profileData: ProfileData;
+    profileData: any; // You can keep your ProfileData type here
     profileId: string;
     sectionName: string;
     locale: string;
@@ -59,7 +57,7 @@ interface ProfileFormProps {
 export default function ProfileForm({ profileData, profileId, sectionName, locale }: ProfileFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const intl = useIntl();
-    // Initialize form with default values from profileData
+
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileSchema),
         defaultValues: {
@@ -72,22 +70,20 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
         },
     });
 
-    // Handle form submission
     const onSubmit = async (data: ProfileFormValues) => {
         setIsSubmitting(true);
         try {
-            // Convert data to match the API expectations
-            const formattedData = {
-                ...data,
-                birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
-            };
-            console.log('Submitting profile data:', formattedData);
-            await updateProfile(profileId, formattedData);
+            // Call server action (server-side formatting & API call)
+            const result = await updateProfileAction(profileId, data);
 
-            toast.success(intl.formatMessage({ id: "Profile updated successfully" }));
-        } catch (error: any) {
-            console.error('Profile update error:', error);
-            toast.error(intl.formatMessage({ id: "Failed to update profile. Please try again." }));
+            if (result.success) {
+                toast.success(intl.formatMessage({ id: 'Profile updated successfully' }));
+            } else {
+                toast.error(result.message || intl.formatMessage({ id: 'Failed to update profile. Please try again.' }));
+            }
+        } catch (error) {
+            console.error('Client error:', error);
+            toast.error(intl.formatMessage({ id: 'Something went wrong. Please try again.' }));
         } finally {
             setIsSubmitting(false);
         }
@@ -100,7 +96,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                     <div className="space-y-4">
                         <h2 className="text-lg font-semibold"><FormattedMessage id="basic-information" /></h2>
                         <div className="space-y-4">
-                            {/* First Name Field */}
                             <FormField
                                 control={form.control}
                                 name="fullName"
@@ -130,18 +125,14 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
-                                                        variant="outline"
+                                                        type="button"
                                                         className={cn(
                                                             'w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950',
                                                             !field.value && 'text-muted-foreground',
                                                         )}
                                                         disabled={profileData.lockedFeatures?.birthDate}
                                                     >
-                                                        {field.value ? (
-                                                            format(field.value, 'yyyy-MM-dd')
-                                                        ) : (
-                                                            <span>Pick a date</span>
-                                                        )}
+                                                        {field.value ? field.value.toISOString().slice(0, 10) : <span>Pick a date</span>}
                                                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                     </Button>
                                                 </FormControl>
@@ -151,7 +142,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                                     mode="single"
                                                     selected={field.value}
                                                     onSelect={field.onChange}
-                                                // disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                                                 />
                                             </PopoverContent>
                                         </Popover>
@@ -160,7 +150,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 )}
                             />
 
-                            {/* Gender Field */}
                             <FormField
                                 control={form.control}
                                 name="gender"
@@ -193,7 +182,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                     <div className="space-y-4">
                         <h2 className="text-lg font-semibold"><FormattedMessage id="professional-information" /></h2>
                         <div className="space-y-4">
-                            {/* Company Name Field */}
                             <FormField
                                 control={form.control}
                                 name="companyName"
@@ -213,7 +201,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 )}
                             />
 
-                            {/* Activity Sector Field */}
                             <FormField
                                 control={form.control}
                                 name="activitySector"
@@ -233,7 +220,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 )}
                             />
 
-                            {/* Position Field */}
                             <FormField
                                 control={form.control}
                                 name="position"
@@ -253,7 +239,6 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                 )}
                             />
 
-                            {/* Profile Type Field (Read-only) */}
                             <div>
                                 <FormLabel className="text-sm"><FormattedMessage id="profile-type" /></FormLabel>
                                 <Input
@@ -270,19 +255,19 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 btn btn-primary"
                     >
                         {isSubmitting ? (
                             <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                                <FormattedMessage id="saving" />
+                                <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full" />
+                                <span><FormattedMessage id="saving" /></span>
                             </>
                         ) : (
-                            <FormattedMessage id="save-changes" />
+                            <FormattedMessage id="save" />
                         )}
                     </Button>
                 </div>
             </form>
         </Form>
     );
-} 
+}

@@ -1,4 +1,4 @@
-import { api, ServerApi } from '@/lib/axios';
+import { ServerApi } from '@/lib/axios';
 import type { Contact, ContactInput } from '@/types/contact';
 import { withServerCookies } from '@/utils/withServerCookies';
 
@@ -92,7 +92,7 @@ export const deleteContacts = async (profileId: string, contacts: string[]): Pro
         if (contacts.length === 0) {
             throw new Error(`no contacts to delete`);
         }
-        const response = await ServerApi.post(`/profile/${profileId}/contacts/delete`, contacts,{ headers });
+        const response = await ServerApi.post(`/profile/${profileId}/contacts/delete`, contacts, { headers });
         console.log("Contacts deleted response received:", response.status);
 
         return response.data;
@@ -100,7 +100,7 @@ export const deleteContacts = async (profileId: string, contacts: string[]): Pro
         console.error('Error deleting contacts:', error);
         throw error;
     }
-        }
-    
+}
+
 
 
