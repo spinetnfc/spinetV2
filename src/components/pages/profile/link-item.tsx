@@ -4,7 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { Edit, Trash2, MoreVertical } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
-import { updateProfile } from "@/lib/api/profile"
+import { updateProfileAction } from "@/actions/profile"
 import type { ProfileData } from "@/types/profile"
 import Link from "next/link"
 import EditLinkForm from "./edit-link-form"
@@ -53,7 +53,7 @@ export default function LinkItem({ link, index, profileId, profileData, icon }: 
 
             const updatedLinks = profileData.links.filter((_, i) => i !== index)
 
-            await updateProfile(profileId, {
+            await updateProfileAction(profileId, {
                 links: updatedLinks,
             })
 

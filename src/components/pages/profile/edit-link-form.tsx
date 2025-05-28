@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { X } from "lucide-react"
-import { updateProfile } from "@/lib/api/profile"
+import { updateProfileAction } from "@/actions/profile"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
 
@@ -76,7 +76,7 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
             setIsSubmitting(true)
             const updatedLinks = [...existingLinks]
             updatedLinks[linkIndex] = editedLink
-            await updateProfile(profileId, { links: updatedLinks })
+            await updateProfileAction(profileId, { links: updatedLinks })
             onSuccess()
         } catch (error) {
             console.error("Error updating link:", error)
