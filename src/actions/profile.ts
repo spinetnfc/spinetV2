@@ -3,16 +3,33 @@
 import { format } from 'date-fns';
 import { updateProfile } from '@/lib/api/profile';
 import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';
+import { LinkType } from '@/types/profile';
 
 interface ProfileFormValues {
-    fullName: string;
+    fullName?: string;
     birthDate?: Date;
     gender?: 'male' | 'female' | 'other';
-    companyName: string;
-    activitySector: string;
-    position: string;
+    companyName?: string;
+    activitySector?: string;
+    position?: string;
+    links?: LinkType[];
 }
 
+export async function updateProfileAction(profileId: string, data: ProfileFormValues) {
+    try {
+        const formattedData = {
+            ...data,
+            birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
+        };
+
+        await updateProfile(profileId, formattedData);
+
+        return { success: true };
+    } catch (error) {
+        console.error('[Server Action] Failed to update profile:', error);
+        return { success: false, message: 'Failed to update profile' };
+    }
+}
 export async function updatePreferencesAction(profileId: string, themeColor: string) {
     try {
         // Format data for API
@@ -32,21 +49,6 @@ export async function updatePreferencesAction(profileId: string, themeColor: str
     }
 }
 
-export async function updateProfileAction(profileId: string, data: ProfileFormValues) {
-    try {
-        const formattedData = {
-            ...data,
-            birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
-        };
-
-        await updateProfile(profileId, formattedData);
-
-        return { success: true };
-    } catch (error) {
-        console.error('[Server Action] Failed to update profile:', error);
-        return { success: false, message: 'Failed to update profile' };
-    }
-}
 
 export async function requestEmailChangeAction(userId: string, oldEmail: string, newEmail: string) {
     try {

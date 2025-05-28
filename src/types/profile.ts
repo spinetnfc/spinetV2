@@ -38,3 +38,9 @@ export type ProfileData = {
         gender?: boolean;
     };
 }
+
+export type LinkType = {
+    name: string
+    title: string
+    link: string
+}
