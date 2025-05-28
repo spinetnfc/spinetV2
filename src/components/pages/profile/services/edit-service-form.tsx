@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { X } from "lucide-react"
 import { toast } from "sonner"
 import type { Service, ServiceInput } from "@/types/services"
-import { updateService } from "@/lib/api/services"
+import { updateServiceAction } from "@/actions/services"
 import { FormattedMessage, useIntl } from "react-intl"
 
 type EditServiceFormProps = {
@@ -43,7 +43,7 @@ export default function EditServiceForm({
 
         try {
             setIsSubmitting(true)
-            const respone = await updateService(profileId, service._id, editedService)
+            const respone = await updateServiceAction(profileId, service._id, editedService)
             console.log("Service updated response received:", respone)
             onSuccess()
         } catch (error) {

@@ -7,8 +7,7 @@ import { toast } from "sonner"
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
 import EditServiceForm from "./edit-service-form"
 import { Service } from "@/types/services"
-import { deleteService } from "@/lib/api/services"
-import { Form } from "react-hook-form"
+import { deleteServiceAction } from "@/actions/services"
 import { FormattedMessage, useIntl } from "react-intl"
 
 interface ServiceItemProps {
@@ -29,7 +28,7 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
     const handleDeleteConfirm = async () => {
         try {
             setIsDeleting(true)
-            const response = await deleteService(profileId, service._id)
+            const response = await deleteServiceAction(profileId, service._id)
             toast.success(intl.formatMessage({ id: "Service deleted successfully" }))
             window.location.reload()
         } catch (error) {

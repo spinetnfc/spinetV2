@@ -1,17 +1,16 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { X } from "lucide-react"
 import { toast } from "sonner"
-import { ServiceInput } from "@/types/services"
-import { addService } from "@/lib/api/services"
 import { FormattedMessage, useIntl } from "react-intl"
+import { ServiceInput } from "@/types/services"
+import { addServiceAction } from "@/actions/services"
 
 type AddServiceFormProps = {
     profileId: string
@@ -20,33 +19,32 @@ type AddServiceFormProps = {
 }
 
 export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddServiceFormProps) {
-    const { formatMessage } = useIntl();
+    const { formatMessage } = useIntl()
     const [newService, setNewService] = useState<ServiceInput>({
         name: "",
         description: "",
     })
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const intl = useIntl()
-    const handleSubmit = async (e: React.FormEvent) => {
+    const [isPending, startTransition] = useTransition()
+
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
         if (!newService.name || !newService.description) {
-            toast.error(intl.formatMessage({ id: "Please fill in all required fields" }))
+            toast.error(formatMessage({ id: "Please fill in all required fields" }))
             return
         }
 
-        try {
-            setIsSubmitting(true)
-            const response = await addService(profileId, newService)
-            console.log("Service added response received:", response)
-            toast.success(intl.formatMessage({ id: "Service added successfully" }))
-            onSuccess()
-        } catch (error) {
-            console.error("Error adding service:", error)
-            toast.error(intl.formatMessage({ id: "Failed to add service. Please try again." }))
-        } finally {
-            setIsSubmitting(false)
-        }
+        startTransition(async () => {
+            const result = await addServiceAction(profileId, newService)
+
+            if (result.success) {
+                toast.success(formatMessage({ id: "Service added successfully" }))
+                onSuccess()
+            } else {
+                toast.error(formatMessage({ id: "Failed to add service. Please try again." }))
+                console.error("addServiceAction failed:", result.error)
+            }
+        })
     }
 
     return (
@@ -66,7 +64,6 @@ export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddSe
                         value={newService.name}
                         onChange={(e) => setNewService({ ...newService, name: e.target.value })}
                         placeholder={formatMessage({ id: "e.g. Web Development", defaultMessage: "e.g. Web Development" })}
-
                     />
                 </div>
 
@@ -85,13 +82,9 @@ export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddSe
                     <Button type="button" variant="outline" onClick={onCancel}>
                         <FormattedMessage id="cancel" />
                     </Button>
-                    {isSubmitting ?
-                        <Button type="submit" disabled={isSubmitting}>
-                            <FormattedMessage id="saving" />
-                        </Button> : <Button type="submit" disabled={isSubmitting}>
-                            <FormattedMessage id="save" />
-                        </Button>
-                    }
+                    <Button type="submit" disabled={isPending}>
+                        <FormattedMessage id={isPending ? "saving" : "save"} />
+                    </Button>
                 </div>
             </form>
         </div>
