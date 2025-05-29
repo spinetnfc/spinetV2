@@ -59,9 +59,9 @@ export default function GoogleSignIn() {
             // Send to backend
             try {
                 const res = await fetch('https://api.spinet.app/auth/google', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userData),
+                    // body: JSON.stringify(userData),
                 });
                 const data: User = await res.json();
                 if (res.ok) {
@@ -86,10 +86,13 @@ export default function GoogleSignIn() {
             {user ? (
                 <div>
                     <p>Welcome, {user.fullName}</p>
-                    <button onClick={logout}>Sign Out</button>
+                    <button onClick={logout} className='bg-red-500 text-white px-4 py-2 rounded-md'>Sign Out</button>
                 </div>
             ) : (
-                <button onClick={() => login()}>Sign in with Google</button>
+                <div>
+                    <p className='text-center text-8xl font-bold text-red-600'>Please sign in with Google</p>
+                    <button onClick={() => login()}>Sign in with Google</button>
+                </div>
             )}
         </div>
     );
