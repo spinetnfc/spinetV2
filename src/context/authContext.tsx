@@ -76,11 +76,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             : "en";
     }, [pathname]);
 
-    // Hydrate user from cookie and logout if null/undefined
+    // Hydrate user from cookie and handle initial state
     useEffect(() => {
         const userFromCookie = getUserFromCookie();
         if (!userFromCookie) {
-            logout(); // Trigger logout if no valid user
+            // Just set the default user and loading state without redirecting
+            setUser(defaultUser);
+            setIsLoading(false);
         } else {
             setUser(userFromCookie);
             setIsLoading(false);
@@ -100,8 +102,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push(`/${localeRef.current}`);
     }, [router]);
 
-    const logout = useCallback(async () => {
-        setUser(defaultUser); // Set to defaultUser instead of null
+    const logout = useCallback(async (shouldRedirect: boolean = true) => {
+        setUser(defaultUser);
         document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
         document.cookie = `fileApiToken=; path=/; max-age=0; SameSite=Lax`;
         document.cookie = `fileApiRefreshToken=; path=/; max-age=0; SameSite=Lax`;
@@ -109,7 +111,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             await signOut();
         } finally {
-            router.push(`/${localeRef.current}/auth/login`);
+            if (shouldRedirect) {
+                router.push(`/${localeRef.current}/auth/login`);
+            }
         }
     }, [router]);
 

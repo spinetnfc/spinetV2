@@ -160,29 +160,32 @@ export async function middleware(request: NextRequest) {
 
   if (nextLocale) response.cookies.set('NEXT_LOCALE', nextLocale);
 
+  // Check if this is a public route before doing any auth checks
+  if (isPublicRoute(pathWithoutLocale)) {
+    return response;
+  }
+
   // Authentication logic - only apply to protected routes
-  if (!isPublic) {
-    const token = request.cookies.get('current-user')?.value;
+  const token = request.cookies.get('current-user')?.value;
 
-    if (!token) {
-      // Check if we have a refresh token and try to refresh
-      const refreshToken = request.cookies.get('fileApiRefreshToken')?.value;
+  if (!token) {
+    // Check if we have a refresh token and try to refresh
+    const refreshToken = request.cookies.get('fileApiRefreshToken')?.value;
 
-      if (refreshToken) {
-        // Attempt to refresh the token
-        const refreshed = await attemptTokenRefresh(request);
+    if (refreshToken) {
+      // Attempt to refresh the token
+      const refreshed = await attemptTokenRefresh(request);
 
-        if (refreshed) {
-          // If token refresh was successful, continue to the requested page
-          return response;
-        }
+      if (refreshed) {
+        // If token refresh was successful, continue to the requested page
+        return response;
       }
-
-      // If no refresh token or refresh failed, redirect to login
-      const localePart = nextLocale || defaultLocale;
-      const redirectUrl = new URL(`/${localePart}/auth/login`, request.url);
-      return NextResponse.redirect(redirectUrl);
     }
+
+    // If no refresh token or refresh failed, redirect to login
+    const localePart = nextLocale || defaultLocale;
+    const redirectUrl = new URL(`/${localePart}/auth/login`, request.url);
+    return NextResponse.redirect(redirectUrl);
   }
 
   return response;
