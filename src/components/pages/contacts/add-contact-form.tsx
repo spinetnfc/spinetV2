@@ -152,7 +152,7 @@ export default function AddContactForm({ themeColor, locale }: AddContactFormPro
             });
 
             // Submit the form
-            const result = await createContact(profileId, formData);
+            const result = await createContact(profileId, formData, "manual");
 
             if (result?.success) {
                 toast.success(intl.formatMessage({ id: "Contact added successfully" }));

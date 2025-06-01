@@ -114,7 +114,7 @@ export default function ScanContact({ themeColor, locale, getProfileData }: Scan
                         links: formLinks,
                     });
 
-                    const result = await createContact(profileId, formData);
+                    const result = await createContact(profileId, formData, "scan");
                     if (result.success) {
                         toast.success(intl.formatMessage(
                             { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },

@@ -48,7 +48,7 @@ export const removeContacts = async (profileId: string, contacts: string[]) => {
         return { success: false, message: "Error removing contact" }
     }
 }
-export const createContact = async (profileId: string, formData: FormData) => {
+export const createContact = async (profileId: string, formData: FormData, type: "manual" | "scan" | "exchange" | "spinet" | "phone" | undefined) => {
     "use server";
 
     if (!profileId) {
@@ -100,7 +100,7 @@ export const createContact = async (profileId: string, formData: FormData) => {
         const contactData: ContactInput = {
             name: fullName, // Derive from fullName
             description: notes || undefined,
-            type: "manual",
+            type: type || "manual", // Default to "manual" if not provided
             profile: {
                 fullName,
                 companyName: companyName || undefined,
