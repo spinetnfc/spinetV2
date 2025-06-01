@@ -213,7 +213,7 @@ export default function ImportContacts({ themeColor, locale }: ImportContactsPro
                 ]));
 
                 try {
-                    const result = await createContact(profileId, formData, "pho");
+                    const result = await createContact(profileId, formData, "phone");
                     if (result.success) {
                         toast.success(intl.formatMessage(
                             { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
