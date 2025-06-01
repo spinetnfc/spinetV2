@@ -45,7 +45,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
   const intl = useIntl();
   const [showPassword, setShowPassword] = useState(false);
   const { login: authLogin } = useAuth(); // Get login function from AuthContext
-  const [isSunbmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Initialize form with zod resolver
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -61,21 +61,18 @@ const LoginForm = ({ locale }: { locale: string }) => {
       setIsSubmitting(true);
       const response = await login(data);
       const user = response;
-      if (!user || typeof user !== 'object') {
+      if (!user || typeof user !== 'object' || !user._id || !user.tokens?.fileApiToken) {
         throw new Error('Invalid user response');
       }
-      // Save user to cookie — must stringify safely
-      document.cookie = `current-user=${encodeURIComponent(JSON.stringify(user))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-      document.cookie = `fileApiToken=${encodeURIComponent(JSON.stringify((user.tokens.fileApiToken)))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-      document.cookie = `fileApiRefreshToken=${encodeURIComponent(JSON.stringify(user.tokens.fileApiRefreshToken))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-
-      authLogin(user); // Call AuthContext login function
-      toast.success(intl.formatMessage({ id: "login successful" }));
+      authLogin(user); // Calls AuthContext login, which sets current-user cookie and cache
+      // Set token cookies directly (no JSON.stringify for strings)
+      // document.cookie = `fileApiToken=${encodeURIComponent(user.tokens.fileApiToken)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      // document.cookie = `fileApiRefreshToken=${encodeURIComponent(user.tokens.fileApiRefreshToken)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      toast.success(intl.formatMessage({ id: 'login successful' }));
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(intl.formatMessage({ id: "login failed" }));
-    }
-    finally {
+      toast.error(intl.formatMessage({ id: 'login failed' }));
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -159,9 +156,9 @@ const LoginForm = ({ locale }: { locale: string }) => {
           <Button
             type="submit"
             className="w-full"
-            disabled={isSunbmitting}
+            disabled={isSubmitting}
           >
-            {!isSunbmitting ? <FormattedMessage id="sign-in" /> : <>
+            {!isSubmitting ? <FormattedMessage id="sign-in" /> : <>
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
               <FormattedMessage id="signing-in" />
             </>}
