@@ -103,12 +103,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, [router]);
 
     const logout = useCallback(async (shouldRedirect: boolean = true) => {
-        setUser(defaultUser);
-        document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
-        // document.cookie = `fileApiToken=; path=/; max-age=0; SameSite=Lax`;
-        // document.cookie = `fileApiRefreshToken=; path=/; max-age=0; SameSite=Lax`;
-        (getUserFromCookie as any).cache = null;
         try {
+            setUser(defaultUser);
+            document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
+            // document.cookie = `fileApiToken=; path=/; max-age=0; SameSite=Lax`;
+            // document.cookie = `fileApiRefreshToken=; path=/; max-age=0; SameSite=Lax`;
+            (getUserFromCookie as any).cache = null;
             await signOut();
         } finally {
             if (shouldRedirect) {

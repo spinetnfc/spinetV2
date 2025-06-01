@@ -47,7 +47,9 @@ export default function FilterTabs({ themeColor }: FilterTabsProps) {
     const handleFilterChange = (filter: FilterType) => {
         const params = new URLSearchParams(searchParams)
 
-        if (filter === "all") {
+        if (currentFilter === filter) {
+            params.delete("filter")
+        } else if (filter === "all") {
             params.delete("filter")
         } else {
             params.set("filter", filter)
