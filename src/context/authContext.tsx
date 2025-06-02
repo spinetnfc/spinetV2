@@ -110,12 +110,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
         onSuccess: async (tokenResponse) => {
             try {
-                // Step 1: Get Google profile
+                // get Google profile
                 const { data: googleUser } = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
                     headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
                 });
 
-                // Step 2: Prepare user data
                 const userData = {
                     googleId: googleUser.sub,
                     email: googleUser.email || 'unknown@example.com',
@@ -123,10 +122,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     lastName: googleUser.family_name || 'sigma',
                 };
 
-                // Step 3: Send to backend using your `api` instance
                 const res = await api.post('/auth/signup', userData, { withCredentials: true });
 
-                // Step 4: Handle response
                 const data = res.data;
                 console.log('Full signup response:', data);
                 login(data);
@@ -145,8 +142,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             setUser(defaultUser);
             document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
-            // document.cookie = `fileApiToken=; path=/; max-age=0; SameSite=Lax`;
-            // document.cookie = `fileApiRefreshToken=; path=/; max-age=0; SameSite=Lax`;
             (getUserFromCookie as any).cache = null;
             await signOut();
         } finally {
@@ -170,9 +165,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [logout]);
 
-    // Token refresh on focus or navigation
+    // token refresh on focus or navigation
     useEffect(() => {
-        if (user._id === "") return; // Skip if default user (not authenticated)
+        if (user._id === "") return; // skip if default user (not authenticated)
 
         const handleFocus = () => refreshUserToken();
         window.addEventListener("focus", handleFocus);
@@ -185,7 +180,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, [user, refreshUserToken]);
 
-    const isAuthenticated = user._id !== ""; // Check if not default user
+    const isAuthenticated = user._id !== ""; // check if not default user
 
     const contextValue = useMemo(
         () => ({
