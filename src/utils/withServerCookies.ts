@@ -19,7 +19,7 @@ export const withServerCookies = async () => {
         const user = JSON.parse(decodeURIComponent(userCookie));
         if (user.googleId) {
             return {
-                Cookie: `spinet-session=${user.googleId}`,
+                Cookie: `googleId=${user.googleId}`,
             };
         }
     }

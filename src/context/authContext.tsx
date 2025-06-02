@@ -13,7 +13,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { signOut, refreshToken } from "@/lib/api/auth";
 import { getUserFromCookie } from "@/utils/cookie";
 import type { User } from "@/types/user";
-
+import { useGoogleLogin } from "@react-oauth/google";
+import { api } from "@/lib/axios";
+import axios from "axios";
 // Define a default user to avoid null
 const defaultUser: User = {
     _id: "",
@@ -42,6 +44,7 @@ const defaultUser: User = {
 interface AuthContextType {
     user: User;
     login: (user: User) => void;
+    googleLogin: () => void;
     logout: () => void;
     isAuthenticated: boolean;
     isLoading: boolean;
@@ -51,6 +54,7 @@ interface AuthContextType {
 const defaultContextValue: AuthContextType = {
     user: defaultUser,
     login: () => { },
+    googleLogin: () => { },
     logout: () => { },
     isAuthenticated: false,
     isLoading: true,
@@ -98,9 +102,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         document.cookie = `current-user=${encodeURIComponent(
             JSON.stringify(userData)
         )}; path=/; SameSite=Lax`; {/*max-age=${60 * 60 * 24 * 7};*/ }
+        if (userData.googleId) {
+            document.cookie = `googleId=${userData.googleId}; path=/; SameSite=Lax; Secure`;
+        }
         (getUserFromCookie as any).cache = userData;
         router.push(`/${localeRef.current}`);
     }, [router]);
+
+    const googleLogin = useGoogleLogin({
+        scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+        onSuccess: async (tokenResponse) => {
+            try {
+                // Step 1: Get Google profile
+                const { data: googleUser } = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
+
+                // Step 2: Prepare user data
+                const userData = {
+                    googleId: googleUser.sub,
+                    email: googleUser.email || 'unknown@example.com',
+                    firstName: googleUser.given_name || 'alpha',
+                    lastName: googleUser.family_name || 'sigma',
+                };
+
+                // Step 3: Send to backend using your `api` instance
+                const res = await api.post('/auth/signup', userData, { withCredentials: true });
+
+                // Step 4: Handle response
+                const data = res.data;
+                console.log('Full signup response:', data);
+                login(data);
+
+            } catch (error) {
+                console.error('Google login error:', error);
+            }
+        },
+        onError: (error: any) => {
+            console.error('Google login error:', error);
+        },
+    });
+
 
     const logout = useCallback(async (shouldRedirect: boolean = true) => {
         try {
@@ -152,6 +194,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         () => ({
             user,
             login,
+            googleLogin,
             logout,
             isAuthenticated,
             isLoading,

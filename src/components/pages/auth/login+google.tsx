@@ -1,12 +1,11 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Divide, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useIntl, FormattedMessage, IntlProvider } from 'react-intl';
 import * as z from 'zod';
-import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import FacebookIcon from '@/components/icons/facebook-icon';
 import GoogleIcon from '@/components/icons/google-icon';
 import { Button } from '@/components/ui/button';
@@ -70,7 +69,7 @@ export default function Login({ locale, messages }: Props) {
 const LoginForm = ({ locale }: { locale: string }) => {
     const intl = useIntl();
     const [showPassword, setShowPassword] = useState(false);
-    const { login: authLogin } = useAuth();
+    const { login: authLogin, googleLogin } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -103,52 +102,6 @@ const LoginForm = ({ locale }: { locale: string }) => {
             setIsSubmitting(false);
         }
     };
-
-    const handleGoogleLogin = useGoogleLogin({
-        scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
-        onSuccess: async (tokenResponse) => {
-            try {
-                setIsSubmitting(true);
-                const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-                });
-                if (!response.ok) throw new Error(`Google API error: ${response.statusText}`);
-                const googleUser = await response.json();
-
-                const userData = {
-                    googleId: googleUser.sub,
-                    email: googleUser.email || 'unknown@example.com',
-                    firstName: googleUser.given_name || 'alpha',
-                    lastName: googleUser.family_name || 'sigma',
-                };
-
-                const res = await fetch('https://api.spinet.app/auth/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userData),
-                });
-                if (!res.ok) {
-                    console.error('Backend response:', await res.text());
-                    throw new Error(`Backend error: ${res.statusText}`);
-                }
-                const data = await res.json();
-                console.log('Full signup response:', data);
-
-                document.cookie = `current-user=${encodeURIComponent(JSON.stringify(data))}; path=/; SameSite=Lax`;
-                toast.success(intl.formatMessage({ id: 'login successful' }));
-            } catch (error) {
-                console.error('Google login error:', error);
-                toast.error(intl.formatMessage({ id: 'login failed' }));
-            } finally {
-                setIsSubmitting(false);
-            }
-        },
-        onError: (error) => {
-            console.error('Google login error:', error);
-            toast.error(intl.formatMessage({ id: 'login failed' }));
-            setIsSubmitting(false);
-        },
-    });
 
     return (
         <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
@@ -240,7 +193,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         <Button
                             variant="outline"
                             type="button"
-                            onClick={() => handleGoogleLogin()}
+                            onClick={() => googleLogin()}
                             disabled={isSubmitting}
                             className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
                         >
@@ -270,4 +223,3 @@ const LoginForm = ({ locale }: { locale: string }) => {
         </div>
     );
 };
-``
