@@ -1,6 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
+import AppleIcon from '@/components/icons/apple-icon';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,6 +23,7 @@ import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/authContext';
 import { useFacebookSDK } from '@/hooks/use-facebookDSK';
+import Script from 'next/script';
 
 
 const loginSchema = z.object({
@@ -71,7 +73,7 @@ export default function Login({ locale, messages }: Props) {
 const LoginForm = ({ locale }: { locale: string }) => {
     const intl = useIntl();
     const [showPassword, setShowPassword] = useState(false);
-    const { login: authLogin, googleLogin, facebookLogin } = useAuth();
+    const { login: authLogin, googleLogin, facebookLogin, appleLogin } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
     useFacebookSDK(process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '');
 
@@ -211,6 +213,14 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         >
                             <FacebookIcon />
                         </Button>
+                        <Button
+                            variant="outline"
+                            className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                            onClick={() => appleLogin()}
+                            disabled={isSubmitting}
+                        >
+                            <AppleIcon />
+                        </Button>
                     </div>
 
                     <div className="flex justify-center space-x-1 text-sm">
@@ -226,6 +236,20 @@ const LoginForm = ({ locale }: { locale: string }) => {
                     </div>
                 </form>
             </Form>
+            <Script
+                src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+                strategy="afterInteractive"
+                onLoad={() => {
+                    if ((window as any).AppleID) {
+                        (window as any).AppleID.auth.init({
+                            clientId: "com.example.web",
+                            scope: "name email",
+                            redirectURI: "https://yourdomain.com/auth/callback",
+                            usePopup: true,
+                        });
+                    }
+                }}
+            />
         </div>
     );
 };

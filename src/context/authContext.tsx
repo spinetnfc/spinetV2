@@ -48,6 +48,7 @@ interface AuthContextType {
     login: (user: User) => void;
     googleLogin: () => void;
     facebookLogin: () => void;
+    appleLogin: () => void;
     logout: () => void;
     isAuthenticated: boolean;
     isLoading: boolean;
@@ -59,6 +60,7 @@ const defaultContextValue: AuthContextType = {
     login: () => { },
     googleLogin: () => { },
     facebookLogin: () => { },
+    appleLogin: () => { },
     logout: () => { },
     isAuthenticated: false,
     isLoading: true,
@@ -188,6 +190,57 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         );
     };
 
+    // apple login
+    useEffect(() => {
+        if (typeof window !== "undefined" && (window as any).AppleID) {
+            (window as any).AppleID.auth.init({
+                clientId: "com.example.web",
+                scope: "name email",
+                redirectURI: "https://yourdomain.com/auth/callback",
+                usePopup: true,
+            });
+        }
+    }, []);
+
+    // Apple login function
+    const appleLogin = async () => {
+        try {
+            const AppleID = (window as any).AppleID;
+            if (!AppleID) {
+                console.error("AppleID SDK not loaded");
+                return;
+            }
+
+            const response = await AppleID.auth.signIn();
+
+            const { id_token, user } = response.authorization;
+
+            // Decode id_token JWT payload (simplified base64 decode)
+            const base64Url = id_token.split(".")[1];
+            const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+            const jsonPayload = decodeURIComponent(
+                atob(base64)
+                    .split("")
+                    .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join("")
+            );
+            const payload = JSON.parse(jsonPayload);
+
+            const userData = {
+                appleId: payload.sub,
+                email: payload.email || (user && user.email) || "unknown@example.com",
+                firstName: user?.name?.firstName || "Unknown",
+                lastName: user?.name?.lastName || "User",
+            };
+
+            const res = await api.post("/auth/signup", userData, { withCredentials: true });
+
+            login(res.data);
+        } catch (error) {
+            console.error("Apple login error:", error);
+        }
+    };
+
     const logout = useCallback(async (shouldRedirect: boolean = true) => {
         try {
             setUser(defaultUser);
@@ -238,6 +291,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             login,
             googleLogin,
             facebookLogin,
+            appleLogin,
             logout,
             isAuthenticated,
             isLoading,
