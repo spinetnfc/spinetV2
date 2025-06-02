@@ -102,9 +102,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         document.cookie = `current-user=${encodeURIComponent(
             JSON.stringify(userData)
         )}; path=/; SameSite=Lax`; {/*max-age=${60 * 60 * 24 * 7};*/ }
-        if (userData.googleId) {
-            document.cookie = `googleId=${userData.googleId}; path=/; SameSite=Lax; Secure`;
-        }
         (getUserFromCookie as any).cache = userData;
         router.push(`/${localeRef.current}`);
     }, [router]);

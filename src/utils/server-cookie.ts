@@ -1,10 +1,10 @@
 import type { User } from '@/types/user';
-import { cookies } from 'next/headers';  // for server-side cookie handling
+import { cookies } from 'next/headers';
 
 export async function getUserCookieOnServer(): Promise<User | null> {
   const cookieStore = await cookies();
   const userCookie = cookieStore.get('current-user')?.value;
-  const sessionId = cookieStore.get('spinet-session')?.value || (userCookie ? JSON.parse(decodeURIComponent(userCookie)).googleId : null);
+  const sessionId = cookieStore.get('spinet-session')?.value;
 
   if (!sessionId || !userCookie) {
     return null;
