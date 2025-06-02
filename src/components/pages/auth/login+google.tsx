@@ -73,8 +73,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
     const [showPassword, setShowPassword] = useState(false);
     const { login: authLogin, googleLogin, facebookLogin } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    useFacebookSDK('784307662577291');
+    useFacebookSDK(process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '');
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
