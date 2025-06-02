@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(userData);
         document.cookie = `current-user=${encodeURIComponent(
             JSON.stringify(userData)
-        )}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+        )}; path=/; SameSite=Lax`; {/*max-age=${60 * 60 * 24 * 7};*/ }
         (getUserFromCookie as any).cache = userData;
         router.push(`/${localeRef.current}`);
     }, [router]);
