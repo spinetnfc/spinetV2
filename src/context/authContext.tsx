@@ -194,9 +194,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         if (typeof window !== "undefined" && (window as any).AppleID) {
             (window as any).AppleID.auth.init({
-                clientId: "com.example.web",
-                scope: "name email",
-                redirectURI: "https://yourdomain.com/auth/callback",
+                clientId: process.env.NEXT_PUBLIC_APPLE_CLIENT_ID || "",
+                scope: process.env.NEXT_PUBLIC_APPLE_SCOPE || "",
+                redirectURI: process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI || "",
                 usePopup: true,
             });
         }

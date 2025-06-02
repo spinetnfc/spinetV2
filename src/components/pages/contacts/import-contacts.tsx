@@ -10,7 +10,7 @@ import { Upload, Smartphone, User, Check } from 'lucide-react';
 import { useAuth } from '@/context/authContext';
 import { createContact } from '@/actions/contacts';
 
-// Custom TypeScript declarations for Web Contacts API
+// custom typeScript declarations for Web Contacts API
 interface ContactProperties {
     name?: string[] | null;
     tel?: string[] | null;
