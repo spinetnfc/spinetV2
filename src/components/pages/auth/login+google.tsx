@@ -21,6 +21,8 @@ import { Input } from '@/components/ui/input';
 import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/authContext';
+import { useFacebookSDK } from '@/hooks/use-facebookDSK';
+
 
 const loginSchema = z.object({
     email: z.string().email({ message: 'invalid-email-address' }),
@@ -69,8 +71,11 @@ export default function Login({ locale, messages }: Props) {
 const LoginForm = ({ locale }: { locale: string }) => {
     const intl = useIntl();
     const [showPassword, setShowPassword] = useState(false);
-    const { login: authLogin, googleLogin } = useAuth();
+    const { login: authLogin, googleLogin, facebookLogin } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useFacebookSDK('784307662577291');
+
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -202,6 +207,8 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         <Button
                             variant="outline"
                             className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                            onClick={() => facebookLogin()}
+                            disabled={isSubmitting}
                         >
                             <FacebookIcon />
                         </Button>

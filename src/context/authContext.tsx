@@ -16,7 +16,7 @@ import type { User } from "@/types/user";
 import { useGoogleLogin } from "@react-oauth/google";
 import { api } from "@/lib/axios";
 import axios from "axios";
-// Define a default user to avoid null
+// default user to avoid null case
 const defaultUser: User = {
     _id: "",
     email: "",
@@ -40,11 +40,14 @@ const defaultUser: User = {
         fileApiRefreshToken: ""
     }
 };
+// type for the facebook login function
+// type LoginFunc = (data: any) => void;
 
 interface AuthContextType {
     user: User;
     login: (user: User) => void;
     googleLogin: () => void;
+    facebookLogin: () => void;
     logout: () => void;
     isAuthenticated: boolean;
     isLoading: boolean;
@@ -55,6 +58,7 @@ const defaultContextValue: AuthContextType = {
     user: defaultUser,
     login: () => { },
     googleLogin: () => { },
+    facebookLogin: () => { },
     logout: () => { },
     isAuthenticated: false,
     isLoading: true,
@@ -106,6 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push(`/${localeRef.current}`);
     }, [router]);
 
+    // google login
     const googleLogin = useGoogleLogin({
         scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
         onSuccess: async (tokenResponse) => {
@@ -137,6 +142,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
     });
 
+    // facebook login 
+    const facebookLogin = () => {
+        if (!window.FB) {
+            console.error("Facebook SDK not loaded");
+            return;
+        }
+
+        window.FB.login(
+            (response: any) => {
+                if (response.authResponse) {
+                    window.FB.api(
+                        "/me",
+                        { fields: "id,email,first_name,last_name" },
+                        async (userInfo: any) => {
+                            if (userInfo.error) {
+                                console.error("Error fetching user info:", userInfo.error);
+                                return;
+                            }
+
+                            const userData = {
+                                facebookId: userInfo.id,
+                                email: userInfo.email || "unknown@example.com",
+                                firstName: userInfo.first_name || "alpha",
+                                lastName: userInfo.last_name || "sigma",
+                            };
+
+                            try {
+                                const res = await axios.post(
+                                    "https://api.spinet.app/auth/signup",
+                                    userData,
+                                    { withCredentials: true }
+                                );
+                                login(res.data);
+                            } catch (error) {
+                                console.error("Backend signup error:", error);
+                            }
+                        }
+                    );
+                } else {
+                    console.error("User cancelled login or did not authorize.");
+                }
+            },
+            { scope: "email,public_profile" }
+        );
+    };
 
     const logout = useCallback(async (shouldRedirect: boolean = true) => {
         try {
@@ -187,6 +237,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             user,
             login,
             googleLogin,
+            facebookLogin,
             logout,
             isAuthenticated,
             isLoading,

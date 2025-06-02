@@ -71,6 +71,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/cors": "^2.8.17",
     "@types/dompurify": "^3.0.5",
+    "@types/facebook-js-sdk": "^3.3.12",
     "@types/js-cookie": "^3.0.6",
     "@types/marked": "^6.0.0",
     "@types/negotiator": "^0.6.3",
