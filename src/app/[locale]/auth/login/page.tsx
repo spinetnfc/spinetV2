@@ -1,5 +1,5 @@
 import React from 'react';
-import Login from '@/components/pages/auth/login';
+import Login from '@/components/pages/auth/login+google';
 
 async function getMessages(locale: string) {
   return (await import(`../../../../lang/${locale}.json`)).default;

@@ -132,20 +132,9 @@ const LoginForm = ({ locale }: { locale: string }) => {
                     throw new Error(`Backend error: ${res.statusText}`);
                 }
                 const data = await res.json();
-                console.log('Full signup response:', data); // Log to check tokens
+                console.log('Full signup response:', data);
 
-                const user: User = {
-                    ...data,
-                    tokens: data.tokens || { fileApiToken: '', fileApiRefreshToken: '' }, // Ensure tokens is defined
-                };
-
-                if (user.token) {
-                    document.cookie = `mainApiToken=${encodeURIComponent(user.token)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-                } else {
-                    console.warn('No main API token found in response');
-                }
-
-                authLogin(user);
+                document.cookie = `current-user=${encodeURIComponent(JSON.stringify(data))}; path=/; SameSite=Lax`;
                 toast.success(intl.formatMessage({ id: 'login successful' }));
             } catch (error) {
                 console.error('Google login error:', error);
@@ -160,12 +149,6 @@ const LoginForm = ({ locale }: { locale: string }) => {
             setIsSubmitting(false);
         },
     });
-
-    const handleLogout = () => {
-        googleLogout();
-        document.cookie = `mainApiToken=; path=/; max-age=0; SameSite=Lax`;
-        // authLogin(null);
-    };
 
     return (
         <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
