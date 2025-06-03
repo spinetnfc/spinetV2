@@ -47,7 +47,7 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
 
     return (
         <div className="min-h-screen py-16">
-            <div className="mx-auto px-2 xs:px-4">
+            <div className="mx-auto px-1 xs:px-2 md:px-4">
                 <ContactsDataTable
                     contacts={contacts}
                     themeColor={themeColor}

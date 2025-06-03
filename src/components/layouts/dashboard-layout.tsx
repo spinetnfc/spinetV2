@@ -40,8 +40,8 @@ const Layout = ({
       <div
         className={cn(
           "flex w-full flex-col transition-all duration-800 ease-in-out",
-          "sm:gap-4",
-          isExpanded ? "sm:ps-60" : "sm:ps-16"
+          "lg:gap-4",
+          isExpanded ? "lg:ps-60" : "lg:ps-16"
         )}
       >
         {/* <Header locale={locale} /> */}

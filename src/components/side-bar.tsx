@@ -38,7 +38,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
       {/* desktop sidebar */}
       <aside
         className={cn(
-          'hidden sm:flex h-full flex-col bg-background fixed top-0 start-0 transition-all duration-800 ease-in-out overflow-x-hidden',
+          'hidden lg:flex h-full flex-col bg-background fixed top-0 start-0 transition-all duration-800 ease-in-out overflow-x-hidden',
           isExpanded ? 'w-60' : 'w-16'
         )}
       >
@@ -110,7 +110,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
           <Button
             size="icon"
             variant="outline"
-            className="sm:hidden fixed start-4 top-3 z-40"
+            className="lg:hidden fixed start-4 top-3 z-40"
           >
             <PanelLeft className="size-5" />
             <span className="sr-only">Toggle Sidebar</span>
@@ -120,7 +120,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
         <DrawerContent
           side={locale === 'ar' ? 'right' : 'left'}
           lang={locale}
-          className='bg-background w-60 h-full fixed top-0 start-0 p-0 sm:hidden'
+          className='bg-background w-60 h-full fixed top-0 start-0 p-0 lg:hidden'
         >
           <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
           <DrawerDescription className="sr-only">

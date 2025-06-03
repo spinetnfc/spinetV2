@@ -134,7 +134,7 @@ export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): Col
                 const email = contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link || ""
 
                 return (
-                    <Link href={`/${locale}/public-profile/${contact.Profile._id}`} className="flex items-center gap-3">
+                    <Link href={`/${locale}/public-profile/${contact.Profile._id}`} className="flex items-center gap-2 min-w-fit">
                         <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} color={themeColor} />
                         <div>
                             <div className="font-medium">{name}</div>

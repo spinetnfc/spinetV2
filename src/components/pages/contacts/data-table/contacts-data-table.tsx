@@ -45,7 +45,6 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
     const urlSearchParams = useSearchParams()
     const profileId = useAuth().user?.selectedProfile
     const intl = useIntl()
-
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -215,7 +214,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
+                                    <TableHead key={header.id} className="px-2">
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
@@ -227,7 +226,13 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                             table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                                        <TableCell
+                                            key={cell.id}
+                                            className={`p-2 overflow-hidden text-ellipsis${(row.getVisibleCells()[0].id === cell.id || row.getVisibleCells()[row.getVisibleCells().length - 1].id === cell.id) ? " w-fit" : " max-w-[120px]"
+                                                }`}
+                                        >
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
                                     ))}
                                 </TableRow>
                             ))
