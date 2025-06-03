@@ -442,5 +442,13 @@
   "scanned-profile-link": "رابط الملف الشخصي الممسوح",
   "redirecting": "إعادة التوجيه إلى الملف الشخصي خلال 5 ثوانٍ...",
   "scanning": "جارٍ المسح بحثًا عن رمز الاستجابة السريعة...",
-  "processing-progress": "جارٍ معالجة رمز الاستجابة السريعة... {progress}%"
+  "processing-progress": "جارٍ معالجة رمز الاستجابة السريعة... {progress}%",
+  "search-contacts": "البحث في جهات الاتصال",
+  "search": "بحث",
+  "contact": "جهة اتصال",
+  "actions": "إجراءات",
+  "Name desc": "الاسم من ياء إلى ألف",
+  "Name asc": "الاسم من ألف إلى ياء",
+  "Oldest First": "الأقدم أولاً",
+  "Newest First": "الأحدث أولاً"
 }

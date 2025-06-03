@@ -442,5 +442,13 @@
   "scanned-profile-link": "Lien de profil scanné",
   "redirecting": "Redirection vers le profil dans 5 secondes...",
   "scanning": "Scan en cours pour le code QR...",
-  "processing-progress": "Traitement du code QR... {progress}%"
+  "processing-progress": "Traitement du code QR... {progress}%",
+  "search-contacts": "Rechercher des contacts",
+  "search": "Rechercher",
+  "contact": "Contact",
+  "actions": "Actions",
+  "Name desc": "Nom desc",
+  "Name asc": "Nom asc",
+  "Oldest First": "Les plus anciens",
+  "Newest First": "Les plus récents"
 }

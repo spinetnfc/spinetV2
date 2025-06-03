@@ -33,6 +33,7 @@
     "@splinetool/react-spline": "^4.0.0",
     "@tanstack/react-query": "^5.66.0",
     "@tanstack/react-query-devtools": "^5.66.0",
+    "@tanstack/react-table": "^8.21.3",
     "axios": "^1.8.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -75,8 +76,8 @@
     "@types/js-cookie": "^3.0.6",
     "@types/marked": "^6.0.0",
     "@types/negotiator": "^0.6.3",
-    "@types/node": "^20.12.7",
-    "@types/react": "^18.3.18",
+    "@types/node": "^20.17.57",
+    "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.5",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
@@ -107,7 +108,7 @@
     "tailwindcss": "^4.0.6",
     "tailwindcss-rtl": "^0.9.0",
     "tsx": "^4.17.0",
-    "typescript": "^5.4.5",
+    "typescript": "^5.8.3",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "msw": {
