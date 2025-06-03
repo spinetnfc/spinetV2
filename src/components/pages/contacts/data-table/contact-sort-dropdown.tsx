@@ -54,7 +54,7 @@ export function ContactSortDropdown({ themeColor }: ContactSortDropdownProps) {
                     style={{ color: themeColor, borderColor: themeColor }}
                     className="flex items-center gap-2"
                 >
-                    {getSortLabel(currentSort)}
+                    <FormattedMessage id={getSortLabel(currentSort)} />
                     <ChevronDown className="w-4 h-4" />
                 </Button>
             </DropdownMenuTrigger>
