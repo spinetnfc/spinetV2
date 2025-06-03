@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import React from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import {
     type ColumnFiltersState,
@@ -15,17 +15,18 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Trash2, Plus } from "lucide-react"
+import { MoreHorizontal, Edit, Trash2, Plus } from "lucide-react"
 import { FormattedMessage, useIntl } from "react-intl"
 import Link from "next/link"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
-import { removeContacts } from "@/actions/contacts"
+import { removeContacts, removeContact } from "@/actions/contacts"
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
 import { ContactFilterTabs } from "./contact-filter-tabs"
 import { ContactSortDropdown } from "./contact-sort-dropdown"
 import { contactColumns } from "./contact-columns"
 import type { Contact } from "@/types/contact"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
@@ -104,7 +105,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
         }
     }, [columnFilters, pathname, router, urlSearchParams])
 
-    // Configure columns with theme color
+    // Configure columns with theme color (without actions column)
     const columns = React.useMemo(() => contactColumns({ themeColor, locale }), [themeColor, locale])
 
     // Set up the table
@@ -218,6 +219,8 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
+                                {/* Empty header for actions column */}
+                                <TableHead className="w-12"></TableHead>
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -228,17 +231,97 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={`p-2 overflow-hidden text-ellipsis${(row.getVisibleCells()[0].id === cell.id || row.getVisibleCells()[row.getVisibleCells().length - 1].id === cell.id) ? " w-fit" : " max-w-[120px]"
+                                            className={`p-2 overflow-hidden text-ellipsis${row.getVisibleCells()[0].id === cell.id ? " w-fit" : " max-w-[120px]"
                                                 }`}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
+                                    {/* Actions cell outside of the column system */}
+                                    <TableCell className="p-2 w-12">
+                                        {/* Use the existing ActionCell component directly */}
+                                        {(() => {
+                                            const contact = row.original
+                                            const intl = useIntl()
+                                            const [isDeleting, setIsDeleting] = React.useState(false)
+                                            const [showDeleteModal, setShowDeleteModal] = React.useState(false)
+                                            const router = useRouter()
+
+                                            const handleDeleteConfirm = async () => {
+                                                if (!profileId) return
+
+                                                try {
+                                                    setIsDeleting(true)
+                                                    const response = await removeContact(profileId, contact._id)
+
+                                                    if (response.success) {
+                                                        toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
+                                                        router.refresh()
+                                                    } else {
+                                                        throw new Error(response.message)
+                                                    }
+                                                } catch (error) {
+                                                    console.error("Error deleting contact:", error)
+                                                    toast.error(intl.formatMessage({ id: "Failed to delete contact. Please try again." }))
+                                                } finally {
+                                                    setIsDeleting(false)
+                                                    setShowDeleteModal(false)
+                                                }
+                                            }
+
+                                            const handleEditClick = (e: React.MouseEvent) => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                router.push(`/${locale}/contacts/edit-contact/${contact._id}`)
+                                            }
+
+                                            return (
+                                                <>
+                                                    {showDeleteModal && (
+                                                        <DeleteConfirmationModal
+                                                            isOpen={showDeleteModal}
+                                                            onClose={() => setShowDeleteModal(false)}
+                                                            onConfirm={handleDeleteConfirm}
+                                                            itemName={contact.name}
+                                                            isDeleting={isDeleting}
+                                                            message="delete-contact-message"
+                                                        />
+                                                    )}
+
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                                                <span className="sr-only">Open menu</span>
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem onClick={handleEditClick}>
+                                                                <Edit className="mr-2 h-4 w-4" />
+                                                                <FormattedMessage id="edit" defaultMessage="Edit" />
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                onClick={(e: any) => {
+                                                                    e.preventDefault()
+                                                                    e.stopPropagation()
+                                                                    setShowDeleteModal(true)
+                                                                }}
+                                                                className="text-red-600"
+                                                            >
+                                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                                <FormattedMessage id="delete" defaultMessage="Delete" />
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </>
+                                            )
+                                        })()}
+                                    </TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                <TableCell colSpan={columns.length + 1} className="h-24 text-center">
                                     <FormattedMessage id="no-contacts-found" defaultMessage="No contacts found" />
                                 </TableCell>
                             </TableRow>
