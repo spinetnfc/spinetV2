@@ -39,6 +39,87 @@ interface ContactsDataTableProps {
     }
 }
 
+// Move ActionCell outside to avoid hook issues
+function ActionCell({
+    contact,
+    locale,
+    profileId,
+}: { contact: Contact; locale: string; profileId: string | undefined }) {
+    const router = useRouter()
+    const intl = useIntl()
+    const [isDeleting, setIsDeleting] = React.useState(false)
+    const [showDeleteModal, setShowDeleteModal] = React.useState(false)
+
+    const handleDeleteConfirm = async () => {
+        if (!profileId) return
+
+        try {
+            setIsDeleting(true)
+            const response = await removeContact(profileId, contact._id)
+
+            if (response.success) {
+                toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
+                router.refresh()
+            } else {
+                throw new Error(response.message)
+            }
+        } catch (error) {
+            console.error("Error deleting contact:", error)
+            toast.error(intl.formatMessage({ id: "Failed to delete contact. Please try again." }))
+        } finally {
+            setIsDeleting(false)
+            setShowDeleteModal(false)
+        }
+    }
+
+    const handleEditClick = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        router.push(`/${locale}/contacts/edit-contact/${contact._id}`)
+    }
+
+    return (
+        <>
+            {showDeleteModal && (
+                <DeleteConfirmationModal
+                    isOpen={showDeleteModal}
+                    onClose={() => setShowDeleteModal(false)}
+                    onConfirm={handleDeleteConfirm}
+                    itemName={contact.name}
+                    isDeleting={isDeleting}
+                    message="delete-contact-message"
+                />
+            )}
+
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleEditClick}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        <FormattedMessage id="edit" defaultMessage="Edit" />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={(e: any) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            setShowDeleteModal(true)
+                        }}
+                        className="text-red-600"
+                    >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        <FormattedMessage id="delete" defaultMessage="Delete" />
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </>
+    )
+}
+
 export function ContactsDataTable({ contacts, themeColor, locale, searchParams }: ContactsDataTableProps) {
     const { query = "", filter = "all", sort = "name-asc" } = searchParams
     const router = useRouter()
@@ -209,13 +290,13 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
             </div>
 
             {/* Data table */}
-            <div className="rounded-md border">
-                <Table>
+            <div className="rounded-md border overflow-x-auto w-full">
+                <Table className="w-full table-fixed">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className="px-2">
+                                    <TableHead key={header.id} className={`px-2 ${header.column.id === "select" ? "w-10" : ""}`}>
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
@@ -231,7 +312,11 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={`p-2 overflow-hidden text-ellipsis${row.getVisibleCells()[0].id === cell.id ? " w-fit" : " max-w-[120px]"
+                                            className={`p-2 min-w-0 ${cell.column.id === "select"
+                                                ? "w-10"
+                                                : cell.column.id === "name"
+                                                    ? "w-auto"
+                                                    : "max-w-[120px] sm:max-w-none truncate"
                                                 }`}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -239,83 +324,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                     ))}
                                     {/* Actions cell outside of the column system */}
                                     <TableCell className="p-2 w-12">
-                                        {/* Use the existing ActionCell component directly */}
-                                        {(() => {
-                                            const contact = row.original
-                                            const intl = useIntl()
-                                            const [isDeleting, setIsDeleting] = React.useState(false)
-                                            const [showDeleteModal, setShowDeleteModal] = React.useState(false)
-                                            const router = useRouter()
-
-                                            const handleDeleteConfirm = async () => {
-                                                if (!profileId) return
-
-                                                try {
-                                                    setIsDeleting(true)
-                                                    const response = await removeContact(profileId, contact._id)
-
-                                                    if (response.success) {
-                                                        toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
-                                                        router.refresh()
-                                                    } else {
-                                                        throw new Error(response.message)
-                                                    }
-                                                } catch (error) {
-                                                    console.error("Error deleting contact:", error)
-                                                    toast.error(intl.formatMessage({ id: "Failed to delete contact. Please try again." }))
-                                                } finally {
-                                                    setIsDeleting(false)
-                                                    setShowDeleteModal(false)
-                                                }
-                                            }
-
-                                            const handleEditClick = (e: React.MouseEvent) => {
-                                                e.preventDefault()
-                                                e.stopPropagation()
-                                                router.push(`/${locale}/contacts/edit-contact/${contact._id}`)
-                                            }
-
-                                            return (
-                                                <>
-                                                    {showDeleteModal && (
-                                                        <DeleteConfirmationModal
-                                                            isOpen={showDeleteModal}
-                                                            onClose={() => setShowDeleteModal(false)}
-                                                            onConfirm={handleDeleteConfirm}
-                                                            itemName={contact.name}
-                                                            isDeleting={isDeleting}
-                                                            message="delete-contact-message"
-                                                        />
-                                                    )}
-
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                                                <span className="sr-only">Open menu</span>
-                                                                <MoreHorizontal className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem onClick={handleEditClick}>
-                                                                <Edit className="mr-2 h-4 w-4" />
-                                                                <FormattedMessage id="edit" defaultMessage="Edit" />
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem
-                                                                onClick={(e: any) => {
-                                                                    e.preventDefault()
-                                                                    e.stopPropagation()
-                                                                    setShowDeleteModal(true)
-                                                                }}
-                                                                className="text-red-600"
-                                                            >
-                                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                                <FormattedMessage id="delete" defaultMessage="Delete" />
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </>
-                                            )
-                                        })()}
+                                        <ActionCell contact={row.original} locale={locale} profileId={profileId} />
                                     </TableCell>
                                 </TableRow>
                             ))
