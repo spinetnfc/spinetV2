@@ -38,8 +38,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
       {/* desktop sidebar */}
       <aside
         className={cn(
-          'hidden sm:flex h-full flex-col bg-background fixed top-0 transition-all duration-800 ease-in-out overflow-x-hidden',
-          locale === 'ar' ? 'right-0' : 'left-0',
+          'hidden sm:flex h-full flex-col bg-background fixed top-0 start-0 transition-all duration-800 ease-in-out overflow-x-hidden',
           isExpanded ? 'w-60' : 'w-16'
         )}
       >
@@ -121,10 +120,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
         <DrawerContent
           side={locale === 'ar' ? 'right' : 'left'}
           lang={locale}
-          className={cn(
-            'bg-background w-60 h-full fixed top-0 p-0 sm:hidden',
-            locale === 'ar' ? 'right-0' : 'left-0'
-          )}
+          className='bg-background w-60 h-full fixed top-0 start-0 p-0 sm:hidden'
         >
           <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
           <DrawerDescription className="sr-only">

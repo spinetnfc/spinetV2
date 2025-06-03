@@ -34,15 +34,15 @@ export function ContactSortDropdown({ themeColor }: ContactSortDropdownProps) {
     const getSortLabel = (sort: SortOption) => {
         switch (sort) {
             case "name-asc":
-                return "Name desc"
+                return "name-desc"
             case "name-desc":
-                return "Name asc"
+                return "name-asc"
             case "date-asc":
-                return "Oldest First"
+                return "date-desc"
             case "date-desc":
-                return "Newest First"
+                return "date-asc"
             default:
-                return "Name desc"
+                return "name-desc"
         }
     }
 
@@ -60,16 +60,16 @@ export function ContactSortDropdown({ themeColor }: ContactSortDropdownProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => handleSortChange("name-asc")}>
-                    <FormattedMessage defaultMessage="Name desc" />
+                    <FormattedMessage id="name-desc" />
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleSortChange("name-desc")}>
-                    <FormattedMessage defaultMessage="Name asc" />
+                    <FormattedMessage id="name-asc" />
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleSortChange("date-asc")}>
-                    <FormattedMessage defaultMessage="Oldest First" />
+                    <FormattedMessage id="date-desc" />
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleSortChange("date-desc")}>
-                    <FormattedMessage defaultMessage="Newest First" />
+                    <FormattedMessage id="date-asc" />
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

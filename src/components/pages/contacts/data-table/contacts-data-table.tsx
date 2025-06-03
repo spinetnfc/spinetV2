@@ -76,9 +76,9 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
             case "name-desc":
                 return contactsToSort.sort((a, b) => (b.name || "").localeCompare(a.name || ""))
             case "date-asc":
-                return contactsToSort // Original order (oldest first)
+                return contactsToSort // Original order (date-desc)
             case "date-desc":
-                return contactsToSort.reverse() // Reverse order (newest first)
+                return contactsToSort.reverse() // Reverse order (date-asc)
             case "name-asc":
             default:
                 return contactsToSort.sort((a, b) => (a.name || "").localeCompare(b.name || ""))

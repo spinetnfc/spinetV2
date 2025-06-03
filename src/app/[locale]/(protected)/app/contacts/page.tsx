@@ -3,7 +3,7 @@ import { getProfile } from "@/lib/api/profile"
 import { getContacts } from "@/lib/api/contacts"
 import type { Contact } from "@/types/contact"
 import useTranslate from "@/hooks/use-translate"
-import { ContactsDataTable } from "@/components/pages/contacts/contacts-data-table"
+import { ContactsDataTable } from "@/components/pages/contacts/data-table/contacts-data-table"
 
 type SearchParams = {
     query?: string

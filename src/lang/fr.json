@@ -447,8 +447,8 @@
   "search": "Rechercher",
   "contact": "Contact",
   "actions": "Actions",
-  "Name desc": "Nom desc",
-  "Name asc": "Nom asc",
-  "Oldest First": "Les plus anciens",
-  "Newest First": "Les plus récents"
+  "name-desc": "Nom desc",
+  "name-asc": "Nom asc",
+  "date-desc": "Les plus anciens",
+  "date-asc": "Les plus récents"
 }
