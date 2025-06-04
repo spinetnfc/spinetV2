@@ -49,7 +49,7 @@ export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): Col
                 return (
                     <Link
                         href={`/${locale}/public-profile/${contact.Profile._id}`}
-                        className="flex items-center gap-2 w-full min-w-0"
+                        className="flex items-center gap-2 w-full"
                     >
                         <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} color={themeColor} />
                         <div className="min-w-0 overflow-hidden">
