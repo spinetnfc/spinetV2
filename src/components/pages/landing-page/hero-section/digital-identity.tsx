@@ -49,10 +49,10 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         </div>
         <div className="relative flex size-full flex-col items-center justify-end flex-grow">
           <Image
-            src="/img/Designer.png"
+            src="/img/hand-finger-print.png"
             alt="Hand image"
-            width={600} // Set a fixed width
-            height={600} // Adjust height accordingly to maintain aspect ratio
+            width={600}
+            height={600}
             className='h-auto max-w-full mt-auto lg:w-[700px] aspect-[1/1]'
             priority
           />
