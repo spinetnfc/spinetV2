@@ -53,12 +53,12 @@ export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): Col
                     >
                         <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} color={themeColor} />
                         <div className="min-w-0 overflow-hidden">
-                            <div className="font-medium truncate">{name}</div>
+                            <div className="font-medium truncate text-sm">{name}</div>
                             {/* Show email on larger screens */}
-                            {email && <div className="text-sm text-muted-foreground lowercase hidden sm:block truncate">{email}</div>}
+                            {email && <div className="text-xs text-muted-foreground lowercase hidden sm:block truncate">{email}</div>}
                             {/* Show position at company on small screens */}
                             {positionCompanyText && (
-                                <div className="text-sm text-muted-foreground block sm:hidden truncate">{positionCompanyText}</div>
+                                <div className="text-xs text-muted-foreground block sm:hidden truncate">{positionCompanyText}</div>
                             )}
                         </div>
                     </Link>
@@ -89,7 +89,7 @@ export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): Col
                 const contact = row.original
                 const Profile = contact.Profile || {}
                 const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
-                return <div className="truncate">{companyName || "-"}</div>
+                return <div className="truncate text-sm">{companyName || "-"}</div>
             },
         },
         {
@@ -99,7 +99,7 @@ export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): Col
                 const contact = row.original
                 const Profile = contact.Profile || {}
                 const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
-                return <div className="truncate">{position || "-"}</div>
+                return <div className="truncate text-sm">{position || "-"}</div>
             },
         },
     ]

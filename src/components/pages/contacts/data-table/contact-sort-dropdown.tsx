@@ -47,7 +47,6 @@ export function ContactSortDropdown() {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="outline"
-                    // style={{ borderColor: "#1E293B" }}
                     className="flex items-center gap-2 border-[#F3F6FA] dark:border-[#1E293B]"
                 >
                     <FormattedMessage id={getSortLabel(currentSort)} />
