@@ -59,7 +59,7 @@ export function ContactFilterTabs({ themeColor }: ContactFilterTabsProps) {
     }
 
     return (
-        <div className="flex gap-1 sm:gap-2 overflow-x-auto pb-2 no-scrollbar">
+        <div className="flex gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
             <button
                 onClick={() => handleFilterChange("all")}
                 className={cn(

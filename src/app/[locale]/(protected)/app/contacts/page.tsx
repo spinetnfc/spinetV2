@@ -46,7 +46,7 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
     const themeColor = profileData?.theme?.color || "#3b82f6" // Default to blue
 
     return (
-        <div className="min-h-screen py-16">
+        <div className="min-h-screen pt-16">
             <div className="mx-auto px-1 xs:px-2 md:px-4">
                 <ContactsDataTable
                     contacts={contacts}
