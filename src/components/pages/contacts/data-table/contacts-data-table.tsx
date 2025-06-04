@@ -15,7 +15,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { MoreHorizontal, Edit, Trash2, Plus } from "lucide-react"
+import { MoreVertical, Edit, Trash2, Plus } from "lucide-react"
 import { FormattedMessage, useIntl } from "react-intl"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -122,12 +122,12 @@ function ActionCell({
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
+                        <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={handleEditClick}>
-                        <Edit className="mr-2 h-4 w-4" />
+                        <Edit className="me-2 h-4 w-4" />
                         <FormattedMessage id="edit" defaultMessage="Edit" />
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -138,7 +138,7 @@ function ActionCell({
                         }}
                         className="text-red-600"
                     >
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <Trash2 className="me-2 h-4 w-4" />
                         <FormattedMessage id="delete" defaultMessage="Delete" />
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -311,7 +311,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                     )}
                 </div>
 
-                <Button asChild className="flex items-center gap-1" style={{ backgroundColor: themeColor }}>
+                <Button size="sm" asChild className="flex items-center gap-1" style={{ backgroundColor: themeColor }}>
                     <Link href="./contacts/add-contact">
                         <Plus size={16} />
                         <FormattedMessage id="add-contact" defaultMessage="Add contact" />
@@ -321,12 +321,12 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
 
             {/* Data table */}
             <div className="rounded-md border overflow-x-auto ">
-                <Table className="sm:table-fixed table-auto relative">
+                <Table className="table-auto relative">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className={`px-2 ${header.column.id === "select" ? "w-10" : ""}`}>
+                                    <TableHead key={header.id} className={`px-2 ${header.column.id === "select" ? "w-fit" : ""}`}>
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
@@ -344,17 +344,17 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                         <TableCell
                                             key={cell.id}
                                             className={`p-2 min-w-0 ${cell.column.id === "select"
-                                                ? "w-10"
+                                                ? "w-fit"
                                                 : cell.column.id === "name"
                                                     ? "w-auto"
-                                                    : "max-w-[120px] sm:max-w-none truncate"
+                                                    : " truncate"
                                                 }`}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                     {/* Actions cell outside of the column system */}
-                                    <TableCell className="p-2 w-12 flex items-end">
+                                    <TableCell className="p-2 w-12">
                                         <ActionCell contact={row.original} locale={locale} profileId={profileId} />
                                     </TableCell>
                                 </TableRow>

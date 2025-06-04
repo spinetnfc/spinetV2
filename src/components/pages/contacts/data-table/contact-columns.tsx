@@ -53,10 +53,10 @@ export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): Col
                     >
                         <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} color={themeColor} />
                         <div className="min-w-0 overflow-hidden">
-                            <div className="font-medium truncate text-sm">{name}</div>
-                            {/* Show email on larger screens */}
+                            <div className="font-medium truncate text-xs xs:text-sm">{name}</div>
+                            {/* show email on larger screens */}
                             {email && <div className="text-xs text-muted-foreground lowercase hidden sm:block truncate">{email}</div>}
-                            {/* Show position at company on small screens */}
+                            {/* show position at company on small screens */}
                             {positionCompanyText && (
                                 <div className="text-xs text-muted-foreground block sm:hidden truncate">{positionCompanyText}</div>
                             )}
