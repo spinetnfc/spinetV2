@@ -84,30 +84,22 @@ export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): Col
         },
         {
             accessorKey: "company",
-            header: () => (
-                <div className="hidden sm:block">
-                    <FormattedMessage id="company" defaultMessage="Company" />
-                </div>
-            ),
+            header: () => <FormattedMessage id="company" defaultMessage="Company" />,
             cell: ({ row }) => {
                 const contact = row.original
                 const Profile = contact.Profile || {}
                 const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
-                return <div className="hidden sm:block truncate">{companyName || "-"}</div>
+                return <div className="truncate">{companyName || "-"}</div>
             },
         },
         {
             accessorKey: "position",
-            header: () => (
-                <div className="hidden sm:block">
-                    <FormattedMessage id="position" defaultMessage="Position" />
-                </div>
-            ),
+            header: () => <FormattedMessage id="position" defaultMessage="Position" />,
             cell: ({ row }) => {
                 const contact = row.original
                 const Profile = contact.Profile || {}
                 const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
-                return <div className="hidden sm:block truncate">{position || "-"}</div>
+                return <div className="truncate">{position || "-"}</div>
             },
         },
     ]

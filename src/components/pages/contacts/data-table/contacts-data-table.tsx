@@ -20,11 +20,12 @@ import { FormattedMessage, useIntl } from "react-intl"
 import Link from "next/link"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
-import { removeContacts, removeContact } from "@/actions/contacts"
+import { removeContacts, removeContact, editContact } from "@/actions/contacts"
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
 import { ContactFilterTabs } from "./contact-filter-tabs"
 import { ContactSortDropdown } from "./contact-sort-dropdown"
 import { contactColumns } from "./contact-columns"
+import EditContactForm from "../edit-contact-form"
 import type { Contact } from "@/types/contact"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 
@@ -39,6 +40,24 @@ interface ContactsDataTableProps {
     }
 }
 
+// Hook to detect screen size
+function useIsMobile() {
+    const [isMobile, setIsMobile] = React.useState(false)
+
+    React.useEffect(() => {
+        const checkIsMobile = () => {
+            setIsMobile(window.innerWidth < 640) // sm breakpoint is 640px
+        }
+
+        checkIsMobile()
+        window.addEventListener("resize", checkIsMobile)
+
+        return () => window.removeEventListener("resize", checkIsMobile)
+    }, [])
+
+    return isMobile
+}
+
 // Move ActionCell outside to avoid hook issues
 function ActionCell({
     contact,
@@ -49,7 +68,7 @@ function ActionCell({
     const intl = useIntl()
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
-
+    const [showEditModal, setShowEditModal] = React.useState(false)
     const handleDeleteConfirm = async () => {
         if (!profileId) return
 
@@ -75,8 +94,9 @@ function ActionCell({
     const handleEditClick = (e: React.MouseEvent) => {
         e.preventDefault()
         e.stopPropagation()
-        router.push(`/${locale}/contacts/edit-contact/${contact._id}`)
+        setShowEditModal(true)
     }
+
 
     return (
         <>
@@ -88,6 +108,13 @@ function ActionCell({
                     itemName={contact.name}
                     isDeleting={isDeleting}
                     message="delete-contact-message"
+                />
+            )}
+            {showEditModal && (
+                <EditContactForm
+                    contact={contact}
+                    onSuccess={() => { setShowEditModal(false) }}
+                    onCancel={() => setShowEditModal(false)}
                 />
             )}
 
@@ -131,6 +158,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
+    const isMobile = useIsMobile()
 
     // Apply initial filtering based on URL params
     const initialFiltering: ColumnFiltersState = []
@@ -166,6 +194,35 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
         }
     }, [filteredByTypeContacts, sort])
 
+    // Configure columns with theme color
+    const allColumns = React.useMemo(() => contactColumns({ themeColor, locale }), [themeColor, locale])
+
+    // Don't filter columns - instead use columnVisibility to hide them
+    // This ensures the column structure stays consistent
+    const columns = allColumns
+
+    // Set up the table
+    const table = useReactTable({
+        data: sortedContacts,
+        columns,
+        onColumnFiltersChange: setColumnFilters,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
+        state: {
+            columnFilters,
+            columnVisibility: {
+                ...columnVisibility,
+                // Hide company and position columns on mobile
+                company: !isMobile,
+                position: !isMobile,
+            },
+            rowSelection,
+        },
+    })
+
     // Update URL when filtering changes
     React.useEffect(() => {
         const params = new URLSearchParams(urlSearchParams.toString())
@@ -185,26 +242,6 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
             router.replace(`${pathname}?${newParamsString}`, { scroll: false })
         }
     }, [columnFilters, pathname, router, urlSearchParams])
-
-    // Configure columns with theme color (without actions column)
-    const columns = React.useMemo(() => contactColumns({ themeColor, locale }), [themeColor, locale])
-
-    // Set up the table
-    const table = useReactTable({
-        data: sortedContacts,
-        columns,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        state: {
-            columnFilters,
-            columnVisibility,
-            rowSelection,
-        },
-    })
 
     // Handle bulk delete
     const handleBulkDelete = async () => {
@@ -290,8 +327,8 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
             </div>
 
             {/* Data table */}
-            <div className="rounded-md border overflow-x-auto w-full">
-                <Table className="w-full table-fixed">
+            <div className="rounded-md border overflow-x-auto ">
+                <Table className="sm:table-fixed table-auto">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>

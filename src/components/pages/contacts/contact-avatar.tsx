@@ -24,7 +24,7 @@ export default function ContactAvatar({ name, profilePicture, initials, color, s
 
     if (profilePicture) {
         return (
-            <div className="rounded-md overflow-hidden" style={{ width: sizeInPx, height: sizeInPx }}>
+            <div className={`rounded-md overflow-hidden min-w-[${sizeInPx}px]`} style={{ width: sizeInPx, height: sizeInPx }}>
                 <Image
                     src={profilePicture || "/placeholder.svg"}
                     alt={name}
@@ -38,7 +38,7 @@ export default function ContactAvatar({ name, profilePicture, initials, color, s
 
     return (
         <div
-            className="rounded-md flex items-center justify-center text-white font-medium"
+            className={`rounded-md flex items-center justify-center text-white font-medium min-w-[${sizeInPx}px]`}
             style={{
                 width: sizeInPx,
                 height: sizeInPx,
