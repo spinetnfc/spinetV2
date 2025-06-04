@@ -66,11 +66,9 @@ interface EditContactFormProps {
 }
 
 export default function EditContactForm({
-    // profileId,
     contact,
     onSuccess,
     onCancel,
-    // editContact,
 }: EditContactFormProps) {
     const { user } = useAuth();
     const profileId = user.selectedProfile;

@@ -8,11 +8,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 type SortOption = "name-asc" | "name-desc" | "date-asc" | "date-desc"
 
-interface ContactSortDropdownProps {
-    themeColor: string
-}
-
-export function ContactSortDropdown({ themeColor }: ContactSortDropdownProps) {
+export function ContactSortDropdown() {
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
@@ -51,8 +47,8 @@ export function ContactSortDropdown({ themeColor }: ContactSortDropdownProps) {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="outline"
-                    style={{ color: themeColor, borderColor: themeColor }}
-                    className="flex items-center gap-2"
+                    // style={{ borderColor: "#1E293B" }}
+                    className="flex items-center gap-2 border-[#F3F6FA] dark:border-[#1E293B]"
                 >
                     <FormattedMessage id={getSortLabel(currentSort)} />
                     <ChevronDown className="w-4 h-4" />

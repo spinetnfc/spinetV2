@@ -337,7 +337,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                     </TableHead>
                                 ))}
                                 <TableHead className="w-12 absolute top-1.5 end-[104px]">
-                                    <ContactSortDropdown themeColor={themeColor} />
+                                    <ContactSortDropdown />
                                 </TableHead>
                             </TableRow>
                         ))}
@@ -360,7 +360,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                         </TableCell>
                                     ))}
                                     {/* Actions cell outside of the column system */}
-                                    <TableCell className="p-2 w-12">
+                                    <TableCell className="p-2 w-12 flex items-end">
                                         <ActionCell contact={row.original} locale={locale} profileId={profileId} />
                                     </TableCell>
                                 </TableRow>
