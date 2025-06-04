@@ -296,7 +296,6 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                     </h2>
                     <div className="flex items-center gap-4">
                         <ContactFilterTabs themeColor={themeColor} />
-                        <ContactSortDropdown themeColor={themeColor} />
                     </div>
                 </div>
             </div>
@@ -328,7 +327,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
 
             {/* Data table */}
             <div className="rounded-md border overflow-x-auto ">
-                <Table className="sm:table-fixed table-auto">
+                <Table className="sm:table-fixed table-auto relative">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
@@ -337,8 +336,9 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
-                                {/* Empty header for actions column */}
-                                <TableHead className="w-12"></TableHead>
+                                <TableHead className="w-12 absolute top-1.5 end-[104px]">
+                                    <ContactSortDropdown themeColor={themeColor} />
+                                </TableHead>
                             </TableRow>
                         ))}
                     </TableHeader>
