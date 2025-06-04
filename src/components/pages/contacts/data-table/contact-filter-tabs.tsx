@@ -3,15 +3,17 @@
 import type React from "react"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Scan, Users, ArrowLeftRight, Phone } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Scan, Users, ArrowLeftRight, Phone, SlidersHorizontal, ChevronDown } from "lucide-react"
 import { FormattedMessage } from "react-intl"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
+import { Button } from "@/components/ui/button"
 
 type FilterType = "all" | "scanned" | "manual" | "exchange" | "phone"
 
 interface FilterOption {
     value: FilterType
     icon: React.ReactNode
+    labelId: string
 }
 
 interface ContactFilterTabsProps {
@@ -20,20 +22,29 @@ interface ContactFilterTabsProps {
 
 const filterOptions: FilterOption[] = [
     {
+        value: "all",
+        icon: null,
+        labelId: "all",
+    },
+    {
         value: "scanned",
-        icon: <Scan className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
+        icon: <Scan className="h-4 w-4" />,
+        labelId: "scanned",
     },
     {
         value: "manual",
-        icon: <Users className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
+        icon: <Users className="h-4 w-4" />,
+        labelId: "manual",
     },
     {
         value: "exchange",
-        icon: <ArrowLeftRight className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
+        icon: <ArrowLeftRight className="h-4 w-4" />,
+        labelId: "exchange",
     },
     {
         value: "phone",
-        icon: <Phone className="h-[12px] w-[12px] xs:h-[16px] xs:w-[16px] sm:h-[18px] sm:w-[18px]" />,
+        icon: <Phone className="h-4 w-4" />,
+        labelId: "phone",
     },
 ]
 
@@ -47,9 +58,7 @@ export function ContactFilterTabs({ themeColor }: ContactFilterTabsProps) {
     const handleFilterChange = (filter: FilterType) => {
         const params = new URLSearchParams(searchParams)
 
-        if (currentFilter === filter) {
-            params.delete("filter")
-        } else if (filter === "all") {
+        if (filter === "all") {
             params.delete("filter")
         } else {
             params.set("filter", filter)
@@ -58,37 +67,45 @@ export function ContactFilterTabs({ themeColor }: ContactFilterTabsProps) {
         replace(`${pathname}?${params.toString()}`)
     }
 
-    return (
-        <div className="flex gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
-            <button
-                onClick={() => handleFilterChange("all")}
-                className={cn(
-                    "flex items-center gap-0.5 sm:gap-1.5 px-1.5 py-0.5 xs:px-2 xs:py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] xs:text-xs sm:text-sm whitespace-nowrap border",
-                    currentFilter === "all" ? "border-transparent" : " border-gray-200",
-                )}
-                style={currentFilter === "all" ? { backgroundColor: themeColor } : {}}
-            >
-                <span className="truncate max-w-[60px] sm:max-w-none">
-                    <FormattedMessage id="all" defaultMessage="All" />
-                </span>
-            </button>
+    // const currentOption = filterOptions.find((option) => option.value === currentFilter)
 
-            {filterOptions.map((option) => (
-                <button
-                    key={option.value}
-                    onClick={() => handleFilterChange(option.value)}
-                    className={cn(
-                        "flex items-center gap-0.5 sm:gap-1.5 px-1.5 py-0.5 xs:px-2 xs:py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] xs:text-xs sm:text-sm whitespace-nowrap border",
-                        currentFilter === option.value ? "border-transparent" : " border-gray-200",
-                    )}
-                    style={currentFilter === option.value ? { backgroundColor: themeColor } : {}}
-                >
-                    {option.icon}
-                    <span className="truncate max-w-[60px] sm:max-w-none">
-                        <FormattedMessage id={option.value} />
-                    </span>
-                </button>
-            ))}
+    return (
+        <div className="w-fit">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="outline"
+                        className="flex items-center"
+                    // style={{
+                    //     borderColor: themeColor,
+                    //     color: themeColor,
+                    // }}
+                    >
+                        <SlidersHorizontal className="h-6 w-6" strokeWidth={3} />
+                        {/* <span>
+                            <FormattedMessage
+                                id={currentOption?.labelId || "all"}
+                                defaultMessage={currentOption?.value === "all" ? "All" : currentOption?.value}
+                            />
+                        </span>
+                        <ChevronDown className="h-4 w-4" /> */}
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                    {filterOptions.map((option) => (
+                        <DropdownMenuItem
+                            key={option.value}
+                            onClick={() => handleFilterChange(option.value)}
+                            className="flex items-center gap-2 cursor-pointer"
+                        >
+                            {option.icon}
+                            <span>
+                                <FormattedMessage id={option.labelId} defaultMessage={option.value === "all" ? "All" : option.value} />
+                            </span>
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
     )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronDown } from 'lucide-react'
+import { ArrowDownUp } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import { FormattedMessage } from "react-intl"
@@ -13,7 +13,7 @@ export function ContactSortDropdown() {
     const pathname = usePathname()
     const { replace } = useRouter()
 
-    const currentSort = (searchParams.get("sort") as SortOption) || "name-asc"
+    // const currentSort = (searchParams.get("sort") as SortOption) || "name-asc"
 
     const handleSortChange = (sort: SortOption) => {
         const params = new URLSearchParams(searchParams)
@@ -27,20 +27,20 @@ export function ContactSortDropdown() {
         replace(`${pathname}?${params.toString()}`)
     }
 
-    const getSortLabel = (sort: SortOption) => {
-        switch (sort) {
-            case "name-asc":
-                return "name-desc"
-            case "name-desc":
-                return "name-asc"
-            case "date-asc":
-                return "date-desc"
-            case "date-desc":
-                return "date-asc"
-            default:
-                return "name-desc"
-        }
-    }
+    // const getSortLabel = (sort: SortOption) => {
+    //     switch (sort) {
+    //         case "name-asc":
+    //             return "name-desc"
+    //         case "name-desc":
+    //             return "name-asc"
+    //         case "date-asc":
+    //             return "date-desc"
+    //         case "date-desc":
+    //             return "date-asc"
+    //         default:
+    //             return "name-desc"
+    //     }
+    // }
 
     return (
         <DropdownMenu>
@@ -49,11 +49,10 @@ export function ContactSortDropdown() {
                     variant="outline"
                     className="flex items-center gap-2 border-[#F3F6FA] dark:border-[#1E293B]"
                 >
-                    <FormattedMessage id={getSortLabel(currentSort)} />
-                    <ChevronDown className="w-4 h-4" />
+                    <ArrowDownUp className="w-4 h-4" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => handleSortChange("name-asc")}>
                     <FormattedMessage id="name-desc" />
                 </DropdownMenuItem>

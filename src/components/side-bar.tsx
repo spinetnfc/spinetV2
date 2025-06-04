@@ -110,7 +110,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
           <Button
             size="icon"
             variant="outline"
-            className="lg:hidden fixed start-4 top-3 z-40"
+            className="lg:hidden absolute  start-4 top-3 z-40"
           >
             <PanelLeft className="size-5" />
             <span className="sr-only">Toggle Sidebar</span>

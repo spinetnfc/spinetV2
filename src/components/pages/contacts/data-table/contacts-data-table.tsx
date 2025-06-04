@@ -20,7 +20,7 @@ import { FormattedMessage, useIntl } from "react-intl"
 import Link from "next/link"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
-import { removeContacts, removeContact, editContact } from "@/actions/contacts"
+import { removeContacts, removeContact } from "@/actions/contacts"
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
 import { ContactFilterTabs } from "./contact-filter-tabs"
 import { ContactSortDropdown } from "./contact-sort-dropdown"
@@ -277,21 +277,16 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
     return (
         <div className="space-y-2">
             {/* Search and filter section */}
-            <div className="flex flex-col gap-4">
-                <div>
-                    <Input
-                        placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
-                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                        onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
-                        className="max-w-sm"
-                    />
-                </div>
+            <div className="flex gap-4">
+                <Input
+                    placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
+                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
+                    className="max-w-sm"
+                />
+                <ContactFilterTabs themeColor={themeColor} />
 
-                <div>
-                    <div className="flex items-center gap-4">
-                        <ContactFilterTabs themeColor={themeColor} />
-                    </div>
-                </div>
+
             </div>
 
             {/* Add contact button and bulk actions */}
@@ -326,16 +321,13 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className={`px-2 ${header.column.id === "select" ? "w-fit" : header.column.id === "name" ? "flex items-center gap-2" : ""}`}>
+                                    <TableHead key={header.id} className={`px-2 ${header.column.id === "select" ? "w-fit" : ""}`}>
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                        {header.column.id === "name" && <ContactSortDropdown />}
                                     </TableHead>
                                 ))}
-                                <TableHead className="w-12">
-                                </TableHead>
-                                {/* <TableHead className="w-12 absolute top-1.5 end-[104px]">
+                                <TableHead className="w-12 absolute top-1.5 end-4">
                                     <ContactSortDropdown />
-                                </TableHead> */}
+                                </TableHead>
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -374,7 +366,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-end space-x-2 py-2">
+            <div className="flex items-center justify-end space-x-2 py-4">
                 <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
                     <FormattedMessage id="previous" defaultMessage="Previous" />
                 </Button>
