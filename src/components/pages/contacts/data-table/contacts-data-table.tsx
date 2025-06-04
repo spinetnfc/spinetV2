@@ -279,9 +279,6 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
             {/* Search and filter section */}
             <div className="flex flex-col gap-4">
                 <div>
-                    <h2 className="text-xl mb-2">
-                        <FormattedMessage id="search" defaultMessage="Search" />
-                    </h2>
                     <Input
                         placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
                         value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -291,9 +288,6 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                 </div>
 
                 <div>
-                    <h2 className="text-xl mb-2">
-                        <FormattedMessage id="filter" defaultMessage="Filter" />
-                    </h2>
                     <div className="flex items-center gap-4">
                         <ContactFilterTabs themeColor={themeColor} />
                     </div>
