@@ -39,7 +39,7 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
         contacts = await getContacts(profileId)
     } catch (error) {
         console.error("Error fetching contacts:", error)
-        // Continue with empty contacts array
+        // continue with empty contacts array
     }
 
     // Get theme color
