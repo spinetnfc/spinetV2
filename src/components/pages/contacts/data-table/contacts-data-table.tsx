@@ -22,7 +22,7 @@ import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
 import { removeContacts, removeContact } from "@/actions/contacts"
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
-import { ContactFilterTabs } from "./contact-filter-tabs"
+import { ContactFilters } from "./contact-filters"
 import { ContactSortDropdown } from "./contact-sort-dropdown"
 import { contactColumns } from "./contact-columns"
 import EditContactForm from "../edit-contact-form"
@@ -276,20 +276,20 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
 
     return (
         <div className="space-y-2">
-            {/* Search and filter section */}
-            <div className="flex gap-4">
+            {/* search and filter section */}
+            <div className="flex gap-4 items-center">
                 <Input
                     placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
                     value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
-                <ContactFilterTabs themeColor={themeColor} />
+                <ContactFilters themeColor={themeColor} />
 
 
             </div>
 
-            {/* Add contact button and bulk actions */}
+            {/* add contact button and bulk actions */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     {selectedRowCount > 0 && (
@@ -365,17 +365,15 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                 </Table>
             </div>
 
-            {/* Pagination */}
             <div className="flex items-center justify-end space-x-2 py-4">
-                <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                <Button variant="outline" size="sm" className="text-xs sm:text-sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
                     <FormattedMessage id="previous" defaultMessage="Previous" />
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                <Button variant="outline" size="sm" className="text-xs sm:text-sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
                     <FormattedMessage id="next" defaultMessage="Next" />
                 </Button>
             </div>
 
-            {/* Delete confirmation modal */}
             {showDeleteModal && (
                 <DeleteConfirmationModal
                     isOpen={showDeleteModal}

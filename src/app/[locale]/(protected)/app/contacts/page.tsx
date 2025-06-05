@@ -43,7 +43,7 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
     }
 
     // Get theme color
-    const themeColor = profileData?.theme?.color || "#3b82f6" // Default to blue
+    const themeColor = profileData?.theme?.color || "#3b82f6"
 
     return (
         <div className="min-h-screen pt-16 lg:pt-4">

@@ -16,7 +16,7 @@ interface FilterOption {
     labelId: string
 }
 
-interface ContactFilterTabsProps {
+interface ContactFiltersProps {
     themeColor: string
 }
 
@@ -48,7 +48,7 @@ const filterOptions: FilterOption[] = [
     },
 ]
 
-export function ContactFilterTabs({ themeColor }: ContactFilterTabsProps) {
+export function ContactFilters({ themeColor }: ContactFiltersProps) {
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
@@ -75,13 +75,13 @@ export function ContactFilterTabs({ themeColor }: ContactFilterTabsProps) {
                 <DropdownMenuTrigger asChild>
                     <Button
                         variant="outline"
-                        className="flex items-center"
+                        className="flex items-center h-10"
                     // style={{
                     //     borderColor: themeColor,
                     //     color: themeColor,
                     // }}
                     >
-                        <SlidersHorizontal className="h-6 w-6" strokeWidth={3} />
+                        <SlidersHorizontal className="h-8 w-8 text-azure" strokeWidth={3} />
                         {/* <span>
                             <FormattedMessage
                                 id={currentOption?.labelId || "all"}
