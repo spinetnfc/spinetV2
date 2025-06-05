@@ -450,5 +450,6 @@
   "name-desc": "Name desc",
   "name-asc": "Name asc",
   "date-desc": "Date desc",
-  "date-asc": "Date asc"
+  "date-asc": "Date asc",
+  "contacts": "Contacts"
 }

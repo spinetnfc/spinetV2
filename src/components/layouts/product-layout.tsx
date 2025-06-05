@@ -12,7 +12,7 @@ const messagesMap = {
 
 interface ProductsLayoutProps {
     children: React.ReactNode;
-    locale: string; // Accept locale as a string prop
+    locale: string;
 }
 
 export default function ProductsLayout({ children, locale }: ProductsLayoutProps) {

@@ -84,7 +84,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
             })}
           </nav>
 
-          <div className={`flex flex-col gap-2 justify-between ms-3 ${!isExpanded && "hidden"}`}>
+          {/* <div className={`flex flex-col gap-2 justify-between ms-3 ${!isExpanded && "hidden"}`}>
             <ThemeSwitch locale={locale} />
             <div className="w-fit">
               <ChangeLanguage locale={locale} />
@@ -92,7 +92,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
             <Button variant="destructive" size="icon" onClick={logout}>
               <LogOut size={20} />
             </Button>
-          </div>
+          </div> */}
           <Button
             size="icon"
             variant="outline"
@@ -157,7 +157,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                 );
               })}
             </nav>
-            <div className={`flex flex-col gap-2 justify-between ms-3 ${!isExpanded && "hidden"}`}>
+            {/* <div className={`flex flex-col gap-2 justify-between ms-3 ${!isExpanded && "hidden"}`}>
               <ThemeSwitch locale={locale} />
               <div className="w-fit">
                 <ChangeLanguage locale={locale} />
@@ -165,7 +165,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
               <Button variant="destructive" size="icon" onClick={logout}>
                 <LogOut size={20} />
               </Button>
-            </div>
+            </div> */}
           </aside>
         </DrawerContent>
       </Drawer>

@@ -13,7 +13,7 @@ function Header({ locale }: { locale: string }) {
   const path = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-end gap-4 px-4 sm:static sm:h-auto sm:bg-transparent xl:px-6">
+    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-end gap-4  sm:static sm:h-auto sm:bg-transparent">
       <div className="flex items-center gap-4">
         <ThemeSwitch locale={locale} />
         <ChangeLanguage locale={locale} />

@@ -304,7 +304,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className={`px - 2 ${header.column.id === "select" ? "w-fit" : ""} `}>
+                                    <TableHead key={header.id} className={`px-2 ${header.column.id === "select" ? "w-fit" : ""} `}>
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
@@ -321,7 +321,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={`p - 2 min - w - 0 ${cell.column.id === "select"
+                                            className={`p-2 min-w-0 ${cell.column.id === "select"
                                                 ? "w-fit"
                                                 : cell.column.id === "name"
                                                     ? "w-auto truncate"

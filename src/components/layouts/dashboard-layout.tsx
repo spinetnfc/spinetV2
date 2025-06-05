@@ -8,6 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/utils/cn';
 import type { SideNavigationItem } from '@/types/layout-types';
 import { userRole } from '@/utils/role';
+import Header from '../header';
 
 const Layout = ({
   locale,
@@ -44,8 +45,10 @@ const Layout = ({
           isExpanded ? "lg:ps-60" : "lg:ps-16"
         )}
       >
-        {/* <Header locale={locale} /> */}
-        <main className="grid flex-1 items-start gap-4 md:gap-8">
+        <main className="grid flex-1 items-start gap-4 md:gap-8 relative">
+          <div className='absolute top-0 sm:top-2 end-2 z-100'>
+            <Header locale={locale} />
+          </div>
           {children}
         </main>
       </div>
