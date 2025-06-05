@@ -28,6 +28,7 @@ import { contactColumns } from "./contact-columns"
 import EditContactForm from "../edit-contact-form"
 import type { Contact } from "@/types/contact"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
+import { PaginationControls } from "@/components/ui/pagination-controls"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
@@ -37,16 +38,16 @@ interface ContactsDataTableProps {
         query?: string
         filter?: string
         sort?: string
+        page?: string
     }
 }
 
-// Hook to detect screen size
 function useIsMobile() {
     const [isMobile, setIsMobile] = React.useState(false)
 
     React.useEffect(() => {
         const checkIsMobile = () => {
-            setIsMobile(window.innerWidth < 640) // sm breakpoint is 640px
+            setIsMobile(window.innerWidth < 640)
         }
 
         checkIsMobile()
@@ -58,7 +59,6 @@ function useIsMobile() {
     return isMobile
 }
 
-// Move ActionCell outside to avoid hook issues
 function ActionCell({
     contact,
     locale,
@@ -69,6 +69,7 @@ function ActionCell({
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
     const [showEditModal, setShowEditModal] = React.useState(false)
+
     const handleDeleteConfirm = async () => {
         if (!profileId) return
 
@@ -97,7 +98,6 @@ function ActionCell({
         setShowEditModal(true)
     }
 
-
     return (
         <>
             {showDeleteModal && (
@@ -113,7 +113,7 @@ function ActionCell({
             {showEditModal && (
                 <EditContactForm
                     contact={contact}
-                    onSuccess={() => { setShowEditModal(false) }}
+                    onSuccess={() => setShowEditModal(false)}
                     onCancel={() => setShowEditModal(false)}
                 />
             )}
@@ -148,7 +148,7 @@ function ActionCell({
 }
 
 export function ContactsDataTable({ contacts, themeColor, locale, searchParams }: ContactsDataTableProps) {
-    const { query = "", filter = "all", sort = "name-asc" } = searchParams
+    const { query = "", filter = "all", sort = "name-asc", page = "1" } = searchParams
     const router = useRouter()
     const pathname = usePathname()
     const urlSearchParams = useSearchParams()
@@ -160,48 +160,38 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
     const isMobile = useIsMobile()
 
-    // Apply initial filtering based on URL params
     const initialFiltering: ColumnFiltersState = []
     if (query) {
         initialFiltering.push({ id: "name", value: query })
     }
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(initialFiltering)
 
-    // Filter contacts based on type
     const filteredByTypeContacts = React.useMemo(() => {
         if (filter === "all") return contacts
-
         return contacts.filter((contact) => {
-            if ("id" in contact.Profile) return false // Skip id-only profiles for type filtering
+            if ("id" in contact.Profile) return false
             return contact.type === filter
         })
     }, [contacts, filter])
 
-    // Apply sorting based on URL params
     const sortedContacts = React.useMemo(() => {
         const contactsToSort = [...filteredByTypeContacts]
-
         switch (sort) {
             case "name-desc":
                 return contactsToSort.sort((a, b) => (b.name || "").localeCompare(a.name || ""))
             case "date-asc":
-                return contactsToSort // Original order (date-desc)
+                return contactsToSort
             case "date-desc":
-                return contactsToSort.reverse() // Reverse order (date-asc)
+                return contactsToSort.reverse()
             case "name-asc":
             default:
                 return contactsToSort.sort((a, b) => (a.name || "").localeCompare(b.name || ""))
         }
     }, [filteredByTypeContacts, sort])
 
-    // Configure columns with theme color
     const allColumns = React.useMemo(() => contactColumns({ themeColor, locale }), [themeColor, locale])
-
-    // Don't filter columns - instead use columnVisibility to hide them
-    // This ensures the column structure stays consistent
     const columns = allColumns
 
-    // Set up the table
     const table = useReactTable({
         data: sortedContacts,
         columns,
@@ -215,35 +205,34 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
             columnFilters,
             columnVisibility: {
                 ...columnVisibility,
-                // Hide company and position columns on mobile
                 company: !isMobile,
                 position: !isMobile,
             },
             rowSelection,
+            pagination: {
+                pageIndex: Number(page) - 1,
+                pageSize: 10,
+            },
         },
     })
 
-    // Update URL when filtering changes
     React.useEffect(() => {
         const params = new URLSearchParams(urlSearchParams.toString())
-
-        // Update search query param
         const searchValue = columnFilters.find((filter) => filter.id === "name")?.value as string
         if (searchValue) {
             params.set("query", searchValue)
         } else {
             params.delete("query")
         }
-
-        // Only update URL if params have changed
+        const currentPage = table.getState().pagination.pageIndex + 1
+        params.set("page", currentPage.toString())
         const newParamsString = params.toString()
         const currentParamsString = urlSearchParams.toString()
         if (newParamsString !== currentParamsString) {
-            router.replace(`${pathname}?${newParamsString}`, { scroll: false })
+            router.replace(`${pathname}?${newParamsString} `, { scroll: false })
         }
-    }, [columnFilters, pathname, router, urlSearchParams])
+    }, [columnFilters, table.getState().pagination.pageIndex, pathname, router, urlSearchParams])
 
-    // Handle bulk delete
     const handleBulkDelete = async () => {
         if (!profileId) return
 
@@ -257,7 +246,6 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
 
             if (response.success) {
                 toast.success(intl.formatMessage({ id: "Contacts deleted successfully" }))
-                // Refresh the page to get updated data
                 router.refresh()
             } else {
                 throw new Error(response.message)
@@ -268,15 +256,14 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
         } finally {
             setIsDeleting(false)
             setShowDeleteModal(false)
+            setRowSelection({})
         }
     }
 
-    // Get the count of selected rows
     const selectedRowCount = Object.values(rowSelection).filter(Boolean).length
 
     return (
         <div className="space-y-2">
-            {/* search and filter section */}
             <div className="flex gap-4 items-center">
                 <Input
                     placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
@@ -285,11 +272,8 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                     className="max-w-sm"
                 />
                 <ContactFilters themeColor={themeColor} />
-
-
             </div>
 
-            {/* add contact button and bulk actions */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     {selectedRowCount > 0 && (
@@ -314,14 +298,13 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                 </Button>
             </div>
 
-            {/* Data table */}
-            <div className="rounded-md border overflow-x-auto ">
+            <div className="rounded-md border overflow-x-auto">
                 <Table className="table-auto relative">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className={`px-2 ${header.column.id === "select" ? "w-fit" : ""}`}>
+                                    <TableHead key={header.id} className={`px - 2 ${header.column.id === "select" ? "w-fit" : ""} `}>
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
@@ -338,17 +321,16 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={`p-2 min-w-0 ${cell.column.id === "select"
+                                            className={`p - 2 min - w - 0 ${cell.column.id === "select"
                                                 ? "w-fit"
                                                 : cell.column.id === "name"
                                                     ? "w-auto truncate"
                                                     : " truncate"
-                                                }`}
+                                                } `}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
-                                    {/* Actions cell outside of the column system */}
                                     <TableCell className="p-2 w-12">
                                         <ActionCell contact={row.original} locale={locale} profileId={profileId} />
                                     </TableCell>
@@ -365,14 +347,10 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                 </Table>
             </div>
 
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <Button variant="outline" size="sm" className="text-xs sm:text-sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                    <FormattedMessage id="previous" defaultMessage="Previous" />
-                </Button>
-                <Button variant="outline" size="sm" className="text-xs sm:text-sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                    <FormattedMessage id="next" defaultMessage="Next" />
-                </Button>
-            </div>
+            <PaginationControls
+                currentPage={table.getState().pagination.pageIndex + 1}
+                totalPages={table.getPageCount()}
+            />
 
             {showDeleteModal && (
                 <DeleteConfirmationModal
