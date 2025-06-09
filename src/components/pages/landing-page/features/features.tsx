@@ -30,8 +30,8 @@ function Features({ locale, messages }: Props) {
   }, []);
 
   const features = [
-    { title: 'f1', subtitle: 'f1-subtitle', imageUrl: '/img/features/1.digital-identity.png' },
-    { title: 'f2', subtitle: 'f2-subtitle', imageUrl: '/img/features/2.spinet-devices.png' },
+    { title: 'f1', subtitle: 'f1-subtitle', imageUrl: '/img/features/1.digital-identity.jpg' },
+    { title: 'f2', subtitle: 'f2-subtitle', imageUrl: '/img/features/2.spinet-devices.jpg' },
     { title: 'f3', subtitle: 'f3-subtitle', imageUrl: '/img/features/3.contact-management.jpg' },
     { title: 'f4', subtitle: 'f4-subtitle', imageUrl: '/img/features/4.lead-management.png' },
     { title: 'f5', subtitle: 'f5-subtitle', imageUrl: '/img/features/5.actions-managemnet.svg' },

@@ -167,6 +167,7 @@ export default function ScanContact({ themeColor, locale, getProfileData }: Scan
             new URL(data);
             setScannedUrl(data);
             setProgress(100);
+
         } catch (error) {
             console.error('QR scan error:', error);
             toast.error(intl.formatMessage({
@@ -288,8 +289,8 @@ export default function ScanContact({ themeColor, locale, getProfileData }: Scan
                     </div>
                     <p className="text-sm text-muted-foreground">
                         <FormattedMessage
-                            id="redirecting"
-                            defaultMessage="Redirecting to profile in 5 seconds..."
+                            id="adding-contact"
+                            defaultMessage="Adding contact..."
                         />
                     </p>
                 </div>
