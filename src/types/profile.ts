@@ -40,6 +40,35 @@ export type ProfileData = {
     };
 }
 
+export type profileInput = {
+    status: 'professional' | 'employee' | 'company' | 'student' | 'none';
+    code?: string;
+    theme?: { color: string };
+    profileName?: string;
+    fullName?: string;
+    firstName?: string;
+    lastName?: string;
+    profilePicture?: string;
+    profileCover?: string;
+    logo?: string;
+    qrCodeLogo?: string;
+    displayLogo?: boolean;
+    bio?: string;
+    phoneNumber?: string;
+    website?: string;
+    birthDate?: string;
+    gender?: 'male' | 'female';
+    companyName?: string;
+    school?: string;
+    activitySector?: string;
+    position?: string;
+    profession?: string;
+    sensitiveInfo?: {
+        bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'O+' | 'O-' | 'AB+' | 'AB-';
+        illnesses?: { name: string; details?: string }[];
+    };
+    links?: { name: string; title: string; link: string; order?: number }[];
+};
 export type LinkType = {
     name: string
     title: string

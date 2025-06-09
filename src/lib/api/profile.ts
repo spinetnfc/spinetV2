@@ -1,5 +1,5 @@
 import { ServerApi } from '@/lib/axios';
-import type { ProfileData } from '@/types/profile';
+import type { ProfileData, profileInput } from '@/types/profile';
 import { withServerCookies } from '@/utils/withServerCookies';
 
 export const viewProfile = async (profileId: string | null, userId: string | null): Promise<ProfileData> => {
@@ -33,7 +33,7 @@ export const getAllProfiles = async (userId: string | null): Promise<ProfileData
     }
 }
 
-export const createProfile = async (userId: string, profile: ProfileData): Promise<ProfileData> => {
+export const createProfile = async (userId: string, profile: profileInput): Promise<profileInput> => {
     const headers = await withServerCookies();
     try {
         if (!userId || typeof userId !== "string") {
@@ -71,3 +71,18 @@ export const updateProfile = async (userId: string, profileData: Partial<Profile
         throw error;
     }
 };
+
+
+export const deleteProfile = async (profileId: string): Promise<ProfileData> => {
+    const headers = await withServerCookies();
+    try {
+        if (!profileId || typeof profileId !== 'string') {
+            throw new Error(`Invalid profileId: ${profileId}`);
+        }
+        const response = await ServerApi.delete(`/profile/${profileId}`, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Profile deletion error:', error);
+        throw error;
+    }
+}

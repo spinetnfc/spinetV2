@@ -1,9 +1,9 @@
 'use server';
 
 import { format } from 'date-fns';
-import { updateProfile, createProfile, getAllProfiles } from '@/lib/api/profile';
+import { updateProfile, createProfile, getAllProfiles, deleteProfile } from '@/lib/api/profile';
 import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';
-import { LinkType, ProfileData } from '@/types/profile';
+import { LinkType, ProfileData, profileInput } from '@/types/profile';
 
 interface ProfileFormValues {
     fullName?: string;
@@ -25,14 +25,14 @@ export const getAllProfilesAction = async (userId: string | null): Promise<Profi
     }
 };
 
-export async function createProfileAction(userId: string, data: ProfileData) {
+export async function createProfileAction(userId: string, data: profileInput) {
     try {
-        const formattedData = {
-            ...data,
-            birthDate: format(data.birthDate, 'yyyy-MM-dd'),
-        };
+        // const formattedData = {
+        //     ...data,
+        //     birthDate: format(data.birthDate, 'yyyy-MM-dd'),
+        // };
 
-        const response = await createProfile(userId, formattedData);
+        const response = await createProfile(userId, data);
 
         return { success: true, data: response };
     } catch (error) {
@@ -56,6 +56,17 @@ export async function updateProfileAction(profileId: string, data: ProfileFormVa
         return { success: false, message: 'Failed to update profile' };
     }
 }
+
+export async function deleteProfileAction(profileId: string) {
+    try {
+        await deleteProfile(profileId);
+        return { success: true };
+    } catch (error) {
+        console.error('[Server Action] Failed to delete profile:', error);
+        return { success: false, message: 'Failed to delete profile' };
+    }
+}
+
 export async function updatePreferencesAction(profileId: string, themeColor: string) {
     try {
         // Format data for API
