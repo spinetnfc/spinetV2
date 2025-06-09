@@ -19,6 +19,34 @@ export const viewProfile = async (profileId: string | null, userId: string | nul
     }
 };
 
+export const getAllProfiles = async (userId: string | null): Promise<ProfileData[]> => {
+    const headers = await withServerCookies();
+    try {
+        if (!userId || typeof userId !== 'string') {
+            throw new Error(`Invalid userId: ${userId}`);
+        }
+        const response = await ServerApi.get(`/user/${userId}/profiles`, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Profiles fetch error:', error);
+        throw error;
+    }
+}
+
+export const createProfile = async (userId: string, profile: ProfileData): Promise<ProfileData> => {
+    const headers = await withServerCookies();
+    try {
+        if (!userId || typeof userId !== "string") {
+            throw new Error("Invalid userId:" + userId);
+        }
+        const response = await ServerApi.post(`/user/${userId}/profiles`, profile, { headers })
+        return response.data;
+    } catch (error) {
+        console.error('Profile creation error:', error);
+        throw error;
+    }
+}
+
 export const getProfile = async (profileId: string | null): Promise<ProfileData> => {
     try {
 
