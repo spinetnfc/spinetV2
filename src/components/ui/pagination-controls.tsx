@@ -12,7 +12,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const locale = pathname.split("/")[1]; // 'en', 'ar', 'fr', etc.
+    const locale = pathname.split("/")[1];
 
     const createPageURL = (pageNumber: number) => {
         const params = new URLSearchParams(searchParams.toString())
@@ -23,7 +23,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
     const renderPageNumbers = () => {
         const pages = [];
 
-        // Always show the first page
+        //first page number
         pages.push(
             <button
                 key={1}
@@ -34,12 +34,12 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
             </button>
         );
 
-        // Add dots if currentPage > 3
+        // if currentPage > 2
         if (currentPage > 2) {
             pages.push(<span key="start-ellipsis" className="px-2">...</span>);
         }
 
-        // Show currentPage if it's not 1 or totalPages
+        // show currentPage if it's not first or last
         if (currentPage !== 1 && currentPage !== totalPages) {
             pages.push(
                 <button
@@ -52,12 +52,12 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
             );
         }
 
-        // Add dots if currentPage < totalPages - 2
+        // if currentPage < totalPages - 1
         if (currentPage < totalPages - 1) {
             pages.push(<span key="end-ellipsis" className="px-2">...</span>);
         }
 
-        // Always show the last page if totalPages > 1
+        //  last page number
         if (totalPages > 1) {
             pages.push(
                 <button

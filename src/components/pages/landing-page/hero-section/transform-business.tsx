@@ -2,13 +2,9 @@ import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-
 import { Button } from '@/components/ui/button';
-
 import CtaButton from '../cta-button';
-
-import NavBar from './nav-bar';
-
+import transformBusiness from "@/assets/images/transform-business.png";
 type Props = {
   locale: string;
   isMenuOpen: boolean;
@@ -80,7 +76,8 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
             }`}
         >
           <Image
-            src="/img/transform-business.png"
+            src={transformBusiness}
+            quality={100}
             alt="Transform business image"
             width={1075}
             height={920}

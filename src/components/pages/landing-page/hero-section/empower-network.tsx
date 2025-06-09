@@ -1,89 +1,103 @@
-import { ChevronRight, LogIn } from "lucide-react";
-import { useTheme } from "next-themes";
-import React, { useEffect, useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import CtaButton from "../cta-button";
+import { LogIn } from "lucide-react"
+import { useTheme } from "next-themes"
+import type React from "react"
+import { useEffect, useState } from "react"
+import { FormattedMessage, useIntl } from "react-intl"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import CtaButton from "../cta-button"
+
+import ellipseOneDark from "@/assets/images/Ellipse-one-dark.png"
+import ellipseOne from "@/assets/images/Ellipse-one.png"
+import ellipseTwoDark from "@/assets/images/Ellipse-two-dark.png"
+import ellipseTwo from "@/assets/images/Ellipse-two.png"
+import ellipseThreeDark from "@/assets/images/Ellipse-three-dark.png"
+import ellipseThree from "@/assets/images/Ellipse-three.png"
 
 type Props = {
-  locale: string;
-  isMenuOpen: boolean;
-  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+  locale: string
+  isMenuOpen: boolean
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
 
 function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
-  const intl = useIntl();
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const intl = useIntl()
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
   function scrollToSection(id: string, setIsMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>) {
-    const element = document.getElementById(id);
+    const element = document.getElementById(id)
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-      setIsMenuOpen?.(false); // Close menu in mobile view
+      element.scrollIntoView({ behavior: "smooth", block: "start" })
+      setIsMenuOpen?.(false) // Close menu in mobile view
     }
   }
   // Handle mounting state
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   if (!mounted) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
-        {/* Minimal content to prevent layout shift */}
         <h1 className="z-10 mx-auto px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-6xl xl:text-8xl ">
           <FormattedMessage id="empower-your-network" />
         </h1>
       </div>
-    );
+    )
   }
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       {/* Background Ellipses */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* {resolvedTheme === "dark" && (
-          <>
-            <div className="absolute left-[384px] top-[-70px] h-[422px] w-[121px] rotate-[-20deg] bg-linear-to-b from-[#0A234D] via-[#8FC8FF] to-[#145FF2] opacity-70 blur-[58px]" />
-            <div className="absolute left-[710px] top-[-106px] h-[422px] w-[121px] rotate-[31deg] bg-linear-to-b from-[#0A234D] via-[#8FC8FF] to-[#145FF2] opacity-70 blur-[58px]" />
-          </>
-        )} */}
-        <img
-          src={resolvedTheme === "dark" ? "/img/Ellipse-one-dark.png" : "/img/Ellipse-one.png"}
+        <Image
+          quality={100}
+          src={resolvedTheme === "dark" ? ellipseOneDark : ellipseOne}
           alt=""
           className="absolute left-[10%] top-[20%] hidden w-2/5 max-w-[15%] lg:block animate-floating"
+          priority
         />
-        <img
-          src={resolvedTheme === "dark" ? "/img/Ellipse-two-dark.png" : "/img/Ellipse-two.png"}
+        <Image
+          quality={100}
+          src={resolvedTheme === "dark" ? ellipseTwoDark : ellipseTwo}
           alt=""
           className="absolute right-0 top-1/4 hidden w-1/2 max-w-[30%] lg:block animate-floating"
+          priority
         />
-        <img
-          src={resolvedTheme === "dark" ? "/img/Ellipse-three-dark.png" : "/img/Ellipse-three.png"}
+        <Image
+          quality={100}
+          src={resolvedTheme === "dark" ? ellipseThreeDark : ellipseThree}
           alt=""
           className="absolute bottom-[5%] left-[5%] hidden w-[30%] max-w-[30%] lg:block animate-floating"
+          priority
         />
 
         {/* Mobile Ellipses */}
-        <img
-          src={resolvedTheme === "dark" ? "/img/Ellipse-one-dark.png" : "/img/Ellipse-one.png"}
+        <Image
+          quality={100}
+          src={resolvedTheme === "dark" ? ellipseOneDark : ellipseOne}
           alt=""
           className="absolute left-0 top-[30%] max-w-[30%] lg:hidden animate-floating"
+          priority
         />
-        <img
-          src={resolvedTheme === "dark" ? "/img/Ellipse-two-dark.png" : "/img/Ellipse-two.png"}
+        <Image
+          quality={100}
+          src={resolvedTheme === "dark" ? ellipseTwoDark : ellipseTwo}
           alt=""
           className="absolute right-0 top-[40%] w-full max-w-[50%] lg:hidden animate-floating"
+          priority
         />
-        <img
-          src={resolvedTheme === "dark" ? "/img/Ellipse-three-dark.png" : "/img/Ellipse-three.png"}
+        <Image
+          quality={100}
+          src={resolvedTheme === "dark" ? ellipseThreeDark : ellipseThree}
           alt=""
           className="absolute bottom-[10%] left-[5%] w-full max-w-[50%] lg:hidden animate-floating"
+          priority
         />
       </div>
-
 
       {/* Content Container */}
       <div className="container z-10 text-center p-0">
@@ -132,7 +146,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default EmpowerNetwork;
+export default EmpowerNetwork

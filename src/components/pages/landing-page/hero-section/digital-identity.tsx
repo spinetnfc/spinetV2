@@ -4,7 +4,8 @@ import Image from 'next/image';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import CtaButton from '../cta-button';
-// import { useTheme } from 'next-themes';
+import digitalIdentityBg from "@/assets/images/digital-identity-background.png"
+import handFingerPrint from "@/assets/images/hand-finger-print.png"
 
 type Props = {
   locale: string;
@@ -14,14 +15,11 @@ type Props = {
 
 function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
-  // const theme = useTheme();
   return (
     <div
       className={`relative flex h-full flex-col  overflow-hidden pt-16
-     bg-[url('/img/digital-identity-background.png')] bg-cover bg-no-repeat`}
-    //  className={`relative flex h-full flex-col overflow-hidden pt-16 
-    //   ${theme.theme === "dark" ? "bg-[url('/img/digital-identity-background.png')]" : "bg-[url('/img/digital-identity-background-light.png')]"} 
-    //   bg-cover bg-no-repeat`}
+        bg-cover bg-no-repeat`}
+      style={{ backgroundImage: `url(${digitalIdentityBg.src})` }}
     >
       <div className="flex size-full flex-col lg:flex-row">
         <div className="z-10 lg:mx-5 mt-20 flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:items-start">
@@ -49,7 +47,8 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         </div>
         <div className="relative flex size-full flex-col items-center justify-end flex-grow">
           <Image
-            src="/img/hand-finger-print.png"
+            quality={100}
+            src={handFingerPrint}
             alt="Hand image"
             width={600}
             height={600}

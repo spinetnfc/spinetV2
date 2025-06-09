@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import CtaButton from '../cta-button';
-
+import eventsBg from "@/assets/images/organiser-evenement-digital-entreprise.jpeg"
 type Props = {
   locale: string;
   isMenuOpen: boolean;
@@ -18,13 +18,14 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         {' '}
         <div className="absolute inset-0 bg-[#01173A]/30 object-cover shadow-[0_-1px_4px_rgba(20,95,242,0.2)]">
           <Image
-            src="/img/organiser-evenement-digital-entreprise.jpeg"
+            src={eventsBg}
+            quality={100}
+            priority
             alt="Digital Event Organization"
             className="mix-blend-overlay"
             fill
             sizes='100vw'
             style={{ objectFit: 'cover' }}
-            priority
           />
         </div>
         <div

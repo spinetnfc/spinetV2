@@ -6,9 +6,6 @@ import DigitalIdentity from './digital-identity';
 import EmpowerNetwork from './empower-network';
 import Events from './events';
 import TransformBusiness from './transform-business';
-// import Image from 'next/image';
-// import { useTheme } from 'next-themes';
-// import { cn } from '@/utils/cn';
 
 export default function HeroSection({
   locale,
