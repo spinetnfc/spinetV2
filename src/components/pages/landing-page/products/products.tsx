@@ -1,12 +1,12 @@
 import { Store } from 'lucide-react';
 import React from 'react';
-
 import useTranslate from '@/hooks/use-translate';
-
 import CtaButton from '../cta-button';
 import Legend from '../legend';
-
 import ProductCard from './product-card';
+import product1 from '@/assets/images/products/product1.png';
+import product2 from '@/assets/images/products/product2.png';
+import product3 from '@/assets/images/products/product3.png';
 
 type Props = { locale: string };
 
@@ -14,17 +14,17 @@ async function Products({ locale }: Props) {
   const { t } = await useTranslate(locale);
   const products = [
     {
-      imageUrl: '/img/products/product1.png',
+      imageUrl: product1,
       title: 'spinet-keychain',
       price: '2300 DA',
     },
     {
-      imageUrl: '/img/products/product2.png',
+      imageUrl: product2,
       title: 'spinet-business-card',
       price: '3000 DA',
     },
     {
-      imageUrl: '/img/products/product3.png',
+      imageUrl: product3,
       title: 'spinet-kid-band',
       price: '1500 DA',
     },

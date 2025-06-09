@@ -8,7 +8,6 @@ import { FormattedMessage, useIntl } from "react-intl"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import CtaButton from "../cta-button"
-
 import ellipseOneDark from "@/assets/images/Ellipse-one-dark.png"
 import ellipseOne from "@/assets/images/Ellipse-one.png"
 import ellipseTwoDark from "@/assets/images/Ellipse-two-dark.png"

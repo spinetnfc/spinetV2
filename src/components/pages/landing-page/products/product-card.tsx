@@ -2,9 +2,10 @@ import { ShoppingCart } from 'lucide-react';
 import React from 'react';
 
 import useTranslate from '@/hooks/use-translate';
+import Image, { StaticImageData } from 'next/image';
 
 type Product = {
-  imageUrl: string;
+  imageUrl: StaticImageData;
   title: string;
   price: string;
 };
@@ -40,7 +41,8 @@ async function ProductCard({ index, product, locale }: Props) {
 
       {/* Product Image */}
       <div className="relative z-10 size-[239px] flex-1">
-        <img
+        <Image
+          quality={100}
           src={product.imageUrl}
           alt={product.title}
           className="size-full object-cover"

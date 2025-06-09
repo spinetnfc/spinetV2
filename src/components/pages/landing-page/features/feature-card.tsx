@@ -16,7 +16,13 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   return (
     <div className="noSelect flex shrink-0 flex-col  overflow-hidden h-[532px] w-3/4 sm:w-[542px]">
       <div className="relative h-[383px] w-full bg-white">
-        <Image src={imageUrl} alt={title} draggable={false} fill sizes='w-fit' className="object-cover rounded-lg" priority />
+        <Image src={imageUrl}
+          alt={title}
+          draggable={false}
+          fill
+          sizes='w-fit'
+          className="object-cover rounded-lg"
+        />
       </div>
 
       <div className="flex flex-col space-y-2 p-6">

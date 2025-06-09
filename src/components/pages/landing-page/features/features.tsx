@@ -6,6 +6,14 @@ import { FormattedMessage, IntlProvider } from 'react-intl';
 import useDrag from '@/hooks/use-horizontal-drag';
 import Legend from '../legend';
 import FeatureCard from './feature-card';
+import digitalIdentityImg from '@/assets/images/features/1.digital-identity.jpg';
+import spinetDevicesImg from '@/assets/images/features/2.spinet-devices.jpg';
+import contactManagementImg from '@/assets/images/features/3.contact-management.jpg';
+import leadManagementImg from '@/assets/images/features/4.lead-management.png';
+import actionsManagementImg from '@/assets/images/features/5.actions-managemnet.svg';
+import multipleProfilesImg from '@/assets/images/features/6.multiple-profiles.png';
+import offersImg from '@/assets/images/features/7.offers.svg';
+import teamsFormsRedirectionsImg from '@/assets/images/features/8.teams-forms-redirections.png';
 
 type Props = { locale: string; messages: Record<string, string> };
 
@@ -30,14 +38,14 @@ function Features({ locale, messages }: Props) {
   }, []);
 
   const features = [
-    { title: 'f1', subtitle: 'f1-subtitle', imageUrl: '/img/features/1.digital-identity.jpg' },
-    { title: 'f2', subtitle: 'f2-subtitle', imageUrl: '/img/features/2.spinet-devices.jpg' },
-    { title: 'f3', subtitle: 'f3-subtitle', imageUrl: '/img/features/3.contact-management.jpg' },
-    { title: 'f4', subtitle: 'f4-subtitle', imageUrl: '/img/features/4.lead-management.png' },
-    { title: 'f5', subtitle: 'f5-subtitle', imageUrl: '/img/features/5.actions-managemnet.svg' },
-    { title: 'f6', subtitle: 'f6-subtitle', imageUrl: '/img/features/6.multiple-profiles.png' },
-    { title: 'f7', subtitle: 'f7-subtitle', imageUrl: '/img/features/7.offers.svg' },
-    { title: 'f8', subtitle: 'f8-subtitle', imageUrl: '/img/features/8.teams-forms-redirections.png' },
+    { title: 'f1', subtitle: 'f1-subtitle', imageUrl: digitalIdentityImg },
+    { title: 'f2', subtitle: 'f2-subtitle', imageUrl: spinetDevicesImg },
+    { title: 'f3', subtitle: 'f3-subtitle', imageUrl: contactManagementImg },
+    { title: 'f4', subtitle: 'f4-subtitle', imageUrl: leadManagementImg },
+    { title: 'f5', subtitle: 'f5-subtitle', imageUrl: actionsManagementImg },
+    { title: 'f6', subtitle: 'f6-subtitle', imageUrl: multipleProfilesImg },
+    { title: 'f7', subtitle: 'f7-subtitle', imageUrl: offersImg },
+    { title: 'f8', subtitle: 'f8-subtitle', imageUrl: teamsFormsRedirectionsImg },
   ];
 
   useEffect(() => {

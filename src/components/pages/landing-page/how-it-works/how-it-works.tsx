@@ -1,12 +1,13 @@
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
-
 import useTranslate from '@/hooks/use-translate';
-
 import CtaButton from '../cta-button';
 import Legend from '../legend';
-
 import StepCard from './step-card';
+import howItWorks1 from '@/assets/images/how-it-works/1.png';
+import howItWorks2 from '@/assets/images/how-it-works/2.png';
+import howItWorks3 from '@/assets/images/how-it-works/3.png';
+import howItWorks4 from '@/assets/images/how-it-works/4.png';
 
 type Props = { locale: string };
 
@@ -14,23 +15,23 @@ async function HowItWorks({ locale }: Props) {
   const { t } = await useTranslate(locale);
   const steps = [
     {
-      imageUrl: '/img/how-it-works/1.png',
+      imageUrl: howItWorks1,
 
       text: 'create-an-account',
       ordinal: 'first',
     },
     {
-      imageUrl: '/img/how-it-works/2.png',
+      imageUrl: howItWorks2,
       text: 'set-up-your-profile',
       ordinal: 'second',
     },
     {
-      imageUrl: '/img/how-it-works/3.png',
+      imageUrl: howItWorks3,
       text: 'active-spinet-product',
       ordinal: 'third',
     },
     {
-      imageUrl: '/img/how-it-works/4.png',
+      imageUrl: howItWorks4,
       text: 'exchange-contact-and-collect-leads',
       ordinal: 'fourth',
     },

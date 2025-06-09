@@ -11,6 +11,10 @@ import ThemeSwitch from '../theme-switch';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useAuth } from '@/context/authContext';
+import logoSpinet from '@/assets/images/logo-spinet.svg';
+import logoSpinetDark from '@/assets/images/logo-spinet-dark.svg';
+import authImage from '@/assets/images/authentication.png';
+import authBg from '@/assets/images/abstract.jpeg';
 
 type LayoutProps = {
   children: ReactNode;
@@ -92,8 +96,8 @@ export const AuthLayout = ({ children }: LayoutProps) => {
               <Image
                 src={
                   resolvedTheme === 'light' && isMobile
-                    ? '/img/logo-spinet.svg'
-                    : '/img/logo-spinet-dark.svg'
+                    ? logoSpinet
+                    : logoSpinetDark
                 }
                 alt="logo"
                 width={160}
@@ -104,7 +108,8 @@ export const AuthLayout = ({ children }: LayoutProps) => {
           </div>
         </div>
         <Image
-          src="/img/abstract.jpeg"
+          src={authBg}
+          quality={100}
           alt="auth Background"
           fill
           sizes="100vw"
@@ -116,8 +121,9 @@ export const AuthLayout = ({ children }: LayoutProps) => {
           {children}
           <div className="z-10 lg:w-1/2">
             {!pathname?.includes('/auth/forgot-password') ? (
-              <img
-                src="/img/authentication.png"
+              <Image
+                priority
+                src={authImage}
                 alt="auth illustration"
                 className="w-60 xs:w-80 lg:w-full"
               />

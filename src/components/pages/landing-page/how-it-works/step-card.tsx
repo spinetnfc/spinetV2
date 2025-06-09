@@ -1,5 +1,5 @@
 'use client';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 
@@ -9,9 +9,10 @@ import { cn } from '@/utils/cn';
 import { useParams } from 'next/navigation';
 
 type Props = {
-  imageUrl: string;
+  imageUrl: StaticImageData;
   text: string;
   ordinal: string;
+
 
 };
 
@@ -43,16 +44,16 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
                 ? imageUrl
                 : resolvedTheme === 'dark'
                   ? imageUrl
-                  : imageUrl.slice(0, imageUrl.lastIndexOf('.')) +
+                  : imageUrl.src.slice(0, imageUrl.src.lastIndexOf('.')) +
                   '-light' +
-                  imageUrl.slice(imageUrl.lastIndexOf('.'))
+                  imageUrl.src.slice(imageUrl.src.lastIndexOf('.'))
             }
             alt={text}
             fill
             sizes='w-100%'
             className="object-cover"
             // className={`${(ordinal !== 'Third') ? "object-cover" : "object-contain"} rounded-lg overflow-hidden`}
-            priority
+            quality={100}
           />
         </div>
 
