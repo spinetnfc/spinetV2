@@ -18,7 +18,7 @@ import {
     Key,
     Eye,
     EyeOff,
-    ArrowLeft,
+    // ArrowLeft,
 } from "lucide-react";
 import useTranslate from "@/hooks/use-translate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -76,11 +76,11 @@ export default async function UpdateProfilePage({
                             : {}
                 }
             >
-                <div className="absolute top-4 start-4">
+                {/* <div className="absolute top-4 start-4">
                     <Link href="./" className="p-2 rounded-full bg-white/20 text-white inline-flex items-center">
                         <ArrowLeft size={24} />
                     </Link>
-                </div>
+                </div> */}
                 <div className="absolute -bottom-12 xs:-bottom-14 sm:-bottom-16 left-4 sm:left-8">
                     <div className="relative">
                         <Image

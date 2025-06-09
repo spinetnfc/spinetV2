@@ -109,10 +109,9 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
         <DrawerTrigger asChild>
           <Button
             size="icon"
-            variant="outline"
-            className="lg:hidden absolute  start-4 top-3 z-40"
+            className="lg:hidden absolute  start-4 top-3 z-40  dark:border dark:border-azure bg-azure dark:bg-background"
           >
-            <PanelLeft className="size-5" />
+            <PanelLeft className="size-5  text-white" />
             <span className="sr-only">Toggle Sidebar</span>
           </Button>
         </DrawerTrigger>
@@ -157,15 +156,6 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                 );
               })}
             </nav>
-            {/* <div className={`flex flex-col gap-2 justify-between ms-3 ${!isExpanded && "hidden"}`}>
-              <ThemeSwitch locale={locale} />
-              <div className="w-fit">
-                <ChangeLanguage locale={locale} />
-              </div>
-              <Button variant="destructive" size="icon" onClick={logout}>
-                <LogOut size={20} />
-              </Button>
-            </div> */}
           </aside>
         </DrawerContent>
       </Drawer>
