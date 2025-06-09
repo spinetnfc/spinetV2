@@ -1,4 +1,5 @@
 export type ProfileData = {
+    _id?: string;
     type: string;
     groupId: string;
     theme: {

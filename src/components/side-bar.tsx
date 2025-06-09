@@ -3,16 +3,13 @@
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import { LogOut, PanelLeft } from 'lucide-react';
+import { PanelLeft } from 'lucide-react';
 import Logo from '@/components/logo';
 import LogoSpinet from '@/components/logo-spinet';
 import { SideNavigationItem } from '@/types/layout-types';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
-import ThemeSwitch from './theme-switch';
-import ChangeLanguage from './change-language';
-import { useAuth } from '@/context/authContext';
 import { useTheme } from 'next-themes';
 
 type Props = {
@@ -24,8 +21,7 @@ type Props = {
 
 function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const pathname = usePathname();
-  const { logout } = useAuth();
-  const { theme, setTheme } = useTheme(); // Use setTheme for control if needed
+  const { theme } = useTheme();
   const [isDark, setIsDark] = useState(theme === 'dark');
 
   // Sync isDark with theme changes

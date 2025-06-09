@@ -21,7 +21,7 @@ const Layout = ({
   const role = userRole();
 
   const navigation = [
-    { name: 'Dashboard', to: `/app`, icon: LayoutDashboard },
+    { name: 'Home', to: `/app`, icon: LayoutDashboard },
     { name: 'Profile', to: `/app/profile`, icon: CircleUserRound },
     { name: 'Contacts', to: `/app/contacts`, icon: Contact },
     { name: 'Settings', to: `/app/profile/update-info`, icon: Settings },
