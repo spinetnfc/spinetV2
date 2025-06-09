@@ -1,9 +1,9 @@
 'use server';
 
 import { format } from 'date-fns';
-import { updateProfile } from '@/lib/api/profile';
+import { updateProfile, createProfile, getAllProfiles } from '@/lib/api/profile';
 import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';
-import { LinkType } from '@/types/profile';
+import { LinkType, ProfileData } from '@/types/profile';
 
 interface ProfileFormValues {
     fullName?: string;
@@ -13,6 +13,32 @@ interface ProfileFormValues {
     activitySector?: string;
     position?: string;
     links?: LinkType[];
+}
+
+export const getAllProfilesAction = async (userId: string | null): Promise<ProfileData[]> => {
+    try {
+        const profiles = await getAllProfiles(userId);
+        return profiles;
+    } catch (error) {
+        console.error('Error fetching profiles:', error);
+        throw error;
+    }
+};
+
+export async function createProfileAction(userId: string, data: ProfileData) {
+    try {
+        const formattedData = {
+            ...data,
+            birthDate: format(data.birthDate, 'yyyy-MM-dd'),
+        };
+
+        const response = await createProfile(userId, formattedData);
+
+        return { success: true, data: response };
+    } catch (error) {
+        console.error('[Server Action] Failed to create profile:', error);
+        return { success: false, message: 'Failed to create profile' };
+    }
 }
 
 export async function updateProfileAction(profileId: string, data: ProfileFormValues) {
