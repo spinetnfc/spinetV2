@@ -10,6 +10,7 @@ import {
 import { FormattedMessage } from "react-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
+import SwitchProfile from "@/components/switch-profile-drawer";
 const UserMenu = ({ locale }: { locale: string }) => {
     const router = useRouter();
     const { logout } = useAuth();
@@ -21,8 +22,8 @@ const UserMenu = ({ locale }: { locale: string }) => {
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-            <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => router.push(`/${locale}/app/profile`)}>
-                <FormattedMessage id="switch-profile" defaultMessage="Switch Profile" />
+            <DropdownMenuItem asChild>
+                <SwitchProfile />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-primary cursor-pointer" onClick={logout}>
