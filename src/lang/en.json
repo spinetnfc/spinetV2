@@ -451,5 +451,6 @@
   "name-asc": "Name asc",
   "date-desc": "Date desc",
   "date-asc": "Date asc",
-  "contacts": "Contacts"
+  "contacts": "Contacts",
+  "switch-profile": "Switch Profile"
 }

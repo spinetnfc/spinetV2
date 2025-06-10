@@ -451,5 +451,6 @@
   "name-asc": "Nom asc",
   "date-desc": "Les plus anciens",
   "date-asc": "Les plus récents",
-  "contacts": "Contacts"
+  "contacts": "Contacts",
+  "switch-profile": "Changer de profil"
 }
