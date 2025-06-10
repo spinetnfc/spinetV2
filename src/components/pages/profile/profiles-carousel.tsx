@@ -89,9 +89,18 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                         </CarouselItem>
                     ))}
                 </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
             </Carousel>
+            <div className="mt-4 flex items-center justify-center gap-2">
+                {profiles.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => api?.scrollTo(index)}
+                        className={cn("h-2.5 w-2.5 rounded-full bg-primary cursor-pointer", {
+                            " scale-150": current === index + 1,
+                        })}
+                    />
+                ))}
+            </div>
         </div>
     );
 }

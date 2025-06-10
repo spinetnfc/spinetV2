@@ -79,7 +79,7 @@ export default async function HomePage() {
     console.error("Error fetching profiles:", error);
   }
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center pt-10 bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800 min-h-screen">
+    <div className="w-full h-full flex flex-col items-center justify-center pt-10 min-h-screen">
       <ProfileCarousel profiles={profiles} />
     </div>
   )
