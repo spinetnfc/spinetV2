@@ -10,7 +10,7 @@ import {
     DrawerHeader,
     DrawerTitle,
     DrawerDescription,
-} from "@/components/ui/drawer";
+} from "@/components/ui/drawer/drawer";
 import { SlidersHorizontal } from "lucide-react";
 import { cn } from "@/utils/cn";
 import enMessages from '@/lang/en.json';
