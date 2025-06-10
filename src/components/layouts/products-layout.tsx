@@ -10,7 +10,7 @@ import {
     DrawerHeader,
     DrawerTitle,
     DrawerDescription,
-} from "@/components/ui/drawer";
+} from "@/components/ui/drawer/drawer";
 import { SlidersHorizontal } from "lucide-react";
 import { cn } from "@/utils/cn";
 import enMessages from '@/lang/en.json';
@@ -53,7 +53,7 @@ export default function ProductsLayout({ children, locale }: ProductsLayoutProps
                             </button>
                         </DrawerTrigger>
                         <DrawerContent
-                            // side={locale === 'ar' ? 'right' : 'left'}
+                            side={locale === 'ar' ? 'right' : 'left'}
                             lang={locale}
                             className={cn(
                                 'bg-background p-4 h-full fixed top-0 md:hidden overflow-auto',

@@ -7,8 +7,7 @@ import {
     DrawerHeader,
     DrawerTitle,
     DrawerTrigger,
-} from "@/components/ui/drawer"
-// import { Button } from "./ui/button"
+} from "@/components/ui/bottom-drawer"
 import { getAllProfilesAction } from "@/actions/profile"
 import { FormattedMessage } from "react-intl"
 import { getUserFromCookie } from "@/utils/cookie";

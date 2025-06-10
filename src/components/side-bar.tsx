@@ -9,7 +9,7 @@ import LogoSpinet from '@/components/logo-spinet';
 import { SideNavigationItem } from '@/types/layout-types';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
-import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer/drawer';
 import { useTheme } from 'next-themes';
 
 type Props = {
