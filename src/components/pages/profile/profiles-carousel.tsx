@@ -43,7 +43,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
             >
                 <CarouselContent className="py-3 -ms-0">
                     {profiles.map((profile, index) => (
-                        <CarouselItem key={profile._id} className={cn("basis-4/5 sm:basis-2/3 md:basis-1/2 xl:basis-1/3 ps-0", {})}>
+                        <CarouselItem key={profile._id} className={cn("basis-4/5 sm:basis-2/3 md:basis-1/2 2xl:basis-1/3 ps-0", {})}>
                             <div>
                                 <img
                                     src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://spinettest.vercel.app/public-profile/${profile._id}`}
@@ -59,8 +59,8 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                                     className={cn(
                                         "transition-transform duration-500",
                                         index !== current - 1
-                                            ? "scale-[0.8] basis-1/2 md:basis-[40%] xl:basis-[25%] opacity-70 pointer-events-none"
-                                            : "scale-100 basis-2/3 md:basis-1/2 xl:basis-1/3 opacity-100"
+                                            ? "scale-[0.8] basis-1/2 md:basis-[40%] 2xl:basis-[25%] opacity-70 pointer-events-none"
+                                            : "scale-100 basis-2/3 md:basis-1/2 2xl:basis-1/3 opacity-100"
                                     )}
                                 >
 
@@ -78,14 +78,14 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                                     </div>
 
                                     {/* Profile Information */}
-                                    <CardContent className="pt-10 xs:pt-12 sm:pt-14 pb-2 xs:pb-4 sm:pb-6 px-3 xs:px-4 sm:px-6 text-gray-800flex flex-col justify-between">
+                                    <CardContent className="pt-10 h-36 sm:h-42 xs:pt-12 sm:pt-14 pb-2 xs:pb-4 sm:pb-6 px-3 xs:px-4 sm:px-6 text-gray-800flex flex-col justify-between">
                                         <div>
                                             <h3 className="text-lg xs:text-xl font-bold text-primary xs:mb-1">{profile.fullName}</h3>
                                             {profile.position && <p className="text-gray-600 text-sm font-medium xs:mb-1">{profile.position} <FormattedMessage id="at" /> {profile.companyName}</p>}
                                         </div>
 
                                         {/* Action buttons at bottom */}
-                                        <div className="flex justify-end">
+                                        <div className="flex justify-end items-end">
                                             <Link
                                                 href={`${pathname}/profile`}
                                                 className="text-blue-600 hover:text-blue-700 transition-colors p-2 rounded-full hover:bg-blue-50"
@@ -114,6 +114,30 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                             </div>
                         </CarouselItem>
                     ))}
+                    <CarouselItem key="add-profile" className={cn("basis-4/5 sm:basis-2/3 md:basis-1/2 2xl:basis-1/3 ps-0", "flex w-full items-end")}>
+                        <Card
+                            className={cn(
+                                "flex-1 flex items-center justify-center h-60 xs:h-64 sm:h-74 transition-transform duration-500",
+                                current === profiles.length + 1
+                                    ? "scale-100 basis-2/3 md:basis-1/2 2xl:basis-1/3 opacity-100"
+                                    : "scale-[0.8] basis-1/2 md:basis-[40%] 2xl:basis-[25%] opacity-70 pointer-events-none"
+                            )}
+                        >
+                            <button
+                                className="flex flex-col items-center justify-center w-full h-full py-8 text-primary hover:text-blue-700 transition-colors"
+                                onClick={() => {
+                                    // Replace with your add profile logic or navigation
+                                    window.location.href = "/profile/create";
+                                }}
+                            >
+                                <span className="text-4xl font-bold">+</span>
+                                <span className="mt-2 font-medium">
+                                    <FormattedMessage id="addProfile" defaultMessage="Add Profile" />
+                                </span>
+                            </button>
+                        </Card>
+                    </CarouselItem>
+
                 </CarouselContent>
             </Carousel>
             <div className="mt-4 flex items-center justify-center gap-2">
