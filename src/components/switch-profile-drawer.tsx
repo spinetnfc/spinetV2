@@ -85,9 +85,9 @@ export default function SwitchProfileDrawer() {
                                     {profiles.map((profile) => (
                                         <div
                                             key={profile._id}
-                                            className={`flex-shrink-0 h-60 w-60 flex flex-col items-center m-2 gap-4 p-3 rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:bg-accent/50 transition-colors ${user.selectedProfile === profile._id ? "border-2 border-azure" : ""
+                                            className={`flex-shrink-0 h-60 w-60 flex flex-col items-center m-2 gap-4 p-3 rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:opacity-70 transition-colors ${user.selectedProfile === profile._id ? "border-2 border-azure" : ""
                                                 }`}
-                                            onClick={() => handleProfileClick(profile)}
+                                            onClick={() => { if (profile._id !== user.selectedProfile) handleProfileClick(profile) }}
                                         >
                                             <Image
                                                 src="/img/user.png"
@@ -103,7 +103,7 @@ export default function SwitchProfileDrawer() {
                                             </div>
                                         </div>
                                     ))}
-                                    <div className="flex-shrink-0 h-60 w-60 flex justify-center items-center m-2 rounded-lg border bg-card text-card-foreground shadow-sm">
+                                    <div className="flex-shrink-0 h-60 w-60 flex justify-center items-center m-2 rounded-lg border bg-card text-card-foreground shadow-sm hover:opacity-70 ">
                                         <button className="cursor-pointer">
                                             <CirclePlus className="h-24 w-24" strokeWidth={1} />
                                         </button>

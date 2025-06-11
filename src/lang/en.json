@@ -399,7 +399,7 @@
   "close-link-form": "Close link form",
   "Failed to add contact": "Failed to add contact",
   "An unexpected error occurred. Please try again.": "An unexpected error occurred. Please try again.",
-  "step-of": "Step {step} of {totalSteps}",
+  "step-of": "Step {current} of {total}",
   "import-contacts-description": "Select a source to import your contacts from.",
   "import-from-phone": "Import from Phone",
   "import-from-google": "Import from Google",
