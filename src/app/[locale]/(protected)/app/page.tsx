@@ -75,6 +75,11 @@ export default async function HomePage() {
   let profiles: ProfileData[] = [];
   try {
     profiles = await getAllProfiles(user._id);
+    const selectedIndex = profiles.findIndex(p => p._id === user.selectedProfile);
+    if (selectedIndex > 0) {
+      const [selectedProfile] = profiles.splice(selectedIndex, 1);
+      profiles.unshift(selectedProfile);
+    }
   } catch (error) {
     console.error("Error fetching profiles:", error);
   }
