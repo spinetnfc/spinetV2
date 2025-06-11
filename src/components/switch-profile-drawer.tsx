@@ -34,7 +34,7 @@ export default function SwitchProfileDrawer() {
                 <DrawerFooter className="sm:justify-start p-0">
                     <ScrollArea className="w-full h-[72vh] sm:h-[280px]">
                         {profiles.length > 0 ? (
-                            <div className="flex flex-col items-center sm:flex-row pb-4">
+                            <div className="flex flex-col items-center sm:justify-center sm:flex-row pb-4">
                                 {profiles.map((profile) => (
                                     <div
                                         key={profile._id}
