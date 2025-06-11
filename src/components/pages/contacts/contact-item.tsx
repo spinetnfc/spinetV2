@@ -6,7 +6,7 @@ import type { Contact, ContactInput } from "@/types/contact";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown";
 import { useState } from "react";
 import EditContactForm from "./edit-contact-form";
-import DeleteConfirmationModal from "@/components/delete-confirmation-modal";
+import ConfirmationModal from "@/components/delete-confirmation-modal";
 import { toast } from "sonner";
 import { FormattedMessage, useIntl } from "react-intl";
 import Link from "next/link";
@@ -79,7 +79,7 @@ export default function ContactItem({ contact, themeColor, locale, onDelete }: C
     return (
         <>
             {showDeleteModal && (
-                <DeleteConfirmationModal
+                <ConfirmationModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteConfirm}

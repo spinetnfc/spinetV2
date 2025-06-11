@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Edit, Trash2, MoreVertical } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import { toast } from "sonner"
-import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
+import ConfirmationModal from "@/components/delete-confirmation-modal"
 import EditServiceForm from "./edit-service-form"
 import { Service } from "@/types/services"
 import { deleteServiceAction } from "@/actions/services"
@@ -65,7 +65,7 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
     return (
         <>
             {showDeleteModal && (
-                <DeleteConfirmationModal
+                <ConfirmationModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteConfirm}

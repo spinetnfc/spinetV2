@@ -8,7 +8,7 @@ import { updateProfileAction } from "@/actions/profile"
 import type { ProfileData } from "@/types/profile"
 import Link from "next/link"
 import EditLinkForm from "./edit-link-form"
-import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
+import ConfirmationModal from "@/components/delete-confirmation-modal"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
 
@@ -134,7 +134,7 @@ export default function LinkItem({ link, index, profileId, profileData, icon }: 
     return (
         <>
             {showDeleteModal && (
-                <DeleteConfirmationModal
+                <ConfirmationModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteConfirm}

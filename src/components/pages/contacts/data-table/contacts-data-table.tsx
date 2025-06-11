@@ -21,7 +21,7 @@ import Link from "next/link"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
 import { removeContacts, removeContact } from "@/actions/contacts"
-import DeleteConfirmationModal from "@/components/delete-confirmation-modal"
+import ConfirmationModal from "@/components/delete-confirmation-modal"
 import { ContactFilters } from "./contact-filters"
 import { ContactSortDropdown } from "./contact-sort-dropdown"
 import { contactColumns } from "./contact-columns"
@@ -101,7 +101,7 @@ function ActionCell({
     return (
         <>
             {showDeleteModal && (
-                <DeleteConfirmationModal
+                <ConfirmationModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteConfirm}
@@ -353,7 +353,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
             />
 
             {showDeleteModal && (
-                <DeleteConfirmationModal
+                <ConfirmationModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleBulkDelete}

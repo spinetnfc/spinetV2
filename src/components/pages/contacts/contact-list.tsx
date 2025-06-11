@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { removeContacts } from "@/actions/contacts";
 import { useAuth } from "@/context/authContext";
-import DeleteConfirmationModal from "@/components/delete-confirmation-modal";
+import ConfirmationModal from "@/components/delete-confirmation-modal";
 
 
 interface ContactListProps {
@@ -78,7 +78,7 @@ export default function ContactList({
     return (
         <div className="relative">
             {showDeleteModal && (
-                <DeleteConfirmationModal
+                <ConfirmationModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleBulkDelete}
