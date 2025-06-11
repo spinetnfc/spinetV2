@@ -31,14 +31,14 @@ export default function SwitchProfileDrawer() {
                         <FormattedMessage id="my-profiles" defaultMessage="My Profiles" />
                     </DrawerTitle>
                 </DrawerHeader>
-                <DrawerFooter className="sm:justify-start">
-                    <ScrollArea className="w-full h-[300px] px-1">
+                <DrawerFooter className="sm:justify-start p-0">
+                    <ScrollArea className="w-full h-[280px]">
                         {profiles.length > 0 ? (
-                            <div className="flex flex-col items-center sm:flex-row gap-4 pb-4">
+                            <div className="flex flex-col items-center sm:flex-row pb-4">
                                 {profiles.map((profile) => (
                                     <div
                                         key={profile._id}
-                                        className={`flex-shrink-0 min-h-60 w-60 flex flex-col items-center gap-4 p-2 rounded-lg border bg-card text-card-foreground shadow-sm ${user.selectedProfile === profile._id ? "border-2 border-azure" : ""
+                                        className={`flex-shrink-0 h-60  w-60 flex flex-col items-center m-2 gap-4 p-2 rounded-lg border bg-card text-card-foreground shadow-sm ${user.selectedProfile === profile._id ? "border-2 border-azure" : ""
                                             }`}
                                     >
                                         <Image
