@@ -25,20 +25,20 @@ export default function SwitchProfileDrawer() {
             <DrawerTrigger className="relative w-full flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden transition-colors hover:bg-accent focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50">
                 <FormattedMessage id="switch-profile" defaultMessage="Switch Profile" />
             </DrawerTrigger>
-            <DrawerContent className="focus:outline-none">
+            <DrawerContent className="focus:outline-none max-sm:h-[80vh]">
                 <DrawerHeader>
                     <DrawerTitle>
                         <FormattedMessage id="my-profiles" defaultMessage="My Profiles" />
                     </DrawerTitle>
                 </DrawerHeader>
                 <DrawerFooter className="sm:justify-start p-0">
-                    <ScrollArea className="w-full h-[280px]">
+                    <ScrollArea className="w-full h-[72vh] sm:h-[280px]">
                         {profiles.length > 0 ? (
                             <div className="flex flex-col items-center sm:flex-row pb-4">
                                 {profiles.map((profile) => (
                                     <div
                                         key={profile._id}
-                                        className={`flex-shrink-0 h-60  w-60 flex flex-col items-center m-2 gap-4 p-2 rounded-lg border bg-card text-card-foreground shadow-sm ${user.selectedProfile === profile._id ? "border-2 border-azure" : ""
+                                        className={`flex-shrink-0 h-60  w-60 flex flex-col items-center m-2 gap-4 p-3 rounded-lg border bg-card text-card-foreground shadow-sm ${user.selectedProfile === profile._id ? "border-2 border-azure" : ""
                                             }`}
                                     >
                                         <Image
