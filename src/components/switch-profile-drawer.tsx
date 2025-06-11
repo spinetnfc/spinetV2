@@ -61,7 +61,7 @@ export default function SwitchProfileDrawer() {
                                 <Loader className="animate-spin" />
                             </div>
                         )}
-                        <ScrollBar orientation="horizontal" className="hidden sm:block" />
+                        <ScrollBar orientation="horizontal" className="sm:visible h-4" />
                     </ScrollArea>
 
                 </DrawerFooter>
