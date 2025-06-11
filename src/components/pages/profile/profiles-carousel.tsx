@@ -132,7 +132,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                             >
                                 <span className="text-4xl font-bold">+</span>
                                 <span className="mt-2 font-medium">
-                                    <FormattedMessage id="addProfile" defaultMessage="Add Profile" />
+                                    <FormattedMessage id="add-profile" defaultMessage="Add Profile" />
                                 </span>
                             </button>
                         </Card>
@@ -150,6 +150,13 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                         })}
                     />
                 ))}
+                <button
+                    key={profiles.length}
+                    onClick={() => api?.scrollTo(profiles.length)}
+                    className={cn("h-2.5 w-2.5 rounded-full bg-primary cursor-pointer", {
+                        " scale-150": current === profiles.length + 1,
+                    })}
+                />
             </div>
         </div >
     );

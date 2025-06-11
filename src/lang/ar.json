@@ -182,12 +182,18 @@
   "q2": "ما نوع الأجهزة التي ستعمل معها؟",
   "q2-answer": "Spinet متوافق مع معظم الهواتف الذكية الحديثة التي تدعم تقنية NFC، بما في ذلك أجهزة iOS و Android الحديثة.",
   "q3": "جهازي لا يدعم NFC؟",
-  "q3-answer": "لا تقلق! يمكنك仍然 استخدام Spinet عن طريق مشاركة رابط ملفك الشخصي أو استخدام طريقة رمز الاستجابة السريعة QR.",
+  "q3-answer": "لا تقلق! يمكنك استخدام Spinet عن طريق مشاركة رابط ملفك الشخصي أو استخدام طريقة رمز الاستجابة السريعة QR.",
   "personal-information": "المعلومات الشخصية",
   "company-information": "معلومات الشركة",
   "customization": "التخصيص",
   "password-setup": "إعداد كلمة المرور",
   "enter-your-first-name": "أدخل اسمك الأول",
+  "enter-company-name": "أدخل اسم الشركة",
+  "enter-activity-sector": "أدخل القطاع الاقتصادي",
+  "enter-position": "أدخل المنصب",
+  "company-name-required": "اسم الشركة مطلوب",
+  "activity-sector-required": "القطاع الاقتصادي مطلوب",
+  "position-required": "المنصب مطلوب",
   "full-name": "الاسم الكامل",
   "first-name": "الاسم",
   "last-name": "اللقب",
@@ -452,5 +458,6 @@
   "date-desc": "الأقدم أولاً",
   "date-asc": "الأحدث أولاً",
   "contacts": "جهات الاتصال",
-  "switch-profile": "تغيير الملف الشخصي"
+  "switch-profile": "تغيير الملف الشخصي",
+  "add-profile": "إضافة ملف شخصي"
 }

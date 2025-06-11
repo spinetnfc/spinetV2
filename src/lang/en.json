@@ -191,6 +191,12 @@
   "customization": "Customization",
   "password-setup": "Password Setup",
   "enter-your-first-name": "Enter your first name",
+  "enter-company-name": "Enter company name",
+  "enter-activity-sector": "Enter activity sector",
+  "enter-position": "Enter position",
+  "company-name-required": "Company name is required",
+  "activity-sector-required": "Activity sector is required",
+  "position-required": "Position is required",
   "full-name": "Full Name",
   "first-name": "First Name",
   "last-name": "Last Name",
@@ -452,5 +458,6 @@
   "date-desc": "Date desc",
   "date-asc": "Date asc",
   "contacts": "Contacts",
-  "switch-profile": "Switch Profile"
+  "switch-profile": "Switch Profile",
+  "add-profile": "Add Profile"
 }

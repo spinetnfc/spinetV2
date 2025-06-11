@@ -150,6 +150,12 @@
   "customization": "Personnalisation",
   "password-setup": "Configuration du mot de passe",
   "enter-your-first-name": "Entrez votre prénom",
+  "enter-company-name": "Entrez le nom de l'entreprise",
+  "enter-activity-sector": "Entrez le secteur d'activité",
+  "enter-position": "Entrez le poste",
+  "company-name-required": "Le nom de l'entreprise est obligatoire",
+  "activity-sector-required": "Le secteur d'activité est obligatoire",
+  "position-required": "Le poste est obligatoire",
   "full-name": "Nom complet",
   "first-name": "Prénom",
   "last-name": "Nom",
@@ -239,7 +245,7 @@
   "send": "Envoyer",
   "send-otp": "Envoyer l'OTP",
   "set-up-your-profile": "Établir votre profil",
-  "sign-in": "S'inscrire",
+  "sign-in": "Se connecter",
   "signing-in": "Connexion...",
   "sign-up": "S'enregistrer",
   "sign-up-now": "Inscrivez-vous maintenant",
@@ -452,5 +458,6 @@
   "date-desc": "Les plus anciens",
   "date-asc": "Les plus récents",
   "contacts": "Contacts",
-  "switch-profile": "Changer de profil"
+  "switch-profile": "Changer de profil",
+  "add-profile": "Ajouter un profil"
 }
