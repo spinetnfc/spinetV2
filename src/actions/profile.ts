@@ -4,6 +4,8 @@ import { format } from 'date-fns';
 import { updateProfile, createProfile, getAllProfiles, deleteProfile } from '@/lib/api/profile';
 import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';
 import { LinkType, ProfileData, profileInput } from '@/types/profile';
+import { User } from '@/types/user';
+import { updateUser } from '@/lib/api/user';
 
 interface ProfileFormValues {
     fullName?: string;
@@ -104,5 +106,15 @@ export async function verifyEmailChangeOTPAction(userId: string, sessionId: stri
     } catch (error) {
         console.error('Error in verifyEmailChangeOTPAction:', error);
         return { success: false, error: 'Failed to verify OTP.' };
+    }
+}
+
+export async function switchProfile(userId: string, profileId: string) {
+    try {
+        const response = await updateUser(userId, { selectedProfile: profileId } as User);
+        return { success: true, data: response };
+    } catch (error) {
+        console.error('Error in switchProfile:', error);
+        return { success: false, error: 'Failed to switch profile.' };
     }
 }

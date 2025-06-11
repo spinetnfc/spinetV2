@@ -6,7 +6,7 @@ import { getAllProfilesAction } from "@/actions/profile"
 import { FormattedMessage } from "react-intl"
 import { getUserFromCookie } from "@/utils/cookie"
 import { startTransition, useEffect, useState } from "react"
-import { Loader } from "lucide-react"
+import { CirclePlus, Loader } from "lucide-react"
 import Image from "next/image"
 
 export default function SwitchProfileDrawer() {
@@ -55,6 +55,11 @@ export default function SwitchProfileDrawer() {
                                         </div>
                                     </div>
                                 ))}
+                                <div className="flex-shrink-0 h-60 w-60 flex justify-center items-center m-2 rounded-lg border bg-card text-card-foreground shadow-sm">
+                                    <button className="cursor-pointer">
+                                        <CirclePlus className="h-24 w-24" strokeWidth={1} />
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <div className="flex justify-center items-center h-full">

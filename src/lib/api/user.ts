@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { ServerApi } from '../axios';
 import type { User } from '@/types/user';
+import { withServerCookies } from '@/utils/withServerCookies';
 
 export const getUser = async (userId: string | null): Promise<User> => {
     if (!userId || typeof userId !== 'string') {
@@ -24,4 +25,18 @@ export const getUser = async (userId: string | null): Promise<User> => {
     return response.data;
 };
 
+export const updateUser = async (userId: string, user: User) => {
+    if (!userId || typeof userId !== 'string') {
+        throw new Error(`Invalid userId: ${userId}`);
+    }
+
+    const headers = await withServerCookies();
+    try {
+        const response = await ServerApi.patch(`/user/${userId}`, user, { headers });
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to update user ${userId}:`, error);
+        throw error;
+    }
+}
 
