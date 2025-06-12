@@ -50,7 +50,7 @@ const registerSchema = z.object({
   gender: z.enum(['male', 'female', 'other']).optional(),
   phoneNumber: z
     .string()
-    .min(1, { message: 'phone-number-required' })
+    .min(10, { message: 'phone-number-required' })
     .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
       message: 'invalid-phone-number',
     }),
@@ -63,9 +63,9 @@ const registerSchema = z.object({
     ),
 
   // Company Info
-  companyName: z.string().min(1, { message: 'company-name-required' }),
-  activitySector: z.string().min(1, { message: 'activity-sector-required' }),
-  position: z.string().min(1, { message: 'position-required' }),
+  companyName: z.string().min(3, { message: 'company-name-required' }),
+  activitySector: z.string().min(3, { message: 'activity-sector-required' }),
+  position: z.string().min(3, { message: 'position-required' }),
 
   // Customization
   language: z.enum(['en', 'fr', 'ar']).default('en'),

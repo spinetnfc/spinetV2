@@ -37,14 +37,18 @@ interface AddProfileFormProps {
 
 // Schema definition
 const profileSchema = z.object({
-    fullName: z.string().min(2, { message: 'Full name is required' }),
-    phoneNumber: z.string().min(1, { message: 'Phone number is required' }),
+    fullName: z.string().min(3, { message: 'full-name-required' }),
+    phoneNumber: z.string()
+        .min(10, { message: 'phone-number-required' })
+        .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
+            message: 'invalid-phone-number',
+        }),
     role: z.enum(['student', 'employee', 'professional', 'none']),
-    school: z.string().optional(),
-    profession: z.string().optional(),
-    companyName: z.string().optional(),
-    activitySector: z.string().optional(),
-    position: z.string().optional(),
+    school: z.string().min(3, { message: 'school-required' }).optional(),
+    profession: z.string().min(3, { message: 'profession-required' }).optional(),
+    companyName: z.string().min(3, { message: 'company-name-required' }),
+    activitySector: z.string().min(3, { message: 'activity-sector-required' }),
+    position: z.string().min(3, { message: 'position-required' }),
     links: z
         .array(z.object({ name: z.string(), title: z.string(), link: z.string() }))
         .optional(),
@@ -501,7 +505,7 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
                             </Button>
                         )}
                         {currentStep < 4 ? (
-                            <Button type="button" onClick={handleNextStep}>
+                            <Button type="button" className="ms-auto" onClick={handleNextStep}>
                                 <FormattedMessage id="next" />
                             </Button>
                         ) : (

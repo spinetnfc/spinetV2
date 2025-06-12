@@ -22,9 +22,6 @@ export default async function AddProfilePage() {
 
     return (
         <div className="flex h-screen w-full items-center justify-center p-2 sm:p-4">
-            {/* <h1 className="text-2xl font-bold mb-6">
-                <FormattedMessage id="add-profile" />
-            </h1> */}
             <AddProfileForm
                 user={user}
                 linkTypes={LINK_TYPES}
