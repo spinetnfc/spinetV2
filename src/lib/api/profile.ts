@@ -39,7 +39,10 @@ export const createProfile = async (userId: string, profile: profileInput): Prom
         if (!userId || typeof userId !== "string") {
             throw new Error("Invalid userId:" + userId);
         }
+        console.log('Creating profile :', profile);
         const response = await ServerApi.post(`/user/${userId}/profiles`, profile, { headers })
+        console.log('Create profile response:', JSON.stringify(response.data, null, 2));
+
         return response.data;
     } catch (error) {
         console.error('Profile creation error:', error);

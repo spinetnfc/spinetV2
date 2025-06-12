@@ -35,7 +35,7 @@ export async function createProfileAction(userId: string, data: profileInput) {
         // };
 
         const response = await createProfile(userId, data);
-
+        console.log(JSON.stringify)
         return { success: true, data: response };
     } catch (error) {
         console.error('[Server Action] Failed to create profile:', error);
