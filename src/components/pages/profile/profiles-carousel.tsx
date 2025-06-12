@@ -8,12 +8,12 @@ import {
     type CarouselApi,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { Eye, Share2, UserRoundPen } from "lucide-react"
+import { CirclePlus, Eye, Share2, UserRoundPen } from "lucide-react"
 import { ProfileData } from "@/types/profile";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from 'sonner';
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FormattedMessage } from "react-intl";
 
 interface ProfileCarouselProps {
@@ -24,6 +24,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
     const [api, setApi] = React.useState<CarouselApi>();
     const [current, setCurrent] = React.useState(0);
     const pathname = usePathname();
+    const router = useRouter();
     React.useEffect(() => {
         if (!api) {
             return;
@@ -124,13 +125,13 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                             )}
                         >
                             <button
-                                className="flex flex-col items-center justify-center w-full h-full py-8 text-primary hover:text-blue-700 transition-colors"
+                                className="flex flex-col items-center justify-center w-full h-full py-8 text-primary hover:text-blue-700 transition-colors cursor-pointer"
                                 onClick={() => {
                                     // Replace with your add profile logic or navigation
-                                    window.location.href = "/profile/create";
+                                    router.push(`${pathname}/profile/add-profile`);
                                 }}
                             >
-                                <span className="text-4xl font-bold">+</span>
+                                <CirclePlus className="h-24 w-24" strokeWidth={1} />
                                 <span className="mt-2 font-medium">
                                     <FormattedMessage id="add-profile" defaultMessage="Add Profile" />
                                 </span>

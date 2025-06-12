@@ -25,9 +25,13 @@ import { getUserFromCookie } from "@/utils/cookie"
 import { startTransition, useEffect, useState } from "react"
 import { CirclePlus, Loader } from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { getLocale } from "@/utils/getClientLocale"
 
 export default function SwitchProfileDrawer() {
     const user = getUserFromCookie()
+    const locale = getLocale();
+    const router = useRouter();
     const [profiles, setProfiles] = useState<any[]>([])
     const [selectedProfile, setSelectedProfile] = useState<any>(null)
     const [showAlert, setShowAlert] = useState(false)
@@ -104,8 +108,13 @@ export default function SwitchProfileDrawer() {
                                         </div>
                                     ))}
                                     <div className="flex-shrink-0 h-60 w-60 flex justify-center items-center m-2 rounded-lg border bg-card text-card-foreground shadow-sm hover:opacity-70 ">
-                                        <button className="cursor-pointer">
+                                        <button className="cursor-pointer flex flex-col items-center justify-center"
+                                            onClick={() => {
+                                                window.location.href = `/${locale}/app/profile/add-profile`
+                                            }}>
                                             <CirclePlus className="h-24 w-24" strokeWidth={1} />
+                                            <FormattedMessage id="add-profile" defaultMessage="Add Profile" />
+
                                         </button>
                                     </div>
                                 </div>
