@@ -30,7 +30,7 @@ import { getLocale } from "@/utils/getClientLocale"
 
 export default function SwitchProfileDrawer() {
     const user = getUserFromCookie()
-    const locale = getLocale();
+    const locale = getLocale() || "en";
     const router = useRouter();
     const [profiles, setProfiles] = useState<any[]>([])
     const [selectedProfile, setSelectedProfile] = useState<any>(null)

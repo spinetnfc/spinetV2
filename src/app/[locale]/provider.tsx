@@ -8,11 +8,11 @@ import { Notifications } from '@/components/ui/notifications';
 import { AuthProvider } from '@/context/authContext';
 import { Toaster } from '@/components/ui/sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { usePathname } from 'next/navigation';
 import { IntlProvider } from 'react-intl';
 import enMessages from '@/lang/en.json';
 import arMessages from '@/lang/ar.json';
 import frMessages from '@/lang/fr.json';
+import { getLocale } from '@/utils/getClientLocale';
 
 const messagesMap = {
   en: enMessages,
@@ -25,9 +25,7 @@ type AppProviderProps = {
 };
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const pathname = usePathname();
-  const pathLocale = pathname ? pathname.split('/')[1] : undefined;
-  const locale = pathLocale === "ar" || pathLocale === "fr" ? pathLocale : "en";
+  const locale = getLocale() || 'en';
   const messages = messagesMap[locale as keyof typeof messagesMap];
 
   return (

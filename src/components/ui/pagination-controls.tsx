@@ -1,7 +1,8 @@
 "use client"
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { getLocale } from "@/utils/getClientLocale"
 
 interface PaginationControlsProps {
     currentPage: number
@@ -11,8 +12,7 @@ interface PaginationControlsProps {
 export function PaginationControls({ currentPage, totalPages }: PaginationControlsProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const locale = pathname.split("/")[1];
+    const locale = getLocale() || "en";
 
     const createPageURL = (pageNumber: number) => {
         const params = new URLSearchParams(searchParams.toString())

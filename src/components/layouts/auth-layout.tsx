@@ -15,6 +15,7 @@ import logoSpinet from '@/assets/images/logo-spinet.svg';
 import logoSpinetDark from '@/assets/images/logo-spinet-dark.svg';
 import authImage from '@/assets/images/authentication.png';
 import authBg from '@/assets/images/abstract.jpeg';
+import { getLocale } from '@/utils/getClientLocale';
 
 type LayoutProps = {
   children: ReactNode;
@@ -49,27 +50,15 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   // Handle redirection for authenticated users
   useEffect(() => {
     if (mounted && isAuthenticated && !pathname?.includes('/auth/forgot-password')) {
-      const localeParam = params.locale;
-      const locale =
-        typeof localeParam === 'string'
-          ? localeParam
-          : Array.isArray(localeParam)
-            ? localeParam[0]
-            : 'en';
+      const locale = getLocale() || 'en';
+
       router.push(`/${locale}/app`);
     }
   }, [mounted, isAuthenticated, pathname, router, params.locale]);
 
-  const localeParam = params.locale;
-  const locale =
-    typeof localeParam === 'string'
-      ? localeParam
-      : Array.isArray(localeParam)
-        ? localeParam[0]
-        : 'en';
+  const locale = getLocale() || 'en';
 
-  // Render a simple loading state during server-side rendering
-  // to avoid hydration mismatches
+  // Render a simple loading state during server-side rendering to avoid hydration mismatches
   if (!mounted) {
     return (
       <div className="relative flex w-full flex-col items-center justify-center min-h-screen">

@@ -8,7 +8,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { usePathname } from "next/navigation"
+import { getLocale } from "@/utils/getClientLocale"
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
@@ -52,8 +52,7 @@ function Carousel({
   children,
   ...props
 }: React.ComponentProps<"div"> & CarouselProps) {
-  const pathname = usePathname();
-  const locale = pathname ? pathname.split('/')[1] || 'en' : 'en';
+  const locale = getLocale() || "en";
 
   const [carouselRef, api] = useEmblaCarousel(
     {

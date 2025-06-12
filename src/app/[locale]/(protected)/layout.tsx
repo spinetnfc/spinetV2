@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/authContext'; // Corrected import path
+import { getLocale } from '@/utils/getClientLocale';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -19,12 +20,11 @@ export default function ProtectedLayout({
         setIsClient(true);
     }, []);
 
-    // Get locale safely
-    const locale = pathname ? pathname.split('/')[1] || 'en' : 'en';
+    const locale = getLocale() || 'en';
 
     useEffect(() => {
         if (isClient && !isLoading && !isAuthenticated) {
-            router.push(`/${locale}/auth?redirectTo=${encodeURIComponent(pathname || '')}`);
+            router.push(`/${locale}/auth/login`);
         }
     }, [isClient, isLoading, isAuthenticated, router, pathname, locale]);
 
