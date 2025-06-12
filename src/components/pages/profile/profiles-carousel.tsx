@@ -15,6 +15,7 @@ import Image from "next/image";
 import { toast } from 'sonner';
 import { usePathname, useRouter } from "next/navigation";
 import { FormattedMessage } from "react-intl";
+import { useSidebar } from "@/context/sidebarContext";
 
 interface ProfileCarouselProps {
     profiles: ProfileData[] | []
@@ -25,6 +26,8 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
     const [current, setCurrent] = React.useState(0);
     const pathname = usePathname();
     const router = useRouter();
+    const { isExpanded } = useSidebar();
+
     React.useEffect(() => {
         if (!api) {
             return;
@@ -36,10 +39,10 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
     }, [api]);
 
     return (
-        <div className="w-full">
+        <div className="flex flex-col items-center justify-center ">
             <Carousel
                 setApi={setApi}
-                className="w-full max-w-screen overflow-hidden"
+                className={`w-full ${isExpanded ? "max-w-[calc(100vw-240px)]" : "max-w-[calc(100vw-64px)]"} overflow-hidden`}
                 opts={{ loop: true }}
             >
                 <CarouselContent className="py-3 -ms-0">

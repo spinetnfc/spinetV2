@@ -7,8 +7,9 @@ import SideBar from '@/components/side-bar';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/utils/cn';
 import type { SideNavigationItem } from '@/types/layout-types';
-import { userRole } from '@/utils/role';
+// import { userRole } from '@/utils/role';
 import Header from '../header';
+import { SidebarProvider, useSidebar } from '@/context/sidebarContext';
 
 const Layout = ({
   locale,
@@ -17,21 +18,21 @@ const Layout = ({
   locale: string;
   children: React.ReactNode;
 }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const role = userRole();
+  const { isExpanded, setIsExpanded } = useSidebar();
+  // const role = userRole();
 
   const navigation = [
-    { name: 'Home', to: `/app`, icon: LayoutDashboard },
-    { name: 'Profile', to: `/app/profile`, icon: CircleUserRound },
-    { name: 'Contacts', to: `/app/contacts`, icon: Contact },
-    { name: 'Settings', to: `/app/profile/update-info`, icon: Settings },
-    // { name: 'Opportunities', to: `/app/opportunities`, icon: BriefcaseBusiness },
-    // { name: 'Notifications', to: `/app/notifications`, icon: Bell },
-    // { name: 'Offers', to: `/app/offers`, icon: Package },
-    // { name: 'Leads', to: `/app/leads`, icon: Target },
-    // { name: 'Redirections', to: `/app/redirections`, icon: ArrowRightLeft },
-    // { name: 'Users', to: `/app/users`, icon: User },
-    // { name: 'Groups', to: `/app/groups`, icon: Users },
+    { name: 'home', to: `/app`, icon: LayoutDashboard },
+    { name: 'profile', to: `/app/profile`, icon: CircleUserRound },
+    { name: 'contacts', to: `/app/contacts`, icon: Contact },
+    { name: 'settings', to: `/app/profile/update-info`, icon: Settings },
+    // { name: 'opportunities', to: `/app/opportunities`, icon: BriefcaseBusiness },
+    // { name: 'notifications', to: `/app/notifications`, icon: Bell },
+    // { name: 'offers', to: `/app/offers`, icon: Package },
+    // { name: 'leads', to: `/app/leads`, icon: Target },
+    // { name: 'redirections', to: `/app/redirections`, icon: ArrowRightLeft },
+    // { name: 'users', to: `/app/users`, icon: User },
+    // { name: 'groups', to: `/app/groups`, icon: Users },
   ].filter(Boolean) as SideNavigationItem[];
 
 
@@ -65,21 +66,23 @@ export const DashboardLayout = ({
 }) => {
   const pathname = usePathname();
   return (
-    <Layout locale={locale}>
-      <Suspense
-        fallback={
-          <div className="flex size-full items-center justify-center">
-            <Spinner size="xl" />
-          </div>
-        }
-      >
-        <ErrorBoundary
-          key={pathname}
-          fallback={<div>Something went wrong!</div>}
+    <SidebarProvider>
+      <Layout locale={locale}>
+        <Suspense
+          fallback={
+            <div className="flex size-full items-center justify-center">
+              <Spinner size="xl" />
+            </div>
+          }
         >
-          {children}
-        </ErrorBoundary>
-      </Suspense>
-    </Layout>
+          <ErrorBoundary
+            key={pathname}
+            fallback={<div>Something went wrong!</div>}
+          >
+            {children}
+          </ErrorBoundary>
+        </Suspense>
+      </Layout>
+    </SidebarProvider>
   );
 };

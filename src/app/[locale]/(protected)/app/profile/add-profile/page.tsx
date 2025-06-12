@@ -1,8 +1,5 @@
-// app/add-profile/page.tsx
-// import { getUserFromCookie } from '@/utils/cookie';
 import { redirect } from 'next/navigation';
 import AddProfileForm from '@/components/pages/profile/add-profile/add-profile-form';
-// import { FormattedMessage } from 'react-intl';
 import { getUserCookieOnServer } from '@/utils/server-cookie';
 
 // Static data for form options

@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer/drawer';
 import { useTheme } from 'next-themes';
+import { FormattedMessage } from 'react-intl';
 
 type Props = {
   navigation: SideNavigationItem[];
@@ -74,21 +75,12 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                     )}
                     aria-hidden="true"
                   />
-                  {isExpanded && item.name}
+                  {isExpanded && <FormattedMessage id={item.name} defaultMessage={item.name} />}
                 </NextLink>
               );
             })}
           </nav>
 
-          {/* <div className={`flex flex-col gap-2 justify-between ms-3 ${!isExpanded && "hidden"}`}>
-            <ThemeSwitch locale={locale} />
-            <div className="w-fit">
-              <ChangeLanguage locale={locale} />
-            </div>
-            <Button variant="destructive" size="icon" onClick={logout}>
-              <LogOut size={20} />
-            </Button>
-          </div> */}
           <Button
             size="icon"
             variant="outline"
@@ -147,7 +139,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                       )}
                       aria-hidden="true"
                     />
-                    {item.name}
+                    <FormattedMessage id={item.name} defaultMessage={item.name} />
                   </NextLink>
                 );
               })}

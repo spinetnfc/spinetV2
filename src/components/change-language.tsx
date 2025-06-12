@@ -19,20 +19,7 @@ function ChangeLanguage({ locale }: Props) {
   const pathname = usePathname();
 
   const newPathName = (pathname: string, locale: string) => {
-    const pathWithoutLocale = pathname.replace(/^\/(ar|fr|en)/, ''); // Remove existing locale
-    // const isCurrentEnglish = !/^\/(ar|fr)/.test(pathname); // Check if it's in English (no locale prefix)
-
-    // If switching to English, return the path without any locale prefix
-    // if (locale === 'en') {
-    //   return pathWithoutLocale === '' ? '/' : pathWithoutLocale;
-    // }
-
-    // If currently in English and switching to another locale, add the locale prefix
-    // if (isCurrentEnglish) {
-    //   return `/${locale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
-    // }
-
-    // If switching between non-English locales, replace the existing one
+    const pathWithoutLocale = pathname.replace(/^\/(ar|fr|en)/, '');
     return `/${locale}${pathWithoutLocale}`;
   };
   return (
