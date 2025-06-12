@@ -151,7 +151,6 @@ const AddProfilePage = () => {
                 return false;
             }
         } else if (step === 2) {
-            // Get dynamic fields based on role
             const fieldsToValidate = ['role'];
             if (role === 'student') fieldsToValidate.push('school');
             if (role === 'professional') fieldsToValidate.push('profession');
@@ -173,11 +172,14 @@ const AddProfilePage = () => {
     const handleNextStep = async () => {
         const isValid = await validateStep(currentStep);
         if (isValid) {
-            setCurrentStep(currentStep + 1);
+            if (currentStep < 4) {
+                setCurrentStep((prev) => prev + 1);
+            }
         }
     };
 
-    // Function to create clean profile data with only relevant fields
+
+    // create clean profile data with only relevant fields
     const createProfileData = (data: ProfileFormValues): profileInput => {
         const baseData = {
             status: data.role,
@@ -188,7 +190,7 @@ const AddProfilePage = () => {
             profileCover: data.profileCover,
         };
 
-        // Add role-specific fields only if they exist and are not empty
+        // Add role-specific fields only if they're not empty
         const profileData: profileInput = { ...baseData };
 
         if (data.role === 'student' && data.school && data.school.trim() !== '') {
@@ -483,7 +485,7 @@ const AddProfilePage = () => {
                     <FormattedMessage id="add-profile" />
                 </h1>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="space-y-6">
                         {currentStep === 1 && renderStep1()}
                         {currentStep === 2 && renderStep2()}
                         {currentStep === 3 && renderStep3()}
@@ -506,7 +508,7 @@ const AddProfilePage = () => {
                                     <FormattedMessage id="next" />
                                 </Button>
                             ) : (
-                                <Button type="submit" disabled={isSubmitting}>
+                                <Button type="submit" disabled={isSubmitting} onSubmit={form.handleSubmit(onSubmit)}>
                                     {isSubmitting ? (
                                         <FormattedMessage id="creating" />
                                     ) : (
@@ -515,7 +517,7 @@ const AddProfilePage = () => {
                                 </Button>
                             )}
                         </div>
-                    </form>
+                    </div>
                 </Form>
             </Card>
         </div>
