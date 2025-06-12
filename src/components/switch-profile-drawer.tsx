@@ -31,15 +31,21 @@ import { getLocale } from "@/utils/getClientLocale"
 export default function SwitchProfileDrawer() {
     const user = getUserFromCookie()
     const locale = getLocale() || "en";
-    const router = useRouter();
     const [profiles, setProfiles] = useState<any[]>([])
     const [selectedProfile, setSelectedProfile] = useState<any>(null)
     const [showAlert, setShowAlert] = useState(false)
 
     useEffect(() => {
         startTransition(async () => {
-            const result = await getAllProfilesAction(user._id)
-            setProfiles(result)
+            const result = await getAllProfilesAction(user._id);
+            // Move the selected profile to the front, keep others in order
+            const selectedIdx = result.findIndex(p => p._id === user.selectedProfile);
+            if (selectedIdx > -1) {
+                const [selected] = result.splice(selectedIdx, 1);
+                setProfiles([selected, ...result]);
+            } else {
+                setProfiles(result);
+            }
         })
     }, [user._id])
 
