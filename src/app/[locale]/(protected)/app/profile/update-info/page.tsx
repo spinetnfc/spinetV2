@@ -6,19 +6,58 @@ import {
     Settings,
     // Shield,
     // ArrowLeft,
+    LinkIcon,
+    Globe, Linkedin, Instagram, Twitter, Github, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send
+
 } from "lucide-react";
 import useTranslate from "@/hooks/use-translate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { getAllProfiles, getProfile } from "@/lib/api/profile";
 import type { ProfileData } from "@/types/profile";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import ProfileForm from "@/components/pages/profile/profile-form";
 import PreferencesForm from "@/components/pages/profile/preferences-form";
+import AddLinkButton from "@/components/pages/profile/add-link-button";
+import LinkItem from "@/components/pages/profile/link-item";
 // import ChangeEmailForm from "@/components/pages/profile/change-email-form";
 // import Link from "next/link";
 // import { deleteProfileAction, getAllProfilesAction } from "@/actions/profile";
 // import { profile } from "console";
+
+function getLinkIcon(linkName: string, themeColor: string) {
+    switch (linkName.toLowerCase()) {
+        case "website":
+            return <Globe style={{ color: themeColor }} size={24} />
+        case "linkedin":
+            return <Linkedin style={{ color: themeColor }} size={24} />
+        case "instagram":
+            return <Instagram style={{ color: themeColor }} size={24} />
+        case "twitter":
+            return <Twitter style={{ color: themeColor }} size={24} />
+        case "github":
+            return <Github style={{ color: themeColor }} size={24} />
+        case "facebook":
+            return <Facebook style={{ color: themeColor }} size={24} />
+        case "location":
+            return <MapPin style={{ color: themeColor }} size={24} />
+        case "order now":
+            return <ShoppingCart style={{ color: themeColor }} size={24} />
+        case "play store":
+            return <Store style={{ color: themeColor }} size={24} />
+        case "app store":
+            return <Smartphone style={{ color: themeColor }} size={24} />
+        case "whatsapp":
+            return <MessageCircle style={{ color: themeColor }} size={24} />
+        case "telegram":
+            return <Send style={{ color: themeColor }} size={24} />
+        case "viber":
+            return <MessageCircle style={{ color: themeColor }} size={24} />
+        default:
+            return <LinkIcon style={{ color: themeColor }} size={24} />
+    }
+}
+
 
 export default async function UpdateProfilePage({
     params,
@@ -66,6 +105,7 @@ export default async function UpdateProfilePage({
     //     }
     //     await deleteProfileAction(profileId || "");
     // }
+
     return (
         <div className="min-h-screen w-full -mt-12">
             {/* Profile Header */}
@@ -106,7 +146,7 @@ export default async function UpdateProfilePage({
                 </div>
 
                 <Tabs defaultValue="personal" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
-                    <TabsList className="grid w-full grid-cols-2 mb-8">
+                    <TabsList className="grid w-full grid-cols-3 mb-8">
                         <TabsTrigger
                             value="personal"
                             className="flex items-center gap-[1px] sm:gap-2 text-[9px] xs:text-[11px] sm:text-sm px-0"
@@ -127,6 +167,13 @@ export default async function UpdateProfilePage({
                         >
                             <Settings className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             {t("preferences")}
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="links"
+                            className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
+                        >
+                            <LinkIcon className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
+                            {t("links")}
                         </TabsTrigger>
                     </TabsList>
 
@@ -156,6 +203,29 @@ export default async function UpdateProfilePage({
                             sectionName="preferences"
                             locale={locale}
                         />
+                    </TabsContent>
+
+                    <TabsContent value="links" className="space-y-6">
+                        {/* Personal links section */}
+                        <div className="flex justify-between items-center mt-6">
+                            <h2 className="text-xl font-semibold">{t("personal-links")}</h2>
+                            {profileId && <AddLinkButton profileId={profileId} profileData={profileData} />}
+                        </div>
+
+                        {/* Dynamic links in a grid */}
+                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {profileData.links.map((link, index) => (
+                                <LinkItem
+                                    key={index}
+                                    link={link}
+                                    index={index}
+                                    profileId={profileId || ""}
+                                    profileData={profileData}
+                                    themeColor={themeColor}
+                                    icon={getLinkIcon(link.name, themeColor)}
+                                />
+                            ))}
+                        </div>
                     </TabsContent>
                 </Tabs>
             </div>
