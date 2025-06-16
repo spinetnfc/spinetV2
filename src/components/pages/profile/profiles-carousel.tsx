@@ -39,10 +39,10 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
     }, [api]);
 
     return (
-        <div className="flex flex-col items-center justify-center ">
+        <div className="flex flex-col items-center justify-center">
             <Carousel
                 setApi={setApi}
-                className={`w-full ${isExpanded ? "max-w-[calc(100vw-240px)]" : "max-w-[calc(100vw-64px)]"} overflow-hidden`}
+                className={`w-full ${isExpanded ? "max-w-screen lg:max-w-[calc(100vw-240px)]" : "max-w-screen  lg:max-w-[calc(100vw-64px)]"} overflow-hidden`}
                 opts={{ loop: true }}
             >
                 <CarouselContent className="py-3 -ms-0">
@@ -82,7 +82,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                                     </div>
 
                                     {/* Profile Information */}
-                                    <CardContent className="pt-10 h-36 sm:h-42 xs:pt-12 sm:pt-14 pb-2 xs:pb-4 sm:pb-6 px-3 xs:px-4 sm:px-6 text-gray-800flex flex-col justify-between">
+                                    <CardContent className="pt-10 h-36 sm:h-42 xs:pt-12 sm:pt-14 pb-2 xs:pb-4 sm:pb-6 px-3 xs:px-4 sm:px-6 text-gray-800 flex flex-col justify-between">
                                         <div>
                                             <h3 className="text-lg xs:text-xl font-bold text-primary xs:mb-1">{profile.fullName}</h3>
                                             {profile.position && <p className="text-gray-600 text-sm font-medium xs:mb-1">{profile.position} <FormattedMessage id="at" /> {profile.companyName}</p>}
