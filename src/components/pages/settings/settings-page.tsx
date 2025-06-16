@@ -1,52 +1,47 @@
 "use client"
 
-import { useState } from "react"
-import { ArrowLeft, Edit2, Check, X, Eye, EyeOff, Copy } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Edit2, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { User } from "@/types/user"
-import { useEffect } from "react"
 import ChangeEmailForm from "../profile/change-email-form"
 import ChangePhoneForm from "../profile/change-phone"
 import Link from "next/link"
 import { getLocale } from "@/utils/getClientLocale"
 import { useAuth } from "@/context/authContext"
+import { toast } from "sonner"
+import { useIntl, FormattedMessage } from "react-intl"
 
 export default function SettingsPage({ user }: { user: Promise<User | null> }) {
-    // State for resolved user
     const [resolvedUser, setResolvedUser] = useState<User | null>(null)
-
-    useEffect(() => {
-        user.then(setResolvedUser)
-    }, [user])
-
-    // State for editable fields
     const [email, setEmail] = useState<string | undefined>(undefined)
     const [phone, setPhone] = useState<string | undefined>(undefined)
     const [profileLink, setProfileLink] = useState<string | undefined>(undefined)
     const [language, setLanguage] = useState<string | undefined>(undefined)
     const [searchable, setSearchable] = useState<boolean>(false)
-    const { logout } = useAuth();
+    const { logout } = useAuth()
+    const intl = useIntl()
+
+    useEffect(() => {
+        user.then(setResolvedUser)
+    }, [user])
+
     useEffect(() => {
         if (resolvedUser) {
             setEmail(resolvedUser.email)
             setPhone(resolvedUser.phoneNumber)
-            setProfileLink(`https://spinettest.vercel.app/${locale}/public-profile/${resolvedUser.selectedProfile}`)//tbd
+            setProfileLink(`https://spinettest.vercel.app/${locale}/public-profile/${resolvedUser.selectedProfile}`)
             setLanguage(resolvedUser.language)
-            setSearchable(true)//tbd
+            setSearchable(true)
         }
     }, [resolvedUser])
 
-    // State for editing modes
     const [editingEmail, setEditingEmail] = useState(false)
     const [editingPhone, setEditingPhone] = useState(false)
-    const [copied, setCopied] = useState(false);
-
-    // Temporary values for editing
     const [tempPhone, setTempPhone] = useState(phone)
 
     const locale = getLocale() || "en"
@@ -62,27 +57,24 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
 
     const handleCopy = async () => {
         try {
-            if (!profileLink) {
-                return;
-            }
-            await navigator.clipboard.writeText(profileLink);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000); // Reset after 2s
+            if (!profileLink) return
+            await navigator.clipboard.writeText(profileLink)
+            toast.success(intl.formatMessage({ id: "profile-url-copied" }))
         } catch (err) {
-            console.error("Failed to copy:", err);
+            console.error("Failed to copy:", err)
+            toast.error(intl.formatMessage({ id: "failed-copy-profile-link" }))
         }
-    };
-
+    }
 
     return (
         <div className="min-h-screen">
-
-            {/* Settings Content */}
             <div className="p-4 space-y-4">
                 {/* Email Section */}
                 <Card className="p-4">
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email address</Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <FormattedMessage id="email-address" defaultMessage="Email address" />
+                        </Label>
                         {editingEmail ? (
                             resolvedUser && <ChangeEmailForm user={resolvedUser} onCancel={handleCancelEmail} />
                         ) : (
@@ -91,9 +83,7 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                                 <Button
                                     size="sm"
                                     variant="ghost"
-                                    onClick={() => {
-                                        setEditingEmail(true)
-                                    }}
+                                    onClick={() => setEditingEmail(true)}
                                 >
                                     <Edit2 className="h-4 w-4" />
                                 </Button>
@@ -105,7 +95,9 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                 {/* Phone Section */}
                 <Card className="p-4">
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone number</Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <FormattedMessage id="phone-number" defaultMessage="Phone number" />
+                        </Label>
                         {editingPhone ? (
                             resolvedUser && <ChangePhoneForm user={resolvedUser} onCancel={handleCancelPhone} />
                         ) : (
@@ -114,9 +106,7 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                                 <Button
                                     size="sm"
                                     variant="ghost"
-                                    onClick={() => {
-                                        setEditingPhone(true)
-                                    }}
+                                    onClick={() => setEditingPhone(true)}
                                 >
                                     <Edit2 className="h-4 w-4" />
                                 </Button>
@@ -131,13 +121,15 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                         href={`/${locale}/auth/forgot-password`}
                         className="block w-full h-full text-sm"
                     >
-                        Change password
+                        <FormattedMessage id="change-password" defaultMessage="Change password" />
                     </Link>
                 </Card>
 
                 {/* Profile Link */}
                 <Card className="p-4">
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">Profile Link</span>
+                    <span className="text-gray-700 dark:text-gray-300 text-sm">
+                        <FormattedMessage id="profile-link" defaultMessage="Profile Link" />
+                    </span>
                     <div className="flex items-center justify-between w-full gap-2">
                         <p className="min-w-0 text-gray-500 text-sm dark:text-gray-400 break-all">
                             {profileLink}
@@ -148,34 +140,42 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                     </div>
                 </Card>
 
-
                 {/* Edit Profile */}
                 <Card className="p-4">
-
                     <Link
-                        href={`/${locale}/profile/update-info`}
+                        href={`/${locale}/app/profile/update-info`}
                         className="block w-full h-full text-sm"
                     >
-                        Edit Profile
+                        <FormattedMessage id="edit-profile" defaultMessage="Edit Profile" />
                     </Link>
                 </Card>
-
-                {/* Change Theme */}
 
                 {/* Change Language */}
                 {/* <Card className="p-4">
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Language</Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <FormattedMessage id="language" defaultMessage="Language" />
+                        </Label>
                         <Select value={language} onValueChange={setLanguage}>
                             <SelectTrigger>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="English">English</SelectItem>
-                                <SelectItem value="French">Français</SelectItem>
-                                <SelectItem value="Arabic">العربية</SelectItem>
-                                <SelectItem value="Spanish">Español</SelectItem>
-                                <SelectItem value="German">Deutsch</SelectItem>
+                                <SelectItem value="English">
+                                    <FormattedMessage id="language.english" defaultMessage="English" />
+                                </SelectItem>
+                                <SelectItem value="French">
+                                    <FormattedMessage id="language.french" defaultMessage="Français" />
+                                </SelectItem>
+                                <SelectItem value="Arabic">
+                                    <FormattedMessage id="language.arabic" defaultMessage="العربية" />
+                                </SelectItem>
+                                <SelectItem value="Spanish">
+                                    <FormattedMessage id="language.spanish" defaultMessage="Español" />
+                                </SelectItem>
+                                <SelectItem value="German">
+                                    <FormattedMessage id="language.german" defaultMessage="Deutsch" />
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -185,9 +185,14 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                 <Card className="p-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">Allow people to find me in search</span>
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">
+                                <FormattedMessage id="allow-search" defaultMessage="Allow people to find me in search" />
+                            </span>
                             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                {searchable ? "Your profile is discoverable" : "Your profile is private"}
+                                <FormattedMessage
+                                    id={searchable ? "profile-discoverable" : "profile-private"}
+                                    defaultMessage={searchable ? "Your profile is discoverable" : "Your profile is private"}
+                                />
                             </p>
                         </div>
                         <Switch checked={searchable} onCheckedChange={setSearchable} />
@@ -197,15 +202,27 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                 {/* Account Expiration Notice */}
                 <Card className="p-4 border-amber-800">
                     <div className="text-amber-800">
-                        <span className="font-medium">Professional Account</span>
-                        <p className="text-sm mt-1">Your professional account expires on 2024-01-30</p>
+                        <span className="font-medium">
+                            <FormattedMessage id="professional-account" defaultMessage="Professional Account" />
+                        </span>
+                        <p className="text-sm mt-1">
+                            <FormattedMessage
+                                id="account-expiration"
+                                defaultMessage="Your professional account expires on {date}"
+                                values={{ date: "2024-01-30" }}
+                            />
+                        </p>
                     </div>
                 </Card>
 
                 {/* Sign Out */}
                 <Card className="p-4 border-red-600 cursor-pointer" onClick={logout}>
-                    <span className="text-red-600 font-medium">Sign out</span>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign out of your account</p>
+                    <span className="text-red-600 font-medium">
+                        <FormattedMessage id="sign-out" defaultMessage="Sign out" />
+                    </span>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <FormattedMessage id="sign-out-description" defaultMessage="Sign out of your account" />
+                    </p>
                 </Card>
             </div>
         </div>
