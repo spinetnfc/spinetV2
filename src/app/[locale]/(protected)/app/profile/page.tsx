@@ -71,16 +71,14 @@ export default async function ProfilePage({ params }: {
     const fullName = profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`
     const profilePictureUrl = profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
     const coverImageUrl = profileData.profileCover ? `/api/files/${profileData.profileCover}` : ""
-    const email = profileData.links.find((link) => link.name === "email")?.title || "user@email.com"
-    const phone = profileData.links.find((link) => link.name === "phone")?.title || "0666778899"
     const themeColor = profileData.theme?.color || "#3b82f6" // Default to blue if undefined
 
     return (
         <div className="min-h-screen w-full pb-4">
             {/* Header with gradient background */}
-            <div className="relative">
+            <div className="relative z-0">
                 <div
-                    className="w-full aspect-video md:max-h-96 bg-gradient-to-r from-blue-700 via-blue-600 to-pink-400"
+                    className="w-full aspect-video md:max-h-96"
                     style={
                         coverImageUrl
                             ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }

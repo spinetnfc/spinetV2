@@ -5,15 +5,13 @@ import { LogIn, ShoppingCart } from 'lucide-react';
 import ChangeLanguage from '@/components/change-language';
 import ThemeSwitch from '@/components/theme-switch';
 import Link from 'next/link';
-import CtaButton from './pages/landing-page/cta-button';
 import UserMenu from './userMenu';
 
 function Header({ locale }: { locale: string }) {
-  const isLogged = true;
   const path = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-end gap-4  sm:static sm:h-auto sm:bg-transparent">
+    <header className="fixed top-0 z-[999999] flex h-14 w-full items-center justify-end gap-4 sm:static sm:h-auto sm:bg-transparent">
       <div className="flex items-center gap-4">
         <ThemeSwitch locale={locale} />
         <ChangeLanguage locale={locale} />

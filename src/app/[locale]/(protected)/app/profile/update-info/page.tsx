@@ -62,18 +62,17 @@ export default async function UpdateProfilePage({
     const coverImageUrl = profileData.profileCover
         ? `/api/files/${profileData.profileCover}`
         : "";
+    const themeColor = profileData.theme?.color || "#3b82f6"
 
     return (
         <div className="min-h-screen w-full">
             {/* Profile Header */}
             <div
-                className="relative w-full aspect-video md:max-h-96 bg-gradient-to-r from-blue-500 to-purple-600"
+                className="relative w-full aspect-video md:max-h-96"
                 style={
                     coverImageUrl
                         ? { backgroundImage: `url(${coverImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
-                        : profileData.theme?.color
-                            ? { backgroundColor: profileData.theme.color }
-                            : {}
+                        : { backgroundColor: themeColor }
                 }
             >
                 {/* <div className="absolute top-4 start-4">
