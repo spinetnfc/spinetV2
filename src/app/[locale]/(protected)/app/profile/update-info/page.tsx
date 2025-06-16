@@ -133,11 +133,11 @@ export default async function UpdateProfilePage({
 
                     <TabsContent value="security" className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
+                            {/* <div className="space-y-4">
                                 {user && <ChangeEmailForm
                                     user={user}
                                 />}
-                            </div>
+                            </div> */}
 
                             <div className="space-y-4">
                                 <h2 className="text-lg font-semibold">{t("account-security")}</h2>

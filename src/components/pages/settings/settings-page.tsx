@@ -8,14 +8,35 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { User } from "@/types/user"
 
-export default function SettingsPage() {
+import { useEffect } from "react"
+import ChangeEmailForm from "../profile/change-email-form"
+
+export default function SettingsPage({ user }: { user: Promise<User | null> }) {
+    // State for resolved user
+    const [resolvedUser, setResolvedUser] = useState<User | null>(null)
+
+    useEffect(() => {
+        user.then(setResolvedUser)
+    }, [user])
+
     // State for editable fields
-    const [email, setEmail] = useState("abderrahmanebakdi@gmail.com")
-    const [phone, setPhone] = useState("+213794257091")
-    const [profileLink, setProfileLink] = useState("https://spinetnfc.com/profil...")
-    const [language, setLanguage] = useState("English")
-    const [searchable, setSearchable] = useState(true)
+    const [email, setEmail] = useState<string | undefined>(undefined)
+    const [phone, setPhone] = useState<string | undefined>(undefined)
+    const [profileLink, setProfileLink] = useState<string | undefined>(undefined)
+    const [language, setLanguage] = useState<string | undefined>(undefined)
+    const [searchable, setSearchable] = useState<boolean>(false)
+
+    useEffect(() => {
+        if (resolvedUser) {
+            setEmail(resolvedUser.email)
+            setPhone(resolvedUser.phoneNumber)
+            setProfileLink("https://something.com")//tbd
+            setLanguage(resolvedUser.language)
+            setSearchable(true)//tbd
+        }
+    }, [resolvedUser])
 
     // State for editing modes
     const [editingEmail, setEditingEmail] = useState(false)
@@ -109,24 +130,7 @@ export default function SettingsPage() {
                     <div className="space-y-3">
                         <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email address</Label>
                         {editingEmail ? (
-                            <div className="space-y-3">
-                                <Input
-                                    type="email"
-                                    value={tempEmail}
-                                    onChange={(e) => setTempEmail(e.target.value)}
-                                    className="w-full"
-                                />
-                                <div className="flex gap-2">
-                                    <Button size="sm" onClick={handleSaveEmail}>
-                                        <Check className="h-4 w-4 mr-1" />
-                                        Save
-                                    </Button>
-                                    <Button size="sm" variant="outline" onClick={handleCancelEmail}>
-                                        <X className="h-4 w-4 mr-1" />
-                                        Cancel
-                                    </Button>
-                                </div>
-                            </div>
+                            resolvedUser && <ChangeEmailForm user={resolvedUser} onCancel={handleCancelEmail} />
                         ) : (
                             <div className="flex items-center justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">{email}</span>

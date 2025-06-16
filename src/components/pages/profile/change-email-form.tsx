@@ -34,7 +34,7 @@ const otpSchema = z.object({
     otp: z.string().length(5, { message: 'otp-length' }),
 });
 
-export default function ChangeEmailForm({ user }: { user: User }) {
+export default function ChangeEmailForm({ user, onCancel }: { user: User, onCancel: () => void }) {
     const [step, setStep] = useState<'email' | 'otp'>('email');
     const [sessionID, setSessionID] = useState<string | null>(null);
     const [newEmail, setNewEmail] = useState('');
@@ -150,10 +150,6 @@ export default function ChangeEmailForm({ user }: { user: User }) {
 
     return (
         <div className="space-y-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Shield className="w-5 h-5" /> <FormattedMessage id="change-email" defaultMessage="Change Email" />
-            </h2>
-
             {step === 'email' && (
                 <Form {...emailForm}>
                     <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
@@ -176,16 +172,24 @@ export default function ChangeEmailForm({ user }: { user: User }) {
                                 </FormItem>
                             )}
                         />
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={isSubmitting}
-                        >
-                            <FormattedMessage id="send-otp" defaultMessage="Send OTP" />
-                            {isSubmitting && (
-                                <div className="animate-spin rounded-full h-4 w-4 ml-2 border-2 border-white border-t-transparent"></div>
-                            )}
-                        </Button>
+                        <div className='flex justify-end gap-2'>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={onCancel}
+                            >
+                                <FormattedMessage id="cancel" defaultMessage="Cancel" />
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                            >
+                                <FormattedMessage id="send-otp" defaultMessage="Send OTP" />
+                                {isSubmitting && (
+                                    <div className="animate-spin rounded-full h-4 w-4 ml-2 border-2 border-white border-t-transparent"></div>
+                                )}
+                            </Button>
+                        </div>
                     </form>
                 </Form>
             )}
@@ -218,16 +222,24 @@ export default function ChangeEmailForm({ user }: { user: User }) {
                                 </FormItem>
                             )}
                         />
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={isSubmitting}
-                        >
-                            <FormattedMessage id="verify" defaultMessage="Verify" />
-                            {isSubmitting && (
-                                <div className="animate-spin rounded-full h-4 w-4 ml-2 border-2 border-white border-t-transparent"></div>
-                            )}
-                        </Button>
+                        <div className='flex justify-end gap-2'>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={onCancel}
+                            >
+                                <FormattedMessage id="cancel" defaultMessage="Cancel" />
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                            >
+                                <FormattedMessage id="verify" defaultMessage="Verify" />
+                                {isSubmitting && (
+                                    <div className="animate-spin rounded-full h-4 w-4 ml-2 border-2 border-white border-t-transparent"></div>
+                                )}
+                            </Button>
+                        </div>
                         <div className="text-center text-sm">
                             <FormattedMessage id="did-not-receive-code" defaultMessage="Didn't receive the code?" />
                             <button
