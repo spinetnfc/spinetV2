@@ -1,4 +1,3 @@
-import { D } from "@tanstack/react-query-devtools/build/legacy/ReactQueryDevtools-Cn7cKi7o";
 import { getUserFromCookie } from "./cookie";
 
 export function userRole() {

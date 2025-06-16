@@ -1,23 +1,10 @@
 import Image from "next/image";
 import {
     User,
-    Mail,
-    Phone,
-    MapPin,
-    Globe,
-    Linkedin,
-    Instagram,
-    Twitter,
-    Github,
     Edit,
-    Lock,
-    Bell,
     Activity,
     Settings,
     Shield,
-    Key,
-    Eye,
-    EyeOff,
     // ArrowLeft,
 } from "lucide-react";
 import useTranslate from "@/hooks/use-translate";
@@ -65,7 +52,7 @@ export default async function UpdateProfilePage({
     const themeColor = profileData.theme?.color || "#3b82f6"
 
     return (
-        <div className="min-h-screen w-full">
+        <div className="min-h-screen w-full -mt-12">
             {/* Profile Header */}
             <div
                 className="relative w-full aspect-video md:max-h-96"
@@ -75,11 +62,6 @@ export default async function UpdateProfilePage({
                         : { backgroundColor: themeColor }
                 }
             >
-                {/* <div className="absolute top-4 start-4">
-                    <Link href="./" className="p-2 rounded-full bg-white/20 text-white inline-flex items-center">
-                        <ArrowLeft size={24} />
-                    </Link>
-                </div> */}
                 <div className="absolute -bottom-12 xs:-bottom-14 sm:-bottom-16 left-4 sm:left-8">
                     <div className="relative">
                         <Image

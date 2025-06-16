@@ -74,7 +74,7 @@ export default async function ProfilePage({ params }: {
     const themeColor = profileData.theme?.color || "#3b82f6" // Default to blue if undefined
 
     return (
-        <div className="min-h-screen w-full pb-4">
+        <div className="min-h-screen w-full pb-4 -mt-12">
             {/* Header with gradient background */}
             <div className="relative z-0">
                 <div

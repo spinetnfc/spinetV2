@@ -97,7 +97,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
         <DrawerTrigger asChild>
           <Button
             size="icon"
-            className="lg:hidden absolute  start-4 top-3 z-40  border border-azure bg-gray-50 dark:bg-background"
+            className="lg:hidden absolute  start-4 top-3 z-50  border border-azure bg-gray-50 dark:bg-background"
           >
             <PanelLeft className="size-5  text-primary" />
             <span className="sr-only">Toggle Sidebar</span>

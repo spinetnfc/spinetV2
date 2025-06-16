@@ -25,7 +25,7 @@ const Layout = ({
     { name: 'home', to: `/app`, icon: LayoutDashboard },
     { name: 'profile', to: `/app/profile`, icon: CircleUserRound },
     { name: 'contacts', to: `/app/contacts`, icon: Contact },
-    { name: 'settings', to: `/app/profile/update-info`, icon: Settings },
+    { name: 'settings', to: `/app/settings`, icon: Settings },
     // { name: 'opportunities', to: `/app/opportunities`, icon: BriefcaseBusiness },
     // { name: 'notifications', to: `/app/notifications`, icon: Bell },
     // { name: 'offers', to: `/app/offers`, icon: Package },
@@ -46,9 +46,9 @@ const Layout = ({
           isExpanded ? "lg:ps-60" : "lg:ps-16"
         )}
       >
-        <main className="grid flex-1 items-start gap-4 md:gap-8 relative">
+        <main className="grid flex-1 items-start gap-4 md:gap-8 relative pt-10">
           {children}
-          <div className='absolute top-0 sm:top-2 end-2'>
+          <div className='absolute top-0 -start-2 sm:top-2 sm:end-2'>
             <Header locale={locale} />
           </div>
         </main>
