@@ -496,5 +496,12 @@
   "User not found": "المستخدم غير موجود",
   "Profile created successfully": "تم إنشاء الملف الشخصي بنجاح",
   "Failed to create profile": "فشل في إنشاء الملف الشخصي",
-  "Something went wrong": "حدث خطأ ما"
+  "Something went wrong": "حدث خطأ ما",
+  "delete-profile": "حذف الملف الشخصي",
+  "delete-profile-message": "هل أنت متأكد أنك تريد حذف هذا الملف الشخصي؟ لا يمكن التراجع عن هذا الإجراء.",
+  "profile-deleted": "تم حذف الملف الشخصي بنجاح",
+  "failed-to-delete-profile": "فشل في حذف الملف الشخصي. يرجى المحاولة مرة أخرى.",
+  "confirm-profile-switch": "تأكيد تغيير الملف الشخصي",
+  "profile-switch-confirmation": "هل أنت متأكد أنك تريد تغيير هذا الملف الشخصي؟",
+  "confirm": "تأكيد"
 }

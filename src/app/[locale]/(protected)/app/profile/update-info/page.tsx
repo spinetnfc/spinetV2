@@ -2,21 +2,23 @@ import Image from "next/image";
 import {
     User,
     Edit,
-    Activity,
+    // Activity,
     Settings,
-    Shield,
+    // Shield,
     // ArrowLeft,
 } from "lucide-react";
 import useTranslate from "@/hooks/use-translate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { getProfile } from "@/lib/api/profile";
+import { getAllProfiles, getProfile } from "@/lib/api/profile";
 import type { ProfileData } from "@/types/profile";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import ProfileForm from "@/components/pages/profile/profile-form";
 import PreferencesForm from "@/components/pages/profile/preferences-form";
-import ChangeEmailForm from "@/components/pages/profile/change-email-form";
-import Link from "next/link";
+// import ChangeEmailForm from "@/components/pages/profile/change-email-form";
+// import Link from "next/link";
+// import { deleteProfileAction, getAllProfilesAction } from "@/actions/profile";
+// import { profile } from "console";
 
 export default async function UpdateProfilePage({
     params,
@@ -32,7 +34,6 @@ export default async function UpdateProfilePage({
 
     try {
         profileData = await getProfile(profileId);
-        console.log("profileData : ", profileData);
     } catch (err: any) {
         console.error("Error fetching profile:", err);
         throw new Error(`Failed to load profile data: ${err.message}`);
@@ -51,6 +52,20 @@ export default async function UpdateProfilePage({
         : "";
     const themeColor = profileData.theme?.color || "#3b82f6"
 
+    // const handleDeleteProfile = async () => {
+    //     "use server";
+    //     const profiles = getAllProfilesAction(user?._id || "");
+    //     "use client";
+    //     const profilesArr = await profiles;
+    //     const currentIndex = profilesArr.findIndex((p: any) => p._id === profileId);
+    //     if (currentIndex !== -1 && profilesArr.length > 1) {
+    //         const nextIndex = (currentIndex + 1) % profilesArr.length;
+    //         const nextProfileId = profilesArr[nextIndex]._id;
+    //         // Update the user cookie with the new selected profile (client-side)
+    //         document.cookie = `current-user=${JSON.stringify({ ...user, selectedProfile: nextProfileId })}; path=/`;
+    //     }
+    //     await deleteProfileAction(profileId || "");
+    // }
     return (
         <div className="min-h-screen w-full -mt-12">
             {/* Profile Header */}
@@ -91,7 +106,7 @@ export default async function UpdateProfilePage({
                 </div>
 
                 <Tabs defaultValue="personal" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
-                    <TabsList className="grid w-full grid-cols-4 mb-8">
+                    <TabsList className="grid w-full grid-cols-2 mb-8">
                         <TabsTrigger
                             value="personal"
                             className="flex items-center gap-[1px] sm:gap-2 text-[9px] xs:text-[11px] sm:text-sm px-0"
@@ -99,20 +114,13 @@ export default async function UpdateProfilePage({
                             <User className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             {t("information")}
                         </TabsTrigger>
-                        <TabsTrigger
+                        {/* <TabsTrigger
                             value="security"
                             className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
                         >
                             <Shield className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             {t("security")}
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="activity"
-                            className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
-                        >
-                            <Activity className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
-                            {t("activity")}
-                        </TabsTrigger>
+                        </TabsTrigger> */}
                         <TabsTrigger
                             value="preferences"
                             className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
@@ -131,56 +139,15 @@ export default async function UpdateProfilePage({
                         />
                     </TabsContent>
 
-                    <TabsContent value="security" className="space-y-6">
+                    {/* <TabsContent value="security" className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* <div className="space-y-4">
-                                {user && <ChangeEmailForm
-                                    user={user}
-                                />}
-                            </div> */}
-
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">{t("account-security")}</h2>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <h3 className="font-medium">{t("change-password")}</h3>
-                                        </div>
-                                        <Link href={`/${locale}/auth/forgot-password`}>
-                                            <Button variant="default">{t("change-password")}</Button>
-                                        </Link>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        {/* <div>
-                                            <h3 className="font-medium">Two-Factor Authentication</h3>
-                                            <p className="text-sm text-gray-500">
-                                                Add an extra layer of security to your account
-                                            </p>
-                                        </div>
-                                        <Button variant="default">Enable</Button>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <h3 className="font-medium">Active Sessions</h3>
-                                            <p className="text-sm text-gray-500">
-                                                View your active sessions
-                                            </p>
-                                        </div>
-                                        <Button variant="outline">View All</Button> */}
-                                    </div>
-                                </div>
-                            </div>
+                            <Button variant="destructive" className="w-fit" onClick={handleDeleteProfile}>
+                                {t("delete-profile")}
+                                <Edit className="me-2 h-4 w-4" />
+                            </Button>
                         </div>
-                    </TabsContent>
+                    </TabsContent> */}
 
-                    <TabsContent value="activity" className="space-y-6">
-                        <div className="space-y-4">
-                            <h2 className="text-lg font-semibold"> {t("recent-activity")}</h2>
-                            <div className="p-4 border rounded-lg">
-                                <p className="text-center text-gray-500">{t("no-recent-activity")}</p>
-                            </div>
-                        </div>
-                    </TabsContent>
 
                     <TabsContent value="preferences" className="space-y-6">
                         <PreferencesForm

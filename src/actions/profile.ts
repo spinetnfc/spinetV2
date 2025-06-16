@@ -1,5 +1,4 @@
 'use server';
-
 import { format } from 'date-fns';
 import { updateProfile, createProfile, getAllProfiles, deleteProfile } from '@/lib/api/profile';
 import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';

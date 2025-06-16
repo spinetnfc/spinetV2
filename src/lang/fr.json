@@ -497,5 +497,13 @@
   "User not found": "Utilisateur non trouvé",
   "Profile created successfully": "Profil créé avec succès",
   "Failed to create profile": "Échec de la création du profil",
-  "Something went wrong": "Une erreur s'est produite"
+  "Something went wrong": "Une erreur s'est produite",
+  "delete-profile": "Supprimer le profil",
+  "delete-profile-confirmation": "Êtes-vous sûr de vouloir supprimer ce profil ? Cette action ne peut pas être annulée.",
+  "delete-profile-message": "Êtes-vous sûr de vouloir supprimer ce profil ? Cette action ne peut pas être annulée.",
+  "profile-deleted": "Profil supprimé avec succès",
+  "failed-to-delete-profile": "Échec de la suppression du profil. Veuillez réessayer.",
+  "confirm-profile-switch": "Confirmer le changement de profil",
+  "profile-switch-confirmation": "Êtes-vous sûr de vouloir changer de profil ?",
+  "confirm": "Confirmer"
 }
