@@ -12,6 +12,8 @@ import { User } from "@/types/user"
 
 import { useEffect } from "react"
 import ChangeEmailForm from "../profile/change-email-form"
+import Link from "next/link"
+import { getLocale } from "@/utils/getClientLocale"
 
 export default function SettingsPage({ user }: { user: Promise<User | null> }) {
     // State for resolved user
@@ -42,27 +44,13 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
     const [editingEmail, setEditingEmail] = useState(false)
     const [editingPhone, setEditingPhone] = useState(false)
     const [editingProfileLink, setEditingProfileLink] = useState(false)
-    const [changingPassword, setChangingPassword] = useState(false)
-
-    // Password change state
-    const [currentPassword, setCurrentPassword] = useState("")
-    const [newPassword, setNewPassword] = useState("")
-    const [confirmPassword, setConfirmPassword] = useState("")
-    const [showPasswords, setShowPasswords] = useState({
-        current: false,
-        new: false,
-        confirm: false,
-    })
 
     // Temporary values for editing
     const [tempEmail, setTempEmail] = useState(email)
     const [tempPhone, setTempPhone] = useState(phone)
     const [tempProfileLink, setTempProfileLink] = useState(profileLink)
 
-    const handleSaveEmail = () => {
-        setEmail(tempEmail)
-        setEditingEmail(false)
-    }
+    const locale = getLocale() || "en"
 
     const handleCancelEmail = () => {
         setTempEmail(email)
@@ -88,24 +76,6 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
         setTempProfileLink(profileLink)
         setEditingProfileLink(false)
     }
-
-    const handlePasswordChange = () => {
-        if (newPassword !== confirmPassword) {
-            alert("New passwords don't match!")
-            return
-        }
-        if (newPassword.length < 6) {
-            alert("Password must be at least 6 characters long!")
-            return
-        }
-        // Here you would typically make an API call to change the password
-        alert("Password changed successfully!")
-        setCurrentPassword("")
-        setNewPassword("")
-        setConfirmPassword("")
-        setChangingPassword(false)
-    }
-
     const handleSignOut = () => {
         if (confirm("Are you sure you want to sign out?")) {
             // Handle sign out logic here
@@ -187,93 +157,15 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
 
                 {/* Change Password */}
                 <Card className="p-4">
-                    <div className="space-y-3">
-                        <button
-                            className="w-full flex items-center justify-between text-left"
-                            onClick={() => setChangingPassword(!changingPassword)}
-                        >
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">Change password</span>
-                            <span className="text-sm text-gray-500 dark:text-gray-400">{changingPassword ? "Cancel" : "Click to change"}</span>
-                        </button>
-
-                        {changingPassword && (
-                            <div className="space-y-4 pt-3 border-t">
-                                <div className="space-y-2">
-                                    <Label htmlFor="current-password">Current Password</Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="current-password"
-                                            type={showPasswords.current ? "text" : "password"}
-                                            value={currentPassword}
-                                            onChange={(e) => setCurrentPassword(e.target.value)}
-                                            placeholder="Enter current password"
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            className="absolute right-0 top-0 h-full px-3"
-                                            onClick={() => setShowPasswords((prev) => ({ ...prev, current: !prev.current }))}
-                                        >
-                                            {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="new-password">New Password</Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="new-password"
-                                            type={showPasswords.new ? "text" : "password"}
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                            placeholder="Enter new password"
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            className="absolute right-0 top-0 h-full px-3"
-                                            onClick={() => setShowPasswords((prev) => ({ ...prev, new: !prev.new }))}
-                                        >
-                                            {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="confirm-password">Confirm New Password</Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="confirm-password"
-                                            type={showPasswords.confirm ? "text" : "password"}
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            placeholder="Confirm new password"
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            className="absolute right-0 top-0 h-full px-3"
-                                            onClick={() => setShowPasswords((prev) => ({ ...prev, confirm: !prev.confirm }))}
-                                        >
-                                            {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-2">
-                                    <Button onClick={handlePasswordChange}>Change Password</Button>
-                                    <Button variant="outline" onClick={() => setChangingPassword(false)}>
-                                        Cancel
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    <Link
+                        href={`/${locale}/auth/forgot-password`}
+                        className="block w-full h-full text-sm"
+                    >
+                        Change password
+                    </Link>
                 </Card>
+
+
 
                 {/* Profile Link */}
                 <Card className="p-4">
