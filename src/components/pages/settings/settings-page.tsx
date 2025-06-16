@@ -7,11 +7,11 @@ import { Switch } from "@/components/ui/switch"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { User } from "@/types/user"
-
 import { useEffect } from "react"
 import ChangeEmailForm from "../profile/change-email-form"
+import ChangePhoneForm from "../profile/change-phone"
 import Link from "next/link"
 import { getLocale } from "@/utils/getClientLocale"
 import { useAuth } from "@/context/authContext"
@@ -47,13 +47,11 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
     const [copied, setCopied] = useState(false);
 
     // Temporary values for editing
-    const [tempEmail, setTempEmail] = useState(email)
     const [tempPhone, setTempPhone] = useState(phone)
 
     const locale = getLocale() || "en"
 
     const handleCancelEmail = () => {
-        setTempEmail(email)
         setEditingEmail(false)
     }
 
@@ -94,7 +92,6 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                                     size="sm"
                                     variant="ghost"
                                     onClick={() => {
-                                        setTempEmail(email)
                                         setEditingEmail(true)
                                     }}
                                 >
@@ -110,19 +107,7 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                     <div className="space-y-3">
                         <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone number</Label>
                         {editingPhone ? (
-                            <div className="space-y-3">
-                                <Input type="tel" value={tempPhone} onChange={(e) => setTempPhone(e.target.value)} className="w-full" />
-                                <div className="flex gap-2">
-                                    <Button size="sm">
-                                        <Check className="h-4 w-4 mr-1" />
-                                        Save
-                                    </Button>
-                                    <Button size="sm" variant="outline" onClick={handleCancelPhone}>
-                                        <X className="h-4 w-4 mr-1" />
-                                        Cancel
-                                    </Button>
-                                </div>
-                            </div>
+                            resolvedUser && <ChangePhoneForm user={resolvedUser} onCancel={handleCancelPhone} />
                         ) : (
                             <div className="flex items-center justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">{phone}</span>
@@ -130,7 +115,6 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                                     size="sm"
                                     variant="ghost"
                                     onClick={() => {
-                                        setTempPhone(phone)
                                         setEditingPhone(true)
                                     }}
                                 >

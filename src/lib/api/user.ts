@@ -25,7 +25,7 @@ export const getUser = async (userId: string | null): Promise<User> => {
     return response.data;
 };
 
-export const updateUser = async (userId: string, user: User) => {
+export const updateUser = async (userId: string, user: Partial<User>) => {
     if (!userId || typeof userId !== 'string') {
         throw new Error(`Invalid userId: ${userId}`);
     }
