@@ -91,7 +91,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                                                 </>
                                             ) : profile.status === "employee" ? (
                                                 <>
-                                                    {profile.position} <FormattedMessage id="at" />{profile.companyName}
+                                                    {profile.position} <FormattedMessage id="at" /> {profile.companyName}
                                                 </>
                                             ) : profile.status === "professional" ? (
                                                 profile.profession
