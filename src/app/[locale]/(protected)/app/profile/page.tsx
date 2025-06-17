@@ -108,7 +108,17 @@ export default async function ProfilePage({ params }: {
                 <div>
                     <h1 className="text-2xl font-bold">{fullName}</h1>
                     <p className="text-gray-500">
-                        {profileData.position} {profileData.companyName ? `${t("at")} ${profileData.companyName}` : ""}
+                        {profileData.status === "student" ? (
+                            <>
+                                {t("student")} {t("at")} {profileData.school}
+                            </>
+                        ) : profileData.status === "employee" ? (
+                            <>
+                                {profileData.position} {t("at")} {profileData.companyName}
+                            </>
+                        ) : profileData.status === "professional" ? (
+                            profileData.companyName
+                        ) : null}
                     </p>
                 </div>
                 <Link href={`./profile/update-info`} className="text-primary hover:scale-105 cursor-pointer pt-1">

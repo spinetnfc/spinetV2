@@ -140,7 +140,18 @@ export default async function UpdateProfilePage({
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{fullName}</h1>
                         <p className="text-gray-600 dark:text-gray-300 mt-1">
-                            {profileData.position} {profileData.companyName ? `${t("at")} ${profileData.companyName}` : ""}
+                            {profileData.status === "student" ? (
+                                <>
+                                    {t("student")} {t("at")} {profileData.school}
+                                </>
+                            ) : profileData.status === "employee" ? (
+                                <>
+                                    {profileData.position} {t("at")} {profileData.companyName}
+                                </>
+                            ) : profileData.status === "professional" ? (
+                                profileData.companyName
+                            ) : null}
+
                         </p>
                     </div>
                 </div>

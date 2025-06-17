@@ -1,5 +1,6 @@
 export type ProfileData = {
     _id?: string;
+    status: 'professional' | 'employee' | 'company' | 'student' | 'none';
     type: string;
     groupId: string;
     theme: {
@@ -11,9 +12,6 @@ export type ProfileData = {
     birthDate: string;
     gender: string;
     phoneNumber?: string;
-    // companyName: string;
-    // activitySector: string;
-    // position: string;
     companyName?: string;
     activitySector?: string;
     position?: string;
@@ -34,6 +32,8 @@ export type ProfileData = {
         companyName: boolean;
         activitySector: boolean;
         position: boolean;
+        school: boolean;
+        profession: boolean;
         theme: boolean;
         canAddLinks: boolean;
         canAddServices: boolean;
