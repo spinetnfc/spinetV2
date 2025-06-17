@@ -7,6 +7,8 @@ import Link from "next/link"
 import AddLinkButton from "@/components/pages/profile/add-link-button"
 import LinkItem from "@/components/pages/profile/link-item"
 import useTranslate from "@/hooks/use-translate"
+import { Service } from "@/types/services";
+import { getServices } from "@/lib/api/services";
 
 // Helper function to get the appropriate icon for a link type
 function getLinkIcon(linkName: string, themeColor: string) {
@@ -54,10 +56,11 @@ export default async function ProfilePage({ params }: {
 
     // Fetch user profile data
     let profileData: ProfileData | null
+    let services: Service[] = []
 
     try {
         profileData = await getProfile(profileId)
-        console.log("profileData", profileData)
+        services = await getServices(profileId);
     } catch (err: any) {
         console.error("Error fetching profile:", err)
         throw new Error(`Failed to load profile data: ${err.message}`)
@@ -139,7 +142,7 @@ export default async function ProfilePage({ params }: {
                                 <div>
                                     <h2 className="text-lg font-semibold">{t("my-services")}</h2>
                                     <p className="text-gray-500 text-sm">
-                                        1 {t("services")}
+                                        {services.length} {services.length === 1 ? t("service") : t("services")}
                                     </p>
                                 </div>
                             </div>

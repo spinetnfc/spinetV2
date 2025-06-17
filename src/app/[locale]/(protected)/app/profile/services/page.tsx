@@ -46,7 +46,7 @@ export default async function ServicesPage({
 
 
     return (
-        <div className="min-h-screen w-full">
+        <div className="min-h-screen w-full absolute top-0">
             {/* Header */}
             <div className="w-full h-32 flex items-center px-6" style={{ backgroundColor: themeColor }}>
                 <Link href={`./`} className="p-2 rounded-full bg-white/20 text-white me-4">
