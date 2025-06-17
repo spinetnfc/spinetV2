@@ -1,97 +1,80 @@
-import React from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-import GreenCheckIcon from '@/components/icons/green-check';
-import RedDashIcon from '@/components/icons/red-dash';
+import GreenCheckIcon from "@/components/icons/green-check"
+import RedDashIcon from "@/components/icons/red-dash"
 
 function ComparePlans() {
   const plans = [
     {
-      title: 'free',
+      title: "Free",
+      features: [
+        { name: "Basic Analytics", exist: true },
+        { name: "Advanced Reports", exist: false },
+        { name: "Team Collaboration", exist: false },
+        { name: "Priority Support", exist: false },
+        { name: "Custom Integrations", exist: false },
+      ],
+    },
+    {
+      title: "Plus",
+      features: [
+        { name: "Basic Analytics", exist: true },
+        { name: "Advanced Reports", exist: true },
+        { name: "Team Collaboration", exist: false },
+        { name: "Priority Support", exist: false },
+        { name: "Custom Integrations", exist: false },
+      ],
+    },
+    {
+      title: "Pro",
+      features: [
+        { name: "Basic Analytics", exist: true },
+        { name: "Advanced Reports", exist: true },
+        { name: "Team Collaboration", exist: true },
+        { name: "Priority Support", exist: true },
+        { name: "Custom Integrations", exist: false },
+      ],
+    },
+    {
+      title: "Company",
+      features: [
+        { name: "Basic Analytics", exist: true },
+        { name: "Advanced Reports", exist: true },
+        { name: "Team Collaboration", exist: true },
+        { name: "Priority Support", exist: true },
+        { name: "Custom Integrations", exist: true },
+      ],
+    },
+  ]
 
-      features: [
-        { name: 'feature 1', exist: true },
-        { name: 'feature 2', exist: false },
-        { name: 'feature 3', exist: false },
-        { name: 'feature 4', exist: false },
-        { name: 'feature 5', exist: false },
-      ],
-    },
-    {
-      title: 'plus',
-      features: [
-        { name: 'feature 1', exist: true },
-        { name: 'feature 2', exist: true },
-        { name: 'feature 3', exist: false },
-        { name: 'feature 4', exist: false },
-        { name: 'feature 5', exist: false },
-      ],
-    },
-    {
-      title: 'pro',
-      features: [
-        { name: 'feature 1', exist: true },
-        { name: 'feature 2', exist: true },
-        { name: 'feature 3', exist: true },
-        { name: 'feature 4', exist: true },
-        { name: 'feature 5', exist: false },
-      ],
-    },
-    {
-      title: 'company',
-      features: [
-        { name: 'feature 1', exist: true },
-        { name: 'feature 2', exist: true },
-        { name: 'feature 3', exist: true },
-        { name: 'feature 4', exist: true },
-        { name: 'feature 5', exist: true },
-      ],
-    },
-  ];
   return (
-    <div className="w-full ">
-      <table className="compare-plans-table w-full border-collapse">
-        <thead>
-          <tr className="compare-plans-header-row bg-gray-100 text-black">
-            <th className="compare-plans-header-cell py-2 pl-2 sm:pl-4 text-left font-semibold">
-              Features
-            </th>
+    <div className="w-full">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-azure hover:bg-gray-50 hover:dark:bg-navy">
+            <TableHead className="font-semibold text-primary">Features</TableHead>
             {plans.map((plan) => (
-              <th
-                key={plan.title}
-                className="compare-plans-header-cell pl-2 sm:pl-4 text-left font-semibold"
-              >
+              <TableHead key={plan.title} className="font-semibold text-primary">
                 {plan.title}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {plans[0].features.map((feature, featureIndex) => (
-            <tr
-              key={feature.name}
-              className="compare-plans-row hover:cursor-pointer hover:bg-gray-50 hover:text-black"
-            >
-              <td className="compare-plans-cell pl-2 sm:pl-4 font-medium">
-                {feature.name}
-              </td>
+            <TableRow key={feature.name} className="hover:bg-gray-50 hover:dark:bg-navy">
+              <TableCell className="font-medium">{feature.name}</TableCell>
               {plans.map((plan) => (
-                <td
-                  key={plan.title}
-                  className="compare-plans-cell py-3 pl-2 sm:pl-4 flex-row items-center justify-center"
-                >
-                  {plan.features[featureIndex].exist ? (
-                    <GreenCheckIcon />
-                  ) : (
-                    <RedDashIcon />
-                  )}
-                </td>
+                <TableCell key={plan.title} className="text-center">
+                  {plan.features[featureIndex].exist ? <GreenCheckIcon className="h-6 w-6" /> : <RedDashIcon className="h-6 w-6" />}
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
-  );
+  )
 }
 
-export default ComparePlans;
+export default ComparePlans

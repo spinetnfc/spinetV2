@@ -7,5 +7,4 @@ export const COLOR_PALETTE: string[] = [
     "#AB47BC", //  Purple
     "#448AFF", //  Light blue
     "#4FC3F7", //  Sky blue
-    "#000000", //  Black
 ];
