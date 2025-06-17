@@ -492,6 +492,7 @@
   "create-profile": "Créer le profil",
   "School is required": "L'école est requise",
   "Profession is required": "La profession est requise",
+  "website-required": "Le site web est requis",
   "Company name, activity sector, and position are required": "Le nom de l'entreprise, le secteur d'activité et le poste sont requis",
   "Please fill in all link fields": "Veuillez remplir tous les champs de lien",
   "User not found": "Utilisateur non trouvé",

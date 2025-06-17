@@ -11,9 +11,14 @@ export type ProfileData = {
     birthDate: string;
     gender: string;
     phoneNumber?: string;
-    companyName: string;
-    activitySector: string;
-    position: string;
+    // companyName: string;
+    // activitySector: string;
+    // position: string;
+    companyName?: string;
+    activitySector?: string;
+    position?: boolean;
+    school?: string;
+    profession?: string;
     profilePicture: string;
     profileCover: string;
     links: {

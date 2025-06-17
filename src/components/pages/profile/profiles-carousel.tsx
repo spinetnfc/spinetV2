@@ -86,6 +86,8 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                                         <div>
                                             <h3 className="text-lg xs:text-xl font-bold text-primary xs:mb-1">{profile.fullName}</h3>
                                             {profile.position && <p className="text-gray-600 text-sm font-medium xs:mb-1">{profile.position} <FormattedMessage id="at" /> {profile.companyName}</p>}
+                                            {profile.school && <p className="text-gray-600 text-sm font-medium xs:mb-1"><FormattedMessage id="student" /> <FormattedMessage id="at" /> {profile.school}</p>}
+                                            {profile.profession && <p className="text-gray-600 text-sm font-medium xs:mb-1"><FormattedMessage id="student" />{profile.profession}</p>}
                                         </div>
                                         {/* Action buttons at bottom */}
                                         <div className="flex justify-end items-end">
