@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { FormattedMessage, useIntl } from 'react-intl';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 
 import {
     Form,
@@ -73,8 +74,12 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
     const onSubmit = async (data: ProfileFormValues) => {
         setIsSubmitting(true);
         try {
+            const formattedData = {
+                ...data,
+                birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
+            };
             // Call server action (server-side formatting & API call)
-            const result = await updateProfileAction(profileId, data);
+            const result = await updateProfileAction(profileId, formattedData);
 
             if (result.success) {
                 toast.success(intl.formatMessage({ id: 'Profile updated successfully' }));

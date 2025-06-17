@@ -16,7 +16,7 @@ export type ProfileData = {
     // position: string;
     companyName?: string;
     activitySector?: string;
-    position?: boolean;
+    position?: string;
     school?: string;
     profession?: string;
     profilePicture: string;
