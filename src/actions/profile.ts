@@ -6,16 +6,6 @@ import { LinkType, ProfileData, profileInput } from '@/types/profile';
 import { User } from '@/types/user';
 import { updateUser } from '@/lib/api/user';
 
-interface ProfileFormValues {
-    fullName?: string;
-    birthDate?: Date;
-    gender?: 'male' | 'female' | 'other';
-    companyName?: string;
-    activitySector?: string;
-    position?: string;
-    links?: LinkType[];
-}
-
 export const getAllProfilesAction = async (userId: string | null): Promise<ProfileData[]> => {
     try {
         const profiles = await getAllProfiles(userId);
@@ -42,7 +32,7 @@ export async function createProfileAction(userId: string, data: profileInput) {
     }
 }
 
-export async function updateProfileAction(profileId: string, data: ProfileFormValues) {
+export async function updateProfileAction(profileId: string, data: Partial<ProfileData>) {
     try {
         const formattedData = {
             ...data,
