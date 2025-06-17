@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/input-otp';
 import { requestEmailChangeAction, verifyEmailChangeOTPAction } from '@/actions/profile';
 import { toast } from 'sonner';
-import { Shield } from 'lucide-react';
 import { User } from '@/types/user';
 import Cookies from 'js-cookie';
 

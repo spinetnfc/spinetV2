@@ -12,7 +12,7 @@ import { IntlProvider } from 'react-intl';
 import enMessages from '@/lang/en.json';
 import arMessages from '@/lang/ar.json';
 import frMessages from '@/lang/fr.json';
-import { getLocale } from '@/utils/getClientLocale';
+import { useLocale } from '@/hooks/use-locale';
 
 const messagesMap = {
   en: enMessages,
@@ -25,7 +25,7 @@ type AppProviderProps = {
 };
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const locale = getLocale() || 'en';
+  const locale = useLocale();
   const messages = messagesMap[locale as keyof typeof messagesMap];
 
   return (
