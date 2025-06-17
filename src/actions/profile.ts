@@ -36,7 +36,7 @@ export async function updateProfileAction(profileId: string, data: Partial<Profi
     try {
         const formattedData = {
             ...data,
-            birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
+            birthDate: data.birthDate ? (format(data.birthDate, 'yyyy-MM-dd') as string) : undefined,
         };
 
         await updateProfile(profileId, formattedData);
