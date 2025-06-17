@@ -55,7 +55,10 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
           {/* navigation */}
           <nav className={`flex flex-col ${isExpanded ? "items-center" : "items-start"} gap-4 px-2 py-4 flex-1 overflow-x-hidden`}>
             {navigation.map((item) => {
-              const isActive = pathname.endsWith(item.to);
+              const isActive =
+                item.to === '/app'
+                  ? pathname === '/app'
+                  : pathname.includes(item.to);
               return (
                 <NextLink
                   key={item.name}
@@ -120,7 +123,10 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                 {isDark ? <LogoSpinet locale={locale} parentDarkMode={true} /> : <LogoSpinet locale={locale} parentDarkMode={false} />}
               </div>
               {navigation.map((item) => {
-                const isActive = pathname.endsWith(item.to);
+                const isActive =
+                  item.to === '/app'
+                    ? pathname === '/app'
+                    : pathname.includes(item.to);
                 return (
                   <NextLink
                     key={item.name}
