@@ -85,9 +85,17 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                                     <CardContent className="pt-10 h-36 sm:h-42 xs:pt-12 sm:pt-14 pb-2 xs:pb-4 sm:pb-6 px-3 xs:px-4 sm:px-6 text-gray-800 flex flex-col justify-between">
                                         <div>
                                             <h3 className="text-lg xs:text-xl font-bold text-primary xs:mb-1">{profile.fullName}</h3>
-                                            {profile.position && <p className="text-gray-600 text-sm font-medium xs:mb-1">{profile.position} <FormattedMessage id="at" /> {profile.companyName}</p>}
-                                            {profile.school && <p className="text-gray-600 text-sm font-medium xs:mb-1"><FormattedMessage id="student" /> <FormattedMessage id="at" /> {profile.school}</p>}
-                                            {profile.profession && <p className="text-gray-600 text-sm font-medium xs:mb-1"><FormattedMessage id="student" />{profile.profession}</p>}
+                                            {profile.status === "student" ? (
+                                                <>
+                                                    <FormattedMessage id="student" /> <FormattedMessage id="at" /> {profile.school}
+                                                </>
+                                            ) : profile.status === "employee" ? (
+                                                <>
+                                                    {profile.position} <FormattedMessage id="at" />{profile.companyName}
+                                                </>
+                                            ) : profile.status === "professional" ? (
+                                                profile.profession
+                                            ) : null}
                                         </div>
                                         {/* Action buttons at bottom */}
                                         <div className="flex justify-end items-end">
