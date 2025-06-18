@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             JSON.stringify(userData)
         )}; path=/; SameSite=Lax`; {/*max-age=${60 * 60 * 24 * 7};*/ }
         (getUserFromCookie as any).cache = userData;
-        router.push(`/${localeRef.current}`);
+        // router.push(`/${localeRef.current}`);
     }, [router]);
 
     // google login
@@ -134,6 +134,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 const data = res.data;
                 console.log('Full signup response:', data);
                 login(data);
+                router.push(`/${localeRef.current}`);
+
 
             } catch (error) {
                 console.error('Google login error:', error);
@@ -177,6 +179,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                                     { withCredentials: true }
                                 );
                                 login(res.data);
+                                router.push(`/${localeRef.current}`);
+
                             } catch (error) {
                                 console.error("Backend signup error:", error);
                             }
@@ -236,6 +240,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const res = await api.post("/auth/signup", userData, { withCredentials: true });
 
             login(res.data);
+            router.push(`/${localeRef.current}`);
+
         } catch (error) {
             console.error("Apple login error:", error);
         }
