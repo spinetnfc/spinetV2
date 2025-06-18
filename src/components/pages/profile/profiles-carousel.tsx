@@ -43,7 +43,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
             <Carousel
                 setApi={setApi}
                 className={` ${isExpanded ? "w-full max-w-screen lg:max-w-[calc(100vw-240px)]" : "max-w-screen  lg:max-w-[calc(100vw-64px)]"} overflow-hidden`}
-                opts={{ loop: true }}
+                opts={{ containScroll: false }}
             >
                 <CarouselContent className="py-3 -ms-0">
                     {profiles.map((profile, index) => (
