@@ -54,9 +54,9 @@ const registerSchema = z.object({
   passwordConfirmation: z.string().min(8, { message: 'password-length' }),
   birthDate: z.date().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
-  companyName: z.string().min(3, { message: 'company-name-required' }),
-  activitySector: z.string().min(3, { message: 'activity-sector-required' }),
-  position: z.string().min(3, { message: 'position-required' }),
+  companyName: z.string().min(3, { message: 'company-name-invalid' }).optional(),
+  activitySector: z.string().min(3, { message: 'activity-sector-invalid' }).optional(),
+  position: z.string().min(3, { message: 'position-invalid' }).optional(),
   language: z.enum(['en', 'fr', 'ar']).default('en'),
   theme: z.object({
     color: z.string().default('#0F62FE'),
@@ -92,9 +92,9 @@ export default function Register({ locale }: { locale: string }) {
       passwordConfirmation: '',
       birthDate: undefined,
       gender: undefined,
-      companyName: '',
-      activitySector: '',
-      position: '',
+      companyName: ' ',
+      activitySector: ' ',
+      position: ' ',
       language: 'en',
       theme: { color: '#0F62FE' },
     },
@@ -116,22 +116,27 @@ export default function Register({ locale }: { locale: string }) {
 
   const nextStep = async () => {
     let fieldsToValidate: (keyof z.infer<typeof registerSchema>)[] = [];
+    let hasRequiredFields = false;
+
     switch (step) {
       case 1:
         fieldsToValidate = ['email', 'password', 'passwordConfirmation'];
+        hasRequiredFields = true;
         break;
       case 2:
-        fieldsToValidate = ['firstName', 'birthDate', 'gender'];
+        fieldsToValidate = ['firstName'];
+        hasRequiredFields = true;
         break;
       case 3:
-        fieldsToValidate = ['companyName', 'activitySector', 'position'];
-        break;
+      case 4:
       case 5:
-        fieldsToValidate = ['language', 'theme'];
+        // No required fields; bypass validation
+        fieldsToValidate = [];
+        hasRequiredFields = false;
         break;
     }
 
-    if (fieldsToValidate.length > 0) {
+    if (hasRequiredFields && fieldsToValidate.length > 0) {
       const result = await form.trigger(fieldsToValidate);
       if (!result) return;
     }
@@ -147,7 +152,33 @@ export default function Register({ locale }: { locale: string }) {
     }
   };
 
-  const skipStep = () => {
+  const skipStep = async () => {
+    let fieldsToValidate: (keyof z.infer<typeof registerSchema>)[] = [];
+    let hasRequiredFields = false;
+
+    switch (step) {
+      case 1:
+        fieldsToValidate = ['email', 'password', 'passwordConfirmation'];
+        hasRequiredFields = true;
+        break;
+      case 2:
+        fieldsToValidate = ['firstName'];
+        hasRequiredFields = true;
+        break;
+      case 3:
+      case 4:
+      case 5:
+        // No required fields; bypass validation
+        fieldsToValidate = [];
+        hasRequiredFields = false;
+        break;
+    }
+
+    if (hasRequiredFields && fieldsToValidate.length > 0) {
+      const result = await form.trigger(fieldsToValidate);
+      if (!result) return;
+    }
+
     if (step < totalSteps) {
       setStep((prev) => prev + 1);
     } else {
@@ -188,9 +219,9 @@ export default function Register({ locale }: { locale: string }) {
         fullName: loginResponse.fullName || data.firstName,
         birthDate: userData.birthDate || '',
         gender: userData.gender || '',
-        companyName: data.companyName,
-        activitySector: data.activitySector,
-        position: data.position,
+        companyName: data.companyName || '',
+        activitySector: data.activitySector || '',
+        position: data.position || '',
         phoneNumber: loginResponse.phoneNumber || '',
         website: loginResponse.website || '',
         language: data.language,
@@ -218,7 +249,7 @@ export default function Register({ locale }: { locale: string }) {
 
       toast.success(intl.formatMessage({ id: 'Account registered successfully' }));
       setTimeout(() => {
-        router.push(`/${locale}/dashboard`);
+        router.push(`/${locale}/app`);
       }, 2000);
     } catch (error) {
       console.error('Registration error:', error);
@@ -352,7 +383,7 @@ export default function Register({ locale }: { locale: string }) {
                   type="button"
                   variant="outline"
                   onClick={skipStep}
-                  className="flex items-center gap-2"
+                  className={`flex items-center gap-2 ${step === 1 ? 'hidden' : ''}`}
                   disabled={isSubmitting}
                 >
                   <FormattedMessage id="skip" defaultMessage="Skip" />
@@ -360,7 +391,7 @@ export default function Register({ locale }: { locale: string }) {
                 <Button
                   type="button"
                   onClick={nextStep}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 ms-auto"
                   disabled={isSubmitting}
                 >
                   <FormattedMessage id="next" defaultMessage="Next" />
