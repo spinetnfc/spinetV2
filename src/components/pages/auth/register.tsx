@@ -829,7 +829,8 @@ export default function Register({ locale }: { locale: string }) {
                   <FormattedMessage id="skip" defaultMessage="Skip" />
                 </Button>
                 <Button
-                  type="submit"
+                  type="button"
+                  onClick={() => onSubmit(form.getValues())}
                   className="flex items-center gap-2"
                   disabled={isSubmitting}
                 >
