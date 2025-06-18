@@ -12,7 +12,7 @@ export type NewUser = {
   phoneNumber?: string;
   website?: string;
   language?: string;
-  theme: {
+  theme?: {
     color: string;
   };
 }
