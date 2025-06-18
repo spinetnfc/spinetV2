@@ -830,6 +830,7 @@ export default function Register({ locale }: { locale: string }) {
                 </Button>
                 <Button
                   type="button"
+                  //skip validation since last step has no required fields
                   onClick={() => onSubmit(form.getValues())}
                   className="flex items-center gap-2"
                   disabled={isSubmitting}

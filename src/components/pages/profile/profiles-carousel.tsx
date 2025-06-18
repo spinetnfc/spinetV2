@@ -39,10 +39,10 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
     }, [api]);
 
     return (
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center w-full">
             <Carousel
                 setApi={setApi}
-                className={`w-full ${isExpanded ? "max-w-screen lg:max-w-[calc(100vw-240px)]" : "max-w-screen  lg:max-w-[calc(100vw-64px)]"} overflow-hidden`}
+                className={` ${isExpanded ? "w-full max-w-screen lg:max-w-[calc(100vw-240px)]" : "max-w-screen  lg:max-w-[calc(100vw-64px)]"} overflow-hidden`}
                 opts={{ loop: true }}
             >
                 <CarouselContent className="py-3 -ms-0">
@@ -63,8 +63,8 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                                     className={cn(
                                         "transition-transform duration-500",
                                         index !== current - 1
-                                            ? "scale-[0.8] basis-1/2 md:basis-[40%] 2xl:basis-[25%] opacity-70 pointer-events-none"
-                                            : "scale-100 basis-2/3 md:basis-1/2 2xl:basis-1/3 opacity-100"
+                                            ? "scale-[0.8] ] opacity-70 pointer-events-none"
+                                            : "scale-100  opacity-100"
                                     )}
                                 >
 
@@ -132,8 +132,8 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                             className={cn(
                                 "flex-1 flex items-center justify-center h-60 xs:h-64 sm:h-74 transition-transform duration-500",
                                 current === profiles.length + 1
-                                    ? "scale-100 basis-2/3 md:basis-1/2 2xl:basis-1/3 opacity-100"
-                                    : "scale-[0.8] basis-1/2 md:basis-[40%] 2xl:basis-[25%] opacity-70 pointer-events-none"
+                                    ? "scale-100 opacity-100"
+                                    : "scale-[0.8] opacity-70 pointer-events-none"
                             )}
                         >
                             <button
