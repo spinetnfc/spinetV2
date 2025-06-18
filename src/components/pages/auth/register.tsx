@@ -34,6 +34,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
+import FacebookIcon from '@/components/icons/facebook-icon';
+import GoogleIcon from '@/components/icons/google-icon';
+import AppleIcon from '@/components/icons/apple-icon';
 import { cn } from '@/utils/cn';
 import ColorPicker from '@/components/ui/color-picker';
 import { registerUser, login as apiLogin } from '@/lib/api/auth';
@@ -75,7 +78,7 @@ type LinkType = {
 export default function Register({ locale }: { locale: string }) {
   const intl = useIntl();
   const router = useRouter();
-  const { login: authLogin } = useAuth();
+  const { login: authLogin, googleLogin, facebookLogin, appleLogin } = useAuth();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -409,6 +412,42 @@ export default function Register({ locale }: { locale: string }) {
                 </Button>
               </div>
 
+              <div className="flex items-center justify-center gap-2">
+                <div className="h-px grow bg-gray-300"></div>
+                <span className="text-sm">
+                  <FormattedMessage id="or-continue-with" />
+                </span>
+                <div className="h-px grow bg-gray-300"></div>
+              </div>
+
+              <div className="flex justify-center space-x-4">
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => googleLogin()}
+                  disabled={isSubmitting}
+                  className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                >
+                  <GoogleIcon />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                  onClick={() => facebookLogin()}
+                  disabled={isSubmitting}
+                >
+                  <FacebookIcon />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                  onClick={() => appleLogin()}
+                  disabled={isSubmitting}
+                >
+                  <AppleIcon />
+                </Button>
+              </div>
+
               <div className="flex justify-center space-x-1 text-sm mt-2">
                 <span>
                   <FormattedMessage id="you-have-an-account" />
@@ -428,13 +467,13 @@ export default function Register({ locale }: { locale: string }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">
-                      <FormattedMessage id="first-name" />*
+                      <FormattedMessage id="full-name" />*
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder={intl.formatMessage({
-                          id: 'enter-your-first-name',
-                          defaultMessage: 'Enter your first name',
+                          id: 'enter-your-full-name',
+                          defaultMessage: 'Enter your full name',
                         })}
                         {...field}
                         className="border-gray-200 dark:border-blue-950 focus:border-blue-500 h-9"
