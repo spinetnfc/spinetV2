@@ -262,10 +262,10 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const selectedRowCount = Object.values(rowSelection).filter(Boolean).length
 
     return (
-        <div className="space-y-4 mt-4">
+        <div className="space-y-2 sm:space-y-4 sm:mt-4">
 
-            <div className="flex items-center justify-end gap-2">
-                <div className="flex items-center gap-2 me-auto">
+            <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">
+                <div className="me-auto">
                     {selectedRowCount > 0 && (
                         <Button
                             onClick={() => setShowDeleteModal(true)}
@@ -279,30 +279,32 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                         </Button>
                     )}
                 </div>
-                <div className="flex gap-4 items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
-                    <Input
-                        placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
-                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                        onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
-                        className="max-w-sm border-none min-w-64 sm:min-w-80"
-                    />
-                    <ContactFilters />
+                <div className="ms-auto flex items-center gap-2">
+                    <div className="flex gap-4 items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
+                        <Input
+                            placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
+                            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                            onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
+                            className="max-w-sm border-none min-w-60 sm:min-w-80"
+                        />
+                        <ContactFilters />
+                    </div>
+                    <Button asChild className="flex items-center h-10 gap-1 bg-azure">
+                        <Link href="./contacts/add-contact">
+                            <Plus size={16} />
+                            <FormattedMessage id="add-contact" defaultMessage="Add contact" />
+                        </Link>
+                    </Button>
                 </div>
-                <Button asChild className="flex items-center h-10 gap-1 bg-azure">
-                    <Link href="./contacts/add-contact">
-                        <Plus size={16} />
-                        <FormattedMessage id="add-contact" defaultMessage="Add contact" />
-                    </Link>
-                </Button>
             </div>
 
             <div className="rounded-md border overflow-x-auto">
                 <Table className="table-auto relative">
-                    <TableHeader>
+                    <TableHeader className="bg-gray-100 dark:bg-navy">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className={`px-2 ${header.column.id === "select" ? "w-fit" : ""} `}>
+                                    <TableHead key={header.id} className={`px-4 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
@@ -319,7 +321,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={`p-2 min-w-0 ${cell.column.id === "select"
+                                            className={`px-4 min-w-0 ${cell.column.id === "select"
                                                 ? "w-fit"
                                                 : cell.column.id === "name"
                                                     ? "w-auto truncate"
@@ -329,7 +331,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
-                                    <TableCell className="p-2 w-12">
+                                    <TableCell className="px-4 w-12">
                                         <ActionCell contact={row.original} locale={locale} profileId={profileId} />
                                     </TableCell>
                                 </TableRow>

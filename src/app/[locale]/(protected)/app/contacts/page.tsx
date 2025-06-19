@@ -43,8 +43,8 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
     }
 
     return (
-        <div className="min-h-screen pt-16 lg:pt-4">
-            <div className="mx-auto px-1 xs:px-2 md:px-4">
+        <div className="min-h-screen">
+            <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-2">
                 <ContactsDataTable
                     contacts={contacts}
                     locale={locale}

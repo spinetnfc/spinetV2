@@ -37,7 +37,7 @@ const Layout = ({
 
 
   return (
-    <div className="z-50 flex min-h-screen w-full flex-col bg-muted/40">
+    <div className="z-50 flex min-h-screen w-full flex-col sm:bg-muted/20">
       <SideBar navigation={navigation} locale={locale} isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
       <div
         className={cn(

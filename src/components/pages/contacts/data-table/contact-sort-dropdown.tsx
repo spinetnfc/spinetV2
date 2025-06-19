@@ -27,27 +27,11 @@ export function ContactSortDropdown() {
         replace(`${pathname}?${params.toString()}`)
     }
 
-    // const getSortLabel = (sort: SortOption) => {
-    //     switch (sort) {
-    //         case "name-asc":
-    //             return "name-desc"
-    //         case "name-desc":
-    //             return "name-asc"
-    //         case "date-asc":
-    //             return "date-desc"
-    //         case "date-desc":
-    //             return "date-asc"
-    //         default:
-    //             return "name-desc"
-    //     }
-    // }
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button
-                    variant="outline"
-                    className="flex items-center gap-2 border-[#F3F6FA] dark:border-[#1E293B]"
+                    variant="ghost"
                 >
                     <ArrowDownUp className="w-4 h-4" />
                 </Button>

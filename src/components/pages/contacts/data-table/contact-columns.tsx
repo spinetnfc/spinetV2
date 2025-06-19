@@ -12,6 +12,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
             id: "select",
             header: ({ table }) => (
                 <Checkbox
+                    className="sm:h-5 sm:w-5 border-gray-400 dark:border-gray-600 bg-transparent dark:dark:bg-transparent cursor-pointer"
                     checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
                     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                     aria-label="Select all"
@@ -19,6 +20,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
             ),
             cell: ({ row }) => (
                 <Checkbox
+                    className="sm:h-5 sm:w-5 border-gray-400 dark:border-gray-600 bg-transparent dark:dark:bg-transparent cursor-pointer"
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
                     aria-label="Select row"
@@ -48,7 +50,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
                     >
                         <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} />
                         <div className="min-w-0 overflow-hidden">
-                            <div className="font-medium truncate text-xs xs:text-sm">{name}</div>
+                            <div className="font-medium truncate text-xs xs:text-sm sm:text-base">{name}</div>
                             {/* show email on larger screens */}
                             {email && <div className="text-xs text-muted-foreground lowercase hidden sm:block truncate">{email}</div>}
                             {/* show position at company on small screens */}
@@ -84,7 +86,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
                 const contact = row.original
                 const Profile = contact.Profile || {}
                 const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
-                return <div className="truncate text-sm">{companyName || "-"}</div>
+                return <div className="truncate text-xs sm:text-base">{companyName || "-"}</div>
             },
         },
         {
@@ -94,7 +96,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
                 const contact = row.original
                 const Profile = contact.Profile || {}
                 const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
-                return <div className="truncate text-sm">{position || "-"}</div>
+                return <div className="truncate text-sm sm:text-base">{position || "-"}</div>
             },
         },
     ]
