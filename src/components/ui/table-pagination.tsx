@@ -3,13 +3,15 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { getLocale } from "@/utils/getClientLocale"
+import { FormattedMessage } from "react-intl"
 
 interface PaginationControlsProps {
     currentPage: number
     totalPages: number
+    totalElements: number
 }
 
-export function PaginationControls({ currentPage, totalPages }: PaginationControlsProps) {
+export function PaginationControls({ currentPage, totalPages, totalElements }: PaginationControlsProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const locale = getLocale() || "en"
@@ -23,7 +25,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
     // Calculate the range display
     const startItem = (currentPage - 1) * 10 + 1
     const endItem = Math.min(currentPage * 10, totalPages * 10)
-    const totalItems = totalPages * 10
+    const totalItems = totalElements
 
     const renderPageNumbers = () => {
         const pages = []
@@ -52,7 +54,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
 
         <div className="flex items-center justify-between">
             <div className="text-sm text-gray-500">
-                {startItem}-{endItem} of {totalItems}
+                {startItem}-{endItem} <FormattedMessage id="of" /> {totalItems}
             </div>
 
             <div className="flex items-center space-x-1">

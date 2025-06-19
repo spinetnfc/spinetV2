@@ -354,6 +354,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                 <PaginationControls
                                     currentPage={table.getState().pagination.pageIndex + 1}
                                     totalPages={table.getPageCount()}
+                                    totalElements={contacts.length}
                                 />
                             </TableCell>
                         </TableRow>
