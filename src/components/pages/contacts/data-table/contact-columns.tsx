@@ -6,12 +6,7 @@ import Link from "next/link"
 import ContactAvatar from "../contact-avatar"
 import type { Contact } from "@/types/contact"
 
-interface ContactColumnsProps {
-    themeColor: string
-    locale: string
-}
-
-export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): ColumnDef<Contact>[] => {
+export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
     return [
         {
             id: "select",
@@ -51,7 +46,7 @@ export const contactColumns = ({ themeColor, locale }: ContactColumnsProps): Col
                         href={`/${locale}/public-profile/${contact.Profile._id}`}
                         className="flex items-center gap-2 w-full"
                     >
-                        <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} color={themeColor} />
+                        <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} />
                         <div className="min-w-0 overflow-hidden">
                             <div className="font-medium truncate text-xs xs:text-sm">{name}</div>
                             {/* show email on larger screens */}

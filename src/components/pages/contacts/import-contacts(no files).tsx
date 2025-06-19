@@ -69,11 +69,10 @@ interface Contact {
 }
 
 interface ImportContactsProps {
-    themeColor: string;
     locale: string;
 }
 
-export default function ImportContacts({ themeColor, locale }: ImportContactsProps) {
+export default function ImportContacts({ locale }: ImportContactsProps) {
     const intl = useIntl();
     const profileId = useAuth().user?.selectedProfile;
     const [importSource, setImportSource] = useState<'phone' | 'google' | null>(null);
@@ -480,8 +479,7 @@ export default function ImportContacts({ themeColor, locale }: ImportContactsPro
                         <Button
                             onClick={() => handleImport('phone')}
                             disabled={isImporting || isApiSupported === false}
-                            style={{ backgroundColor: themeColor }}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 bg-azure"
                         >
                             <Smartphone size={20} />
                             <FormattedMessage id="import-from-phone" defaultMessage="Import from Phone" />
@@ -489,8 +487,7 @@ export default function ImportContacts({ themeColor, locale }: ImportContactsPro
                         <Button
                             onClick={() => handleImport('google')}
                             disabled={isImporting || !googleApiLoaded}
-                            style={{ backgroundColor: themeColor }}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 bg-azure"
                         >
                             <User size={20} />
                             <FormattedMessage id="import-from-google" defaultMessage="Import from Google" />
@@ -546,8 +543,7 @@ export default function ImportContacts({ themeColor, locale }: ImportContactsPro
                     <div className="flex justify-center gap-4 mt-4">
                         <Button
                             onClick={handleConfirmGoogleSelection}
-                            style={{ backgroundColor: themeColor }}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 bg-azure"
                         >
                             <Check size={20} />
                             <FormattedMessage id="confirm-selection" defaultMessage="Confirm Selection" />

@@ -13,12 +13,11 @@ import { useAuth } from '@/context/authContext';
 import { createContact } from '@/actions/contacts';
 
 interface ScanContactProps {
-    themeColor: string;
     locale: string;
     getProfileData: (profileId: string, userId: string) => Promise<ProfileData | null>;
 }
 
-export default function ScanContact({ themeColor, locale, getProfileData }: ScanContactProps) {
+export default function ScanContact({ locale, getProfileData }: ScanContactProps) {
     const intl = useIntl();
     const profileId = useAuth().user.selectedProfile;;
     const user = getUserFromCookie();
@@ -255,8 +254,7 @@ export default function ScanContact({ themeColor, locale, getProfileData }: Scan
                         <Button
                             onClick={startScanning}
                             disabled={isProcessing}
-                            style={{ backgroundColor: themeColor }}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 bg-azure"
                         >
                             <QrCode size={20} />
                             <FormattedMessage id="start-scanning" defaultMessage="Start Scanning" />
@@ -264,8 +262,7 @@ export default function ScanContact({ themeColor, locale, getProfileData }: Scan
                         <Button
                             onClick={() => fileInputRef.current?.click()}
                             disabled={isProcessing}
-                            style={{ backgroundColor: themeColor }}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 bg-azure"
                         >
                             <Upload size={20} />
                             <FormattedMessage id="upload-image" defaultMessage="Upload Image" />

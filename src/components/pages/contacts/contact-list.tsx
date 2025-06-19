@@ -17,13 +17,11 @@ import ConfirmationModal from "@/components/delete-confirmation-modal";
 
 interface ContactListProps {
     filteredContacts: Contact[];
-    themeColor: string;
     locale: string;
 }
 
 export default function ContactList({
     filteredContacts,
-    themeColor,
     locale,
 }: ContactListProps) {
     const profileId = useAuth().user.selectedProfile;
@@ -118,9 +116,7 @@ export default function ContactList({
                         </div>
                     )}
                     <Button asChild
-                        className="flex items-center gap-1"
-                        style={{ backgroundColor: themeColor }}
-                    >
+                        className="flex items-center gap-1"                    >
                         <Link
                             href="./contacts/add-contact"
                         >
@@ -140,7 +136,6 @@ export default function ContactList({
                             <div className="flex-1">
                                 <ContactItem
                                     contact={contact}
-                                    themeColor={themeColor}
                                     locale={locale}
                                     onDelete={handleDelete}
                                 />

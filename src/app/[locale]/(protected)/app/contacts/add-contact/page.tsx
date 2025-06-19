@@ -32,7 +32,6 @@ export default async function AddContactPage({ params }: {
     const profilePictureUrl = profileData?.profilePicture
         ? `/api/files/${profileData.profilePicture}`
         : "/img/user.png";
-    const themeColor = profileData?.theme?.color || "#3b82f6"; // Default to blue
 
     const getProfileData = async (profileId: string, userId = user?._id): Promise<ProfileData | null> => {
         "use server";
@@ -77,16 +76,16 @@ export default async function AddContactPage({ params }: {
                     </TabsList>
 
                     <TabsContent value="manual">
-                        <AddContactForm themeColor={themeColor} locale={locale} />
+                        <AddContactForm locale={locale} />
                     </TabsContent>
 
                     <TabsContent value="scan">
-                        <ScanContact themeColor={themeColor} locale={locale} getProfileData={getProfileData} />
+                        <ScanContact locale={locale} getProfileData={getProfileData} />
                     </TabsContent>
 
 
                     <TabsContent value="import">
-                        <ImportContacts themeColor={themeColor} locale={locale} />
+                        <ImportContacts locale={locale} />
                     </TabsContent>
                 </Tabs>
             </div>

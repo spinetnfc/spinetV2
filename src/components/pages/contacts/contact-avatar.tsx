@@ -4,11 +4,10 @@ interface ContactAvatarProps {
     name: string
     profilePicture?: string | null
     initials?: string | null
-    color: string
     size?: "sm" | "md" | "lg"
 }
 
-export default function ContactAvatar({ name, profilePicture, initials, color, size = "md" }: ContactAvatarProps) {
+export default function ContactAvatar({ name, profilePicture, initials, size = "md" }: ContactAvatarProps) {
     // Determine size in pixels
     const sizeInPx = size === "sm" ? 40 : size === "md" ? 56 : 72
 
@@ -38,9 +37,8 @@ export default function ContactAvatar({ name, profilePicture, initials, color, s
 
     return (
         <div
-            className="rounded-md flex items-center justify-center text-white font-medium
+            className="rounded-md flex items-center justify-center text-white bg-azure font-medium
             text-lg sm:text-xl aspect-square w-10 sm:w-14 min-w-10 sm:min-w-14"
-            style={{ backgroundColor: color }}
         >
             {displayInitials}
         </div>

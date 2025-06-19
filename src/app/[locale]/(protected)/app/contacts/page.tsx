@@ -42,15 +42,11 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
         // continue with empty contacts array
     }
 
-    // Get theme color
-    const themeColor = profileData?.theme?.color || "#3b82f6"
-
     return (
         <div className="min-h-screen pt-16 lg:pt-4">
             <div className="mx-auto px-1 xs:px-2 md:px-4">
                 <ContactsDataTable
                     contacts={contacts}
-                    themeColor={themeColor}
                     locale={locale}
                     searchParams={await searchParams}
                 />

@@ -16,10 +16,6 @@ interface FilterOption {
     labelId: string
 }
 
-interface ContactFiltersProps {
-    themeColor: string
-}
-
 const filterOptions: FilterOption[] = [
     {
         value: "all",
@@ -48,7 +44,7 @@ const filterOptions: FilterOption[] = [
     },
 ]
 
-export function ContactFilters({ themeColor }: ContactFiltersProps) {
+export function ContactFilters() {
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const { replace } = useRouter()
@@ -76,10 +72,6 @@ export function ContactFilters({ themeColor }: ContactFiltersProps) {
                     <Button
                         variant="outline"
                         className="flex items-center h-10"
-                    // style={{
-                    //     borderColor: themeColor,
-                    //     color: themeColor,
-                    // }}
                     >
                         <SlidersHorizontal className="h-8 w-8 text-azure" strokeWidth={3} />
                         {/* <span>

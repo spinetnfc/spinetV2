@@ -2,7 +2,7 @@
 
 import { Edit, MoreVertical, Trash2 } from "lucide-react";
 import ContactAvatar from "./contact-avatar";
-import type { Contact, ContactInput } from "@/types/contact";
+import type { Contact } from "@/types/contact";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown";
 import { useState } from "react";
 import EditContactForm from "./edit-contact-form";
@@ -15,12 +15,11 @@ import { removeContact } from "@/actions/contacts";
 
 type ContactItemProps = {
     contact: Contact;
-    themeColor: string;
     locale: string;
     onDelete: (contactId: string) => void;
 };
 
-export default function ContactItem({ contact, themeColor, locale, onDelete }: ContactItemProps) {
+export default function ContactItem({ contact, locale, onDelete }: ContactItemProps) {
     const profileId = useAuth().user.selectedProfile;
     const [showEditForm, setShowEditForm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -93,7 +92,6 @@ export default function ContactItem({ contact, themeColor, locale, onDelete }: C
                     <ContactAvatar
                         name={name}
                         profilePicture={Profile.profilePicture ?? ""}
-                        color={themeColor}
                     />
                     <div>
                         <h3 className="font-medium">{name}</h3>

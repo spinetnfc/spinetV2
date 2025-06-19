@@ -32,7 +32,6 @@ import { PaginationControls } from "@/components/ui/pagination-controls"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
-    themeColor: string
     locale: string
     searchParams: {
         query?: string
@@ -147,7 +146,7 @@ function ActionCell({
     )
 }
 
-export function ContactsDataTable({ contacts, themeColor, locale, searchParams }: ContactsDataTableProps) {
+export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDataTableProps) {
     const { query = "", filter = "all", sort = "name-asc", page = "1" } = searchParams
     const router = useRouter()
     const pathname = usePathname()
@@ -189,7 +188,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
         }
     }, [filteredByTypeContacts, sort])
 
-    const allColumns = React.useMemo(() => contactColumns({ themeColor, locale }), [themeColor, locale])
+    const allColumns = React.useMemo(() => contactColumns(locale), [locale])
     const columns = allColumns
 
     const table = useReactTable({
@@ -271,7 +270,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                     onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
-                <ContactFilters themeColor={themeColor} />
+                <ContactFilters />
             </div>
 
             <div className="flex items-center justify-between">
@@ -290,7 +289,7 @@ export function ContactsDataTable({ contacts, themeColor, locale, searchParams }
                     )}
                 </div>
 
-                <Button size="sm" asChild className="flex items-center gap-1" style={{ backgroundColor: themeColor }}>
+                <Button size="sm" asChild className="flex items-center gap-1 bg-azure">
                     <Link href="./contacts/add-contact">
                         <Plus size={16} />
                         <FormattedMessage id="add-contact" defaultMessage="Add contact" />

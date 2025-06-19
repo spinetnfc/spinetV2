@@ -57,12 +57,9 @@ type LinkType = {
     link: string;
 };
 
-interface AddContactFormProps {
-    themeColor: string;
-    locale: string;
-}
 
-export default function AddContactForm({ themeColor, locale }: AddContactFormProps) {
+
+export default function AddContactForm({ locale }: { locale: string }) {
     const intl = useIntl();
     const profileId = useAuth().user.selectedProfile;;
     const router = useRouter();
@@ -417,8 +414,7 @@ export default function AddContactForm({ themeColor, locale }: AddContactFormPro
                             variant="outline"
                             size="sm"
                             onClick={() => setShowLinkForm(true)}
-                            className="flex items-center gap-1"
-                            style={{ color: themeColor, borderColor: themeColor }}
+                            className="flex items-center gap-1 text-azure border-azure"
                         >
                             <Plus className="h-4 w-4" />
                             <FormattedMessage id="add-link" />
@@ -525,9 +521,8 @@ export default function AddContactForm({ themeColor, locale }: AddContactFormPro
                 {/* Submit Button */}
                 <Button
                     type="submit"
-                    className="w-full mt-6"
+                    className="w-full mt-6 bg-azure"
                     disabled={isSubmitting}
-                    style={{ backgroundColor: themeColor }}
                 >
                     {isSubmitting ? <FormattedMessage id="saving" /> : <FormattedMessage id="save" />}
                 </Button>
