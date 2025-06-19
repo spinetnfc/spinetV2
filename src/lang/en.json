@@ -348,7 +348,7 @@
   "send-message": "Send Message",
   "login successful": "login successful",
   "login failed": "login failed",
-  "Account registered successfully, Proceeding to login...": "Account registered successfully, Proceeding to login...",
+  "Account registered successfully": "Account registered successfully, logging in...",
   "Error: Failed to register": "Error: Failed to register",
   "OTP sent to your email": "OTP sent to your email",
   "Failed to send OTP, try again with a valid email": "Failed to send OTP, try again with a valid email",

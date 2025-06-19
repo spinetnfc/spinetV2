@@ -70,17 +70,9 @@ export function ContactFilters() {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
-                        variant="outline"
-                        className="flex items-center h-10"
+                        variant="ghost"
                     >
-                        <SlidersHorizontal className="h-8 w-8 text-azure" strokeWidth={3} />
-                        {/* <span>
-                            <FormattedMessage
-                                id={currentOption?.labelId || "all"}
-                                defaultMessage={currentOption?.value === "all" ? "All" : currentOption?.value}
-                            />
-                        </span>
-                        <ChevronDown className="h-4 w-4" /> */}
+                        <SlidersHorizontal className="h-8 w-8 text-gray-400 dark:text-azure" strokeWidth={3} />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">

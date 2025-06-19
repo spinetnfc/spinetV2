@@ -262,19 +262,10 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const selectedRowCount = Object.values(rowSelection).filter(Boolean).length
 
     return (
-        <div className="space-y-2">
-            <div className="flex gap-4 items-center">
-                <Input
-                    placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
-                    className="max-w-sm"
-                />
-                <ContactFilters />
-            </div>
+        <div className="space-y-4 mt-4">
 
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center gap-2 me-auto">
                     {selectedRowCount > 0 && (
                         <Button
                             onClick={() => setShowDeleteModal(true)}
@@ -288,8 +279,16 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                         </Button>
                     )}
                 </div>
-
-                <Button size="sm" asChild className="flex items-center gap-1 bg-azure">
+                <div className="flex gap-4 items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
+                    <Input
+                        placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
+                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
+                        className="max-w-sm border-none min-w-64 sm:min-w-80"
+                    />
+                    <ContactFilters />
+                </div>
+                <Button asChild className="flex items-center h-10 gap-1 bg-azure">
                     <Link href="./contacts/add-contact">
                         <Plus size={16} />
                         <FormattedMessage id="add-contact" defaultMessage="Add contact" />
