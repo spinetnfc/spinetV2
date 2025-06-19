@@ -28,7 +28,8 @@ import { contactColumns } from "./contact-columns"
 import EditContactForm from "../edit-contact-form"
 import type { Contact } from "@/types/contact"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
-import { PaginationControls } from "@/components/ui/pagination-controls"
+import { PaginationControls } from "@/components/ui/table-pagination"
+import { TableFooter } from "@/components/ui/table"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
@@ -298,7 +299,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                 </div>
             </div>
 
-            <div className="rounded-md border overflow-x-auto">
+            <div className="rounded-md border bordr-gray-300 overflow-x-auto">
                 <Table className="table-auto relative">
                     <TableHeader className="bg-gray-100 dark:bg-navy">
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -344,13 +345,20 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                             </TableRow>
                         )}
                     </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell colSpan={100} className="p-2 bg-gray-100 dark:bg-navy">
+                                <PaginationControls
+                                    currentPage={table.getState().pagination.pageIndex + 1}
+                                    totalPages={table.getPageCount()}
+                                />
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </div>
 
-            <PaginationControls
-                currentPage={table.getState().pagination.pageIndex + 1}
-                totalPages={table.getPageCount()}
-            />
+
 
             {showDeleteModal && (
                 <ConfirmationModal
