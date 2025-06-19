@@ -346,12 +346,12 @@ export default function Register({ locale }: { locale: string }) {
                         <Input
                           type={showPassword ? 'text' : 'password'}
                           {...field}
-                          className="border-gray-200 dark:border-blue-950 pr-10"
+                          className="border-gray-200 dark:border-blue-950 pe-10"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 flex items-center pr-3"
+                          className="absolute inset-y-0 right-0 flex items-center pe-3"
                         >
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
@@ -375,12 +375,12 @@ export default function Register({ locale }: { locale: string }) {
                         <Input
                           type={showPassword ? 'text' : 'password'}
                           {...field}
-                          className="border-gray-200 dark:border-blue-950 pr-10"
+                          className="border-gray-200 dark:border-blue-950 pe-10"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 flex items-center pr-3"
+                          className="absolute inset-y-0 right-0 flex items-center pe-3"
                         >
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
@@ -498,7 +498,7 @@ export default function Register({ locale }: { locale: string }) {
                           <Button
                             variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950 text-gray-400 dark:text-blue-800',
+                              'w-full ps-3 text-left font-normal border-gray-200 dark:border-blue-950 text-gray-400 dark:text-blue-800',
                               !field.value && 'text-muted-foreground',
                             )}
                           >
@@ -509,7 +509,7 @@ export default function Register({ locale }: { locale: string }) {
                                 <FormattedMessage id="pick-a-date" defaultMessage="Pick a date" />
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="ms-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>

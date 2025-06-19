@@ -59,7 +59,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
                         <span className="text-yellow-500">
                             {"★".repeat(Math.round(product.rating))}
                         </span>
-                        <span className="ml-1 text-gray-600 dark:text-gray-300">{product.rating}/5</span>
+                        <span className="ms-1 text-gray-600 dark:text-gray-300">{product.rating}/5</span>
                     </div>
                     <div className="flex items-start gap-1">
                         <p className="text-3xl font-semibold text-blue-600">{product.price}</p>

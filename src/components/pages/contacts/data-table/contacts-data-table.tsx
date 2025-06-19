@@ -30,6 +30,7 @@ import type { Contact } from "@/types/contact"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import { PaginationControls } from "@/components/ui/table-pagination"
 import { TableFooter } from "@/components/ui/table"
+import { cn } from "@/utils/cn"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
@@ -305,7 +306,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className={`px-4 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
+                                    <TableHead key={header.id} className={`p-4 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
@@ -322,12 +323,14 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={`px-4 min-w-0 ${cell.column.id === "select"
-                                                ? "w-fit"
-                                                : cell.column.id === "name"
-                                                    ? "w-auto truncate"
-                                                    : " truncate"
-                                                } `}
+                                            className={cn(
+                                                "min-w-0",
+                                                cell.column.id === "select"
+                                                    ? "w-12 ps-4 pe-2" // Adjusted padding for RTL
+                                                    : cell.column.id === "name"
+                                                        ? "w-auto truncate px-4"
+                                                        : "truncate px-4"
+                                            )}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>

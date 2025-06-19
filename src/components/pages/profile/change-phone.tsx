@@ -104,7 +104,7 @@ export default function ChangePhoneForm({ user, onCancel }: { user: User, onCanc
                         >
                             <FormattedMessage id="save" defaultMessage="Save" />
                             {isSubmitting && (
-                                <div className="animate-spin rounded-full h-4 w-4 ml-2 border-2 border-white border-t-transparent"></div>
+                                <div className="animate-spin rounded-full h-4 w-4ms-2 border-2 border-white border-t-transparent"></div>
                             )}
                         </Button>
                     </div>

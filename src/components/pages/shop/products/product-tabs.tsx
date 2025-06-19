@@ -31,7 +31,7 @@ export default function ProductTabs({ details, locale }: { details: string[], lo
             </div>
 
             {activeTab === "details" ? (
-                <ul className="list-disc space-y-2 pl-4 text-gray-700 dark:text-gray-200">
+                <ul className="list-disc space-y-2 ps-4 text-gray-700 dark:text-gray-200">
                     {details.map((item, i) => (
                         <li key={i}>{item}</li>
                     ))}

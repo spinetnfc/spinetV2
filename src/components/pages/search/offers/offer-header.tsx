@@ -51,7 +51,7 @@ export function OfferHeader({ offer }: OfferHeaderProps) {
                         <Button variant="ghost" size="icon" className="hover:bg-white/10">
                             <Share2 className="h-5 w-5" />
                         </Button>
-                        <Button className="ml-2 bg-[#0A1F44] hover:bg-[#152A50] text-white">+ Button Text</Button>
+                        <Button className="ms-2 bg-[#0A1F44] hover:bg-[#152A50] text-white">+ Button Text</Button>
                     </div>
                 </div>
             </div>

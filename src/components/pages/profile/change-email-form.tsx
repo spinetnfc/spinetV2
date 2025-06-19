@@ -185,7 +185,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
                             >
                                 <FormattedMessage id="send-otp" defaultMessage="Send OTP" />
                                 {isSubmitting && (
-                                    <div className="animate-spin rounded-full h-4 w-4 ml-2 border-2 border-white border-t-transparent"></div>
+                                    <div className="animate-spin rounded-full h-4 w-4ms-2 border-2 border-white border-t-transparent"></div>
                                 )}
                             </Button>
                         </div>
@@ -235,7 +235,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
                             >
                                 <FormattedMessage id="verify" defaultMessage="Verify" />
                                 {isSubmitting && (
-                                    <div className="animate-spin rounded-full h-4 w-4 ml-2 border-2 border-white border-t-transparent"></div>
+                                    <div className="animate-spin rounded-full h-4 w-4ms-2 border-2 border-white border-t-transparent"></div>
                                 )}
                             </Button>
                         </div>
@@ -244,7 +244,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
                             <button
                                 type="button"
                                 onClick={handleResendOTP}
-                                className="ml-1 text-[#0F62FE] underline"
+                                className="ms-1 text-[#0F62FE] underline"
                             >
                                 <FormattedMessage id="resend-code" defaultMessage="Resend Code" />
                             </button>

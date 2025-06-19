@@ -151,12 +151,12 @@ const LoginForm = ({ locale }: { locale: string }) => {
                                             type={showPassword ? 'text' : 'password'}
                                             placeholder={intl.formatMessage({ id: 'password' })}
                                             {...field}
-                                            className="border-gray-200 dark:border-blue-950 pr-10 focus:border-blue-500"
+                                            className="border-gray-200 dark:border-blue-950 pe-10 focus:border-blue-500"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute inset-y-0 right-0 flex items-center pr-3"
+                                            className="absolute inset-y-0 right-0 flex items-center pe-3"
                                         >
                                             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                         </button>

@@ -182,13 +182,13 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                                     <Button
                                                         type="button"
                                                         className={cn(
-                                                            'w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950',
+                                                            'w-full ps-3 text-left font-normal border-gray-200 dark:border-blue-950',
                                                             !field.value && 'text-muted-foreground',
                                                         )}
                                                         disabled={profileData.lockedFeatures?.birthDate}
                                                     >
                                                         {field.value ? field.value.toISOString().slice(0, 10) : <span>Pick a date</span>}
-                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        <CalendarIcon className="ms-auto h-4 w-4 opacity-50" />
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>

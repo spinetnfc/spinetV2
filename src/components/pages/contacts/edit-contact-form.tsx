@@ -400,12 +400,12 @@ export default function EditContactForm({
                                                         <Button
                                                             variant="outline"
                                                             className={cn(
-                                                                "w-full pl-3 text-left font-normal border-gray-200 dark:border-blue-950 text-gray-400 dark:text-blue-800",
+                                                                "w-full ps-3 text-left font-normal border-gray-200 dark:border-blue-950 text-gray-400 dark:text-blue-800",
                                                                 !field.value && "text-muted-foreground"
                                                             )}
                                                         >
                                                             {field.value ? format(field.value, "yyyy-MM-dd") : <span>Pick a date</span>}
-                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                            <CalendarIcon className="ms-auto h-4 w-4 opacity-50" />
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -429,7 +429,7 @@ export default function EditContactForm({
                                     <FormattedMessage id="tags" />
                                 </Label>
                                 <div className="flex items-center mt-1 mb-2">
-                                    <Tag className="mr-2 h-4 w-4" />
+                                    <Tag className="me-2 h-4 w-4" />
                                     <Input
                                         id="tags"
                                         placeholder={intl.formatMessage({ id: "add-tags-placeholder" })}

@@ -211,7 +211,7 @@ function Calendar({
             value={months[currentMonth.getMonth()] || months[today.getMonth()]}
             onValueChange={handleMonthChange}
           >
-            <SelectTrigger className="pr-1 focus:ring-0 w-[120px]">
+            <SelectTrigger className="pe-1 focus:ring-0 w-[120px]">
               <SelectValue>{months[currentMonth.getMonth()] || months[today.getMonth()]}</SelectValue>
             </SelectTrigger>
             <SelectContent position="popper">
@@ -228,7 +228,7 @@ function Calendar({
             value={currentMonth.getFullYear().toString()}
             onValueChange={handleYearChange}
           >
-            <SelectTrigger className="pr-1 focus:ring-0 w-[80px]">
+            <SelectTrigger className="pe-1 focus:ring-0 w-[80px]">
               <SelectValue>{currentMonth.getFullYear()}</SelectValue>
             </SelectTrigger>
             <SelectContent position="popper">
