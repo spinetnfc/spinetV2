@@ -43,7 +43,7 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
     }
 
     return (
-        <div className="min-h-screen">
+        <div>
             <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-2">
                 <ContactsDataTable
                     contacts={contacts}
