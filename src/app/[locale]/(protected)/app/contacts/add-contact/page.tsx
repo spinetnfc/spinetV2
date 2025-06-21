@@ -52,13 +52,13 @@ export default async function AddContactPage({ params }: {
 
 
     return (
-        <div className="min-h-screen pt-16">
+        <div>
             {/* <div className="w-full flex items-center m-6">
                 <Link href={`./`} className="p-2 rounded-full bg-white/20 text-white me-4">
                     <ArrowLeft size={24} className={locale === "ar" ? "transition rotate-180" : ""} />
                 </Link>
             </div> */}
-            <div className="px-4 py-2 max-w-4xl mx-auto">
+            <div className="px-2 xs:px-4 py-4 max-w-4xl mx-auto">
                 <Tabs defaultValue="manual" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
                     <TabsList className="grid w-full grid-cols-3 mb-4">
                         <TabsTrigger value="manual" className="text-xs sm:text-sm">

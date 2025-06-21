@@ -48,7 +48,7 @@ const Layout = ({
       >
         <main className="grid flex-1 items-start gap-4 md:gap-8 relative pt-10">
           {children}
-          <div className='absolute top-0 -start-2 sm:top-2 sm:end-2'>
+          <div className='absolute top-0 sm:top-2 end-2'>
             <Header locale={locale} />
           </div>
         </main>
