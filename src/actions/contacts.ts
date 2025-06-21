@@ -5,7 +5,7 @@ import { format, parse } from "date-fns";
 
 
 export const editContact = async (profileId: string, contactId: string, updatedContact: ContactInput) => {
-    "use server"
+
     if (!profileId) {
         return { success: false, message: "Profile ID is missing" };
     }
@@ -20,7 +20,7 @@ export const editContact = async (profileId: string, contactId: string, updatedC
 }
 
 export const removeContact = async (profileId: string, contactId: string) => {
-    "use server"
+
     if (!profileId) {
         return { success: false, message: "Profile ID is missing" };
     }
@@ -35,7 +35,7 @@ export const removeContact = async (profileId: string, contactId: string) => {
 }
 
 export const removeContacts = async (profileId: string, contacts: string[]) => {
-    "use server"
+
     if (!profileId) {
         return { success: false, message: "Profile ID is missing" };
     }
@@ -49,7 +49,7 @@ export const removeContacts = async (profileId: string, contacts: string[]) => {
     }
 }
 export const createContact = async (profileId: string, formData: FormData, type: "manual" | "scan" | "exchange" | "spinet" | "phone" | undefined) => {
-    "use server";
+    ;
 
     if (!profileId) {
         return { success: false, message: "Profile ID is missing" };

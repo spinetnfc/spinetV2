@@ -430,6 +430,7 @@
   "Failed to add contact": "Échec de l'ajout du contact",
   "An unexpected error occurred. Please try again.": "Une erreur inattendue s'est produite. Veuillez réessayer.",
   "step-of": "Étape {current} sur {total}",
+  "skip": "Passer",
   "of": "de",
   "rows": "Lignes:",
   "rows-per-page": "Lignes dans cette page:",

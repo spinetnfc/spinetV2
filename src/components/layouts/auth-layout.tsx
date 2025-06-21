@@ -16,6 +16,7 @@ import logoSpinetDark from '@/assets/images/logo-spinet-dark.svg';
 import authImage from '@/assets/images/authentication.png';
 import authBg from '@/assets/images/abstract.jpeg';
 import { getLocale } from '@/utils/getClientLocale';
+import ChangeLanguage from '../change-language';
 
 type LayoutProps = {
   children: ReactNode;
@@ -80,7 +81,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
     <ErrorBoundary fallback={<div>Something went wrong!</div>}>
       <div className="relative flex w-full flex-col items-center justify-center sm:h-dvh md:h-screen md:max-h-screen">
         <div className="absolute end-2 top-2 z-10">
-          <div className="flex px-4 w-screen items-center justify-between">
+          <div className="flex ps-4 w-screen items-center justify-between">
             <Link href="/" className="cursor-pointer">
               <Image
                 src={
@@ -93,7 +94,10 @@ export const AuthLayout = ({ children }: LayoutProps) => {
                 height={40}
               />
             </Link>
-            <ThemeSwitch locale={locale} />
+            <div className="flex items-center gap-2">
+              <ChangeLanguage locale={locale} />
+              <ThemeSwitch locale={locale} />
+            </div>
           </div>
         </div>
         <Image

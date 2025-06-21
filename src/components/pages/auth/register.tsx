@@ -351,7 +351,7 @@ export default function Register({ locale }: { locale: string }) {
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 flex items-center pe-3"
+                          className="absolute inset-y-0 end-0 flex items-center pe-3"
                         >
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
@@ -380,7 +380,7 @@ export default function Register({ locale }: { locale: string }) {
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 flex items-center pe-3"
+                          className="absolute inset-y-0 end-0 flex items-center pe-3"
                         >
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>

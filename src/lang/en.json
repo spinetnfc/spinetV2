@@ -434,6 +434,7 @@
   "rows": "Rows:",
   "rows-per-page": "Rows in this page:",
   "step-of": "Step {current} of {total}",
+  "skip": "Skip",
   "import-contacts-description": "Select a source to import your contacts from.",
   "import-from-phone": "Import from Phone",
   "import-from-google": "Import from Google",
