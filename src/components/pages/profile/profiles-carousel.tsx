@@ -43,11 +43,11 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
             <Carousel
                 setApi={setApi}
                 className={` ${isExpanded ? "w-full max-w-screen lg:max-w-[calc(100vw-240px)]" : "max-w-screen  lg:max-w-[calc(100vw-64px)]"} overflow-hidden`}
-                opts={{ containScroll: false }}
+                opts={{ containScroll: false, }}
             >
                 <CarouselContent className="py-3 -ms-0">
                     {profiles.map((profile, index) => (
-                        <CarouselItem key={profile._id} className={cn("basis-4/5 sm:basis-2/3 md:basis-1/2 2xl:basis-1/3 ps-0", {})}>
+                        <CarouselItem key={profile._id} className={cn("basis-4/5 sm:basis-2/3 md:basis-1/2 2xl:basis-1/3", {})}>
                             <div>
                                 <img
                                     src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://spinettest.vercel.app/public-profile/${profile._id}`}
@@ -127,7 +127,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                             </div>
                         </CarouselItem>
                     ))}
-                    <CarouselItem key="add-profile" className={cn("basis-4/5 sm:basis-2/3 md:basis-1/2 2xl:basis-1/3 ps-0", "flex w-full items-end")}>
+                    <CarouselItem key="add-profile" className={cn("basis-4/5 sm:basis-2/3 md:basis-1/2 2xl:basis-1/3", "flex w-full items-end")}>
                         <Card
                             className={cn(
                                 "flex-1 flex items-center justify-center h-60 xs:h-64 sm:h-74 transition-transform duration-500",
