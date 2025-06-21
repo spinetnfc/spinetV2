@@ -431,6 +431,8 @@
   "An unexpected error occurred. Please try again.": "Une erreur inattendue s'est produite. Veuillez réessayer.",
   "step-of": "Étape {current} sur {total}",
   "of": "de",
+  "rows": "Lignes:",
+  "rows-per-page": "Lignes dans cette page:",
   "import-contacts-description": "Sélectionnez une source pour importer vos contacts.",
   "import-from-phone": "Importer depuis le téléphone",
   "import-from-google": "Importer depuis Google",

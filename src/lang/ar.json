@@ -430,6 +430,8 @@
   "An unexpected error occurred. Please try again.": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
   "step-of": "خطوة {current} من {total}",
   "of": "من",
+  "rows": "الصفوف:",
+  "rows-per-page": "الصفوف لكل صفحة:",
   "import-contacts-description": "اختر مصدرًا لاستيراد جهات الاتصال الخاصة بك.",
   "import-from-phone": "استيراد من الهاتف",
   "import-from-google": "استيراد من جوجل",

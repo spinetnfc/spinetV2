@@ -31,6 +31,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { PaginationControls } from "@/components/ui/table-pagination"
 import { TableFooter } from "@/components/ui/table"
 import { cn } from "@/utils/cn"
+import { number } from "zod"
+import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
@@ -40,6 +42,7 @@ interface ContactsDataTableProps {
         filter?: string
         sort?: string
         page?: string
+        rowsPerPage?: string
     }
 }
 
@@ -149,7 +152,16 @@ function ActionCell({
 }
 
 export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDataTableProps) {
-    const { query = "", filter = "all", sort = "name-asc", page = "1" } = searchParams
+    const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20) // Min 5, Max 50
+
+    const {
+        query = "",
+        filter = "all",
+        sort = "name-asc",
+        page = "1",
+        rowsPerPage = dynamicRowsPerPage.toString()
+    } = searchParams
+    const currentRowsPerPage = Number(rowsPerPage)
     const router = useRouter()
     const pathname = usePathname()
     const urlSearchParams = useSearchParams()
@@ -212,7 +224,8 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
             rowSelection,
             pagination: {
                 pageIndex: Number(page) - 1,
-                pageSize: 10,
+                pageSize: currentRowsPerPage,
+
             },
         },
     })
@@ -306,7 +319,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className={`p-4 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
+                                    <TableHead key={header.id} className={`px-2 py-1 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
                                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
@@ -326,16 +339,16 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                             className={cn(
                                                 "min-w-0",
                                                 cell.column.id === "select"
-                                                    ? "w-12 ps-4 pe-2" // Adjusted padding for RTL
+                                                    ? "w-12 px-2" // Adjusted padding for RTL
                                                     : cell.column.id === "name"
-                                                        ? "w-auto truncate px-4"
-                                                        : "truncate px-4"
+                                                        ? "w-auto truncate px-2"
+                                                        : "truncate px-2"
                                             )}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
-                                    <TableCell className="px-4 w-12">
+                                    <TableCell className="px-2 w-12">
                                         <ActionCell contact={row.original} locale={locale} profileId={profileId} />
                                     </TableCell>
                                 </TableRow>
@@ -350,11 +363,12 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={100} className="p-2 bg-gray-100 dark:bg-navy">
+                            <TableCell colSpan={100} className="h-12 p-2 bg-gray-100 dark:bg-navy">
                                 <PaginationControls
                                     currentPage={table.getState().pagination.pageIndex + 1}
                                     totalPages={table.getPageCount()}
                                     totalElements={contacts.length}
+                                    rowsPerPage={Number(rowsPerPage)}
                                 />
                             </TableCell>
                         </TableRow>

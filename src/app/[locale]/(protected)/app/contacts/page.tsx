@@ -10,6 +10,7 @@ type SearchParams = {
     filter?: string
     sort?: string
     order?: "asc" | "desc"
+    rowsPerPage?: string
 }
 
 type ContactsPageProps = {
