@@ -35,7 +35,6 @@ const Layout = ({
     // { name: 'groups', to: `/app/groups`, icon: Users },
   ].filter(Boolean) as SideNavigationItem[];
 
-
   return (
     <div className="z-50 flex min-h-screen w-full flex-col sm:dark:bg-muted/20 sm:bg-gray-50">
       <SideBar navigation={navigation} locale={locale} isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
