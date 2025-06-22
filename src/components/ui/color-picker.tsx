@@ -22,7 +22,7 @@ const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({ color, onChange, di
     };
 
     return (
-        <div className="my-3 inline-flex w-[90%] flex-row items-center space-x-6">
+        <div className="my-3 inline-flex w-[90%] flex-wrap flex-row items-center space-x-6">
             <div
                 className={`picker h-[30px] w-[30px] rounded-full cursor-pointer ${isCustomColor ? 'border-2 border-primary' : ''}`}
                 style={{
