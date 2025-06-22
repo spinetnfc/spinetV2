@@ -1,5 +1,5 @@
 'use client';
-import { LayoutDashboard, Contact, BriefcaseBusiness, Bell, Package, Target, ArrowRightLeft, User, Users, Settings, CircleUserRound } from 'lucide-react';
+import { LayoutDashboard, Contact, SquareKanban, BriefcaseBusiness, Bell, Package, Target, ArrowRightLeft, User, Users, Settings, CircleUserRound } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -25,6 +25,7 @@ const Layout = ({
     { name: 'home', to: `/app`, icon: LayoutDashboard },
     { name: 'profile', to: `/app/profile`, icon: CircleUserRound },
     { name: 'contacts', to: `/app/contacts`, icon: Contact },
+    { name: 'insights', to: `/app/insights`, icon: SquareKanban },
     { name: 'settings', to: `/app/settings`, icon: Settings },
     // { name: 'opportunities', to: `/app/opportunities`, icon: BriefcaseBusiness },
     // { name: 'notifications', to: `/app/notifications`, icon: Bell },

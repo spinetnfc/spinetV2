@@ -117,7 +117,7 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
             </div>
 
             {/* Main Content */}
-            <div className="min-h-screen bg-gray-200 dark:bg-slate-800 rounded-t-3xl px-6 py-8 space-y-6">
+            <div className="bg-gray-200 dark:bg-slate-800 rounded-t-3xl px-6 py-8 space-y-6">
                 {/* General Statistics */}
                 <div className="space-y-4">
                     <h2 className="text-xl font-semibold ">
@@ -151,7 +151,7 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400">
-                                        <FormattedMessage id="-new-connections" defaultMessage="New connections" />
+                                        <FormattedMessage id="new-connections" defaultMessage="New connections" />
                                     </p>
                                     <p className="text-2xl font-bold ">{insights.connections}</p>
                                 </div>
@@ -190,7 +190,7 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
 
                 {/* Links Engagement */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-semibold ">Links engagement</h2>
+                    <h2 className="text-xl font-semibold "><FormattedMessage id="links-engagement" defaultMessage="Links engagement" /></h2>
 
                     <div className="space-y-3">
                         {insights.links.map((link) => {
@@ -205,12 +205,12 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
                                             </div>
                                             <div>
                                                 <h3 className="font-medium ">{link.title}</h3>
-                                                <p className="text-sm text-gray-400 truncate max-w-xs">{link.link || "No URL provided"}</p>
+                                                <p className="text-sm text-gray-400 truncate max-w-xs">{link.link}</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-lg font-semibold ">{link.engagements}</p>
-                                            <p className="text-sm text-gray-400">Taps</p>
+                                            <p className="text-sm text-gray-400"><FormattedMessage id="taps" defaultMessage="Taps" /></p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -220,6 +220,6 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
                 </div>
 
             </div>
-        </div>
+        </div >
     )
 }
