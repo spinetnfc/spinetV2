@@ -56,8 +56,8 @@ export default async function ServicesPage({
             </div>
 
             {/* Content */}
-            <div className="px-6 -mt-6">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="px-6 -mt-6 ">
+                <div className="bg-gray-300 dark:bg-slate-800 rounded-xl shadow-lg p-6">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-3">
                             <div className="p-3 rounded-lg" style={{ backgroundColor: themeColor }}>
@@ -73,7 +73,7 @@ export default async function ServicesPage({
 
                     {/* Services list */}
                     {services.length === 0 ? (
-                        <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                        <div className="text-center py-12 bg-gray-50 dark:bg-gray-900">
                             <Briefcase className="mx-auto text-gray-400" size={48} />
                             <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">{t("No-services-yet")}</h3>
                             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">

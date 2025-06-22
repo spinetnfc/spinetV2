@@ -9,6 +9,7 @@ import EditServiceForm from "./edit-service-form"
 import { Service } from "@/types/services"
 import { deleteServiceAction } from "@/actions/services"
 import { FormattedMessage, useIntl } from "react-intl"
+import { Card, CardContent } from "@/components/ui/card"
 
 interface ServiceItemProps {
     service: Service
@@ -75,36 +76,38 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
                 />
             )}
 
-            <div className="bg-blue-100 dark:bg-navy rounded-lg p-6 relative group">
-                <div className="absolute end-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <button className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
-                                <MoreVertical size={20} />
-                            </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="bg-white dark:bg-background">
-                            <DropdownMenuItem
-                                className="flex items-center gap-2 cursor-pointer"
-                                onClick={() => setShowEditForm(true)}
-                            >
-                                <Edit size={14} /> <FormattedMessage id="edit" />
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="flex items-center gap-2 text-red-500 cursor-pointer"
-                                onClick={handleDeleteClick}
-                            >
-                                <Trash2 size={14} /> <FormattedMessage id="delete" />
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+            <Card className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 relative group transition-colors">
+                <CardContent className="p-4">
+                    <div className="absolute end-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
+                                    <MoreVertical size={20} />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="bg-white dark:bg-background">
+                                <DropdownMenuItem
+                                    className="flex items-center gap-2 cursor-pointer"
+                                    onClick={() => setShowEditForm(true)}
+                                >
+                                    <Edit size={14} /> <FormattedMessage id="edit" />
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="flex items-center gap-2 text-red-500 cursor-pointer"
+                                    onClick={handleDeleteClick}
+                                >
+                                    <Trash2 size={14} /> <FormattedMessage id="delete" />
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
 
-                <h3 className="text-xl font-bold mb-2 capitalize" style={{ color: themeColor }}>
-                    {service.name}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300">{service.description}</p>
-            </div>
+                    <h3 className="text-xl font-bold mb-2 capitalize" style={{ color: themeColor }}>
+                        {service.name}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300">{service.description}</p>
+                </CardContent>
+            </Card>
         </>
     )
 }
