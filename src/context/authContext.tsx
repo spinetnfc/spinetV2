@@ -282,7 +282,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // token refresh on focus or navigation
     useEffect(() => {
-        if (!isAuthenticated) return; // skip if default user (not authenticated)
+        if (!isAuthenticated) return;
 
         const handleFocus = () => refreshUserToken();
         window.addEventListener("focus", handleFocus);

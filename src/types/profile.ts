@@ -79,3 +79,19 @@ export type LinkType = {
     title: string
     link: string
 }
+
+export type Insights = {
+    links: {
+        title: string;
+        link: string;
+        name: string;
+        _id: string;
+        engagements: number;
+    }[];
+    views: number;
+    connections: number;
+    score: number;
+    trees: number;
+    economized: number;
+    taps: number;
+};

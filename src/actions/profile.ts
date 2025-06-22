@@ -1,6 +1,6 @@
 'use server';
 import { format } from 'date-fns';
-import { updateProfile, createProfile, getAllProfiles, deleteProfile } from '@/lib/api/profile';
+import { updateProfile, createProfile, getAllProfiles, deleteProfile, getInsights } from '@/lib/api/profile';
 import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';
 import { LinkType, ProfileData, profileInput } from '@/types/profile';
 import { User } from '@/types/user';
@@ -105,5 +105,21 @@ export async function switchProfile(userId: string, profileId: string) {
     } catch (error) {
         console.error('Error in switchProfile:', error);
         return { success: false, error: 'Failed to switch profile.' };
+    }
+}
+
+export async function getInsightsAction(profileId: string, period: { startDate: string; endDate: string }) {
+    try {
+        const formattedPeriod = {
+            startDate: format(period.startDate, 'yyyy-MM-dd'),
+            endDate: format(period.endDate, 'yyyy-MM-dd')
+        };
+
+        const response = await getInsights(profileId, formattedPeriod);
+
+        return response
+    } catch (error: any) {
+        console.error('[Server Action] Failed to update profile:', error);
+        return (error.message)
     }
 }

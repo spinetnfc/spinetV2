@@ -1,5 +1,5 @@
 import { ServerApi } from '@/lib/axios';
-import type { ProfileData, profileInput } from '@/types/profile';
+import type { Insights, ProfileData, profileInput } from '@/types/profile';
 import { withServerCookies } from '@/utils/withServerCookies';
 
 export const viewProfile = async (profileId: string | null, userId: string | null): Promise<ProfileData> => {
@@ -89,3 +89,21 @@ export const deleteProfile = async (profileId: string): Promise<ProfileData> => 
         throw error;
     }
 }
+
+export const getInsights = async (profileId: string, period: { startDate: string; endDate: string }): Promise<Insights> => {
+    const headers = await withServerCookies();
+    try {
+        if (!profileId || typeof profileId !== 'string') {
+            throw new Error(`Invalid profileId: ${profileId}`);
+        }
+        const response = await ServerApi.post(`/profile/${profileId}/insights`, {
+            startDate: period.startDate,
+            endDate: period.endDate
+        }, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Profile insights fetch error:', error);
+        throw error;
+    }
+}
+
