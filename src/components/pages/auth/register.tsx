@@ -43,6 +43,7 @@ import { registerUser, login as apiLogin } from '@/lib/api/auth';
 import { addLinksAction } from '@/actions/links';
 import { useAuth } from "@/context/authContext";
 import type { User } from '@/types/user';
+import StyledFileInput from '@/components/ui/image-input';
 
 const LINK_TYPES = [
   "website", "linkedin", "instagram", "twitter", "github", "email", "phone",
@@ -64,6 +65,7 @@ const registerSchema = z.object({
   theme: z.object({
     color: z.string().default('#0F62FE'),
   }).default({ color: '#0F62FE' }),
+  profilePicture: z.instanceof(File).optional(), // Add profile picture to schema
 }).refine((data) => data.password === data.passwordConfirmation, {
   message: 'passwords-must-match',
   path: ['passwordConfirmation'],
@@ -100,6 +102,7 @@ export default function Register({ locale }: { locale: string }) {
       position: ' ',
       language: 'en',
       theme: { color: '#0F62FE' },
+      profilePicture: undefined, // Initialize profile picture
     },
   });
 
@@ -203,6 +206,7 @@ export default function Register({ locale }: { locale: string }) {
         position: data.position,
         language: data.language,
         theme: data.theme,
+        profilePicture: data.profilePicture, // Include profile picture
       };
 
       const registerResponse = await registerUser(userData);
@@ -281,7 +285,7 @@ export default function Register({ locale }: { locale: string }) {
 
   return (
     <div className="z-50 w-full space-y-2 rounded-lg px-6 py-4 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
-      <div className="flex items-center  justify-between">
+      <div className="flex items-center justify-between">
         <h1 className="text-start text-sm xs:text-base sm:text-2xl font-semibold">{renderStepTitle()}</h1>
         <div className="text-xs xs:text-sm text-gray-500 dark:text-gray-400 flex items-center">
           <FormattedMessage
@@ -291,7 +295,6 @@ export default function Register({ locale }: { locale: string }) {
           />
           <button
             type="button"
-            // variant="ghost"
             onClick={skipStep}
             className="flex items-center ps-2 xs:ps-3 text-azure font-medium text-xs xs:text-sm"
             disabled={isSubmitting}
@@ -787,6 +790,32 @@ export default function Register({ locale }: { locale: string }) {
             <>
               <FormField
                 control={form.control}
+                name="profilePicture"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">
+                      <FormattedMessage id="profile-picture" defaultMessage="Profile Picture" />
+                    </FormLabel>
+                    <FormControl>
+                      <StyledFileInput
+                        onChange={() => {
+                          const handleFileChange = (file: File | null) => {
+                            if (file) {
+                              console.log("Selected file:", file.name)
+                            } else {
+                              console.log("No file selected")
+                            }
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="language"
                 render={({ field }) => (
                   <FormItem>
@@ -795,7 +824,7 @@ export default function Register({ locale }: { locale: string }) {
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="border-gray-200 dark:border-blue-950">
+                        <SelectTrigger className="border-gray-200 dark:border-azure">
                           <SelectValue
                             placeholder={intl.formatMessage({
                               id: 'select-language',
@@ -851,7 +880,6 @@ export default function Register({ locale }: { locale: string }) {
 
                 <Button
                   type="button"
-                  //skip validation since last step has no required fields
                   onClick={() => onSubmit(form.getValues())}
                   className="flex items-center gap-2"
                   disabled={isSubmitting}
