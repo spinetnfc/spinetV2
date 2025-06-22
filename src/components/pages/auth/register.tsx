@@ -284,7 +284,7 @@ export default function Register({ locale }: { locale: string }) {
   };
 
   return (
-    <div className="z-50 w-full space-y-2 rounded-lg px-6 py-4 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
+    <div className="z-50 w-full space-y-2 rounded-lg px-6 py-4 text-[#0D2C60] lg:shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
       <div className="flex items-center justify-between">
         <h1 className="text-start text-sm xs:text-base sm:text-2xl font-semibold">{renderStepTitle()}</h1>
         <div className="text-xs xs:text-sm text-gray-500 dark:text-gray-400 flex items-center">

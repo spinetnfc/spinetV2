@@ -110,7 +110,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
     };
 
     return (
-        <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
+        <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] lg:shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
             <h1 className="text-start text-4xl font-semibold">
                 <FormattedMessage id="login" />
             </h1>
