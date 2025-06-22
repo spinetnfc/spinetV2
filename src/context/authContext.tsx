@@ -16,6 +16,7 @@ import type { User } from "@/types/user";
 import { useGoogleLogin } from "@react-oauth/google";
 import { api } from "@/lib/axios";
 import axios from "axios";
+import { toast } from "sonner";
 // default user to avoid null case
 const defaultUser: User = {
     _id: "",
@@ -252,7 +253,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(defaultUser);
             document.cookie = `current-user=; path=/; max-age=0; SameSite=Lax`;
             (getUserFromCookie as any).cache = null;
-            await signOut();
+            const response = await signOut();
+            console.log("Logout response:", response);
+        } catch (error: any) {
+            console.error("Logout error:", error);
+            await new Promise((resolve) => setTimeout(resolve, 20000));
         } finally {
             if (shouldRedirect) {
                 router.push(`/${localeRef.current}/auth/login`);
@@ -262,8 +267,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const refreshUserToken = useCallback(async (): Promise<boolean> => {
         try {
-            const result = await refreshToken();
-            console.log("Token refreshed:", result);
+            const response = await refreshToken();
+            console.log("Token refreshed:", response);
             return true;
         } catch (error: any) {
             console.error("Failed to refresh token:", error);
@@ -273,10 +278,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             return false;
         }
     }, [logout]);
+    const isAuthenticated = user._id !== ""; // check if not default user
 
     // token refresh on focus or navigation
     useEffect(() => {
-        if (user._id === "") return; // skip if default user (not authenticated)
+        if (!isAuthenticated) return; // skip if default user (not authenticated)
 
         const handleFocus = () => refreshUserToken();
         window.addEventListener("focus", handleFocus);
@@ -289,7 +295,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, [user, refreshUserToken]);
 
-    const isAuthenticated = user._id !== ""; // check if not default user
 
     const contextValue = useMemo(
         () => ({

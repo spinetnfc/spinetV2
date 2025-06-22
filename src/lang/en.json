@@ -348,6 +348,8 @@
   "send-message": "Send Message",
   "login successful": "login successful",
   "login failed": "login failed",
+  "lougout successful": "lougout successful",
+  "lougout failed": "lougout failed",
   "Account registered successfully": "Account registered successfully, logging in...",
   "Error: Failed to register": "Error: Failed to register",
   "OTP sent to your email": "OTP sent to your email",
