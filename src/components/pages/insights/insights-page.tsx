@@ -125,16 +125,16 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
                     </h2>
 
                     {/* Period Buttons */}
-                    <div className="flex space-x-2 overflow-x-auto">
+                    <div className="flex flex-wrap">
                         {periods.map((period) => (
                             <Button
                                 key={period.label}
                                 variant={selectedPeriod.label === period.label ? "default" : "ghost"}
                                 size="sm"
                                 onClick={() => setSelectedPeriod(period)}
-                                className={`text-sm whitespace-nowrap ${selectedPeriod.label === period.label
+                                className={`text-xs sm:text-sm whitespace-nowrap ${selectedPeriod.label === period.label
                                     ? "bg-azure"
-                                    : "text-primary hover: hover:bg-blue-200 dark:bg-navy"
+                                    : "text-primary hover: hover:bg-blue-200"
                                     }`}
                             >
                                 <FormattedMessage id={period.label} />
@@ -142,46 +142,46 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
                         ))}
                     </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <Card className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700">
-                            <CardContent className="p-4 flex items-center space-x-3">
-                                <div className="p-2 bg-blue-500/20 rounded-lg">
-                                    <UserPlus className="w-5 h-5 text-azure" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-400">
-                                        <FormattedMessage id="new-connections" defaultMessage="New connections" />
-                                    </p>
-                                    <p className="text-2xl font-bold ">{insights.connections}</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700">
-                            <CardContent className="p-4 flex items-center space-x-3">
-                                <div className="p-2 bg-blue-500/20 rounded-lg">
+                    {/* Stats */}
+                    <div className="w-full flex gap-4 max-sm:flex-wrap">
+                        <Card className="sm:w-full bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700">
+                            <CardContent className="p-2 sm:p-4 flex items-center space-x-3">
+                                <div className="p-2 bg-blue-400/20 rounded-lg">
                                     <ArrowDownUp className="w-5 h-5 text-azure" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400">
                                         <FormattedMessage id="profile-taps" defaultMessage="Profile Taps" />
                                     </p>
-                                    <p className="text-2xl font-bold ">{insights.taps}</p>
+                                    <p className="text-lg sm:text-2xl font-bold ">{insights.taps}</p>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        <Card className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700">
-                            <CardContent className="p-4 flex items-center space-x-3">
-                                <div className="p-2 bg-blue-500/20 rounded-lg">
+                        <Card className="sm:w-full bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700">
+                            <CardContent className="p-2 sm:p-4 flex items-center space-x-3">
+                                <div className="p-2 bg-blue-400/20 rounded-lg">
                                     <Eye className="w-5 h-5 text-azure" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400">
                                         <FormattedMessage id="profile-views" defaultMessage="Profile Views" />
                                     </p>
-                                    <p className="text-2xl font-bold ">{insights.views}</p>
+                                    <p className="text-lg sm:text-2xl font-bold ">{insights.views}</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="sm:w-full bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700">
+                            <CardContent className="p-2 sm:p-4 flex items-center space-x-3">
+                                <div className="p-2 bg-blue-400/20 rounded-lg">
+                                    <UserPlus className="w-5 h-5 text-azure" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400">
+                                        <FormattedMessage id="new-connections" defaultMessage="New connections" />
+                                    </p>
+                                    <p className="text-lg sm:text-2xl font-bold ">{insights.connections}</p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -198,19 +198,21 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
 
                             return (
                                 <Card key={link._id} className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 transition-colors">
-                                    <CardContent className="p-4 flex items-center justify-between">
-                                        <div className="flex items-center space-x-4">
-                                            <div className={`p-2 rounded-lg text-azure`}>
+                                    <CardContent className="p-4 flex items-center justify-between gap-2 sm:gap-4">
+                                        <div className="flex items-center space-x-2 sm:space-x-4 overflow-hidden">
+                                            <div className="p-2 rounded-lg text-azure flex-shrink-0">
                                                 <IconComponent className="w-5 h-5" />
                                             </div>
-                                            <div>
-                                                <h3 className="font-medium ">{link.title}</h3>
-                                                <p className="text-sm text-gray-400 truncate max-w-xs">{link.link}</p>
+                                            <div className="overflow-hidden">
+                                                <h3 className="font-medium text-sm sm:text-base truncate">{link.title}</h3>
+                                                <p className="text-sm text-gray-400 truncate">{link.link}</p>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-lg font-semibold ">{link.engagements}</p>
-                                            <p className="text-sm text-gray-400"><FormattedMessage id="taps" defaultMessage="Taps" /></p>
+                                        <div className="text-end flex-shrink-0 min-w-[60px]">
+                                            <p className="text-lg font-semibold">{link.engagements}</p>
+                                            <p className="text-sm text-gray-400">
+                                                <FormattedMessage id="taps" defaultMessage="Taps" />
+                                            </p>
                                         </div>
                                     </CardContent>
                                 </Card>
