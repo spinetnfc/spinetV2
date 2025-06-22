@@ -15,7 +15,7 @@ const ColorOutlet: React.FC<Props> = (props) => {
             onClick={() => props.onUpdate(props.color)}
         >
             {props.isChecked ? (
-                <CheckIcon className="m-auto h-[15px] w-[15px] fill-white" />
+                <CheckIcon className="m-auto h-[15px] w-[15px]" strokeWidth={3} />
             ) : null}
         </div>
     );

@@ -155,7 +155,7 @@ export default function PreferencesForm({
                         {isSubmitting ? (
                             <>
                                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                                <FormattedMessage id="saving" />                            </>
+                                <FormattedMessage id="saving" />   </>
                         ) : (
                             <FormattedMessage id="save-changes" />
                         )}
