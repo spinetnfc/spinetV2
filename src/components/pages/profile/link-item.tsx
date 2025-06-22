@@ -11,6 +11,7 @@ import EditLinkForm from "./edit-link-form"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
+import { Card, CardContent } from "@/components/ui/card"
 
 interface LinkItemProps {
     link: {
@@ -91,44 +92,47 @@ export default function LinkItem({ link, index, profileId, profileData, icon }: 
     }
 
     const getLinkContent = () => (
-        <div className="flex items-center w-full h-16 min-h-[60px] px-4 py-3 bg-blue-200 dark:bg-navy rounded-md hover:opacity-90 transition-colors relative group">
-            <div className="flex items-center justify-center text-blue-600">{icon}</div>
-            <div className="ms-3 overflow-hidden flex-grow">
-                <span className="font-medium text-primary truncate block">{getDisplayLabel()}</span>
-                {isEmailOrPhone && <p className="text-xs font-medium text-gray-400 truncate">{link.title}</p>}
-            </div>
-            <div className="absolute end-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <button
+        <Card className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 relative group transition-colors">
+            <CardContent className="p-4 flex items-center justify-between gap-2 sm:gap-4">
+                <div className="flex items-center justify-center text-blue-600">{icon}</div>
+                <div className="ms-3 overflow-hidden flex-grow">
+                    <span className="font-medium text-primary truncate block">{getDisplayLabel()}</span>
+                    {isEmailOrPhone ? <p className="text-xs font-medium text-gray-400 truncate">{link.title}</p> :
+                        <p className="text-xs font-medium text-gray-400 truncate">{link.link || ""}</p>}
+                </div>
+                <div className="absolute end-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                onClick={(e) => { e.preventDefault(), e.stopPropagation(); }}
+                                className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
+                                <MoreVertical size={20} />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="bg-white dark:bg-background"
                             onClick={(e) => { e.preventDefault(), e.stopPropagation(); }}
-                            className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
-                            <MoreVertical size={20} />
-                        </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="bg-white dark:bg-background"
-                        onClick={(e) => { e.preventDefault(), e.stopPropagation(); }}
-                    >
-                        <DropdownMenuItem
-                            className="flex items-center gap-2 cursor-pointer"
-                            onClick={() => {
-                                setShowEditForm(true)
-                            }}
                         >
-                            <Edit size={14} /> <FormattedMessage id="edit" defaultMessage="Edit" />
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            className="flex items-center gap-2 text-red-500 cursor-pointer"
-                            onClick={() => {
-                                handleDeleteClick()
-                            }}
-                        >
-                            <Trash2 size={14} /> <FormattedMessage id="delete" defaultMessage="Delete" />
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        </div>
+                            <DropdownMenuItem
+                                className="flex items-center gap-2 cursor-pointer"
+                                onClick={() => {
+                                    setShowEditForm(true)
+                                }}
+                            >
+                                <Edit size={14} /> <FormattedMessage id="edit" defaultMessage="Edit" />
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                className="flex items-center gap-2 text-red-500 cursor-pointer"
+                                onClick={() => {
+                                    handleDeleteClick()
+                                }}
+                            >
+                                <Trash2 size={14} /> <FormattedMessage id="delete" defaultMessage="Delete" />
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </CardContent>
+        </Card>
     )
 
     return (

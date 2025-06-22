@@ -9,6 +9,7 @@ import LinkItem from "@/components/pages/profile/link-item"
 import useTranslate from "@/hooks/use-translate"
 import { Service } from "@/types/services";
 import { getServices } from "@/lib/api/services";
+import { Card, CardContent } from "@/components/ui/card";
 
 // Helper function to get the appropriate icon for a link type
 function getLinkIcon(linkName: string, themeColor: string) {
@@ -133,8 +134,8 @@ export default async function ProfilePage({ params }: {
             <div className="px-6 mt-8 space-y-4">
                 {/* Services */}
                 <Link href={`./profile/services`} className="block">
-                    <div className="bg-blue-200 dark:bg-navy rounded-lg p-4 hover:bg-blue-300 dark:hover:bg-blue-900 transition-colors">
-                        <div className="flex justify-between items-center">
+                    <Card className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 transition-colors">
+                        <CardContent className="p-4 flex items-center justify-between gap-2 sm:gap-4">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 rounded-lg" style={{ backgroundColor: themeColor }}>
                                     <Briefcase className="text-white" size={20} />
@@ -149,8 +150,8 @@ export default async function ProfilePage({ params }: {
                             <div className="text-gray-500">
                                 <ChevronRight size={20} className={locale === "ar" ? "transition rotate-180" : ""} />
                             </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
                 </Link>
 
                 {/* Personal links section */}
