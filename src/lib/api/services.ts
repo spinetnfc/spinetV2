@@ -1,5 +1,5 @@
 import { ServerApi } from '@/lib/axios';
-import type { Service, ServiceInput } from '@/types/services';
+import type { Service, ServiceInput, ServicesData, ServicesSearchParams } from '@/types/services';
 import { withServerCookies } from '@/utils/withServerCookies';
 
 export const getServices = async (profileId: string | null): Promise<Service[]> => {
@@ -65,5 +65,21 @@ export const deleteService = async (profileId: string, serviceId: string): Promi
     } catch (error) {
         console.error("Error deleting service:", error);
         throw new Error(`Failed to delete service: ${(error as Error).message}`);
+    }
+}
+
+export const searchServices = async (userId: string | null, searchParams: ServicesSearchParams): Promise<ServicesData[]> => {
+    if (!userId || typeof userId !== 'string') {
+        throw new Error(`Invalid userId: ${userId}`);
+    }
+    const headers = await withServerCookies();
+
+    try {
+        const response = await ServerApi.post(`/user/${userId}/search/services`, searchParams, { headers });
+        console.log("Services search response received:", response.status);
+        return response.data;
+    } catch (error) {
+        console.error("Error searching services:", error);
+        throw new Error(`Failed to search services: ${(error as Error).message}`);
     }
 }

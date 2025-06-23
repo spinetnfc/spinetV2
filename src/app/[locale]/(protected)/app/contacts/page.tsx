@@ -1,5 +1,4 @@
 import { getUserCookieOnServer } from "@/utils/server-cookie"
-import { getProfile } from "@/lib/api/profile"
 import { getContacts } from "@/lib/api/contacts"
 import type { Contact } from "@/types/contact"
 import useTranslate from "@/hooks/use-translate"
@@ -20,19 +19,10 @@ type ContactsPageProps = {
 
 export default async function ContactsPage({ params, searchParams }: ContactsPageProps) {
     const { locale } = await params
-    const { t } = await useTranslate(locale)
 
     // Get user and profile data
     const user = await getUserCookieOnServer()
     const profileId = user?.selectedProfile || null
-
-    // Fetch profile data for the header
-    let profileData
-    try {
-        profileData = await getProfile(profileId)
-    } catch (error) {
-        console.error("Error fetching profile:", error)
-    }
 
     // Fetch contacts data
     let contacts: Contact[] = []
@@ -40,7 +30,6 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
         contacts = await getContacts(profileId)
     } catch (error) {
         console.error("Error fetching contacts:", error)
-        // continue with empty contacts array
     }
 
     return (

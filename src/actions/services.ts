@@ -1,7 +1,7 @@
 "use server"
 
-import { addService, updateService, deleteService } from "@/lib/api/services"
-import { ServiceInput } from "@/types/services"
+import { addService, updateService, deleteService, searchServices } from "@/lib/api/services"
+import { ServiceInput, ServicesSearchParams } from "@/types/services"
 
 export async function addServiceAction(profileId: string, data: ServiceInput) {
     try {
@@ -25,10 +25,20 @@ export async function updateServiceAction(profileId: string, serviceId: string, 
 
 export async function deleteServiceAction(profileId: string, serviceId: string) {
     try {
-        const result = await deleteService(profileId, serviceId)
-        return { success: true, data: result }
+        const response = await deleteService(profileId, serviceId)
+        return { success: true, data: response }
     } catch (error) {
         console.error("Error in deleteServiceAction:", error)
+        return { success: false, error: (error as Error).message }
+    }
+}
+
+export async function SerachServicesAction(userId: string, searchParams: ServicesSearchParams) {
+    try {
+        const response = await searchServices(userId, searchParams)
+        return { success: true, data: response }
+    } catch (error) {
+        console.error("Error in SerachServicesAction:", error)
         return { success: false, error: (error as Error).message }
     }
 }

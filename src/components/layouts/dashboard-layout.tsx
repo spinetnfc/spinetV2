@@ -25,6 +25,7 @@ const Layout = ({
     { name: 'home', to: `/app`, icon: LayoutDashboard },
     { name: 'profile', to: `/app/profile`, icon: CircleUserRound },
     { name: 'contacts', to: `/app/contacts`, icon: Contact },
+    { name: 'services', to: `/app/services`, icon: BriefcaseBusiness },
     { name: 'insights', to: `/app/insights`, icon: SquareKanban },
     { name: 'settings', to: `/app/settings`, icon: Settings },
     // { name: 'opportunities', to: `/app/opportunities`, icon: BriefcaseBusiness },
@@ -32,7 +33,6 @@ const Layout = ({
     // { name: 'offers', to: `/app/offers`, icon: Package },
     // { name: 'leads', to: `/app/leads`, icon: Target },
     // { name: 'redirections', to: `/app/redirections`, icon: ArrowRightLeft },
-    // { name: 'users', to: `/app/users`, icon: User },
     // { name: 'groups', to: `/app/groups`, icon: Users },
   ].filter(Boolean) as SideNavigationItem[];
 
