@@ -31,7 +31,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { PaginationControls } from "@/components/ui/table-pagination"
 import { TableFooter } from "@/components/ui/table"
 import { cn } from "@/utils/cn"
-import { number } from "zod"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 
 interface ContactsDataTableProps {

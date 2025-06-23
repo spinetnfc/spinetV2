@@ -2,6 +2,7 @@ import { getUserCookieOnServer } from "@/utils/server-cookie"
 import useTranslate from "@/hooks/use-translate"
 import type { ServicesData, ServicesSearchParams } from "@/types/services"
 import { searchServices } from "@/lib/api/services"
+import { ServicesCardList } from "@/components/pages/services/services-list"
 
 type ServicesPageProps = {
   params: Promise<{ locale: string }>
@@ -29,15 +30,8 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
   }
 
   return (
-    <div>
-      <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-2">
-        {services.map((service, index) => (
-          <div key={index} className="service-item">
-            {/* Display service information here */}
-            <pre>{JSON.stringify(service, null, 2)}</pre>
-          </div>
-        ))}
-      </div>
+    <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-2">
+      <ServicesCardList services={services} locale={locale} />
     </div>
   )
 }
