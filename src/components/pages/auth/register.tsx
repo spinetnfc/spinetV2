@@ -233,7 +233,7 @@ export default function Register({ locale }: { locale: string }) {
         website: loginResponse.website || '',
         language: data.language,
         theme: data.theme,
-        Pro: loginResponse.Pro || { company: false, freeTrail: false },
+        Pro: loginResponse.Pro || { company: false, freeTrial: false },
         createdAt: loginResponse.createdAt || new Date().toISOString(),
         selectedProfile: registerResponse.profile,
         tokens: {

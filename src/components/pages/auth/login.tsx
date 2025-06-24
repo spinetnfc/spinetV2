@@ -51,7 +51,7 @@ interface User {
     website: string;
     language: string;
     theme: { color: string };
-    Pro: { company: boolean; freeTrail: boolean };
+    Pro: { company: boolean; freeTrial: boolean };
     createdAt: string;
     selectedProfile: string;
     tokens: {

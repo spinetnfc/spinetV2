@@ -5,7 +5,7 @@ export function userRole() {
     let role = '';
     if (user?.Pro?.company) {
         role = 'company';
-    } else if (user?.Pro?.freeTrail) {
+    } else if (user?.Pro?.freeTrial) {
         role = 'free trial';
     } else {
         role = 'basic'

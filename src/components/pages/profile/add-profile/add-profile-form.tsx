@@ -37,7 +37,7 @@ interface AddProfileFormProps {
 
 // Schema definition
 const profileSchema = z.object({
-    fullName: z.string().min(3, { message: 'full-name-required' }),
+    fullName: z.string().min(3, { message: 'fullname-required' }),
     phoneNumber: z.string()
         .min(10, { message: 'phone-number-required' })
         .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
