@@ -14,7 +14,7 @@ export interface User {
     website: string;
     language: string;
     theme: { color: string };
-    Pro: { company: boolean; freeTrail: boolean };
+    Pro: { company: boolean; freeTrial: boolean; expiresAt?: string | Date, payment?: {} };
     createdAt: string;
     selectedProfile: string;
     tokens: {

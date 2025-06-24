@@ -33,7 +33,7 @@ const defaultUser: User = {
     website: "",
     language: "",
     theme: { color: "" },
-    Pro: { company: true, freeTrail: true },
+    Pro: { company: false, freeTrial: false },
     createdAt: "",
     selectedProfile: "",
     tokens: {
@@ -52,6 +52,8 @@ interface AuthContextType {
     appleLogin: () => void;
     logout: () => void;
     isAuthenticated: boolean;
+    isCompany: boolean;
+    isPro: boolean;
     isLoading: boolean;
     refreshUserToken: () => Promise<boolean>;
 }
@@ -64,6 +66,8 @@ const defaultContextValue: AuthContextType = {
     appleLogin: () => { },
     logout: () => { },
     isAuthenticated: false,
+    isCompany: false,
+    isPro: false,
     isLoading: true,
     refreshUserToken: async () => false,
 };
@@ -279,6 +283,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [logout]);
     const isAuthenticated = user._id !== ""; // check if not default user
+    const isCompany = user.Pro?.company || false;
+    const isPro = (user.Pro?.freeTrial || user.Pro?.expiresAt) ? true : false
 
     // token refresh on focus or navigation
     useEffect(() => {
@@ -305,10 +311,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             appleLogin,
             logout,
             isAuthenticated,
+            isCompany,
+            isPro,
             isLoading,
             refreshUserToken,
         }),
-        [user, isAuthenticated, isLoading, login, logout, refreshUserToken]
+        [user, isAuthenticated, isCompany, isAuthenticated, isLoading, login, logout, refreshUserToken]
     );
 
     return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
