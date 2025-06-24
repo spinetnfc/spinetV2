@@ -121,6 +121,13 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
         }
     }, [hasMore, isLoading, skip, initialSearchParams, userId])
 
+    useEffect(() => {
+        if (searchTerm === "") {
+            handleSearch()
+        }
+    }, [searchTerm])
+
+
     return (
         <div className="space-y-8 pb-4">
             {/* Search Input */}
@@ -141,68 +148,73 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
             {services.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {services.map((service, index) => (
-                        <Link href={`/${locale}/public-profile/${service.Profile._id}`} key={`${service.Profile._id}-${index}`} className="no-underline">
-                            <Card
-
-                                className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 relative group transition-colors"
-                            >
-                                <CardContent className="p-4">
-                                    <div className="flex gap-3">
-                                        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                            <Briefcase className="w-6 h-6 text-blue-600" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="font-medium text-primary mb-1">{service.name}</h3>
-                                            <p className="text-sm text-gray-400 line-clamp-2 mb-3">{service.description}</p>
-                                        </div>
+                        // <Link href={`${pathname}/description`} key={`${service.Profile._id}-${index}`} className="no-underline group">
+                        <Card
+                            key={`${service.Profile._id}-${index}`}
+                            className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 group relative transition-colors"
+                        >
+                            <CardContent className="p-4">
+                                <Link href={`${pathname}/description`} className="flex gap-3">
+                                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <Briefcase className="w-6 h-6 text-blue-600" />
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="bg-white rounded-full">
-                                                <Image
-                                                    src={avatar}
-                                                    alt="Service provider's Avatar"
-                                                    className="w-10 h-10 rounded-full"
-                                                />
-                                            </div>
-                                            <span className="text-sm font-semibold text-gray-400">
-                                                {service.Profile.firstName} {service.Profile.lastName}
-                                            </span>
-                                        </div>
-                                        <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-                                            {service.Profile.numServices}{" "}
-                                            {service.Profile.numServices === 1 ? (
-                                                <FormattedMessage id="service" />
-                                            ) : (
-                                                <FormattedMessage id="services" />
-                                            )}
-                                        </Badge>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-medium text-primary mb-1">{service.name}</h3>
+                                        <p className="text-sm text-gray-400 line-clamp-2 mb-3">{service.description}</p>
                                     </div>
-                                </CardContent>
-                            </Card>
-                        </Link>
+                                </Link>
+                                <div className="flex items-center justify-between">
+                                    <Link href={`/${locale}/public-profile/${service.Profile._id}`} className="flex items-center gap-2">
+                                        <div className="bg-white rounded-full">
+                                            <Image
+                                                src={avatar}
+                                                alt="Service provider's Avatar"
+                                                className="w-10 h-10 rounded-full"
+                                            />
+                                        </div>
+                                        <span className="text-sm font-semibold text-gray-400">
+                                            {service.Profile.firstName} {service.Profile.lastName}
+                                        </span>
+                                    </Link>
+                                    <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                                        {service.Profile.numServices}{" "}
+                                        {service.Profile.numServices === 1 ? (
+                                            <FormattedMessage id="service" />
+                                        ) : (
+                                            <FormattedMessage id="services" />
+                                        )}
+                                    </Badge>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        // </Link>
                     ))}
                 </div>
             ) : (
                 <p className="text-4xl font-bold text-center text-primary">
                     <FormattedMessage id="No-services-found" defaultMessage="No services found" /> !
                 </p>
-            )}
+            )
+            }
 
             {/* Loading Spinner or No More Services */}
-            {isLoading && (
-                <div className="flex justify-center items-center h-16">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
-                </div>
-            )}
-            {!hasMore && services.length > 0 && (
-                <p className="text-center text-gray-500">
-                    <FormattedMessage id="no-more-services" defaultMessage="No more services" />
-                </p>
-            )}
+            {
+                isLoading && (
+                    <div className="flex justify-center items-center h-16">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+                    </div>
+                )
+            }
+            {
+                !hasMore && services.length > 0 && (
+                    <p className="text-center text-gray-500">
+                        <FormattedMessage id="no-more-services" defaultMessage="No more services" />
+                    </p>
+                )
+            }
 
             {/* Intersection Observer Target */}
             <div ref={observerRef} className="h-1"></div>
-        </div>
+        </div >
     )
 }
