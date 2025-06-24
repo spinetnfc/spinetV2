@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/utils/cn';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/context/authContext';
 
 const Logo = ({
     locale,
@@ -13,7 +14,7 @@ const Logo = ({
 }) => {
     // Add state to prevent hydration mismatch
     const [mounted, setMounted] = useState(false);
-
+    const { isAuthenticated } = useAuth();
     // Ensure component is only rendered client-side after mount
     useEffect(() => {
         setMounted(true);
@@ -22,7 +23,7 @@ const Logo = ({
     // Return null or a placeholder during SSR
     if (!mounted) {
         return (
-            <NextLink className="flex items-center text-white" href={`/${locale}`}>
+            <NextLink className="flex items-center text-white" href={isAuthenticated ? `/${locale}/app` : `/${locale}`}>
                 <Image
                     src={parentDarkMode == true ? "/img/logo-spinet-dark.svg" : "/img/logo-spinet.svg"}
                     alt="Logo"
@@ -38,7 +39,7 @@ const Logo = ({
     }
 
     return (
-        <NextLink className="flex items-center text-white" href={`/${locale}`}>
+        <NextLink className="flex items-center text-white" href={isAuthenticated ? `/${locale}/app` : `/${locale}`}>
             <Image
                 src={
                     !parentDarkMode
