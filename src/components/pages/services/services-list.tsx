@@ -118,7 +118,7 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
                 observer.unobserve(observerRef.current)
             }
         }
-    }, [hasMore, isLoading, skip, initialSearchParams, userId])
+    }, [hasMore, skip])
 
     return (
         <div className="space-y-8 pb-4">
@@ -160,7 +160,7 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
                                             <Image
                                                 src={avatar}
                                                 alt="Service provider's Avatar"
-                                                className="w-8 h-8 rounded-full"
+                                                className="w-10 h-10 rounded-full"
                                             />
                                         </div>
                                         <span className="text-sm font-semibold text-gray-400">
