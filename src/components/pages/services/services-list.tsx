@@ -142,7 +142,7 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
                     {services.map((service, index) => (
                         <Card
                             key={`${service.Profile._id}-${index}`}
-                            className="h-96 bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 relative group transition-colors"
+                            className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 relative group transition-colors"
                         >
                             <CardContent className="p-4">
                                 <div className="flex gap-3">
