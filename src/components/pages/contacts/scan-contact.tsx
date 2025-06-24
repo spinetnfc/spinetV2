@@ -7,7 +7,6 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { QrCode, Upload } from 'lucide-react';
 import QrScanner from 'qr-scanner';
-import { ProfileData } from '@/types/profile';
 import { getUserFromCookie } from '@/utils/cookie';
 import { useAuth } from '@/context/authContext';
 import { createContact } from '@/actions/contacts';
@@ -15,7 +14,6 @@ import { getProfileAction } from '@/actions/profile';
 
 interface ScanContactProps {
     locale: string;
-    // getProfileData: (profileId: string, userId: string) => Promise<ProfileData | null>;
 }
 
 export default function ScanContact({ locale }: ScanContactProps) {

@@ -1,13 +1,11 @@
 import { Edit, QrCode, Upload } from "lucide-react";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
-import { getProfile, viewProfile } from "@/lib/api/profile";
+import { getProfile } from "@/lib/api/profile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AddContactForm from "@/components/pages/contacts/add-contact-form";
 import ImportContacts from "@/components/pages/contacts/import-contacts";
 import useTranslate from "@/hooks/use-translate";
-import { ProfileData } from "@/types/profile";
 import ScanContact from "@/components/pages/contacts/scan-contact";
-// import Link from "next/link";
 export default async function AddContactPage({ params }: {
     params: Promise<{ locale: string }>;
 }) {
@@ -33,31 +31,8 @@ export default async function AddContactPage({ params }: {
         ? `/api/files/${profileData.profilePicture}`
         : "/img/user.png";
 
-    const getProfileData = async (profileId: string, userId = user?._id): Promise<ProfileData | null> => {
-        "use server";
-        if (userId && profileId) {
-            try {
-                const profileData = await viewProfile(profileId, userId);
-                return profileData;
-            } catch (error) {
-                console.error("Error fetching profile:", error);
-                return null;
-            }
-        }
-        console.error("Profile ID or User ID is missing");
-        return null;
-
-    }
-    // Handle form submission
-
-
     return (
         <div>
-            {/* <div className="w-full flex items-center m-6">
-                <Link href={`./`} className="p-2 rounded-full bg-white/20 text-white me-4">
-                    <ArrowLeft size={24} className={locale === "ar" ? "transition rotate-180" : ""} />
-                </Link>
-            </div> */}
             <div className="px-2 xs:px-4 py-4 max-w-4xl mx-auto">
                 <Tabs defaultValue="manual" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
                     <TabsList className="grid w-full grid-cols-3 mb-4">
@@ -82,7 +57,6 @@ export default async function AddContactPage({ params }: {
                     <TabsContent value="scan">
                         <ScanContact
                             locale={locale}
-                        // getProfileData={getProfileData}
                         />
                     </TabsContent>
 
