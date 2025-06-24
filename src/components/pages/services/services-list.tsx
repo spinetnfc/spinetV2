@@ -118,7 +118,7 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
                 observer.unobserve(observerRef.current)
             }
         }
-    }, [hasMore, skip])
+    }, [hasMore, isLoading, skip, initialSearchParams, userId])
 
     return (
         <div className="space-y-8 pb-4">
