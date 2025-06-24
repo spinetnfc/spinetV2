@@ -24,24 +24,25 @@ import Tiktok from "@/components/icons/tiktok"
 import { EmailLink } from "@/components/pages/profile/email-link-wrapper"
 import useTranslate from "@/hooks/use-translate"
 import type { ProfileData } from "@/types/profile"
-import { viewProfile } from "@/lib/api/profile"
+import { getProfile } from "@/lib/api/profile"
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 
 export default async function ProfilePage({
     params,
 }: {
-    params: Promise<{ id: string; locale: string }>
+    params: Promise<{ locale: string; id: string }>
 }) {
-    const { id, locale } = await params
+    const { locale, id } = await params
     const user = await getUserCookieOnServer()
     const { t } = await useTranslate(locale)
     let profileData: ProfileData | null
     try {
-        profileData = await viewProfile(id, user?._id ?? null)
+        // console.log(" fetching profile of id ::::", id, "for user::::", user?._id)
+        profileData = await getProfile(id)
         console.log("profileData", profileData)
     } catch (err: any) {
         console.error("Error fetching profile:", err)
-        throw new Error(`Failed to load profile data: ${err.message}`)
+        throw new Error(`Failed to load profile data: ${(err.message)}`)
     }
 
     if (!profileData) {

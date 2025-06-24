@@ -11,13 +11,14 @@ import { ProfileData } from '@/types/profile';
 import { getUserFromCookie } from '@/utils/cookie';
 import { useAuth } from '@/context/authContext';
 import { createContact } from '@/actions/contacts';
+import { getProfileAction } from '@/actions/profile';
 
 interface ScanContactProps {
     locale: string;
-    getProfileData: (profileId: string, userId: string) => Promise<ProfileData | null>;
+    // getProfileData: (profileId: string, userId: string) => Promise<ProfileData | null>;
 }
 
-export default function ScanContact({ locale, getProfileData }: ScanContactProps) {
+export default function ScanContact({ locale }: ScanContactProps) {
     const intl = useIntl();
     const profileId = useAuth().user.selectedProfile;;
     const user = getUserFromCookie();
@@ -76,7 +77,7 @@ export default function ScanContact({ locale, getProfileData }: ScanContactProps
                     }
 
                     // Get profile data
-                    const profileData = await getProfileData(profileLink, user._id);
+                    const profileData = await getProfileAction(profileLink);
                     console.log('profileData:::::::::::', profileData);
                     if (!profileData) {
                         throw new Error('Failed to fetch profile data');
@@ -146,7 +147,7 @@ export default function ScanContact({ locale, getProfileData }: ScanContactProps
         };
 
         scanContact();
-    }, [scannedUrl, user?._id, getProfileData, createContact, intl]);
+    }, [scannedUrl, user?._id, getProfileAction, createContact, intl]);
 
     // Handle QR code scan result
     const handleQrScan = async (data: string) => {

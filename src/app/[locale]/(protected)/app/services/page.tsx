@@ -21,7 +21,7 @@ export default async function ServicesPage({ params, searchParams }: ServicesPag
     term: resolvedSearchParams.term || "",
     skip: resolvedSearchParams.skip || 0,
     priority: resolvedSearchParams.priority || "score",
-    limit: resolvedSearchParams.limit || 10,
+    limit: resolvedSearchParams.limit || 20,
   }
 
   // Fetch initial service data

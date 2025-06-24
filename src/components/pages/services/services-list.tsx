@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import avatar from "@/assets/images/user.png"
 import Image from "next/image"
+import Link from "next/link"
 
 type ServicesCardListProps = {
     services: ServicesData[]
@@ -140,44 +141,46 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
             {services.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {services.map((service, index) => (
-                        <Card
-                            key={`${service.Profile._id}-${index}`}
-                            className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 relative group transition-colors"
-                        >
-                            <CardContent className="p-4">
-                                <div className="flex gap-3">
-                                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                        <Briefcase className="w-6 h-6 text-blue-600" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-medium text-primary mb-1">{service.name}</h3>
-                                        <p className="text-sm text-gray-400 line-clamp-2 mb-3">{service.description}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <div className="bg-white rounded-full">
-                                            <Image
-                                                src={avatar}
-                                                alt="Service provider's Avatar"
-                                                className="w-10 h-10 rounded-full"
-                                            />
+                        <Link href={`/${locale}/public-profile/${service.Profile._id}`} key={`${service.Profile._id}-${index}`} className="no-underline">
+                            <Card
+
+                                className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 relative group transition-colors"
+                            >
+                                <CardContent className="p-4">
+                                    <div className="flex gap-3">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <Briefcase className="w-6 h-6 text-blue-600" />
                                         </div>
-                                        <span className="text-sm font-semibold text-gray-400">
-                                            {service.Profile.firstName} {service.Profile.lastName}
-                                        </span>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-medium text-primary mb-1">{service.name}</h3>
+                                            <p className="text-sm text-gray-400 line-clamp-2 mb-3">{service.description}</p>
+                                        </div>
                                     </div>
-                                    <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-                                        {service.Profile.numServices}{" "}
-                                        {service.Profile.numServices === 1 ? (
-                                            <FormattedMessage id="service" />
-                                        ) : (
-                                            <FormattedMessage id="services" />
-                                        )}
-                                    </Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="bg-white rounded-full">
+                                                <Image
+                                                    src={avatar}
+                                                    alt="Service provider's Avatar"
+                                                    className="w-10 h-10 rounded-full"
+                                                />
+                                            </div>
+                                            <span className="text-sm font-semibold text-gray-400">
+                                                {service.Profile.firstName} {service.Profile.lastName}
+                                            </span>
+                                        </div>
+                                        <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                                            {service.Profile.numServices}{" "}
+                                            {service.Profile.numServices === 1 ? (
+                                                <FormattedMessage id="service" />
+                                            ) : (
+                                                <FormattedMessage id="services" />
+                                            )}
+                                        </Badge>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
                     ))}
                 </div>
             ) : (

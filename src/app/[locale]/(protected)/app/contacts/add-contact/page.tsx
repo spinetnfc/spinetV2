@@ -80,7 +80,10 @@ export default async function AddContactPage({ params }: {
                     </TabsContent>
 
                     <TabsContent value="scan">
-                        <ScanContact locale={locale} getProfileData={getProfileData} />
+                        <ScanContact
+                            locale={locale}
+                        // getProfileData={getProfileData}
+                        />
                     </TabsContent>
 
 

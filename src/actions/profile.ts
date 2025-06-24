@@ -1,8 +1,8 @@
 'use server';
 import { format } from 'date-fns';
-import { updateProfile, createProfile, getAllProfiles, deleteProfile, getInsights } from '@/lib/api/profile';
+import { updateProfile, createProfile, getAllProfiles, deleteProfile, getInsights, getProfile } from '@/lib/api/profile';
 import { requestEmailChange, verifyEmailChangeOTP } from '@/lib/api/change-email';
-import { LinkType, ProfileData, profileInput } from '@/types/profile';
+import { ProfileData, profileInput } from '@/types/profile';
 import { User } from '@/types/user';
 import { updateUser } from '@/lib/api/user';
 
@@ -15,7 +15,15 @@ export const getAllProfilesAction = async (userId: string | null): Promise<Profi
         throw error;
     }
 };
-
+export const getProfileAction = async (profileId: string | null): Promise<ProfileData> => {
+    try {
+        const profile = await getProfile(profileId);
+        return profile;
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+    }
+}
 export async function createProfileAction(userId: string, data: profileInput) {
     try {
         // const formattedData = {
