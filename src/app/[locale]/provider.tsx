@@ -4,7 +4,6 @@ import { ThemeProvider } from 'next-themes';
 import * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MainErrorFallback } from '@/components/errors/main';
-import { Notifications } from '@/components/ui/notifications';
 import { AuthProvider } from '@/context/authContext';
 import { Toaster } from '@/components/ui/sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -35,7 +34,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
           <GoogleOAuthProvider clientId="191856451903-98inavnv0kljgjt7hcda44do034ou8ua.apps.googleusercontent.com">
             <AuthProvider>
               <Toaster position="bottom-right" />
-              <Notifications />
               {children}
             </AuthProvider>
           </GoogleOAuthProvider>
