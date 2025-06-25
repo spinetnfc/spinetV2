@@ -44,7 +44,7 @@ export type NotificationItem = {
     read?: boolean;
 };
 
-export type FilterNotificationsResponse = {
+export type NotificationsResponse = {
     sent?: NotificationItem[];
     received?: NotificationItem[];
 };
