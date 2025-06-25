@@ -33,35 +33,52 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     const { user } = useAuth()
     const profileId = user.selectedProfile
 
+    // Fetch only notifications
     const fetchNotifications = async () => {
+        if (!profileId) return
         setIsLoading(true)
         try {
-            //notifications
-            const notifictaionsResponse = await api.post(`/profile/${profileId}/notifications/filter`, { limit: 10, skip: 0 })
-            setNotifications(notifictaionsResponse.data.received || [])
-            // Count unread notifications
-            const unreadNotifications = notifictaionsResponse.data.received?.filter(
+            const notificationsResponse = await api.post(`/profile/${profileId}/notifications/filter`, { limit: 10, skip: 0 })
+            const receivedNotifications = notificationsResponse.data.received || []
+            setNotifications(receivedNotifications)
+            const unreadNotifications = receivedNotifications.filter(
                 (notification: NotificationItem) => !notification.read && !notification.readBy?.includes(profileId)
-            ) || [];
-            setUnreadCount(unreadNotifications.length);
-            //invitations
-            const invitationsResponse = await api.post(`/profile/${profileId}/invitations`, { limit: 10, skip: 0 })
-            setInvitations(invitationsResponse.data || [])
+            )
+            setUnreadCount(unreadNotifications.length)
         } catch (error) {
             console.error("Error fetching notifications:", error)
-        }
-        finally {
+        } finally {
             setIsLoading(false)
         }
     }
 
+    // Fetch invitations
+    const fetchInvitations = async () => {
+        if (!profileId) return
+        setIsLoading(true)
+        try {
+            const invitationsResponse = await api.post(`/profile/${profileId}/invitations`, { limit: 10, skip: 0 })
+            setInvitations(invitationsResponse.data || [])
+        } catch (error) {
+            console.error("Error fetching invitations:", error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    // Handle dropdown open/close
+    const handleDropdownOpenChange = (open: boolean) => {
+        setIsOpen(open)
+        if (open && invitations.length === 0) {
+            fetchInvitations() // Fetch invitations when dropdown is opened and no invitations are loaded
+        }
+    }
+
     useEffect(() => {
-        // Initial fetch
+        // Initial fetch for notifications only
         fetchNotifications()
-
-        // Set up polling
+        // Set up polling for notifications
         const interval = setInterval(fetchNotifications, pollingInterval)
-
         // Cleanup
         return () => clearInterval(interval)
     }, [profileId, pollingInterval])
@@ -69,7 +86,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     // Mark notification as read
     const markAsRead = (notificationId: string) => {
         setNotifications((prev) =>
-            prev.map((n) => (n._id === notificationId ? { ...n, read: true, readBy: [...(n.readBy || []), profileId] } : n)),
+            prev.map((n) => (n._id === notificationId ? { ...n, read: true, readBy: [...(n.readBy || []), profileId] } : n))
         )
         setUnreadCount((prev) => Math.max(0, prev - 1))
     }
@@ -81,7 +98,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
                 ...n,
                 read: true,
                 readBy: [...(n.readBy || []), profileId],
-            })),
+            }))
         )
         setUnreadCount(0)
     }
@@ -145,11 +162,9 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     // Format timestamp
     const formatTimestamp = (timestamp?: string) => {
         if (!timestamp) return "Unknown time"
-
         const date = new Date(timestamp)
         const now = new Date()
         const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
-
         if (diffInMinutes < 1) return "Just now"
         if (diffInMinutes < 60) return `${diffInMinutes}m ago`
         if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
@@ -162,204 +177,186 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     }
 
     return (
-        <>
-            <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="rounded-full relative bg-white dark:bg-background">
-                        <Bell className="size-5" />
-                        {unreadCount > 0 && (
-                            <Badge
-                                variant="destructive"
-                                className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full p-0 flex items-center justify-center text-xs font-medium bg-blue-600 hover:bg-blue-700"
-                            >
-                                {unreadCount > 99 ? "99+" : unreadCount}
-                            </Badge>
-                        )}
-                    </Button>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent align={locale === "ar" ? "start" : "end"} className="w-screen max-xs:mx-auto xs:w-96 p-0 shadow-lg" sideOffset={8}>
-                    {/* Tabs */}
-                    <Tabs
-                        value={activeTab}
-                        onValueChange={(value) => setActiveTab(value as "received" | "invitations")}
-                        className="w-full"
-                    >
-                        <div className="px-4 pt-2">
-                            <TabsList className="grid w-full grid-cols-2 h-8">
-                                <TabsTrigger value="received" className="text-xs">
-                                    Notifications ({notifications.length})
-                                </TabsTrigger>
-                                <TabsTrigger value="invitations" className="text-xs">
-                                    Invitations ({invitations.length})
-                                </TabsTrigger>
-                            </TabsList>
-                        </div>
-
-                        <TabsContent value="received" className="mt-0">
-                            <ScrollArea className="max-h-96 overflow-y-auto no-scrollbar">
-                                <div className="flex items-center justify-between p-2 border-b">
-
-                                    <div className="flex items-center gap-1">
-                                        {unreadCount > 0 && (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={markAllAsRead}
-                                                className="h-7 px-2 text-xs text-azure hover:text-blue-700 hover:bg-blue-200"
-                                            >
-                                                <CheckCheck className="h-3 w-3 mr-1" />
-                                                Mark all read
-                                            </Button>
-                                        )}
-                                    </div>
-                                </div>
-                                {notifications.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center py-8 text-center">
-                                        <Bell className="h-8 w-8 text-gray-300 mb-2" />
-                                        <p className="text-sm text-gray-500 font-medium">No notifications</p>
-                                        <p className="text-xs text-gray-400 mt-1">You're all caught up!</p>
-                                    </div>
-                                ) : (
-                                    <div className="divide-y divide-gray-200 dark:divide-gray-900">
-                                        {notifications.map((notification) => {
-                                            const senderInfo = getSenderInfo(notification)
-                                            const isRead = isNotificationRead(notification)
-
-                                            return (
-                                                <div
-                                                    key={notification._id}
-                                                    className={`p-2 transition-colors ${isRead ? "opacity-80" : ""}`}
-                                                >
-                                                    <div className="flex items-start gap-3">
-                                                        <img
-                                                            src={avatar.src}
-                                                            alt={`${senderInfo.name}'s avatar`}
-                                                            className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
-                                                        />
-
-                                                        <div className="flex-1 min-w-0">
-                                                            <div className="flex items-center gap-2 mb-1">
-                                                                <h4
-                                                                    className={`text-sm font-medium truncate ${!isRead ? "text-primary" : "text-gray-600"}`}
-                                                                >
-                                                                    {notification.title}
-                                                                </h4>
-                                                                {!isRead && <div className="h-2 w-2 bg-blue-600 rounded-full flex-shrink-0" />}
-                                                            </div>
-
-                                                            <p className="text-xs text-gray-600 mb-2 line-clamp-2">{notification.body}</p>
-
-
-                                                        </div>
-
-                                                        <div className="flex flex-col gap-1">
-                                                            {!isRead && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    onClick={() => markAsRead(notification._id)}
-                                                                    className="h-8 w-8 p-0 text-gray-400 hover:text-azure hover:bg-blue-200"
-                                                                >
-                                                                    <Check className="h-4 w-4" />
-                                                                </Button>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                    <div className="w-full flex items-center justify-between">
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-xs text-gray-500">{senderInfo.name}</span>
-                                                            <span className="text-xs text-gray-400">•</span>
-                                                            <span className="text-xs text-gray-500">{formatTimestamp(notification.createdAt)}</span>
-                                                        </div>
-
-                                                        <Badge
-                                                            variant="secondary"
-                                                            className={`text-xs px-2 py-0.5 ${getNotificationTypeColor(notification.type)}`}
-                                                        >
-                                                            {notification.type?.replace("-", " ") || "notification"}
-                                                        </Badge>
-                                                    </div>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                )}
-                            </ScrollArea>
-                        </TabsContent>
-
-                        <TabsContent value="invitations" className="mt-0">
-                            <ScrollArea className="max-h-96 overflow-y-auto no-scrollbar">
-                                {invitations.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center py-8 text-center">
-                                        <Bell className="h-8 w-8 text-gray-300 mb-2" />
-                                        <p className="text-sm text-gray-500 font-medium">No invitations</p>
-                                        <p className="text-xs text-gray-400 mt-1">Your invitations will appear here</p>
-                                    </div>
-                                ) : (
-                                    <div className="divide-y divide-gray-200 dark:divide-gray-900">
-                                        {invitations.map((invitation) => {
-                                            const senderInfo = getInvitationSenderInfo(invitation)
-
-                                            return (
-                                                <div key={invitation._id} className="p-2 hover:bg-gray-50 transition-colors">
-                                                    <div className="flex items-start gap-3">
-                                                        <img
-                                                            src={avatar.src}
-                                                            alt={`${senderInfo.name}'s avatar`}
-                                                            className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
-                                                        />
-
-                                                        <div className="flex-1 min-w-0">
-                                                            <div className="flex items-center gap-2 mb-1">
-                                                                <h4 className="text-sm font-medium truncate text-primary">
-                                                                    Invitation from {senderInfo.name}
-                                                                </h4>
-                                                            </div>
-
-                                                            <p className="text-xs text-gray-600 mb-2 line-clamp-2">
-                                                                {senderInfo.name} invited you to connect on SPINET.
-                                                            </p>
-
-                                                            <div className="w-full flex items-center justify-between">
-                                                                <div className="flex items-center gap-2">
-                                                                    <span className="text-xs text-gray-500">{senderInfo.name}</span>
-                                                                    <span className="text-xs text-gray-400">•</span>
-                                                                    <span className="text-xs text-gray-500">{formatTimestamp(invitation.date)}</span>
-                                                                </div>
-                                                                <div className="flex gap-1">
-                                                                    <Button size="sm" variant="destructive">Decline</Button>
-                                                                    <Button size="sm">Accept</Button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                )}
-                            </ScrollArea>
-                        </TabsContent>
-                    </Tabs>
-
-                    {/* Footer */}
-                    {(notifications.length > 0 || invitations.length > 0) && (
-                        <>
-                            <DropdownMenuSeparator />
-                            <div className="p-1 pt-0">
-                                <Button
-                                    variant="ghost"
-                                    className="w-full text-sm text-azure hover:text-blue-700 hover:bg-blue-50 transition-colors"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    View all notifications
-                                </Button>
-                            </div>
-                        </>
+        <DropdownMenu open={isOpen} onOpenChange={handleDropdownOpenChange}>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="rounded-full relative bg-white dark:bg-background">
+                    <Bell className="size-5" />
+                    {unreadCount > 0 && (
+                        <Badge
+                            variant="destructive"
+                            className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full p-0 flex items-center justify-center text-xs font-medium bg-blue-600 hover:bg-blue-700"
+                        >
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                        </Badge>
                     )}
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </>
+                </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align={locale === "ar" ? "start" : "end"} className="w-screen max-xs:mx-auto xs:w-96 p-0 shadow-lg" sideOffset={8}>
+                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "received" | "invitations")} className="w-full">
+                    <div className="px-4 pt-2">
+                        <TabsList className="grid w-full grid-cols-2 h-8">
+                            <TabsTrigger value="received" className="text-xs">
+                                Notifications ({notifications.length})
+                            </TabsTrigger>
+                            <TabsTrigger value="invitations" className="text-xs">
+                                Invitations ({invitations.length})
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
+
+                    <TabsContent value="received" className="mt-0">
+                        <ScrollArea className="max-h-96 overflow-y-auto no-scrollbar">
+                            <div className="flex items-center justify-between p-2 border-b">
+                                <div className="flex items-center gap-1">
+                                    {unreadCount > 0 && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={markAllAsRead}
+                                            className="h-7 px-2 text-xs text-azure hover:text-blue-700 hover:bg-blue-200"
+                                        >
+                                            <CheckCheck className="h-3 w-3 mr-1" />
+                                            Mark all read
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                            {notifications.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-8 text-center">
+                                    <Bell className="h-8 w-8 text-gray-300 mb-2" />
+                                    <p className="text-sm text-gray-500 font-medium">No notifications</p>
+                                    <p className="text-xs text-gray-400 mt-1">You're all caught up!</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-gray-200 dark:divide-gray-900">
+                                    {notifications.map((notification) => {
+                                        const senderInfo = getSenderInfo(notification)
+                                        const isRead = isNotificationRead(notification)
+
+                                        return (
+                                            <div
+                                                key={notification._id}
+                                                className={`p-2 transition-colors ${isRead ? "opacity-80" : ""}`}
+                                            >
+                                                <div className="flex items-start gap-3">
+                                                    <img
+                                                        src={avatar.src}
+                                                        alt={`${senderInfo.name}'s avatar`}
+                                                        className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h4
+                                                                className={`text-sm font-medium truncate ${!isRead ? "text-primary" : "text-gray-600"}`}
+                                                            >
+                                                                {notification.title}
+                                                            </h4>
+                                                            {!isRead && <div className="h-2 w-2 bg-blue-600 rounded-full flex-shrink-0" />}
+                                                        </div>
+                                                        <p className="text-xs text-gray-600 mb-2 line-clamp-2">{notification.body}</p>
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        {!isRead && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => markAsRead(notification._id)}
+                                                                className="h-8 w-8 p-0 text-gray-400 hover:text-azure hover:bg-blue-200"
+                                                            >
+                                                                <Check className="h-4 w-4" />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="w-full flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs text-gray-500">{senderInfo.name}</span>
+                                                        <span className="text-xs text-gray-400">•</span>
+                                                        <span className="text-xs text-gray-500">{formatTimestamp(notification.createdAt)}</span>
+                                                    </div>
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className={`text-xs px-2 py-0.5 ${getNotificationTypeColor(notification.type)}`}
+                                                    >
+                                                        {notification.type?.replace("-", " ") || "notification"}
+                                                    </Badge>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )}
+                        </ScrollArea>
+                    </TabsContent>
+
+                    <TabsContent value="invitations" className="mt-0">
+                        <ScrollArea className="max-h-96 overflow-y-auto no-scrollbar">
+                            {invitations.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-8 text-center">
+                                    <Bell className="h-8 w-8 text-gray-300 mb-2" />
+                                    <p className="text-sm text-gray-500 font-medium">No invitations</p>
+                                    <p className="text-xs text-gray-400 mt-1">Your invitations will appear here</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-gray-200 dark:divide-gray-900">
+                                    {invitations.map((invitation) => {
+                                        const senderInfo = getInvitationSenderInfo(invitation)
+
+                                        return (
+                                            <div key={invitation._id} className="p-2">
+                                                <div className="flex items-start gap-3">
+                                                    <img
+                                                        src={avatar.src}
+                                                        alt={`${senderInfo.name}'s avatar`}
+                                                        className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h4 className="text-sm font-medium truncate text-primary">
+                                                                Invitation from {senderInfo.name.split(" ")[0]}
+                                                            </h4>
+                                                        </div>
+                                                        <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                                                            {senderInfo.name} invited you to connect on SPINET.
+                                                        </p>
+                                                        <div className="w-full flex items-center justify-between">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-xs text-gray-500">{senderInfo.name}</span>
+                                                                <span className="text-xs text-gray-400">•</span>
+                                                                <span className="text-xs text-gray-500">{formatTimestamp(invitation.date)}</span>
+                                                            </div>
+                                                            <div className="flex gap-1">
+                                                                <Button size="sm" variant="destructive">Decline</Button>
+                                                                <Button size="sm">Accept</Button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )}
+                        </ScrollArea>
+                    </TabsContent>
+                </Tabs>
+
+                {(notifications.length > 0 || invitations.length > 0) && (
+                    <>
+                        <DropdownMenuSeparator />
+                        <div className="p-1 pt-0">
+                            <Button
+                                variant="ghost"
+                                className="w-full text-sm text-azure hover:text-blue-700 hover:bg-blue-50 transition-colors"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                View all notifications
+                            </Button>
+                        </div>
+                    </>
+                )}
+            </DropdownMenuContent>
+        </DropdownMenu>
     )
 }
