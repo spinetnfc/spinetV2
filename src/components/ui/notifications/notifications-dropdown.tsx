@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Bell, Check, CheckCheck, Settings, User, Building2 } from "lucide-react"
+import { Bell, Check, CheckCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -14,6 +14,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/context/authContext"
+import avatar from "@/assets/images/user.png"
 
 export type NotificationItem = {
     id: string
@@ -47,11 +48,19 @@ export type NotificationItem = {
     read?: boolean
 }
 
-interface NotificationDropdownProps {
-    pollingInterval?: number
+export type Invitation = {
+    _id: string
+    date: string
+    Profile: {
+        _id: string
+        firstName?: string
+        lastName?: string
+        profilePicture?: string
+        numLinks?: number
+    }
 }
 
-// Mock data array
+// Mock data arrays
 const MOCK_NOTIFICATIONS: NotificationItem[] = [
     {
         id: "1",
@@ -127,15 +136,58 @@ const MOCK_NOTIFICATIONS: NotificationItem[] = [
     },
 ]
 
-export default function NotificationDropdown({ pollingInterval = 30000 }: NotificationDropdownProps) {
+const MOCK_INVITATIONS: Invitation[] = [
+    {
+        _id: "inv1",
+        date: new Date(Date.now() - 10 * 60000).toISOString(),
+        Profile: {
+            _id: "user789",
+            firstName: "Alice",
+            lastName: "Smith",
+            profilePicture: "/placeholder.svg?height=32&width=32",
+            numLinks: 5,
+        },
+    },
+    {
+        _id: "inv2",
+        date: new Date(Date.now() - 45 * 60000).toISOString(),
+        Profile: {
+            _id: "user101",
+            firstName: "Bob",
+            lastName: "Johnson",
+            profilePicture: "/placeholder.svg?height=32&width=32",
+            numLinks: 3,
+        },
+    },
+    {
+        _id: "inv3",
+        date: new Date(Date.now() - 3 * 60 * 60000).toISOString(),
+        Profile: {
+            _id: "user202",
+            firstName: "Emma",
+            lastName: "Brown",
+            profilePicture: "/placeholder.svg?height=32&width=32",
+            numLinks: 8,
+        },
+    },
+]
+
+interface NotificationDropdownProps {
+    locale: string
+    pollingInterval?: number
+}
+
+export default function NotificationDropdown({ pollingInterval = 3000, locale }: NotificationDropdownProps) {
     const [notifications, setNotifications] = useState<NotificationItem[]>([])
-    const [activeTab, setActiveTab] = useState<"received" | "sent">("received")
+    const [invitations, setInvitations] = useState<Invitation[]>([])
+    const [activeTab, setActiveTab] = useState<"received" | "invitations">("received")
     const [unreadCount, setUnreadCount] = useState(0)
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const { user } = useAuth();
-    const profileId = user.selectedProfile;
-    // Simulate fetching notifications from API
+    const { user } = useAuth()
+    const profileId = user.selectedProfile
+
+    // Simulate fetching notifications and invitations from API
     const fetchNotifications = async () => {
         setIsLoading(true)
 
@@ -143,14 +195,8 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
         await new Promise((resolve) => setTimeout(resolve, 500))
 
         try {
-            // In a real app, this would be an API call
-            // const response = await fetch('/api/notifications')
-            // const data = await response.json()
-
-            // For now, we'll use mock data with some randomization
-            const mockData = [...MOCK_NOTIFICATIONS]
-
-            // Randomly add a new notification sometimes
+            // For notifications
+            const mockNotifications = [...MOCK_NOTIFICATIONS]
             if (Math.random() > 0.7) {
                 const newNotification: NotificationItem = {
                     id: Date.now().toString(),
@@ -163,22 +209,38 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
                     createdAt: new Date().toISOString(),
                     read: false,
                 }
-                mockData.unshift(newNotification)
+                mockNotifications.unshift(newNotification)
             }
+            setNotifications(mockNotifications)
 
-            setNotifications(mockData)
+            // For invitations
+            const mockInvitations = [...MOCK_INVITATIONS]
+            if (Math.random() > 0.9) {
+                const newInvitation: Invitation = {
+                    _id: `inv${Date.now()}`,
+                    date: new Date().toISOString(),
+                    Profile: {
+                        _id: `user${Date.now()}`,
+                        firstName: "New",
+                        lastName: "User",
+                        profilePicture: "/placeholder.svg?height=32&width=32",
+                        numLinks: 0,
+                    },
+                }
+                mockInvitations.unshift(newInvitation)
+            }
+            setInvitations(mockInvitations)
 
-            // Calculate unread count
-            const unread = mockData.filter((n) => !n.read && !n.readBy?.includes(profileId))
+            // Calculate unread count for notifications
+            const unread = mockNotifications.filter((n) => !n.read && !n.readBy?.includes(profileId))
             setUnreadCount(unread.length)
         } catch (error) {
-            console.error("Failed to fetch notifications:", error)
+            console.error("Failed to fetch data:", error)
         } finally {
             setIsLoading(false)
         }
     }
 
-    // Periodic fetching with useEffect
     useEffect(() => {
         // Initial fetch
         fetchNotifications()
@@ -226,7 +288,7 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
         }
     }
 
-    // Get sender display info
+    // Get sender display info for notifications
     const getSenderInfo = (notification: NotificationItem) => {
         if (notification.fromType === "system" || notification.fromType === "admin") {
             return {
@@ -256,6 +318,16 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
         }
     }
 
+    // Get sender display info for invitations
+    const getInvitationSenderInfo = (invitation: Invitation) => {
+        const profile = invitation.Profile
+        return {
+            name: `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || "Unknown User",
+            avatar: profile.profilePicture || null,
+            isSystem: false,
+        }
+    }
+
     // Format timestamp
     const formatTimestamp = (timestamp?: string) => {
         if (!timestamp) return "Unknown time"
@@ -275,10 +347,6 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
         return notification.read || notification.readBy?.includes(profileId) || false
     }
 
-    // Filter notifications (for demo, we'll show all as "received")
-    const receivedNotifications = notifications
-    const sentNotifications: NotificationItem[] = []
-
     return (
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
@@ -295,54 +363,43 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
                 </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-96 p-0 shadow-lg" sideOffset={8}>
-                {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b">
-                    <div className="flex items-center gap-2">
-                        <DropdownMenuLabel className="p-0 font-semibold text-gray-600">Notifications</DropdownMenuLabel>
-                        {unreadCount > 0 && (
-                            <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-xs">
-                                {unreadCount} new
-                            </Badge>
-                        )}
-                        {isLoading && <div className="h-2 w-2 bg-blue-600 rounded-full animate-pulse" />}
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                        {unreadCount > 0 && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={markAllAsRead}
-                                className="h-7 px-2 text-xs text-azure hover:text-blue-700 hover:bg-blue-50"
-                            >
-                                <CheckCheck className="h-3 w-3 mr-1" />
-                                Mark all read
-                            </Button>
-                        )}
-                    </div>
-                </div>
-
+            <DropdownMenuContent align={locale === "ar" ? "start" : "end"} className="w-screen max-xs:mx-auto xs:w-96 p-0 shadow-lg" sideOffset={8}>
                 {/* Tabs */}
                 <Tabs
                     value={activeTab}
-                    onValueChange={(value) => setActiveTab(value as "received" | "sent")}
+                    onValueChange={(value) => setActiveTab(value as "received" | "invitations")}
                     className="w-full"
                 >
                     <div className="px-4 pt-2">
                         <TabsList className="grid w-full grid-cols-2 h-8">
                             <TabsTrigger value="received" className="text-xs">
-                                Received ({receivedNotifications.length})
+                                Notifications ({notifications.length})
                             </TabsTrigger>
-                            <TabsTrigger value="sent" className="text-xs">
-                                Sent ({sentNotifications.length})
+                            <TabsTrigger value="invitations" className="text-xs">
+                                Invitations ({invitations.length})
                             </TabsTrigger>
                         </TabsList>
                     </div>
 
                     <TabsContent value="received" className="mt-0">
-                        <ScrollArea className="max-h-96  overflow-y-auto no-scrollbar">
-                            {receivedNotifications.length === 0 ? (
+                        <ScrollArea className="max-h-96 overflow-y-auto no-scrollbar">
+                            <div className="flex items-center justify-between p-2 border-b">
+
+                                <div className="flex items-center gap-1">
+                                    {unreadCount > 0 && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={markAllAsRead}
+                                            className="h-7 px-2 text-xs text-azure hover:text-blue-700 hover:bg-blue-50"
+                                        >
+                                            <CheckCheck className="h-3 w-3 mr-1" />
+                                            Mark all read
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                            {notifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-8 text-center">
                                     <Bell className="h-8 w-8 text-gray-300 mb-2" />
                                     <p className="text-sm text-gray-500 font-medium">No notifications</p>
@@ -350,17 +407,21 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
                                 </div>
                             ) : (
                                 <div className="divide-y divide-gray-200 dark:divide-gray-900">
-                                    {receivedNotifications.map((notification) => {
+                                    {notifications.map((notification) => {
                                         const senderInfo = getSenderInfo(notification)
                                         const isRead = isNotificationRead(notification)
 
                                         return (
                                             <div
                                                 key={notification.id}
-                                                className={`p-4 hover:bg-gray-50 transition-colors ${isRead ? "opacity-80" : ""}`}
+                                                className={`p-2 hover:bg-gray-50 transition-colors ${isRead ? "opacity-80" : ""}`}
                                             >
                                                 <div className="flex items-start gap-3">
-                                                    <img src="@/assets/images/user.png" />
+                                                    <img
+                                                        src={avatar.src}
+                                                        alt={`${senderInfo.name}'s avatar`}
+                                                        className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
+                                                    />
 
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-2 mb-1">
@@ -374,7 +435,7 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
 
                                                         <p className="text-sm text-gray-600 mb-2 line-clamp-2">{notification.body}</p>
 
-                                                        <div className="flex items-center justify-between">
+                                                        <div className="w-full flex items-center justify-between">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-xs text-gray-500">{senderInfo.name}</span>
                                                                 <span className="text-xs text-gray-400">•</span>
@@ -411,25 +472,72 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
                         </ScrollArea>
                     </TabsContent>
 
-                    <TabsContent value="sent" className="mt-0">
-                        <ScrollArea className="max-h-96">
-                            <div className="flex flex-col items-center justify-center py-8 text-center">
-                                <Bell className="h-8 w-8 text-gray-300 mb-2" />
-                                <p className="text-sm text-gray-500 font-medium">No sent notifications</p>
-                                <p className="text-xs text-gray-400 mt-1">Your sent messages will appear here</p>
-                            </div>
+                    <TabsContent value="invitations" className="mt-0">
+                        <ScrollArea className="max-h-96 overflow-y-auto no-scrollbar">
+                            {invitations.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-8 text-center">
+                                    <Bell className="h-8 w-8 text-gray-300 mb-2" />
+                                    <p className="text-sm text-gray-500 font-medium">No invitations</p>
+                                    <p className="text-xs text-gray-400 mt-1">Your invitations will appear here</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-gray-200 dark:divide-gray-900">
+                                    {invitations.map((invitation) => {
+                                        const senderInfo = getInvitationSenderInfo(invitation)
+
+                                        return (
+                                            <div key={invitation._id} className="p-2 hover:bg-gray-50 transition-colors">
+                                                <div className="flex items-start gap-3">
+                                                    <img
+                                                        src={avatar.src}
+                                                        alt={`${senderInfo.name}'s avatar`}
+                                                        className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
+                                                    />
+
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h4 className="text-sm font-medium truncate text-primary">
+                                                                Invitation from {senderInfo.name}
+                                                            </h4>
+                                                        </div>
+
+                                                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                                                            {senderInfo.name} invited you to connect on SPINET.
+                                                        </p>
+
+                                                        <div className="w-full flex items-center justify-between">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-xs text-gray-500">{senderInfo.name}</span>
+                                                                <span className="text-xs text-gray-400">•</span>
+                                                                <span className="text-xs text-gray-500">{formatTimestamp(invitation.date)}</span>
+                                                            </div>
+
+                                                            <Badge
+                                                                variant="secondary"
+                                                                className="text-xs px-2 py-0.5 text-azure bg-blue-50"
+                                                            >
+                                                                invitation
+                                                            </Badge>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )}
                         </ScrollArea>
                     </TabsContent>
                 </Tabs>
 
                 {/* Footer */}
-                {receivedNotifications.length > 0 && (
+                {(notifications.length > 0 || invitations.length > 0) && (
                     <>
                         <DropdownMenuSeparator />
-                        <div className="p-3">
+                        <div className="p-1 pt-0">
                             <Button
                                 variant="ghost"
-                                className="w-full text-sm text-azure hover:text-blue-700 hover:bg-blue-50"
+                                className="w-full text-sm text-azure hover:text-blue-700 hover:bg-blue-50 transition-colors"
                                 onClick={() => setIsOpen(false)}
                             >
                                 View all notifications
@@ -438,6 +546,6 @@ export default function NotificationDropdown({ pollingInterval = 30000 }: Notifi
                     </>
                 )}
             </DropdownMenuContent>
-        </DropdownMenu >
+        </DropdownMenu>
     )
 }

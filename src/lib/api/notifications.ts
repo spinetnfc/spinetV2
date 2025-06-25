@@ -15,3 +15,17 @@ export const getNotifications = async (profileId: string, filters: NotificationF
         throw error;
     }
 }
+
+export const getInvitations = async (profileId: string, filters: { limit: string, skip: string }) => {
+    const headers = await withServerCookies();
+    try {
+        if (!profileId || typeof profileId !== 'string') {
+            throw new Error(`Invalid profileId: ${profileId}`);
+        }
+        const response = await ServerApi.post(`/profile/${profileId}/invitations`, { filters }, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching invitations:', error);
+        throw error;
+    }
+}

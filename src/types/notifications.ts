@@ -48,3 +48,15 @@ export type NotificationsResponse = {
     sent?: NotificationItem[];
     received?: NotificationItem[];
 };
+
+export type Invitation = {
+    _id: string;
+    date: string;
+    Profile: {
+        _id: string;
+        firstName?: string;
+        lastName?: string;
+        profilePicture?: string;
+        numLinks?: number;
+    };
+}
