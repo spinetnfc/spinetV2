@@ -8,7 +8,7 @@ export const getServices = async (profileId: string | null): Promise<Service[]> 
     }
     try {
         const response = await ServerApi.get(`/profile/${profileId}/services`);
-        console.log("Services response received:", response.status);
+        // console.log("Services response received:", response.status);
         return response.data;
     } catch (error) {
         console.error("Error fetching services:", error);

@@ -12,6 +12,7 @@ export type NotificationFilters = {
 
 
 export type NotificationItem = {
+    _id: string;
     Company?: string;
     Invitation?: string;
     type?: "message" | "invitation" | "system-automated" | "system-manual";

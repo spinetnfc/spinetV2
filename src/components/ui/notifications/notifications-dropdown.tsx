@@ -15,169 +15,15 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/context/authContext"
 import avatar from "@/assets/images/user.png"
-
-export type NotificationItem = {
-    id: string
-    Company?: string
-    Invitation?: string
-    type?: "message" | "invitation" | "system-automated" | "system-manual"
-    title: string
-    body: string
-    image?: string
-    from: string
-    to: string[]
-    fromType: "admin" | "profile" | "company" | "system"
-    toType?: "admin" | "profile"
-    readBy?: string[]
-    deletedBySender?: boolean
-    deletedByReceivers?: string[]
-    createdAt?: string
-    updatedAt?: string
-    Sender?: {
-        _id: string
-        fullName?: string
-        firstName?: string
-        lastName?: string
-        name?: string
-        subdomain?: string
-        size?: string
-        description?: string
-        website?: string
-        logo?: string
-    }
-    read?: boolean
-}
-
-export type Invitation = {
-    _id: string
-    date: string
-    Profile: {
-        _id: string
-        firstName?: string
-        lastName?: string
-        profilePicture?: string
-        numLinks?: number
-    }
-}
-
-// Mock data arrays
-const MOCK_NOTIFICATIONS: NotificationItem[] = [
-    {
-        id: "1",
-        title: "New Contact Request",
-        body: "John Doe wants to connect with you on SPINET",
-        type: "invitation",
-        from: "user123",
-        to: ["current-user"],
-        fromType: "profile",
-        createdAt: new Date(Date.now() - 5 * 60000).toISOString(),
-        read: false,
-        Sender: {
-            _id: "user123",
-            fullName: "John Doe",
-            firstName: "John",
-            lastName: "Doe",
-            logo: "/placeholder.svg?height=32&width=32",
-        },
-    },
-    {
-        id: "2",
-        title: "System Update Available",
-        body: "SPINET has been updated to version 2.1.0 with new features and improvements",
-        type: "system-automated",
-        from: "system",
-        to: ["current-user"],
-        fromType: "system",
-        createdAt: new Date(Date.now() - 30 * 60000).toISOString(),
-        read: false,
-    },
-    {
-        id: "3",
-        title: "Profile Incomplete",
-        body: "Complete your profile to unlock all SPINET features and improve your visibility",
-        type: "system-manual",
-        from: "admin",
-        to: ["current-user"],
-        fromType: "admin",
-        createdAt: new Date(Date.now() - 2 * 60 * 60000).toISOString(),
-        read: true,
-        readBy: ["current-user"],
-    },
-    {
-        id: "4",
-        title: "New Message from Sarah",
-        body: "Hi! I saw your profile and would love to discuss potential collaboration opportunities.",
-        type: "message",
-        from: "user456",
-        to: ["current-user"],
-        fromType: "profile",
-        createdAt: new Date(Date.now() - 4 * 60 * 60000).toISOString(),
-        read: true,
-        readBy: ["current-user"],
-        Sender: {
-            _id: "user456",
-            fullName: "Sarah Wilson",
-            firstName: "Sarah",
-            lastName: "Wilson",
-            logo: "/placeholder.svg?height=32&width=32",
-        },
-    },
-    {
-        id: "5",
-        title: "Welcome to SPINET",
-        body: "Thank you for joining SPINET! Get started by completing your profile and adding your first contact.",
-        type: "system-manual",
-        from: "admin",
-        to: ["current-user"],
-        fromType: "admin",
-        createdAt: new Date(Date.now() - 24 * 60 * 60000).toISOString(),
-        read: true,
-        readBy: ["current-user"],
-    },
-]
-
-const MOCK_INVITATIONS: Invitation[] = [
-    {
-        _id: "inv1",
-        date: new Date(Date.now() - 10 * 60000).toISOString(),
-        Profile: {
-            _id: "user789",
-            firstName: "Alice",
-            lastName: "Smith",
-            profilePicture: "/placeholder.svg?height=32&width=32",
-            numLinks: 5,
-        },
-    },
-    {
-        _id: "inv2",
-        date: new Date(Date.now() - 45 * 60000).toISOString(),
-        Profile: {
-            _id: "user101",
-            firstName: "Bob",
-            lastName: "Johnson",
-            profilePicture: "/placeholder.svg?height=32&width=32",
-            numLinks: 3,
-        },
-    },
-    {
-        _id: "inv3",
-        date: new Date(Date.now() - 3 * 60 * 60000).toISOString(),
-        Profile: {
-            _id: "user202",
-            firstName: "Emma",
-            lastName: "Brown",
-            profilePicture: "/placeholder.svg?height=32&width=32",
-            numLinks: 8,
-        },
-    },
-]
+import { Invitation, NotificationItem } from "@/types/notifications"
+import { api } from "@/lib/axios"
 
 interface NotificationDropdownProps {
     locale: string
     pollingInterval?: number
 }
 
-export default function NotificationDropdown({ pollingInterval = 3000, locale }: NotificationDropdownProps) {
+export default function NotificationDropdown({ pollingInterval = 30000, locale }: NotificationDropdownProps) {
     const [notifications, setNotifications] = useState<NotificationItem[]>([])
     const [invitations, setInvitations] = useState<Invitation[]>([])
     const [activeTab, setActiveTab] = useState<"received" | "invitations">("received")
@@ -187,56 +33,24 @@ export default function NotificationDropdown({ pollingInterval = 3000, locale }:
     const { user } = useAuth()
     const profileId = user.selectedProfile
 
-    // Simulate fetching notifications and invitations from API
     const fetchNotifications = async () => {
         setIsLoading(true)
-
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
         try {
-            // For notifications
-            const mockNotifications = [...MOCK_NOTIFICATIONS]
-            if (Math.random() > 0.7) {
-                const newNotification: NotificationItem = {
-                    id: Date.now().toString(),
-                    title: "New Activity",
-                    body: `You have new activity on SPINET - ${new Date().toLocaleTimeString()}`,
-                    type: "system-automated",
-                    from: "system",
-                    to: [profileId],
-                    fromType: "system",
-                    createdAt: new Date().toISOString(),
-                    read: false,
-                }
-                mockNotifications.unshift(newNotification)
-            }
-            setNotifications(mockNotifications)
-
-            // For invitations
-            const mockInvitations = [...MOCK_INVITATIONS]
-            if (Math.random() > 0.9) {
-                const newInvitation: Invitation = {
-                    _id: `inv${Date.now()}`,
-                    date: new Date().toISOString(),
-                    Profile: {
-                        _id: `user${Date.now()}`,
-                        firstName: "New",
-                        lastName: "User",
-                        profilePicture: "/placeholder.svg?height=32&width=32",
-                        numLinks: 0,
-                    },
-                }
-                mockInvitations.unshift(newInvitation)
-            }
-            setInvitations(mockInvitations)
-
-            // Calculate unread count for notifications
-            const unread = mockNotifications.filter((n) => !n.read && !n.readBy?.includes(profileId))
-            setUnreadCount(unread.length)
+            //notifications
+            const notifictaionsResponse = await api.post(`/profile/${profileId}/notifications/filter`, { limit: 10, skip: 0 })
+            setNotifications(notifictaionsResponse.data.received || [])
+            // Count unread notifications
+            const unreadNotifications = notifictaionsResponse.data.received?.filter(
+                (notification: NotificationItem) => !notification.read && !notification.readBy?.includes(profileId)
+            ) || [];
+            setUnreadCount(unreadNotifications.length);
+            //invitations
+            const invitationsResponse = await api.post(`/profile/${profileId}/invitations`, { limit: 10, skip: 0 })
+            setInvitations(invitationsResponse.data.received || [])
         } catch (error) {
-            console.error("Failed to fetch data:", error)
-        } finally {
+            console.error("Error fetching notifications:", error)
+        }
+        finally {
             setIsLoading(false)
         }
     }
@@ -255,7 +69,7 @@ export default function NotificationDropdown({ pollingInterval = 3000, locale }:
     // Mark notification as read
     const markAsRead = (notificationId: string) => {
         setNotifications((prev) =>
-            prev.map((n) => (n.id === notificationId ? { ...n, read: true, readBy: [...(n.readBy || []), profileId] } : n)),
+            prev.map((n) => (n._id === notificationId ? { ...n, read: true, readBy: [...(n.readBy || []), profileId] } : n)),
         )
         setUnreadCount((prev) => Math.max(0, prev - 1))
     }
@@ -392,7 +206,7 @@ export default function NotificationDropdown({ pollingInterval = 3000, locale }:
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={markAllAsRead}
-                                                className="h-7 px-2 text-xs text-azure hover:text-blue-700 hover:bg-blue-50"
+                                                className="h-7 px-2 text-xs text-azure hover:text-blue-700 hover:bg-blue-200"
                                             >
                                                 <CheckCheck className="h-3 w-3 mr-1" />
                                                 Mark all read
@@ -414,8 +228,8 @@ export default function NotificationDropdown({ pollingInterval = 3000, locale }:
 
                                             return (
                                                 <div
-                                                    key={notification.id}
-                                                    className={`p-2 hover:bg-gray-50 transition-colors ${isRead ? "opacity-80" : ""}`}
+                                                    key={notification._id}
+                                                    className={`p-2 transition-colors ${isRead ? "opacity-80" : ""}`}
                                                 >
                                                     <div className="flex items-start gap-3">
                                                         <img
@@ -444,7 +258,7 @@ export default function NotificationDropdown({ pollingInterval = 3000, locale }:
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="sm"
-                                                                    onClick={() => markAsRead(notification.id)}
+                                                                    onClick={() => markAsRead(notification._id)}
                                                                     className="h-8 w-8 p-0 text-gray-400 hover:text-azure hover:bg-blue-200"
                                                                 >
                                                                     <Check className="h-4 w-4" />
