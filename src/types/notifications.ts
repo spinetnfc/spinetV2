@@ -1,3 +1,4 @@
+import { profile } from 'console';
 export type NotificationFilters = {
     direction?: "sent" | "received";
     from?: string[];
@@ -52,12 +53,42 @@ export type NotificationsResponse = {
 
 export type Invitation = {
     _id: string;
-    date: string;
+    type: "contact";
+    inviteeProfile: string;
+    status: "pending" | "accepted" | "refused"; // add more if needed
+    leadCaptions: {
+        tags: string[];
+    };
+    date: string; // ISO date string
+
     Profile: {
         _id: string;
-        firstName?: string;
-        lastName?: string;
-        profilePicture?: string;
-        numLinks?: number;
+        type: string; // e.g., "personal"
+        status: string; // e.g., "none"
+        fullName: string;
+        firstName: string;
+        lastName: string;
+        profilePicture: string;
+        birthDate: string; // ISO date string
+        scope: string; // e.g., "link"
+        gender: string; // e.g., "male"
+        companyName: string;
+        activitySector: string;
+        position: string;
+        theme: {
+            color: string;
+        };
+        phoneNumber: string;
+        website: string;
+        displayLogo: boolean;
+        active: boolean;
+        deactivetedByCompany: boolean;
+        pending: boolean;
+        Account: string;
+        Contacts: any[]; // can be refined
+        links: any[];    // can be refined
+        createdAt: string;
+        updatedAt: string;
+        __v: number;
     };
-}
+};

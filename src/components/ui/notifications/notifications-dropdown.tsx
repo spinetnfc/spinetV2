@@ -46,7 +46,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
             setUnreadCount(unreadNotifications.length);
             //invitations
             const invitationsResponse = await api.post(`/profile/${profileId}/invitations`, { limit: 10, skip: 0 })
-            setInvitations(invitationsResponse.data.received || [])
+            setInvitations(invitationsResponse.data || [])
         } catch (error) {
             console.error("Error fetching notifications:", error)
         }
@@ -136,7 +136,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     const getInvitationSenderInfo = (invitation: Invitation) => {
         const profile = invitation.Profile
         return {
-            name: `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || "Unknown User",
+            name: profile.fullName ? profile.fullName : `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || "Unknown User",
             avatar: profile.profilePicture || null,
             isSystem: false,
         }
@@ -327,7 +327,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
                                                                     <span className="text-xs text-gray-400">•</span>
                                                                     <span className="text-xs text-gray-500">{formatTimestamp(invitation.date)}</span>
                                                                 </div>
-                                                                <div className="space-x-1">
+                                                                <div className="flex gap-1">
                                                                     <Button size="sm" variant="destructive">Decline</Button>
                                                                     <Button size="sm">Accept</Button>
                                                                 </div>
