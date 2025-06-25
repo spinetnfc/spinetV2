@@ -158,7 +158,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                     <button
                         key={index}
                         onClick={() => api?.scrollTo(index)}
-                        className={cn("h-2.5 w-2.5 rounded-full bg-primary cursor-pointer", {
+                        className={cn("h-1.5 w-1.5 sm:h-2.5 sm:w-2.5 rounded-full bg-primary cursor-pointer", {
                             " scale-150": current === index + 1,
                         })}
                     />
@@ -166,7 +166,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                 <button
                     key={profiles.length}
                     onClick={() => api?.scrollTo(profiles.length)}
-                    className={cn("h-2.5 w-2.5 rounded-full bg-primary cursor-pointer", {
+                    className={cn("h-1.5 w-1.5 sm:h-2.5 sm:w-2.5 rounded-full bg-primary cursor-pointer", {
                         " scale-150": current === profiles.length + 1,
                     })}
                 />
