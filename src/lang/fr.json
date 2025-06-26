@@ -348,6 +348,7 @@
   "more-by": "Plus par",
   "related-offers": "Offres connexes",
   "add-contact": "Ajouter contact",
+  "login-to-add-contact": "Vous devez d'abord vous connecter pour ajouter un contact",
   "send-message": "Envoyer message",
   "login successful": "Connexion réussie",
   "login failed": "Échec de la deconnexion",

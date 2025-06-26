@@ -33,7 +33,8 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 
 
 const AddContactButton = () => {
-    const profileId = useAuth().user.selectedProfile;
+    const { isAuthenticated, user } = useAuth();
+    const profileId = user.selectedProfile;
     const pathname = usePathname();
     const newContactId = pathname.split("/").pop();
     const intl = useIntl();
@@ -112,7 +113,13 @@ const AddContactButton = () => {
         <>
             <button className="border-2 border-azure hover:opacity-80 text-azure text-lg font-medium w-fit xs:w-full mx-auto
              flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer"
-                onClick={() => setShowAddContact(true)}>
+                onClick={() => {
+                    if (!isAuthenticated) {
+                        toast.error(intl.formatMessage({ id: "login-to-add-contact", defaultMessage: "Please login to add a contact" }));
+                        return;
+                    }
+                    setShowAddContact(true);
+                }}>
                 <UserPlus className="h-8 w-8 xs:h-5 xs:w-5" />
                 <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">
                     <FormattedMessage id="add-contact" defaultMessage="Add Contact" />
