@@ -25,8 +25,9 @@ import { getUserFromCookie } from "@/utils/cookie"
 import { startTransition, useEffect, useState } from "react"
 import { CirclePlus, Loader } from "lucide-react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { getLocale } from "@/utils/getClientLocale"
+import { useAuth } from "@/context/authContext"
+
 
 export default function SwitchProfileDrawer() {
     const user = getUserFromCookie()
@@ -34,19 +35,21 @@ export default function SwitchProfileDrawer() {
     const [profiles, setProfiles] = useState<any[]>([])
     const [selectedProfile, setSelectedProfile] = useState<any>(null)
     const [showAlert, setShowAlert] = useState(false)
-
+    const { isAuthenticated } = useAuth();
     useEffect(() => {
-        startTransition(async () => {
-            const result = await getAllProfilesAction(user._id);
-            // Move the selected profile to the front, keep others in order
-            const selectedIdx = result.findIndex(p => p._id === user.selectedProfile);
-            if (selectedIdx > -1) {
-                const [selected] = result.splice(selectedIdx, 1);
-                setProfiles([selected, ...result]);
-            } else {
-                setProfiles(result);
-            }
-        })
+        if (isAuthenticated) {
+            startTransition(async () => {
+                const result = await getAllProfilesAction(user._id);
+                // Move the selected profile to the front, keep others in order
+                const selectedIdx = result.findIndex(p => p._id === user.selectedProfile);
+                if (selectedIdx > -1) {
+                    const [selected] = result.splice(selectedIdx, 1);
+                    setProfiles([selected, ...result]);
+                } else {
+                    setProfiles(result);
+                }
+            })
+        }
     }, [user._id])
 
     const handleProfileClick = (profile: any) => {
