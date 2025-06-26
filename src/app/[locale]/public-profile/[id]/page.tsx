@@ -26,6 +26,7 @@ import useTranslate from "@/hooks/use-translate"
 import type { ProfileData } from "@/types/profile"
 import { getProfile } from "@/lib/api/profile"
 import { getUserCookieOnServer } from "@/utils/server-cookie"
+import AddContactButton from "@/components/pages/contacts/add-contact-button"
 
 export default async function ProfilePage({
     params,
@@ -281,10 +282,7 @@ export default async function ProfilePage({
 
                         {/* Action Buttons */}
                         <div className="grid grid-cols-2 gap-4 mt-6">
-                            <button className="border-2 border-azure hover:opacity-80 text-azure font-medium flex items-center justify-center gap-2 py-2 rounded-md cursor-pointer">
-                                <UserPlus className="h-5 w-5" />
-                                <span>{t("add-contact")}</span>
-                            </button>
+                            <AddContactButton />
                             <button className="bg-azure hover:bg-azure/70 text-white font-medium flex items-center justify-center gap-2 py-2 rounded-md cursor-pointer">
                                 <Send className="h-5 w-5" />
                                 <span>{t("send-message")}</span>

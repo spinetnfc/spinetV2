@@ -102,5 +102,19 @@ export const deleteContacts = async (profileId: string, contacts: string[]): Pro
     }
 }
 
+export const sendInvitation = async (profileId: string, invite: any): Promise<{ message: string }> => {
+    const headers = await withServerCookies();
+    try {
+        if (!profileId || typeof profileId !== 'string') {
+            throw new Error(`Invalid profileId: ${profileId}`);
+        }
+        console.log("invite:::::::::::::::::::", JSON.stringify(invite, null, 2));
+        const response = await ServerApi.post(`/profile/${profileId}/invitations/invite`, invite, { headers });
+        console.log("Invitation sent response received:", response.status);
 
-
+        return response.data;
+    } catch (error) {
+        console.error('Error sending invitation:', error);
+        throw error;
+    }
+}

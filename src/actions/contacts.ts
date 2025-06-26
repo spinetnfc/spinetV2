@@ -1,6 +1,6 @@
 "use server";
-import { addContact, deleteContact, deleteContacts, updateContact } from "@/lib/api/contacts";
-import { ContactInput } from "@/types/contact";
+import { addContact, deleteContact, deleteContacts, sendInvitation, updateContact } from "@/lib/api/contacts";
+import { ContactInput, InviteContact } from "@/types/contact";
 import { format, parse } from "date-fns";
 
 
@@ -142,3 +142,13 @@ export const createContact = async (profileId: string, formData: FormData, type:
         };
     }
 }
+
+export const sendInvitationAction = async (profileId: string, invite: InviteContact): Promise<{ message: string }> => {
+    try {
+        const result = await sendInvitation(profileId, invite);
+        return { message: result.message };
+    } catch (error) {
+        console.error("Error sending invitation:", error);
+        throw error;
+    }
+};

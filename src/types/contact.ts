@@ -69,3 +69,15 @@ export type ContactInput = {
         notes?: string;
     };
 };
+
+export type InviteContact = {
+    profile: string;
+    leadCaptions: {
+        metIn?: string;
+        date?: string;
+        tags?: string[];
+        nextAction?: string;
+        dateOfNextAction?: string;
+        notes?: string;
+    };
+}
