@@ -34,7 +34,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
             header: () => <FormattedMessage id="contact" defaultMessage="Contact" />,
             cell: ({ row }) => {
                 const contact = row.original
-                const name = contact.name || "Unnamed Contact"
+                const name = contact.Profile.fullName || "Unnamed Contact"
                 const Profile = contact.Profile || {}
                 const email = contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link || ""
 
@@ -64,7 +64,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
             filterFn: (row, id, value) => {
                 const contact = row.original
                 const searchValue = value.toLowerCase()
-                const name = contact.name?.toLowerCase() || ""
+                const name = contact.Profile.fullName?.toLowerCase() || ""
                 const email =
                     contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link?.toLowerCase() || ""
                 const Profile = contact.Profile || {}

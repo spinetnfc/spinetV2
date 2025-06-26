@@ -108,7 +108,7 @@ function ActionCell({
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteConfirm}
-                    itemName={contact.name}
+                    itemName={contact.Profile.fullName}
                     isDeleting={isDeleting}
                     message="delete-contact-message"
                 />
@@ -190,14 +190,14 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
         const contactsToSort = [...filteredByTypeContacts]
         switch (sort) {
             case "name-desc":
-                return contactsToSort.sort((a, b) => (b.name || "").localeCompare(a.name || ""))
+                return contactsToSort.sort((a, b) => (b.Profile.fullName || "").localeCompare(a.Profile.fullName || ""))
             case "date-asc":
                 return contactsToSort
             case "date-desc":
                 return contactsToSort.reverse()
             case "name-asc":
             default:
-                return contactsToSort.sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+                return contactsToSort.sort((a, b) => (a.Profile.fullName || "").localeCompare(b.Profile.fullName || ""))
         }
     }, [filteredByTypeContacts, sort])
 
