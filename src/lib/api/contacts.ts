@@ -1,5 +1,5 @@
 import { ServerApi } from '@/lib/axios';
-import type { Contact, ContactInput } from '@/types/contact';
+import type { Contact, ContactInput, InviteContact } from '@/types/contact';
 import { withServerCookies } from '@/utils/withServerCookies';
 
 export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
@@ -102,7 +102,7 @@ export const deleteContacts = async (profileId: string, contacts: string[]): Pro
     }
 }
 
-export const sendInvitation = async (profileId: string, invite: any): Promise<{ message: string }> => {
+export const sendInvitation = async (profileId: string, invite: InviteContact): Promise<{ message: string }> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {

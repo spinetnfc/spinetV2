@@ -295,7 +295,10 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
                                                             </h4>
                                                             {!isRead && <div className="h-2 w-2 bg-blue-600 rounded-full flex-shrink-0" />}
                                                         </div>
-                                                        <p className="text-xs text-gray-600 mb-2 line-clamp-2">{notification.body}</p>
+                                                        <p onClick={(e) => {
+                                                            e.currentTarget.classList.toggle("line-clamp-2");
+                                                        }}
+                                                            className="text-xs text-gray-600 mb-2 line-clamp-2 cursor-pointer transition-all">{notification.body}</p>
                                                     </div>
                                                     <div className="flex flex-col gap-1">
                                                         {!isRead && (
@@ -326,6 +329,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
                                             </div>
                                         )
                                     })}
+
                                 </div>
                             )}
                         </ScrollArea>
