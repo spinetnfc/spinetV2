@@ -11,6 +11,7 @@ import { getUserFromCookie } from '@/utils/cookie';
 import { useAuth } from '@/context/authContext';
 import { createContact } from '@/actions/contacts';
 import { getProfileAction } from '@/actions/profile';
+import { useRouter } from 'next/navigation';
 
 interface ScanContactProps {
     locale: string;
@@ -27,6 +28,7 @@ export default function ScanContact({ locale }: ScanContactProps) {
     const videoRef = React.useRef<HTMLVideoElement>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [qrScanner, setQrScanner] = useState<QrScanner | null>(null);
+    const router = useRouter();
 
     // Initialize QR scanner
     useEffect(() => {
@@ -69,63 +71,64 @@ export default function ScanContact({ locale }: ScanContactProps) {
                         throw new Error(`Invalid URL format. Expected /public-profile/<profileLink> ${url}`);
                     }
 
-                    const profileLink = pathSegments[1];
-                    if (!profileLink) {
-                        throw new Error('Profile link is missing');
-                    }
+                    router.push(`${url}`)
+                    // const profileLink = pathSegments[1];
+                    // if (!profileLink) {
+                    //     throw new Error('Profile link is missing');
+                    // }
 
-                    // Get profile data
-                    const profileData = await getProfileAction(profileLink);
-                    console.log('profileData:::::::::::', profileData);
-                    if (!profileData) {
-                        throw new Error('Failed to fetch profile data');
-                    }
+                    // // Get profile data
+                    // const profileData = await getProfileAction(profileLink);
+                    // console.log('profileData:::::::::::', profileData);
+                    // if (!profileData) {
+                    //     throw new Error('Failed to fetch profile data');
+                    // }
 
-                    const formData = new FormData();
-                    formData.append("fullName", profileData.fullName);
+                    // const formData = new FormData();
+                    // formData.append("fullName", profileData.fullName);
 
-                    // Add links
-                    const formLinks = [];
-                    const emailLink = profileData.links.find(link => link.title.toLowerCase() === 'email');
-                    if (emailLink) {
-                        formLinks.push({ title: "Email", link: emailLink.link });
-                    }
-                    const phoneNumber = profileData.links.find(link => link.title.toLowerCase() === 'phone');
-                    if (phoneNumber) {
-                        formLinks.push({ title: "Phone", link: phoneNumber.link });
-                    }
-                    // Add all other links from profile
-                    profileData.links.forEach(link => {
-                        if (link.title.toLowerCase() !== 'email' && link.title.toLowerCase() !== 'phone') {
-                            formLinks.push({ title: link.title, link: link.link });
-                        }
-                    });
+                    // // Add links
+                    // const formLinks = [];
+                    // const emailLink = profileData.links.find(link => link.title.toLowerCase() === 'email');
+                    // if (emailLink) {
+                    //     formLinks.push({ title: "Email", link: emailLink.link });
+                    // }
+                    // const phoneNumber = profileData.links.find(link => link.title.toLowerCase() === 'phone');
+                    // if (phoneNumber) {
+                    //     formLinks.push({ title: "Phone", link: phoneNumber.link });
+                    // }
+                    // // Add all other links from profile
+                    // profileData.links.forEach(link => {
+                    //     if (link.title.toLowerCase() !== 'email' && link.title.toLowerCase() !== 'phone') {
+                    //         formLinks.push({ title: link.title, link: link.link });
+                    //     }
+                    // });
 
-                    // Add tags and links as JSON strings
-                    formData.append("tags", JSON.stringify([]));
-                    formData.append("links", JSON.stringify(formLinks));
+                    // // Add tags and links as JSON strings
+                    // formData.append("tags", JSON.stringify([]));
+                    // formData.append("links", JSON.stringify(formLinks));
 
-                    // Log form data for debugging
-                    console.log("Form data submitted:", {
-                        ...Object.fromEntries(formData.entries()),
-                        tags: [],
-                        links: formLinks,
-                    });
+                    // // Log form data for debugging
+                    // console.log("Form data submitted:", {
+                    //     ...Object.fromEntries(formData.entries()),
+                    //     tags: [],
+                    //     links: formLinks,
+                    // });
 
-                    const result = await createContact(profileId, formData, "scan");
-                    if (result.success) {
-                        toast.success(intl.formatMessage(
-                            { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
-                            { name: profileData.fullName }
-                        ));
-                    } else {
-                        toast.error(intl.formatMessage(
-                            { id: 'contact-add-failed', defaultMessage: 'Failed to add contact: {message}' },
-                            { message: result.message }
-                        ));
-                    }
+                    // const result = await createContact(profileId, formData, "scan");
+                    // if (result.success) {
+                    //     toast.success(intl.formatMessage(
+                    //         { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
+                    //         { name: profileData.fullName }
+                    //     ));
+                    // } else {
+                    //     toast.error(intl.formatMessage(
+                    //         { id: 'contact-add-failed', defaultMessage: 'Failed to add contact: {message}' },
+                    //         { message: result.message }
+                    //     ));
+                    // }
                 } catch (error) {
-                    console.error('Contact creation error:', error);
+                    // console.error('Contact creation error:', error);
                     toast.error(intl.formatMessage({
                         id: 'invalid-url',
                         defaultMessage: 'Invalid profile URL: {message}',
