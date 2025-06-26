@@ -17,7 +17,8 @@ import { useAuth } from "@/context/authContext"
 import avatar from "@/assets/images/user.png"
 import { Invitation, NotificationItem } from "@/types/notifications"
 import { api } from "@/lib/axios"
-import { markNotificationsAsRead } from "@/lib/api/notifications"
+import { acceptInvitation, markNotificationsAsRead } from "@/lib/api/notifications"
+import { set } from "date-fns"
 
 interface NotificationDropdownProps {
     locale: string
@@ -71,17 +72,16 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     // Handle dropdown open/close
     const handleDropdownOpenChange = (open: boolean) => {
         setIsOpen(open)
+        fetchInvitations()
         if (open && invitations.length === 0) {
             fetchInvitations() // Fetch invitations when dropdown is opened and no invitations are loaded
         }
     }
 
     useEffect(() => {
-        // Initial fetch for notifications only
         fetchNotifications()
-        // Set up polling for notifications
+        //polling for notifications
         const interval = setInterval(fetchNotifications, pollingInterval)
-        // Cleanup
         return () => clearInterval(interval)
     }, [profileId, pollingInterval])
 
@@ -176,6 +176,27 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
             name: profile.fullName ? profile.fullName : `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || "Unknown User",
             avatar: profile.profilePicture || null,
             isSystem: false,
+        }
+    }
+
+    const handleAcceptInvitation = async (profileId: string, invitationId: string) => {
+        try {
+            const response = await acceptInvitation(profileId, invitationId);
+            if (response.status === 200) {
+                fetchInvitations()
+            }
+        } catch (error) {
+            console.error("Error accepting invitation:", error);
+        }
+    }
+    const handleRefuseInvitation = async (profileId: string, invitationId: string) => {
+        try {
+            const response = await api.post(`/profile/${profileId}/invitation/${invitationId}/refuse`);
+            if (response.status === 200) {
+                fetchInvitations()
+            }
+        } catch (error) {
+            console.error("Error refusing invitation:", error);
         }
     }
 
@@ -347,8 +368,8 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
                                                                 <span className="text-xs text-gray-500">{formatTimestamp(invitation.date)}</span>
                                                             </div>
                                                             <div className="flex gap-1">
-                                                                <Button size="sm" variant="destructive">Decline</Button>
-                                                                <Button size="sm">Accept</Button>
+                                                                <Button size="sm" variant="destructive" onClick={() => handleRefuseInvitation(profileId, invitation._id)}>Decline</Button>
+                                                                <Button size="sm" onClick={() => handleAcceptInvitation(profileId, invitation._id)}>Accept</Button>
                                                             </div>
                                                         </div>
                                                     </div>
