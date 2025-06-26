@@ -438,6 +438,7 @@
   "Profile ID is missing": "Profile ID is missing",
   "Full name is required": "Full name is required",
   "Incomplete link:": "Incomplete link:",
+  "invitation-sent": "Invitation sent",
   "Contact added successfully": "Contact added successfully",
   "Failed to add contact. Please try again.": "Failed to add contact. Please try again.",
   "full-name-placeholder": "John Doe",

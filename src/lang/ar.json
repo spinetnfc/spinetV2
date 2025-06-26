@@ -436,6 +436,7 @@
   "Profile ID is missing": "معرف الملف الشخصي مفقود",
   "Full name is required": "الاسم الكامل مطلوب",
   "Incomplete link:": "رابط غير مكتمل:",
+  "invitation-sent": "تم إرسال الدعوة",
   "Contact added successfully": "تمت إضافة جهة الاتصال بنجاح",
   "Failed to add contact. Please try again.": "فشل في إضافة جهة الاتصال. يرجى المحاولة مرة أخرى.",
   "full-name-placeholder": "محمد أحمد",

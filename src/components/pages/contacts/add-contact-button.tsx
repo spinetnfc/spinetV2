@@ -77,32 +77,11 @@ const AddContactButton = () => {
             // Log payload for debugging
             console.log("Add contact payload:", JSON.stringify(addedContact, null, 2));
 
-            const result = await sendInvitationAction(profileId, addedContact);
+            const response = await sendInvitationAction(profileId, addedContact);
+            toast.success(intl.formatMessage({ id: "Invitation Sent", defaultMessage: "Invitation sent" }));
 
-            // if (result.success) {
-            //     toast.success(intl.formatMessage({ id: "Contact added successfully" }));
-            //     form.reset();
-            //     onSuccess();
-            // } else {
-            //     toast.error(result.message || intl.formatMessage({ id: "Failed to add contact" }));
-            // }
         } catch (error: any) {
-            console.error("Error adding contact:", {
-                message: error.message,
-                response: error.response
-                    ? {
-                        status: error.response.status,
-                        statusText: error.response.statusText,
-                        data: error.response.data,
-                    }
-                    : "No response data available",
-                stack: error.stack,
-            });
-            toast.error(
-                error.message ||
-                error.response?.data?.message ||
-                intl.formatMessage({ id: "Failed to add contact. Please try again." })
-            );
+            toast.error(intl.formatMessage({ id: "Failed to add contact. Please try again." }));
         } finally {
             setIsSubmitting(false);
             setShowAddContact(false);

@@ -437,6 +437,7 @@
   "Profile ID is missing": "L'identifiant du profil est manquant",
   "Full name is required": "Le nom complet est requis",
   "Incomplete link:": "Lien incomplet :",
+  "invitation-sent": "Invitation envoyée",
   "Contact added successfully": "Contact ajouté avec succès",
   "Failed to add contact. Please try again.": "Échec de l'ajout du contact. Veuillez réessayer.",
   "full-name-placeholder": "Jean Dupont",
