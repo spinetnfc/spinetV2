@@ -17,6 +17,7 @@ import { useAuth } from "@/context/authContext"
 import avatar from "@/assets/images/user.png"
 import { Invitation, NotificationItem } from "@/types/notifications"
 import { api } from "@/lib/axios"
+import { markNotificationsAsRead } from "@/lib/api/notifications"
 
 interface NotificationDropdownProps {
     locale: string
@@ -66,6 +67,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
         }
     }
 
+
     // Handle dropdown open/close
     const handleDropdownOpenChange = (open: boolean) => {
         setIsOpen(open)
@@ -84,23 +86,41 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     }, [profileId, pollingInterval])
 
     // Mark notification as read
-    const markAsRead = (notificationId: string) => {
-        setNotifications((prev) =>
-            prev.map((n) => (n._id === notificationId ? { ...n, read: true, readBy: [...(n.readBy || []), profileId] } : n))
-        )
-        setUnreadCount((prev) => Math.max(0, prev - 1))
+    const markAsRead = async (notificationId: string) => {
+        try {
+            const response = await markNotificationsAsRead(profileId, [notificationId])
+            if (response.status === 200) {
+                setNotifications((prev) =>
+                    prev.map((n) => (n._id === notificationId ? { ...n, read: true, readBy: [...(n.readBy || []), profileId] } : n))
+                )
+                setUnreadCount((prev) => Math.max(0, prev - 1))
+            }
+        }
+        catch (error) {
+            console.error("Error marking notification as read:", error)
+            return
+        }
+
     }
 
     // Mark all notifications as read
-    const markAllAsRead = () => {
-        setNotifications((prev) =>
-            prev.map((n) => ({
-                ...n,
-                read: true,
-                readBy: [...(n.readBy || []), profileId],
-            }))
-        )
-        setUnreadCount(0)
+    const markAllAsRead = async () => {
+        try {
+            const response = await markNotificationsAsRead(profileId, notifications.map(n => n._id))
+            if (response.status === 200) {
+                setNotifications((prev) =>
+                    prev.map((n) => ({
+                        ...n,
+                        read: true,
+                        readBy: [...(n.readBy || []), profileId],
+                    }))
+                )
+                setUnreadCount(0)
+            }
+
+        } catch (error) {
+            console.error("Error marking all notifications as read:", error)
+        }
     }
 
     // Get notification type styling
@@ -197,7 +217,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
                     <div className="px-4 pt-2">
                         <TabsList className="grid w-full grid-cols-2 h-8">
                             <TabsTrigger value="received" className="text-xs">
-                                Notifications ({notifications.length})
+                                Notifications ({unreadCount})
                             </TabsTrigger>
                             <TabsTrigger value="invitations" className="text-xs">
                                 Invitations ({invitations.length})
