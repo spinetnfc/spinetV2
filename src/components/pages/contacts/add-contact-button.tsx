@@ -78,7 +78,7 @@ const AddContactButton = () => {
             console.log("Add contact payload:", JSON.stringify(addedContact, null, 2));
 
             const response = await sendInvitationAction(profileId, addedContact);
-            toast.success(intl.formatMessage({ id: "Invitation Sent", defaultMessage: "Invitation sent" }));
+            toast.success(intl.formatMessage({ id: "invitation-sent", defaultMessage: "Invitation sent" }));
 
         } catch (error: any) {
             toast.error(intl.formatMessage({ id: "Failed to add contact. Please try again." }));

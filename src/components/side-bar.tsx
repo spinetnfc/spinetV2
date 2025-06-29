@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer/drawer';
 import { useTheme } from 'next-themes';
 import { FormattedMessage } from 'react-intl';
+import { getProfileAction } from '@/actions/profile';
+import { getUserFromCookie } from '@/utils/cookie';
 
 type Props = {
   navigation: SideNavigationItem[];
@@ -20,16 +22,25 @@ type Props = {
   setIsExpanded: (value: boolean) => void;
 };
 
-function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
+async function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const pathname = usePathname();
   const { theme } = useTheme();
   const [isDark, setIsDark] = useState(theme === 'dark');
+  const user = getUserFromCookie();
+  const profileId = user?.selectedProfile || '';
 
   // Sync isDark with theme changes
   useEffect(() => {
     setIsDark(theme === 'dark');
   }, [theme]);
 
+
+  let profileData;
+  try {
+    profileData = await getProfileAction(profileId);
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+  }
   return (
     <>
       {/* desktop sidebar */}
@@ -84,14 +95,19 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
             })}
           </nav>
 
-          <Button
-            size="icon"
-            variant="outline"
-            className="ms-3 my-2"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            <PanelLeft className="size-5" />
-          </Button>
+          <div>
+            <Button
+              size="icon"
+              variant="outline"
+              className="ms-3 my-2"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              <PanelLeft className="size-5" />
+            </Button>
+            <div>
+              {profileData?.fullName}
+            </div>
+          </div>
         </div>
       </aside>
 
