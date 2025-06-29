@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { PanelLeft } from 'lucide-react';
 import Logo from '@/components/logo';
 import LogoSpinet from '@/components/logo-spinet';
@@ -12,8 +12,9 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer/drawer';
 import { useTheme } from 'next-themes';
 import { FormattedMessage } from 'react-intl';
+import { useAuth } from '@/context/authContext';
 import { getProfileAction } from '@/actions/profile';
-import { getUserFromCookie } from '@/utils/cookie';
+import { ProfileData } from '@/types/profile';
 
 type Props = {
   navigation: SideNavigationItem[];
@@ -22,25 +23,33 @@ type Props = {
   setIsExpanded: (value: boolean) => void;
 };
 
-async function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
+function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const pathname = usePathname();
   const { theme } = useTheme();
   const [isDark, setIsDark] = useState(theme === 'dark');
-  const user = getUserFromCookie();
-  const profileId = user?.selectedProfile || '';
+  const profileId = useAuth().user.selectedProfile;
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
 
   // Sync isDark with theme changes
   useEffect(() => {
     setIsDark(theme === 'dark');
   }, [theme]);
 
+  useEffect(() => {
+    if (!profileId) return;
 
-  let profileData;
-  try {
-    profileData = await getProfileAction(profileId);
-  } catch (error) {
-    console.error("Error fetching profile:", error);
-  }
+    const fetchProfile = async () => {
+      try {
+        const data = await getProfileAction(profileId);
+        setProfileData(data);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+
+    fetchProfile();
+  }, [profileId]);
+
   return (
     <>
       {/* desktop sidebar */}
@@ -53,14 +62,21 @@ async function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props)
         <div className="flex flex-col h-full overflow-auto">
           {/* logo */}
           <div className={cn(
-            'flex shrink-0 items-center justify-center border-b border-gray-300 h-20 overflow-hidden',
+            'flex flex-col gap-1 shrink-0 items-center justify-center border-b border-gray-300 h-20 overflow-hidden',
             isExpanded ? 'w-full' : 'w-16'
           )}>
             {!isDark ? (
-              isExpanded ? <LogoSpinet locale={locale} parentDarkMode={false} /> : <Logo locale={locale} />
+              isExpanded ? <>
+                <LogoSpinet locale={locale} parentDarkMode={false} />
+                <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
+              </> : <Logo locale={locale} />
             ) : (
-              isExpanded ? <LogoSpinet locale={locale} parentDarkMode={true} /> : <Logo locale={locale} />
+              isExpanded ? <>
+                <LogoSpinet locale={locale} parentDarkMode={true} />
+                <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
+              </> : <Logo locale={locale} />
             )}
+
           </div>
 
           {/* navigation */}
@@ -94,8 +110,7 @@ async function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props)
               );
             })}
           </nav>
-
-          <div>
+          <div className='flex items-center gap-2'>
             <Button
               size="icon"
               variant="outline"
@@ -104,10 +119,8 @@ async function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props)
             >
               <PanelLeft className="size-5" />
             </Button>
-            <div>
-              {profileData?.fullName}
-            </div>
           </div>
+
         </div>
       </aside>
 
@@ -135,8 +148,10 @@ async function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props)
 
           <aside className="flex h-full flex-col overflow-auto">
             <nav className="flex flex-col items-center gap-4 px-2 pb-4">
-              <div className="flex h-20 w-full shrink-0 items-center justify-center border-b border-gray-300">
+              <div className="flex  flex-col gap-1 h-20 w-full shrink-0 items-center justify-center border-b border-gray-300">
                 {isDark ? <LogoSpinet locale={locale} parentDarkMode={true} /> : <LogoSpinet locale={locale} parentDarkMode={false} />}
+                <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
+
               </div>
               {navigation.map((item) => {
                 const isActive =
