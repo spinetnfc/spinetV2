@@ -29,7 +29,7 @@ const Layout = ({
     { name: 'insights', to: `/app/insights`, icon: SquareKanban },
     { name: 'settings', to: `/app/settings`, icon: Settings },
     // { name: 'opportunities', to: `/app/opportunities`, icon: BriefcaseBusiness },
-    { name: 'notifications', to: `/app/notifications`, icon: Bell },
+    // { name: 'notifications', to: `/app/notifications`, icon: Bell },
     // { name: 'offers', to: `/app/offers`, icon: Package },
     // { name: 'leads', to: `/app/leads`, icon: Target },
     // { name: 'redirections', to: `/app/redirections`, icon: ArrowRightLeft },

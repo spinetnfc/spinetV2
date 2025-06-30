@@ -148,8 +148,8 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
             {/* Service Details */}
             {showDetails && (
                 <div className="fixed inset-0 bg-black/40 bg-opacity-50 flex items-center justify-center z-50">
-                    <Card className="bg-white dark:bg-navy w-full max-w-lg pt-6 relative">
-                        <CardContent>
+                    <Card className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 group relative transition-colors">
+                        <CardContent className="h-full p-4 flex flex-col justify-between cursor-pointer">
                             <button
                                 className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
                                 onClick={() => setShowDetails(null)}
