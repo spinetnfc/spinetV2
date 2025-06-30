@@ -37,10 +37,9 @@ export default function SwitchProfileDrawer() {
     const [showAlert, setShowAlert] = useState(false)
     const { isAuthenticated } = useAuth();
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated && user && user._id) {
             startTransition(async () => {
                 const result = await getAllProfilesAction(user._id);
-                // Move the selected profile to the front, keep others in order
                 const selectedIdx = result.findIndex(p => p._id === user.selectedProfile);
                 if (selectedIdx > -1) {
                     const [selected] = result.splice(selectedIdx, 1);
