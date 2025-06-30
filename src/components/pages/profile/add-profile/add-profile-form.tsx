@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import StyledFileInput from '@/components/ui/image-input';
 
 // Define props interface
 interface AddProfileFormProps {
@@ -440,6 +441,56 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
                 name="profilePicture"
                 render={({ field }) => (
                     <FormItem>
+                        <FormLabel className="text-sm">
+                            <FormattedMessage id="profile-picture" defaultMessage="Profile Picture" />
+                        </FormLabel>
+                        <FormControl>
+                            <StyledFileInput
+                                onChange={() => {
+                                    const handleFileChange = (file: File | null) => {
+                                        if (file) {
+                                            console.log("Selected file:", file.name)
+                                        } else {
+                                            console.log("No file selected")
+                                        }
+                                    }
+                                }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="profileCover"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="text-sm">
+                            <FormattedMessage id="cover-image" defaultMessage="Cover image" />
+                        </FormLabel>
+                        <FormControl>
+                            <StyledFileInput
+                                onChange={() => {
+                                    const handleFileChange = (file: File | null) => {
+                                        if (file) {
+                                            console.log("Selected file:", file.name)
+                                        } else {
+                                            console.log("No file selected")
+                                        }
+                                    }
+                                }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            {/* <FormField
+                control={form.control}
+                name="profilePicture"
+                render={({ field }) => (
+                    <FormItem>
                         <FormLabel>
                             <FormattedMessage id="profile-picture" />
                         </FormLabel>
@@ -492,7 +543,7 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
                         <FormMessage />
                     </FormItem>
                 )}
-            />
+            /> */}
         </div>
     );
 
