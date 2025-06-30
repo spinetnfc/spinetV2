@@ -153,7 +153,7 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
                             key={`${service.Profile._id}-${index}`}
                             className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 group relative transition-colors"
                         >
-                            <CardContent className="p-4">
+                            <CardContent className="h-full p-4 flex flex-col justify-between">
                                 <Link href={`${pathname}/description`} className="flex gap-3">
                                     <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
                                         <Briefcase className="w-6 h-6 text-blue-600" />
