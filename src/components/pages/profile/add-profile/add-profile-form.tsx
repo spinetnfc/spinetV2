@@ -177,27 +177,7 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
         }
     };
 
-    const createProfileData = (data: ProfileFormValues): profileInput => {
-        const baseData = {
-            status: data.role,
-            fullName: data.fullName,
-            phoneNumber: data.phoneNumber,
-            links: links,
-            profilePicture: data.profilePicture,
-            profileCover: data.profileCover,
-        };
-        const profileData: profileInput = { ...baseData };
-        if (data.role === 'student' && data.school && data.school.trim() !== '') profileData.school = data.school;
-        if (data.role === 'professional' && data.profession && data.profession.trim() !== '') profileData.profession = data.profession;
-        if (data.role === 'employee') {
-            if (data.companyName && data.companyName.trim() !== '') profileData.companyName = data.companyName;
-            if (data.activitySector && data.activitySector.trim() !== '') profileData.activitySector = data.activitySector;
-            if (data.position && data.position.trim() !== '') profileData.position = data.position;
-        }
-        return profileData;
-    };
-
-    const onSubmit = async (data: ProfileFormValues) => {
+    const handleSubmit = async (data: ProfileFormValues) => {
         if (!user?._id) {
             toast.error(intl.formatMessage({ id: 'User not found' }));
             return;
@@ -218,6 +198,26 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const createProfileData = (data: ProfileFormValues): profileInput => {
+        const baseData = {
+            status: data.role,
+            fullName: data.fullName,
+            phoneNumber: data.phoneNumber,
+            links: links,
+            profilePicture: data.profilePicture,
+            profileCover: data.profileCover,
+        };
+        const profileData: profileInput = { ...baseData };
+        if (data.role === 'student' && data.school && data.school.trim() !== '') profileData.school = data.school;
+        if (data.role === 'professional' && data.profession && data.profession.trim() !== '') profileData.profession = data.profession;
+        if (data.role === 'employee') {
+            if (data.companyName && data.companyName.trim() !== '') profileData.companyName = data.companyName;
+            if (data.activitySector && data.activitySector.trim() !== '') profileData.activitySector = data.activitySector;
+            if (data.position && data.position.trim() !== '') profileData.position = data.position;
+        }
+        return profileData;
     };
 
     const renderStep1 = () => (
@@ -453,6 +453,11 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
                                         field.onChange('placeholder_url');
                                     }
                                 }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault(); // Prevent form submission on Enter
+                                    }
+                                }}
                             />
                         </FormControl>
                         <FormMessage />
@@ -477,6 +482,11 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
                                         field.onChange('placeholder_url');
                                     }
                                 }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault(); // Prevent form submission on Enter
+                                    }
+                                }}
                             />
                         </FormControl>
                         <FormMessage />
@@ -489,7 +499,7 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
     return (
         <Card className="max-w-2xl w-full p-6">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form className="space-y-6">
                     {currentStep === 1 && renderStep1()}
                     {currentStep === 2 && renderStep2()}
                     {currentStep === 3 && renderStep3()}
@@ -509,7 +519,11 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
                                 <FormattedMessage id="next" />
                             </Button>
                         ) : (
-                            <Button type="submit" disabled={isSubmitting}>
+                            <Button
+                                type="button"
+                                onClick={() => form.handleSubmit(handleSubmit)()}
+                                disabled={isSubmitting}
+                            >
                                 {isSubmitting ? (
                                     <FormattedMessage id="creating" />
                                 ) : (

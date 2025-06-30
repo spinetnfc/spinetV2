@@ -296,7 +296,7 @@ export default function Register({ locale }: { locale: string }) {
           <button
             type="button"
             onClick={skipStep}
-            className="flex items-center ps-2 xs:ps-3 text-azure font-medium text-xs xs:text-sm"
+            className="flex items-center ps-2 xs:ps-3 text-azure font-medium text-xs xs:text-sm cursor-pointer"
             disabled={isSubmitting}
           >
             <FormattedMessage id="skip" defaultMessage="Skip" />
