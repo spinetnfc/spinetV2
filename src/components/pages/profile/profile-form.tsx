@@ -187,7 +187,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                                         )}
                                                         disabled={profileData.lockedFeatures?.birthDate}
                                                     >
-                                                        {field.value ? field.value.toISOString().slice(0, 10) : <span>Pick a date</span>}
+                                                        {field.value ? field.value.toISOString().slice(0, 10) : <FormattedMessage id="pick-a-date" />}
                                                         <CalendarIcon className="ms-auto h-4 w-4 opacity-50" />
                                                     </Button>
                                                 </FormControl>
@@ -218,7 +218,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                         >
                                             <FormControl>
                                                 <SelectTrigger className="border-gray-200 dark:border-blue-950">
-                                                    <SelectValue placeholder="Select gender" />
+                                                    <SelectValue placeholder={intl.formatMessage({ id: 'select-gender' })} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -253,10 +253,10 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="none">None</SelectItem>
-                                                <SelectItem value="student">Student</SelectItem>
-                                                <SelectItem value="professional">Professional</SelectItem>
-                                                <SelectItem value="employee">Employee</SelectItem>
+                                                <SelectItem value="none"><FormattedMessage id='none' /></SelectItem>
+                                                <SelectItem value="student"><FormattedMessage id='student' /></SelectItem>
+                                                <SelectItem value="professional"><FormattedMessage id='professional' /></SelectItem>
+                                                <SelectItem value="employee"><FormattedMessage id='employee' /></SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
