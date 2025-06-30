@@ -24,6 +24,7 @@ type ServicesCardListProps = {
 export function ServicesCardList({ services: initialServices, locale, userId, searchParams: initialSearchParams }: ServicesCardListProps) {
     const [services, setServices] = useState(initialServices)
     const [searchTerm, setSearchTerm] = useState(initialSearchParams.term || "")
+    const [showDetails, setShowDetails] = useState<ServicesData | null>(null)
     const [skip, setSkip] = useState(initialServices.length)
     const [isLoading, setIsLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
@@ -144,57 +145,97 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
                 </Button>
             </div>
 
-            {/* Services Cards */}
-            {services.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {services.map((service, index) => (
-                        // <Link href={`${pathname}/description`} key={`${service.Profile._id}-${index}`} className="no-underline group">
-                        <Card
-                            key={`${service.Profile._id}-${index}`}
-                            className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 group relative transition-colors"
-                        >
-                            <CardContent className="h-full p-4 flex flex-col justify-between">
-                                <Link href={`${pathname}/description`} className="flex gap-3">
-                                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                        <Briefcase className="w-6 h-6 text-blue-600" />
+            {/* Service Details */}
+            {showDetails && (
+                <div className="fixed inset-0 bg-black/40 bg-opacity-50 flex items-center justify-center z-50">
+                    <Card className="bg-white dark:bg-navy w-full max-w-lg pt-6 relative">
+                        <CardContent>
+                            <button
+                                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+                                onClick={() => setShowDetails(null)}
+                            >
+                                ✕
+                            </button>
+                            <h2 className="text-2xl font-bold text-primary mb-4">{showDetails.name}</h2>
+                            <p className="text-gray-600 dark:text-gray-300 mb-4">{showDetails.description}</p>
+                            <div className="flex items-center justify-between">
+                                <Link href={`/${locale}/public-profile/${showDetails.Profile._id}`} className="flex items-center gap-2">
+                                    <div className="bg-white rounded-full">
+                                        <Image
+                                            src={avatar}
+                                            alt="Service provider's Avatar"
+                                            className="w-10 h-10 rounded-full"
+                                        />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-medium text-primary mb-1">{service.name}</h3>
-                                        <p className="text-sm text-gray-400 line-clamp-2 mb-3">{service.description}</p>
-                                    </div>
+                                    <span className="text-sm font-semibold text-gray-400">
+                                        {showDetails.Profile.firstName} {showDetails.Profile.lastName}
+                                    </span>
                                 </Link>
-                                <div className="flex items-center justify-between">
-                                    <Link href={`/${locale}/public-profile/${service.Profile._id}`} className="flex items-center gap-2">
-                                        <div className="bg-white rounded-full">
-                                            <Image
-                                                src={avatar}
-                                                alt="Service provider's Avatar"
-                                                className="w-10 h-10 rounded-full"
-                                            />
-                                        </div>
-                                        <span className="text-sm font-semibold text-gray-400">
-                                            {service.Profile.firstName} {service.Profile.lastName}
-                                        </span>
-                                    </Link>
-                                    <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-                                        {service.Profile.numServices}{" "}
-                                        {service.Profile.numServices === 1 ? (
-                                            <FormattedMessage id="service" />
-                                        ) : (
-                                            <FormattedMessage id="services" />
-                                        )}
-                                    </Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        // </Link>
-                    ))}
+                                <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                                    {showDetails.Profile.numServices}{" "}
+                                    {showDetails.Profile.numServices === 1 ? (
+                                        <FormattedMessage id="service" />
+                                    ) : (
+                                        <FormattedMessage id="services" />
+                                    )}
+                                </Badge>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-            ) : (
-                <p className="text-4xl font-bold text-center text-primary">
-                    <FormattedMessage id="No-services-found" defaultMessage="No services found" /> !
-                </p>
             )
+            }
+
+            {/* Services Cards */}
+            {
+                services.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {services.map((service, index) => (
+                            <Card
+                                key={`${service.Profile._id}-${index}`}
+                                className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 group relative transition-colors"
+                            >
+                                <CardContent className="h-full p-4 flex flex-col justify-between cursor-pointer" onClick={() => setShowDetails(service)}>
+                                    <div className="flex gap-3">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <Briefcase className="w-6 h-6 text-blue-600" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-medium text-primary mb-1">{service.name}</h3>
+                                            <p className="text-sm text-gray-400 line-clamp-2 mb-3">{service.description}</p>
+                                        </div>
+                                    </div>
+                                    <div onClick={(e) => { e.stopPropagation() }} className="flex items-center justify-between">
+                                        <Link href={`/${locale}/public-profile/${service.Profile._id}`} className="flex items-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg p-1">
+                                            <div className="bg-white rounded-full">
+                                                <Image
+                                                    src={avatar}
+                                                    alt="Service provider's Avatar"
+                                                    className="w-10 h-10 rounded-full"
+                                                />
+                                            </div>
+                                            <span className="text-sm font-semibold text-gray-400">
+                                                {service.Profile.firstName} {service.Profile.lastName}
+                                            </span>
+                                        </Link>
+                                        <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                                            {service.Profile.numServices}{" "}
+                                            {service.Profile.numServices === 1 ? (
+                                                <FormattedMessage id="service" />
+                                            ) : (
+                                                <FormattedMessage id="services" />
+                                            )}
+                                        </Badge>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-4xl font-bold text-center text-primary">
+                        <FormattedMessage id="No-services-found" defaultMessage="No services found" /> !
+                    </p>
+                )
             }
 
             {/* Loading Spinner or No More Services */}
