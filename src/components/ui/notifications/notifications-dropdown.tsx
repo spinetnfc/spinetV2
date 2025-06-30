@@ -183,7 +183,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
         try {
             const response = await acceptInvitation(profileId, invitationId);
             if (response.status === 200) {
-                fetchInvitations()
+                setInvitations((prev) => prev.filter((inv) => inv._id !== invitationId))
             }
         } catch (error) {
             console.error("Error accepting invitation:", error);
@@ -193,7 +193,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
         try {
             const response = await api.post(`/profile/${profileId}/invitation/${invitationId}/refuse`);
             if (response.status === 200) {
-                fetchInvitations()
+                setInvitations((prev) => prev.filter((inv) => inv._id !== invitationId))
             }
         } catch (error) {
             console.error("Error refusing invitation:", error);
