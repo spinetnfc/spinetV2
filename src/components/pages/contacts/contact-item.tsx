@@ -12,7 +12,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import Link from "next/link";
 import { useAuth } from "@/context/authContext";
 import { removeContact } from "@/actions/contacts";
-import { getFile } from "@/actions/files";
 
 type ContactItemProps = {
     contact: Contact;
@@ -92,7 +91,7 @@ export default function ContactItem({ contact, locale, onDelete }: ContactItemPr
                 <div className="flex items-center gap-3">
                     <ContactAvatar
                         name={name}
-                        profilePicture={Profile.profilePicture ? `https://files.spinetnfc.com/files/${Profile.profilePicture}` : ""}
+                        profilePicture={Profile.profilePicture ?? ""}
                     />
                     <div>
                         <h3 className="font-medium">{name}</h3>
