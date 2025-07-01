@@ -54,7 +54,7 @@ export default async function ProfilePage({
     const position = profileData?.position
     const company = profileData?.companyName
     const themeColor = profileData?.theme?.color || "azure" // Default to azure if undefined
-
+    console.log(`https://files.spinetnfc.com/files/${profileData.profilePicture}`)
     // Replace the hardcoded links array with dynamic links from profileData
     const links = profileData.links.map((link) => {
         const iconType = link.name.toLowerCase()
