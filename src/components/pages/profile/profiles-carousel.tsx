@@ -139,7 +139,6 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
                             <button
                                 className="flex flex-col items-center justify-center w-full h-full py-8 text-primary hover:text-blue-700 transition-colors cursor-pointer"
                                 onClick={() => {
-                                    // Replace with your add profile logic or navigation
                                     router.push(`${pathname}/profile/add-profile`);
                                 }}
                             >

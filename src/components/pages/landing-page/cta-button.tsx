@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
+import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
   icon: React.ReactNode;
@@ -44,7 +45,7 @@ function CtaButton({
     >
       <Link href={link} target={newTab ? '_blank' : '_self'} rel="noreferrer">
         {isLoading ? (
-          <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>) : content
+          <Spinner className="text-white min-h-8 min-w-8" />) : content
         }      </Link>
     </Button>
   ) : (
@@ -59,7 +60,7 @@ function CtaButton({
       }}
     >
       {isLoading ? (
-        <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>) : content
+        <Spinner className="text-white min-h-8 min-w-8" />) : content
       }
     </Button>
   );

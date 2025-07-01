@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/input-otp';
 import { verifyOTP } from '@/lib/api/auth';
 import { toast } from 'sonner';
+import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
   email: string;
@@ -97,7 +98,7 @@ const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
           className="w-full"
         >
           <FormattedMessage id="verify" />
-          {isSubmitting && <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>}
+          {isSubmitting && <Spinner className='text-white' />}
         </Button>
         <div className="text-center text-sm">
           <FormattedMessage id="did-not-receive-code" />

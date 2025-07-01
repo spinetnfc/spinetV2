@@ -24,6 +24,7 @@ import { requestEmailChangeAction, verifyEmailChangeOTPAction } from '@/actions/
 import { toast } from 'sonner';
 import { User } from '@/types/user';
 import Cookies from 'js-cookie';
+import { Spinner } from '@/components/ui/spinner';
 
 const emailSchema = z.object({
     email: z.string().email({ message: 'invalid-email' }),
@@ -175,6 +176,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
                             <Button
                                 type="button"
                                 variant="outline"
+                                className='hover:bg-transparent'
                                 onClick={onCancel}
                             >
                                 <FormattedMessage id="cancel" defaultMessage="Cancel" />
@@ -185,7 +187,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
                             >
                                 <FormattedMessage id="send-otp" defaultMessage="Send OTP" />
                                 {isSubmitting && (
-                                    <div className="animate-spin rounded-full h-4 w-4ms-2 border-2 border-white border-t-transparent"></div>
+                                    <Spinner className='text-white' />
                                 )}
                             </Button>
                         </div>
@@ -235,7 +237,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
                             >
                                 <FormattedMessage id="verify" defaultMessage="Verify" />
                                 {isSubmitting && (
-                                    <div className="animate-spin rounded-full h-4 w-4ms-2 border-2 border-white border-t-transparent"></div>
+                                    <Spinner className='text-white' />
                                 )}
                             </Button>
                         </div>

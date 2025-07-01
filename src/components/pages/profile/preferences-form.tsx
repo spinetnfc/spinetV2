@@ -19,6 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import ColorOutlet from '@/components/ui/color-outlet';
 import { COLOR_PALETTE } from '@/utils/constants/colors';
+import { Spinner } from '@/components/ui/spinner';
 // Define the validation schema for Preferences
 const preferencesSchema = z.object({
     themeColor: z
@@ -154,7 +155,7 @@ export default function PreferencesForm({
                     <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
                         {isSubmitting ? (
                             <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                                <Spinner className="text-white" />
                                 <FormattedMessage id="saving" />   </>
                         ) : (
                             <FormattedMessage id="save-changes" />

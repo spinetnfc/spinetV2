@@ -36,6 +36,7 @@ import { cn } from '@/utils/cn';
 import { updateProfileAction } from '@/actions/profile';
 import { Button } from '../../ui/button';
 import { ProfileData } from '@/types/profile';
+import { Spinner } from '@/components/ui/spinner';
 
 
 // Base schema with all possible fields, optional where needed
@@ -389,7 +390,7 @@ export default function ProfileForm({ profileData, profileId, sectionName, local
                     >
                         {isSubmitting ? (
                             <>
-                                <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full" />
+                                <Spinner className="text-white" />
                                 <span><FormattedMessage id="saving" /></span>
                             </>
                         ) : (

@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import avatar from "@/assets/images/user.png"
 import Image from "next/image"
 import Link from "next/link"
+import { Spinner } from "@/components/ui/spinner"
 
 type ServicesCardListProps = {
     services: ServicesData[]
@@ -38,7 +39,7 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
     if (userId === null) {
         return (
             <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+                <Spinner className="text-white" size="xxl" />
             </div>
         )
     }
@@ -243,7 +244,7 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
             {
                 isLoading && (
                     <div className="flex justify-center items-center h-16">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+                        <Spinner className="text-white" size="lg" />
                     </div>
                 )
             }

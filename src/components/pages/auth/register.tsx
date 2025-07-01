@@ -44,6 +44,7 @@ import { addLinksAction } from '@/actions/links';
 import { useAuth } from "@/context/authContext";
 import type { User } from '@/types/user';
 import StyledFileInput from '@/components/ui/image-input';
+import { Spinner } from '@/components/ui/spinner';
 
 const LINK_TYPES = [
   "website", "linkedin", "instagram", "twitter", "github", "email", "phone",
@@ -886,7 +887,7 @@ export default function Register({ locale }: { locale: string }) {
                 >
                   <FormattedMessage id="finish" defaultMessage="Finish" />
                   {isSubmitting && (
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    <Spinner className="text-white" size="sm" />
                   )}
                 </Button>
               </div>

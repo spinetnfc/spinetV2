@@ -27,6 +27,7 @@ import { CirclePlus, Loader } from "lucide-react"
 import Image from "next/image"
 import { getLocale } from "@/utils/getClientLocale"
 import { useAuth } from "@/context/authContext"
+import { Spinner } from "./ui/spinner"
 
 
 export default function SwitchProfileDrawer() {
@@ -128,7 +129,7 @@ export default function SwitchProfileDrawer() {
                                 </div>
                             ) : (
                                 <div className="flex justify-center items-center h-full">
-                                    <Loader className="animate-spin" />
+                                    <Spinner className="text-primary" size="xl" />
                                 </div>
                             )}
                             <ScrollBar orientation="horizontal" className="sm:visible h-4" />

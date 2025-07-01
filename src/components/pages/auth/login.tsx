@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/context/authContext';
 import { useFacebookSDK } from '@/hooks/use-facebookDSK';
 import Script from 'next/script';
+import { Spinner } from '@/components/ui/spinner';
 
 
 const loginSchema = z.object({
@@ -179,7 +180,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
                     <Button type="submit" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? (
                             <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                                <Spinner className="text-white" size="sm" />
                                 <FormattedMessage id="signing-in" />
                             </>
                         ) : (

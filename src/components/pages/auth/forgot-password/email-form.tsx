@@ -17,6 +17,7 @@ import { forgotPassword } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { set } from 'date-fns';
+import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
   setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -85,7 +86,7 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
           className="w-full"
         >
           <FormattedMessage id="send-otp" />
-          {isSubmitting && <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>}
+          {isSubmitting && <Spinner className="text-white" size="sm" />}
         </Button>
         <div className="flex justify-center space-x-1 text-sm">
           <span>

@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { resetPassword } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
   email: string;
@@ -134,7 +135,7 @@ const NewPasswordForm = ({ email, sessionId }: Props) => {
         <Button type="submit" className="w-full">
           <FormattedMessage id="save" />
           {isSubmitting && (
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+            <Spinner className="text-white" size="sm" />
           )}
         </Button>
       </form>

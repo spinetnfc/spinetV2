@@ -19,6 +19,7 @@ import { updateUserAction } from "@/actions/user";
 import { toast } from 'sonner';
 import { User } from '@/types/user';
 import Cookies from 'js-cookie';
+import { Spinner } from '@/components/ui/spinner';
 
 const phoneSchema = z.object({
     phone: z
@@ -104,7 +105,7 @@ export default function ChangePhoneForm({ user, onCancel }: { user: User, onCanc
                         >
                             <FormattedMessage id="save" defaultMessage="Save" />
                             {isSubmitting && (
-                                <div className="animate-spin rounded-full h-4 w-4ms-2 border-2 border-white border-t-transparent"></div>
+                                <Spinner className='text-white' />
                             )}
                         </Button>
                     </div>
