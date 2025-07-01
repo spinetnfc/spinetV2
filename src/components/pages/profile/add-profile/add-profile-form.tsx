@@ -40,10 +40,12 @@ interface AddProfileFormProps {
 const profileSchema = z.object({
     fullName: z.string().min(3, { message: 'fullname-required' }),
     phoneNumber: z.string()
-        .min(10, { message: 'phone-number-required' })
-        .regex(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/, {
-            message: 'invalid-phone-number',
-        }),
+        .optional()
+        .refine(
+            (value) => !value || value.length === 0 ||
+                (value.length >= 10 && /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(value)),
+            { message: 'invalid-phone-number' }
+        ),
     role: z.enum(['student', 'employee', 'professional', 'none']),
     school: z.string().min(3, { message: 'school-required' }).optional(),
     profession: z.string().min(3, { message: 'profession-required' }).optional(),
@@ -141,7 +143,7 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
 
     const validateStep = async (step: number) => {
         if (step === 1) {
-            const result = await form.trigger(['fullName', 'phoneNumber']);
+            const result = await form.trigger(['fullName']);
             if (!result) {
                 toast.error(intl.formatMessage({ id: 'Please fill in all required fields' }));
                 return false;
@@ -205,12 +207,14 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
         const baseData = {
             status: data.role,
             fullName: data.fullName,
-            phoneNumber: data.phoneNumber,
             links: links,
             profilePicture: data.profilePicture,
             profileCover: data.profileCover,
         };
         const profileData: profileInput = { ...baseData };
+        if (data.phoneNumber && data.phoneNumber.trim() !== '') {
+            profileData.phoneNumber = data.phoneNumber;
+        }
         if (data.role === 'student' && data.school && data.school.trim() !== '') profileData.school = data.school;
         if (data.role === 'professional' && data.profession && data.profession.trim() !== '') profileData.profession = data.profession;
         if (data.role === 'employee') {

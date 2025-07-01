@@ -80,9 +80,8 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
 
 
     return (
-        <div className="min-h-screen w-full absolute top-0 pt-12">
-            {/* Header Section with Level Badge */}
-            <div className="px-6 pb-6 text-center">
+        <div className="min-h-screen w-full absolute top-0">
+            <div className="px-6 pb-6 text-center min-h-[calc(100vh/2)] pt-12">
                 <div className="flex flex-col items-center space-y-6">
                     {/* Level Badge */}
                     <div className="relative">
@@ -116,9 +115,7 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="bg-gray-200 dark:bg-slate-800 rounded-t-3xl px-6 py-8 space-y-6">
-                {/* General Statistics */}
+            <div className="bg-gray-200 dark:bg-slate-800 rounded-t-3xl px-6 py-8 space-y-6 min-h-[calc(100vh/2)]">
                 <div className="space-y-4">
                     <h2 className="text-xl font-semibold ">
                         <FormattedMessage id="general-statistics" defaultMessage="General Statistics" />
