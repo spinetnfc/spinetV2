@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { set } from 'date-fns';
 import { Spinner } from '@/components/ui/spinner';
+import { useAuth } from '@/context/authContext';
 
 type Props = {
   setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -30,6 +31,7 @@ type Props = {
 const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
   const intl = useIntl();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isAuthenticated } = useAuth();
   // Email Validation Schema
   const emailSchema = z.object({
     email: z.string().email({ message: 'invalid-email-address' }),
@@ -93,10 +95,10 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
             <FormattedMessage id="go-back-to" />{' '}
           </span>
           <Link
-            href={`/${locale}/auth/login`}
+            href={isAuthenticated ? `/${locale}/app` : `/${locale}/auth/login`}
             className="text-[#0F62FE] underline"
           >
-            <FormattedMessage id="log-in" />
+            {isAuthenticated ? <FormattedMessage id="app" /> : <FormattedMessage id="log-in" />}
           </Link>
         </div>
       </form>
