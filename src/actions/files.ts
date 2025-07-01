@@ -1,5 +1,9 @@
 export const getFile = async (fileId: string): Promise<string> => {
     console.log(process.env.FILES_API);
+    if (!process.env.FILES_API) {
+        console.log("FILES_API environment variable is not set.");
+        return "";
+    }
     if (fileId) {
         return `${process.env.FILES_API}/files/${fileId}`;
     } else {

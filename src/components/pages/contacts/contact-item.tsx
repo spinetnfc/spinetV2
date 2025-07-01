@@ -92,7 +92,7 @@ export default function ContactItem({ contact, locale, onDelete }: ContactItemPr
                 <div className="flex items-center gap-3">
                     <ContactAvatar
                         name={name}
-                        profilePicture={Profile.profilePicture ? `${getFile(Profile.profilePicture)}` : ""}
+                        profilePicture={Profile.profilePicture ? `https://files.spinetnfc.com/files${Profile.profilePicture}` : ""}
                     />
                     <div>
                         <h3 className="font-medium">{name}</h3>
