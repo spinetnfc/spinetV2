@@ -37,7 +37,7 @@ const Layout = ({
   ].filter(Boolean) as SideNavigationItem[];
 
   return (
-    <div className="z-50 flex min-h-screen w-full flex-col sm:dark:bg-muted/20 sm:bg-gray-50">
+    <div className="z-50 flex min-h-screen w-full flex-col lg:dark:bg-muted/20 lg:bg-gray-50">
       <SideBar navigation={navigation} locale={locale} isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
       <div
         className={cn(
