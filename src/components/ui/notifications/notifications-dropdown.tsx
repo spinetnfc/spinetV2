@@ -234,7 +234,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align={locale === "ar" ? "start" : "end"} className="w-screen max-xs:mx-auto xs:w-96 p-0 shadow-lg" sideOffset={8}>
-                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "received" | "invitations")} className="w-full">
+                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "received" | "invitations")} className="w-full ">
                     <div className="px-4 pt-2">
                         <TabsList className="grid w-full grid-cols-2 h-8">
                             <TabsTrigger value="received" className="text-xs">
@@ -248,7 +248,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
 
                     <TabsContent value="received" className="mt-0">
                         <ScrollArea className="max-h-96 overflow-y-auto no-scrollbar">
-                            <div className="flex items-center justify-between p-2 border-b">
+                            <div className={`flex items-center justify-between p-2 border-b ${unreadCount === 0 && "hidden"} `}>
                                 <div className="flex items-center gap-1">
                                     {unreadCount > 0 && (
                                         <Button
@@ -387,7 +387,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
                     </TabsContent>
                 </Tabs>
 
-                {(notifications.length > 0 || invitations.length > 0) && (
+                {/* {(notifications.length > 0 || invitations.length > 0) && (
                     <>
                         <DropdownMenuSeparator />
                         <div className="p-1 pt-0">
@@ -400,7 +400,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
                             </Button>
                         </div>
                     </>
-                )}
+                )} */}
             </DropdownMenuContent>
         </DropdownMenu>
     )
