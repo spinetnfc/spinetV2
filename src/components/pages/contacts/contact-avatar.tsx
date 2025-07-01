@@ -24,7 +24,7 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
     if (profilePicture) {
         return (
             <div className="rounded-md overflow-hidden aspect-square w-10 sm:w-14 min-w-10 sm:min-w-14">
-                <Image
+                <img
                     src={profilePicture || "/placeholder.svg"}
                     alt={name}
                     width={sizeInPx}
