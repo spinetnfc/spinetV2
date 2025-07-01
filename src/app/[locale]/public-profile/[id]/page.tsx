@@ -57,7 +57,7 @@ export default async function ProfilePage({
 
     // Replace the hardcoded links array with dynamic links from profileData
     const links = profileData.links.map((link) => {
-        const iconType = link.title.toLowerCase()
+        const iconType = link.name.toLowerCase()
         const isEmail = iconType === "email"
         const isPhone = ["phone", "whatsapp", "telegram", "viber"].includes(iconType)
 
