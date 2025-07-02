@@ -30,7 +30,7 @@ export function ProfileAvatar({ profilePicture, alt }: { profilePicture?: string
             alt={alt}
             width={40}
             height={40}
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-10 h-10 rounded-full object-cover border border-white"
             unoptimized
         />
     );
