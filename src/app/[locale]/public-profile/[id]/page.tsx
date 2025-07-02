@@ -165,7 +165,7 @@ export default async function ProfilePage({
                         />
                     </div>
                 </div>
-                <div className="sm:container mx-auto px-4 -mt-10 mb-8">
+                <div className="sm:container mx-auto px-4 mt-8 mb-8">
                     <div className="max-w-md mx-auto sm:border sm:bg-gray-100 sm:dark:bg-navy rounded-3xl sm:shadow-xl overflow-hidden">
                         <div className="flex flex-col items-center sm:pt-8 pb-6">
                             {/* Name and Title */}
@@ -240,7 +240,7 @@ export default async function ProfilePage({
                         }
                     >
                         {/* Profile Image */}
-                        <div className="absolute start-8 bottom-0 transform translate-y-1/2 w-32 h-32 bg-white rounded-full border-4 border-white">
+                        <div className="absolute start-8 bottom-0 transform translate-y-1/2 w-32 h-32 bg-white rounded-full border-2 border-white">
                             <Image
                                 src={profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"}
                                 alt="Profile picture"
