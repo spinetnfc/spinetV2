@@ -28,7 +28,7 @@ export const createProfile = async (userId: string, profile: profileInput): Prom
 
         return response.data;
     } catch (error) {
-        console.error('Profile creation error:', error);
+        console.error('Create profile response:', JSON.stringify(error, null, 2));
         throw error;
     }
 }
