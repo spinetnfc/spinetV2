@@ -1,4 +1,6 @@
+import { getFile } from "@/actions/files"
 import Image from "next/image"
+import { useEffect, useState } from "react"
 
 interface ContactAvatarProps {
     name: string
@@ -10,7 +12,18 @@ interface ContactAvatarProps {
 export default function ContactAvatar({ name, profilePicture, initials, size = "md" }: ContactAvatarProps) {
     // Determine size in pixels
     const sizeInPx = size === "sm" ? 32 : size === "md" ? 44 : 64
-
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    useEffect(() => {
+        console.log("running getFile")
+        async function fetchImage() {
+            if (profilePicture) {
+                const url = await getFile(profilePicture);
+                console.log("Fetched image URL:", url);
+                setImageUrl(url);
+            }
+        }
+        fetchImage();
+    }, [profilePicture]);
     // Generate initials if not provided
     const displayInitials =
         initials ||
@@ -21,18 +34,19 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
             .substring(0, 2)
             .toUpperCase()
 
-    if (profilePicture) {
+    if (imageUrl?.startsWith('http')) {
         return (
             <div className="rounded-md overflow-hidden aspect-square w-10 sm:w-14 min-w-10 sm:min-w-14">
-                <img
-                    src={profilePicture || "/placeholder.svg"}
+                <Image
+                    unoptimized
+                    src={imageUrl}
                     alt={name}
                     width={sizeInPx}
                     height={sizeInPx}
                     className="object-cover"
                 />
             </div>
-        )
+        );
     }
 
     return (

@@ -54,7 +54,6 @@ export default async function ProfilePage({
     const position = profileData?.position
     const company = profileData?.companyName
     const themeColor = profileData?.theme?.color || "azure" // Default to azure if undefined
-    console.log(`https://files.spinetnfc.com/files/${profileData.profilePicture}`)
     // Replace the hardcoded links array with dynamic links from profileData
     const links = profileData.links.map((link) => {
         const iconType = link.name.toLowerCase()
@@ -146,12 +145,12 @@ export default async function ProfilePage({
             {/* Mobile Layout (default) */}
             <div className="sm:hidden">
                 {/* Banner - Moved from layout */}
-                <div className="w-full h-60 bg-[url('/img/spinet-banner.jpg')] bg-cover bg-center dark:bg-neutral-100"></div>
+                <div className={`w-full h-60 bg-[url('/img/spinet-banner.jpg')] bg-cover bg-center dark:bg-neutral-100`}></div>
 
                 {/* Profile Image */}
-                <div className="relative w-32 h-32 xs:w-40 xs:h-40 mx-auto -mt-16 xs:-mt-20 bg-neutral-50 rounded-full">
+                <div className="relative w-32 h-32 xs:w-40 xs:h-40 mx-auto -mt-16 xs:-mt-20 bg-neutral-100 rounded-full">
                     <Image
-                        src={profileData.profilePicture ? `https://files.spinetnfc.com/files/${profileData.profilePicture}` : "/img/user.png"}
+                        src={profileData.profilePicture ? `${process.env.FILES_API}/files/${profileData.profilePicture}` : "/img/user.png"}
                         alt="Profile picture"
                         fill
                         className="rounded-full object-cover border-4 border-neutral-50"

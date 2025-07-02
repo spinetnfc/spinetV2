@@ -5,14 +5,21 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'files.spinetnfc.com',
+        hostname: process.env.FILES_API
+          ? new URL(process.env.FILES_API).hostname
+          : 'files.spinetnfc.com',
         pathname: '/files/**',
       },
     ],
   },
   async rewrites() {
-    const apiUrl = process.env.API_URL;
+    const apiUrl = process.env.API_URL || 'https://api.spinetnfc.com';
+    const filesApi = process.env.FILES_API || 'https://files.spinetnfc.com';
     return [
+      {
+        source: '/api/files/:fileId*',
+        destination: `${filesApi}/files/:fileId*`,
+      },
       {
         source: '/api/:path*',
         destination: `${apiUrl}/:path*`,

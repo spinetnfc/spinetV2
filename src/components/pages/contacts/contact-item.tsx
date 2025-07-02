@@ -4,7 +4,7 @@ import { Edit, MoreVertical, Trash2 } from "lucide-react";
 import ContactAvatar from "./contact-avatar";
 import type { Contact } from "@/types/contact";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EditContactForm from "./edit-contact-form";
 import ConfirmationModal from "@/components/delete-confirmation-modal";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import Link from "next/link";
 import { useAuth } from "@/context/authContext";
 import { removeContact } from "@/actions/contacts";
+import { getFile } from "@/actions/files";
 
 type ContactItemProps = {
     contact: Contact;
@@ -24,6 +25,7 @@ export default function ContactItem({ contact, locale, onDelete }: ContactItemPr
     const [showEditForm, setShowEditForm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    // const [imageUrl, setImageUrl] = useState("/img/user.png"); // Default fallback
     const intl = useIntl();
     const name = contact.name ?? "Unnamed Contact";
     const Profile = contact.Profile ?? {};
@@ -91,7 +93,7 @@ export default function ContactItem({ contact, locale, onDelete }: ContactItemPr
                 <div className="flex items-center gap-3">
                     <ContactAvatar
                         name={name}
-                        profilePicture={Profile.profilePicture ?? ""}
+                        profilePicture={Profile.profilePicture ?? null}
                     />
                     <div>
                         <h3 className="font-medium">{name}</h3>
@@ -106,19 +108,19 @@ export default function ContactItem({ contact, locale, onDelete }: ContactItemPr
                 </div>
                 <div className="relative">
                     <div className="absolute end-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <DropdownMenu >
+                        <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}
-                                    className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                    }}
+                                    className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer"
+                                >
                                     <MoreVertical size={20} />
                                 </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="bg-white dark:bg-background"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                }}
-                            >
+                            <DropdownMenuContent align="start" className="bg-white dark:bg-background">
                                 <DropdownMenuItem
                                     className="flex items-center gap-2 cursor-pointer"
                                     onClick={() => setShowEditForm(true)}
@@ -137,7 +139,7 @@ export default function ContactItem({ contact, locale, onDelete }: ContactItemPr
                         </DropdownMenu>
                     </div>
                 </div>
-            </Link >
+            </Link>
         </>
     );
 }
