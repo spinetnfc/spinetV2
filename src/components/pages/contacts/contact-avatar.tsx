@@ -43,7 +43,7 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
                     alt={name}
                     width={sizeInPx}
                     height={sizeInPx}
-                    className="object-cover"
+                    className="object-cover rounded-md"
                 />
             </div>
         );
@@ -52,7 +52,7 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
     return (
         <div
             className="rounded-md flex items-center justify-center text-white bg-azure font-light
-             sm:text-lg aspect-square w-10 min-w-10"
+             sm:text-lg aspect-square w-10 sm:w-14 min-w-10 sm:min-w-14"
         >
             {displayInitials}
         </div>
