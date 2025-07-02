@@ -2,10 +2,7 @@ import Image from "next/image";
 import {
     User,
     Edit,
-    // Activity,
     Settings,
-    // Shield,
-    // ArrowLeft,
     LinkIcon,
     Globe, Linkedin, Instagram, Twitter, Github, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send
 

@@ -1,9 +1,22 @@
+
 import { getFile } from "@/actions/files";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import avatar from "@/assets/images/user.png";
 
-export function ProfileAvatar({ profilePicture, alt }: { profilePicture?: string | null, alt: string }) {
+interface ProfileAvatarProps {
+    profilePicture?: string | null;
+    alt?: string;
+    width?: number;
+    height?: number;
+}
+
+export function ProfileAvatar({
+    profilePicture,
+    alt = "Profile Picture",
+    width = 40,
+    height = 40,
+}: ProfileAvatarProps) {
     const [imageUrl, setImageUrl] = useState<string>(avatar.src);
 
     useEffect(() => {
@@ -16,6 +29,8 @@ export function ProfileAvatar({ profilePicture, alt }: { profilePicture?: string
                 } catch {
                     if (isMounted) setImageUrl(avatar.src);
                 }
+            } else {
+                setImageUrl(avatar.src);
             }
         }
         fetchImage();
@@ -28,10 +43,10 @@ export function ProfileAvatar({ profilePicture, alt }: { profilePicture?: string
         <Image
             src={imageUrl}
             alt={alt}
-            width={40}
-            height={40}
-            className="w-10 h-10 rounded-full object-cover border border-white"
-            unoptimized
+            width={width}
+            height={height}
+            className="rounded-full object-cover border border-white"
+            priority
         />
     );
 }

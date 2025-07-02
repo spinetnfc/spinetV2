@@ -28,6 +28,7 @@ import Image from "next/image"
 import { getLocale } from "@/utils/getClientLocale"
 import { useAuth } from "@/context/authContext"
 import { Spinner } from "./ui/spinner"
+import { ProfileAvatar } from "./pages/profile-avatar"
 
 
 export default function SwitchProfileDrawer() {
@@ -102,13 +103,8 @@ export default function SwitchProfileDrawer() {
                                                 }`}
                                             onClick={() => { if (profile._id !== user.selectedProfile) handleProfileClick(profile) }}
                                         >
-                                            <Image
-                                                src="/img/user.png"
-                                                alt="profile image"
-                                                className="w-24 h-24 rounded-full"
-                                                width={60}
-                                                height={60}
-                                            />
+                                            <ProfileAvatar profilePicture={profile.profilePicture} height={96} width={96} />
+
                                             <div>
                                                 <div className="font-semibold">{profile.fullName}</div>
                                                 <div className="text-sm text-muted-foreground">{profile.companyName}</div>
