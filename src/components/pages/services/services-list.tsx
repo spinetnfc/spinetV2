@@ -14,6 +14,7 @@ import avatar from "@/assets/images/user.png"
 import Image from "next/image"
 import Link from "next/link"
 import { Spinner } from "@/components/ui/spinner"
+import { ProfileAvatar } from "../profile-avatar"
 
 type ServicesCardListProps = {
     services: ServicesData[]
@@ -163,11 +164,11 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
                             <div className="flex items-center justify-between">
                                 <Link href={`/${locale}/public-profile/${showDetails.Profile._id}`} className="flex items-center gap-2">
                                     <div className="bg-white rounded-full">
-                                        <Image
-                                            src={avatar}
-                                            alt="Service provider's Avatar"
-                                            className="w-10 h-10 rounded-full"
+                                        <ProfileAvatar
+                                            profilePicture={showDetails.Profile.profilePicture}
+                                            alt={`${showDetails.Profile.firstName} ${showDetails.Profile.lastName}`}
                                         />
+
                                     </div>
                                     <span className="text-sm font-semibold text-gray-400">
                                         {showDetails.Profile.firstName} {showDetails.Profile.lastName}
@@ -210,11 +211,11 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
                                     <div onClick={(e) => { e.stopPropagation() }} className="flex items-center justify-between">
                                         <Link href={`/${locale}/public-profile/${service.Profile._id}`} className="flex items-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg p-1">
                                             <div className="bg-white rounded-full">
-                                                <Image
-                                                    src={avatar}
-                                                    alt="Service provider's Avatar"
-                                                    className="w-10 h-10 rounded-full"
+                                                <ProfileAvatar
+                                                    profilePicture={service.Profile.profilePicture}
+                                                    alt={`${service.Profile.firstName} ${service.Profile.lastName}`}
                                                 />
+
                                             </div>
                                             <span className="text-sm font-semibold text-gray-400">
                                                 {service.Profile.firstName} {service.Profile.lastName}
