@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef } from "react"
 import { Upload, ImageIcon, X } from "lucide-react"
+import { FormattedMessage } from "react-intl"
 
 interface StyledFileInputProps {
     onChange: (file: File | null) => void
@@ -129,10 +130,10 @@ export default function StyledFileInput({ onChange, accept = "image/*", classNam
                         ) : (
                             <div>
                                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    {isDragOver ? "Drop your image here" : "Upload an image"}
+                                    {isDragOver ? <FormattedMessage id="drop_image" /> : <FormattedMessage id="upload_image" />}
                                 </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Drag & drop or click to browse</p>
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2"><FormattedMessage id="drag_drop_browse" /></p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1"><FormattedMessage id="image_formats" /></p>
                             </div>
                         )}
                     </div>
