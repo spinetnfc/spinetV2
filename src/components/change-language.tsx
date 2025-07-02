@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown';
+import { Button } from '@/components/ui/button';
 type Props = {
   locale: string;
 };
@@ -25,25 +26,25 @@ function ChangeLanguage({ locale }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          // variant="outline"
-          // size="icon"
-          className="cursor-pointer overflow-hidden rounded-full outline-1"
+        <Button
+          variant="outline"
+          size="icon"
+          className="cursor-pointer overflow-hidden rounded-full"
         >
           <span className="sr-only">Open Language Switcher</span>
           {locale === 'en' ? (
             // <EnglishIcon />
-            <div className='bg-red-500 text-white text-sm font-semibold w-8 h-8 rounded-full flex items-center justify-center'>EN</div>
+            <div className='bg-red-500 text-white text-sm font-semibold w-10 h-10 rounded-full flex items-center justify-center'>EN</div>
           ) : locale === 'fr' ? (
             // <FrenchIcon />
-            <div className='bg-blue-500 text-white text-sm font-semibold w-8 h-8 rounded-full flex items-center justify-center'>FR</div>
+            <div className='bg-blue-500 text-white text-sm font-semibold w-10 h-10 rounded-full flex items-center justify-center'>FR</div>
 
           ) : (
             // <ArabicIcon />
-            <div className='bg-green-600 text-white text-xs font-semibold w-8 h-8 rounded-full flex items-center justify-center'>AR</div>
+            <div className='bg-green-600 text-white text-xs font-semibold w-10 h-10 rounded-full flex items-center justify-center'>AR</div>
 
           )}
-        </button>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className='bg-white dark:bg-main p-0'>
         <Link
