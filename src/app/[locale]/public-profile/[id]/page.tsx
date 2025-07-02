@@ -242,11 +242,10 @@ export default async function ProfilePage({
                         {/* Profile Image */}
                         <div className="absolute start-8 bottom-0 transform translate-y-1/2 w-32 h-32 bg-white rounded-full border-4 border-white">
                             <Image
-                                priority
-                                src={profileData.profilePicture ? `https:files.spinetnfc.com/files/${profileData.profilePicture}` : "/img/user.png"}
+                                src={profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"}
                                 alt="Profile picture"
                                 fill
-                                className="rounded-full object-cover"
+                                className="rounded-full object-cover border-2 border-neutral-50"
                             />
                             <div className="absolute -bottom-2 right-0 bg-white border border-gray-300 h-8 w-8 p-[1px] flex items-center justify-center rounded-md">
                                 <Image
