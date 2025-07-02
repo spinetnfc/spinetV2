@@ -150,7 +150,7 @@ export default async function ProfilePage({
                 {/* Profile Image */}
                 <div className="relative w-32 h-32 xs:w-40 xs:h-40 mx-auto -mt-16 xs:-mt-20 bg-neutral-100 rounded-full">
                     <Image
-                        src={profileData.profilePicture ? `${process.env.FILES_API}/files/${profileData.profilePicture}` : "/img/user.png"}
+                        src={profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"}
                         alt="Profile picture"
                         fill
                         className="rounded-full object-cover border-4 border-neutral-50"

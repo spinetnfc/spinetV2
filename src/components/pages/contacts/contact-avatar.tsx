@@ -36,7 +36,6 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
 
     if (imageUrl?.startsWith('http')) {
         return (
-            // <div className="rounded-md overflow-hidden aspect-square w-10 sm:w-14 min-w-10 sm:min-w-14">
             <Image
                 src={imageUrl}
                 alt={name}
@@ -44,7 +43,6 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
                 height={sizeInPx}
                 className="object-cover rounded-md aspect-square w-10 sm:w-14 min-w-10 sm:min-w-14"
             />
-            // </div>
         );
     }
 
