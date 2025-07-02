@@ -18,3 +18,11 @@ export const ServerApi = axios.create({
   withCredentials: true,
 });
 
+export const filesApi = axios.create({
+  baseURL: process.env.FILES_API,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  withCredentials: true,
+});

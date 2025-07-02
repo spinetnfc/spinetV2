@@ -103,8 +103,9 @@ export default function SwitchProfileDrawer() {
                                                 }`}
                                             onClick={() => { if (profile._id !== user.selectedProfile) handleProfileClick(profile) }}
                                         >
-                                            <ProfileAvatar profilePicture={profile.profilePicture} height={96} width={96} />
-
+                                            <div className="border-2  rounded-full">
+                                                <ProfileAvatar profilePicture={profile.profilePicture} height={96} width={96} />
+                                            </div>
                                             <div>
                                                 <div className="font-semibold">{profile.fullName}</div>
                                                 <div className="text-sm text-muted-foreground">{profile.companyName}</div>

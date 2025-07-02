@@ -45,7 +45,7 @@ export function ProfileAvatar({
             alt={alt}
             width={width}
             height={height}
-            className="rounded-full object-cover border border-white"
+            className="rounded-full object-cover "
             priority
         />
     );

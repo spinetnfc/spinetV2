@@ -1,4 +1,3 @@
-// components/pages/shop/products/ImageModal.tsx
 'use client';
 
 import React, { useState, useCallback, useEffect } from "react";

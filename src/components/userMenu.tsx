@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { getProfileAction } from "@/actions/profile";
 import { getFile } from "@/actions/files";
 import Image from "next/image";
+import { ProfileAvatar } from "./pages/profile-avatar";
 const UserMenu = ({ locale }: { locale: string }) => {
     const { logout, user } = useAuth();
     const profileId = user?.selectedProfile || null;
@@ -24,13 +25,7 @@ const UserMenu = ({ locale }: { locale: string }) => {
         async function fetchImage() {
             const profile = await getProfileAction(profileId);
             if (profile.profilePicture) {
-                try {
-                    const url = await getFile(profile.profilePicture);
-                    if (isMounted) setImageUrl(url);
-                } catch {
-                    if (isMounted) console.log("coundlen't fetch profile image");
-
-                }
+                setImageUrl(profile.profilePicture);
             }
         }
         fetchImage();
@@ -38,7 +33,7 @@ const UserMenu = ({ locale }: { locale: string }) => {
     return (<DropdownMenu>
         <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className="rounded-full bg-white dark:bg-background p-0">
-                {imageUrl ? <Image src={imageUrl} alt="Profile Picture" width={32} height={32} className="rounded-full object-cover" /> : <User2 className="size-6" />}
+                {imageUrl ? <ProfileAvatar profilePicture={imageUrl} /> : <User2 className="size-6" />}
                 <span className="sr-only">Open user menu</span>
             </Button>
         </DropdownMenuTrigger>
