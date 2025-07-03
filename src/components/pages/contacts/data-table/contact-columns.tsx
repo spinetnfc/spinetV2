@@ -44,8 +44,8 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
                     position && companyName ? `${position} at ${companyName}` : position || companyName || ""
 
                 return (
-                    <Link
-                        href={`/${locale}/public-profile/${contact.Profile._id}`}
+                    <div
+                        // href={`/${locale}/public-profile/${contact.Profile._id}`}
                         className="flex items-center gap-2 w-full"
                     >
                         <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} />
@@ -58,7 +58,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
                                 <div className="text-xs text-muted-foreground block sm:hidden truncate">{positionCompanyText}</div>
                             )}
                         </div>
-                    </Link>
+                    </div>
                 )
             },
             filterFn: (row, id, value) => {

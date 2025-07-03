@@ -14,7 +14,6 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
     const sizeInPx = size === "sm" ? 32 : size === "md" ? 44 : 64
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     useEffect(() => {
-        console.log("running getFile")
         async function fetchImage() {
             if (profilePicture) {
                 const url = await getFile(profilePicture);

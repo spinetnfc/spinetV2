@@ -37,6 +37,16 @@ SPINET Web is a digital business card platform that allows users to create and m
 - Calendar component for date selection instead of basic date input
 - Dynamic form fields for social links with add/remove functionality
 
+### Contacts Table & Profile Preview
+
+- Contacts are displayed in a data table with filtering, sorting, and bulk actions.
+- Clicking a contact row shows the contact's profile inside a phone mockup:
+  - On screens `sm` and larger, the phone mockup appears beside the table.
+  - On smaller screens, the phone mockup appears in a modal dialog.
+- The phone mockup uses the `PhoneMockup` component, which displays the contact's profile, avatar, cover, and links in a mobile-style preview.
+- The modal dialog uses the `Dialog` and `DialogContent` components from `@/components/ui/dialog/dialog`.
+- The preview can be closed by clicking the close button or outside the modal (on mobile).
+
 ## Code Organization
 
 ### API Calls
@@ -59,6 +69,8 @@ SPINET Web is a digital business card platform that allows users to create and m
 - Using shadcn/ui components
 - Responsive design with mobile-first approach
 - Dynamic styling based on user preferences (theme color)
+- PhoneMockup component for mobile-style profile previews
+- Responsive layout: table and preview side-by-side on desktop, modal on mobile
 
 ## Dependencies
 

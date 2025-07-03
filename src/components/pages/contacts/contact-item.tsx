@@ -89,57 +89,57 @@ export default function ContactItem({ contact, locale, onDelete }: ContactItemPr
                     message="delete-contact-message"
                 />
             )}
-            <Link href={`/${locale}/public-profile/${contact.Profile._id}`} className="flex items-center justify-between py-4 border-b border-gray-100 group">
-                <div className="flex items-center gap-3">
-                    <ContactAvatar
-                        name={name}
-                        profilePicture={Profile.profilePicture ?? null}
-                    />
-                    <div>
-                        <h3 className="font-medium">{name}</h3>
-                        {hasPositionOrCompany && (
-                            <p className="text-sm text-gray-500">
-                                {position}
-                                {position && companyName ? " at " : ""}
-                                {companyName}
-                            </p>
-                        )}
-                    </div>
+            {/* <Link href={`/${locale}/public-profile/${contact.Profile._id}`} className="flex items-center justify-between py-4 border-b border-gray-100 group"> */}
+            <div className="flex items-center gap-3">
+                <ContactAvatar
+                    name={name}
+                    profilePicture={Profile.profilePicture ?? null}
+                />
+                <div>
+                    <h3 className="font-medium">{name}</h3>
+                    {hasPositionOrCompany && (
+                        <p className="text-sm text-gray-500">
+                            {position}
+                            {position && companyName ? " at " : ""}
+                            {companyName}
+                        </p>
+                    )}
                 </div>
-                <div className="relative">
-                    <div className="absolute end-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                    }}
-                                    className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer"
-                                >
-                                    <MoreVertical size={20} />
-                                </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="bg-white dark:bg-background">
-                                <DropdownMenuItem
-                                    className="flex items-center gap-2 cursor-pointer"
-                                    onClick={() => setShowEditForm(true)}
-                                >
-                                    <Edit size={14} />
-                                    <FormattedMessage id="edit" />
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    className="flex items-center gap-2 text-red-500 cursor-pointer"
-                                    onClick={handleDeleteClick}
-                                >
-                                    <Trash2 size={14} />
-                                    <FormattedMessage id="delete" />
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
+            </div>
+            <div className="relative">
+                <div className="absolute end-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                }}
+                                className="text-primary p-1 hover:text-gray-600 rounded-full cursor-pointer"
+                            >
+                                <MoreVertical size={20} />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="bg-white dark:bg-background">
+                            <DropdownMenuItem
+                                className="flex items-center gap-2 cursor-pointer"
+                                onClick={() => setShowEditForm(true)}
+                            >
+                                <Edit size={14} />
+                                <FormattedMessage id="edit" />
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                className="flex items-center gap-2 text-red-500 cursor-pointer"
+                                onClick={handleDeleteClick}
+                            >
+                                <Trash2 size={14} />
+                                <FormattedMessage id="delete" />
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
-            </Link>
+            </div>
+            {/* </Link> */}
         </>
     );
 }

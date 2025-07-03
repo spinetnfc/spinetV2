@@ -32,6 +32,8 @@ import { PaginationControls } from "@/components/ui/table-pagination"
 import { TableFooter } from "@/components/ui/table"
 import { cn } from "@/utils/cn"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
+import PhoneMockup from "../phone-mockup"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
@@ -45,21 +47,21 @@ interface ContactsDataTableProps {
     }
 }
 
-function useIsMobile() {
-    const [isMobile, setIsMobile] = React.useState(false)
+function useisSmallScreen() {
+    const [isSmallScreen, setisSmallScreen] = React.useState(false)
 
     React.useEffect(() => {
-        const checkIsMobile = () => {
-            setIsMobile(window.innerWidth < 640)
+        const checkisSmallScreen = () => {
+            setisSmallScreen(window.innerWidth < 1280)
         }
 
-        checkIsMobile()
-        window.addEventListener("resize", checkIsMobile)
+        checkisSmallScreen()
+        window.addEventListener("resize", checkisSmallScreen)
 
-        return () => window.removeEventListener("resize", checkIsMobile)
+        return () => window.removeEventListener("resize", checkisSmallScreen)
     }, [])
 
-    return isMobile
+    return isSmallScreen
 }
 
 function ActionCell({
@@ -123,7 +125,7 @@ function ActionCell({
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
+                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                         <span className="sr-only">Open menu</span>
                         <MoreVertical className="h-4 w-4" />
                     </Button>
@@ -170,7 +172,8 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
-    const isMobile = useIsMobile()
+    const isSmallScreen = useisSmallScreen()
+    const [selectedContact, setSelectedContact] = React.useState<Contact | null>(null)
 
     const initialFiltering: ColumnFiltersState = []
     if (query) {
@@ -217,8 +220,8 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
             columnFilters,
             columnVisibility: {
                 ...columnVisibility,
-                company: !isMobile,
-                position: !isMobile,
+                company: !isSmallScreen,
+                position: !isSmallScreen,
             },
             rowSelection,
             pagination: {
@@ -276,8 +279,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const selectedRowCount = Object.values(rowSelection).filter(Boolean).length
 
     return (
-        <div className="space-y-2 sm:space-y-4 sm:mt-4">
-
+        <div>
             <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">
                 <div className="me-auto">
                     {selectedRowCount > 0 && (
@@ -311,81 +313,102 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                     </Button>
                 </div>
             </div>
-
-            <div className="rounded-md border bordr-gray-300 overflow-x-auto">
-                <Table className="table-auto relative">
-                    <TableHeader className="bg-gray-100 dark:bg-navy">
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className={`px-2 py-1 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
-                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
+            {/* Table and PhoneMockup aligned at the top */}
+            <div className="sm:flex sm:gap-4 sm:items-start mt-2">
+                <div className="flex-1">
+                    <div className="rounded-md border bordr-gray-300 overflow-x-auto">
+                        <Table className="table-auto relative">
+                            <TableHeader className="bg-gray-100 dark:bg-navy">
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <TableRow key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <TableHead key={header.id} className={`px-2 py-1 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
+                                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                            </TableHead>
+                                        ))}
+                                        <TableHead className="w-12 absolute top-1.5 end-4">
+                                            <ContactSortDropdown />
+                                        </TableHead>
+                                    </TableRow>
                                 ))}
-                                <TableHead className="w-12 absolute top-1.5 end-4">
-                                    <ContactSortDropdown />
-                                </TableHead>
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell
-                                            key={cell.id}
-                                            className={cn(
-                                                "min-w-0",
-                                                cell.column.id === "select"
-                                                    ? "w-12 px-2" // Adjusted padding for RTL
-                                                    : cell.column.id === "name"
-                                                        ? "w-auto truncate px-2"
-                                                        : "truncate px-2"
-                                            )}
+                            </TableHeader>
+                            <TableBody>
+                                {table.getRowModel().rows?.length ? (
+                                    table.getRowModel().rows.map((row) => (
+                                        <TableRow
+                                            key={row.id}
+                                            data-state={row.getIsSelected() && "selected"}
+                                            onClick={() => setSelectedContact(row.original)}
+                                            className="cursor-pointer"
                                         >
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {row.getVisibleCells().map((cell) => (
+                                                <TableCell
+                                                    key={cell.id}
+                                                    className={cn(
+                                                        "min-w-0",
+                                                        cell.column.id === "select"
+                                                            ? "w-12 px-2"
+                                                            : cell.column.id === "name"
+                                                                ? "w-auto truncate px-2"
+                                                                : "truncate px-2"
+                                                    )}
+                                                >
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </TableCell>
+                                            ))}
+                                            <TableCell className="px-2 w-12">
+                                                <ActionCell contact={row.original} locale={locale} profileId={profileId} />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={columns.length + 1} className="h-24 text-center">
+                                            <FormattedMessage id="no-contacts-found" defaultMessage="No contacts found" />
                                         </TableCell>
-                                    ))}
-                                    <TableCell className="px-2 w-12">
-                                        <ActionCell contact={row.original} locale={locale} profileId={profileId} />
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell colSpan={100} className="h-12 p-2 bg-gray-100 dark:bg-navy">
+                                        <PaginationControls
+                                            currentPage={table.getState().pagination.pageIndex + 1}
+                                            totalPages={table.getPageCount()}
+                                            totalElements={contacts.length}
+                                            rowsPerPage={Number(rowsPerPage)}
+                                        />
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length + 1} className="h-24 text-center">
-                                    <FormattedMessage id="no-contacts-found" defaultMessage="No contacts found" />
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell colSpan={100} className="h-12 p-2 bg-gray-100 dark:bg-navy">
-                                <PaginationControls
-                                    currentPage={table.getState().pagination.pageIndex + 1}
-                                    totalPages={table.getPageCount()}
-                                    totalElements={contacts.length}
-                                    rowsPerPage={Number(rowsPerPage)}
-                                />
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>
-                </Table>
+                            </TableFooter>
+                        </Table>
+                    </div>
+                    {showDeleteModal && (
+                        <ConfirmationModal
+                            isOpen={showDeleteModal}
+                            onClose={() => setShowDeleteModal(false)}
+                            onConfirm={handleBulkDelete}
+                            itemName={"contacts"}
+                            isDeleting={isDeleting}
+                            message="delete-contacts-message"
+                        />
+                    )}
+                </div>
+                {/* PhoneMockup on desktop */}
+                {selectedContact && !isSmallScreen && (
+                    <div className="hidden xl:block h-fit">
+                        <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
+                    </div>
+                )}
             </div>
-
-
-
-            {showDeleteModal && (
-                <ConfirmationModal
-                    isOpen={showDeleteModal}
-                    onClose={() => setShowDeleteModal(false)}
-                    onConfirm={handleBulkDelete}
-                    itemName={"contacts"}
-                    isDeleting={isDeleting}
-                    message="delete-contacts-message"
-                />
+            {/* PhoneMockup in modal on mobile */}
+            {selectedContact && isSmallScreen && (
+                <Dialog open={!!selectedContact} onOpenChange={() => setSelectedContact(null)} >
+                    <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none  max-w-xs [&>button]:hidden">
+                        <DialogTitle className="sr-only">Contact Details</DialogTitle>
+                        <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
+                    </DialogContent>
+                </Dialog>
             )}
         </div>
     )
