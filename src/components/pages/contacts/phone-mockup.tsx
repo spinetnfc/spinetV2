@@ -65,7 +65,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ data, className, onClose }) =
                 {data?.links?.map((link: any, index: number) => (
                     <div
                         key={index}
-                        className="w-full cursor-pointer rounded-md duration-300 hover:shadow-md bg-gray-100"
+                        className="w-full cursor-pointer rounded-md duration-300 hover:shadow-md bg-gray-100 dark:bg-navy"
                         onClick={() => window.open(link.link, "_blank")}
                     >
                         <div className="flex justify-between">
