@@ -37,12 +37,12 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ data, className, onClose }) =
                     <div className="relative inline-flex h-[90px] flex-col items-center">
                         <ProfileAvatar profilePicture={data.profilePicture} height={80} width={80} />
                         {/* {data.logo && (
-                            <img
-                                src={data.logo}
-                                alt="logo"
-                                className="absolute bottom-0 m-0 h-[30px] w-[30px] rounded-sm object-cover p-0"
-                            />
-                        )} */}
+                                <img
+                                    src={data.logo}
+                                    alt="logo"
+                                    className="absolute bottom-0 m-0 h-[30px] w-[30px] rounded-sm object-cover p-0"
+                                />
+                            )} */}
                     </div>
                 </div>
             </div>
@@ -70,7 +70,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ data, className, onClose }) =
                     >
                         <div className="flex justify-between">
                             <div className="relative m-2 flex h-5 w-5 min-w-5 flex-col justify-center">
-                                <RenderIcon iconType={link.title} />
+                                <RenderIcon iconType={link.name ? link.name : link.title} />
 
                             </div>
                         </div>

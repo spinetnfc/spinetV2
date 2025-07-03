@@ -4,7 +4,8 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Linkedin, Globe, Phone, Facebook, Instagram, Youtube, Mail, Twitter, Store, Github, ArrowDownUp, Eye, UserPlus } from "lucide-react"
+// import { Linkedin, Globe, Phone, Facebook, Instagram, Youtube, Mail, Twitter, Store, Github, ArrowDownUp, Eye, UserPlus } from "lucide-react"
+import { ArrowDownUp, Eye, UserPlus } from "lucide-react"
 import { getInsightsAction } from "@/actions/profile"
 import { format, subDays } from "date-fns"
 import { FormattedMessage } from "react-intl"
@@ -13,22 +14,23 @@ import goldMedal from "@/assets/images/medals/medal_Gold.png";
 import silverMedal from "@/assets/images/medals/medal_silver.png";
 import bronzeMedal from "@/assets/images/medals/medal_Bronze.png";
 import Image from "next/image"
+import { RenderIcon } from "@/components/ui/renderIcon"
 
-const getLinkIcon = (name: string) => {
-    const iconComponents: { [key: string]: any } = {
-        linkedin: Linkedin,
-        website: Globe,
-        email: Mail,
-        facebook: Facebook,
-        github: Github,
-        phone: Phone,
-        instagram: Instagram,
-        youtuibe: Youtube,
-        twitter: Twitter,
-        store: Store,
-    }
-    return iconComponents[name] || Globe
-}
+// const getLinkIcon = (name: string) => {
+//     const iconComponents: { [key: string]: any } = {
+//         linkedin: Linkedin,
+//         website: Globe,
+//         email: Mail,
+//         facebook: Facebook,
+//         github: Github,
+//         phone: Phone,
+//         instagram: Instagram,
+//         youtuibe: Youtube,
+//         twitter: Twitter,
+//         store: Store,
+//     }
+//     return iconComponents[name] || Globe
+// }
 
 const getUserLevel = (score: number) => {
     if (score >= 1000) return { level: "Gold", progress: score / 2000 * 100 }
@@ -191,14 +193,14 @@ export default function InsightsPage({ profileId, profileInsights }: { profileId
 
                     <div className="space-y-3">
                         {insights.links.map((link) => {
-                            const IconComponent = getLinkIcon(link.name)
+                            // const IconComponent = getLinkIcon(link.name)
 
                             return (
                                 <Card key={link._id} className="bg-blue-200 dark:bg-navy border-slate-300 dark:border-slate-700 hover:bg-slate-750 transition-colors">
                                     <CardContent className="p-4 flex items-center justify-between gap-2 sm:gap-4">
                                         <div className="flex items-center space-x-2 sm:space-x-4 overflow-hidden">
                                             <div className="p-2 rounded-lg text-azure flex-shrink-0">
-                                                <IconComponent className="w-5 h-5" />
+                                                <RenderIcon iconType={link.name} className="w-6 h-6" />
                                             </div>
                                             <div className="overflow-hidden">
                                                 <h3 className="font-medium text-sm sm:text-base truncate">{link.title}</h3>

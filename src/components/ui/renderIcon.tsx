@@ -41,6 +41,8 @@ export function RenderIcon({ iconType, className = "w-5 h-5 text-azure" }: Rende
             return <Phone className={className} />
         case "Phone Number":
             return <Phone className={className} />
+        case "PhoneNumber":
+            return <Phone className={className} />
         case "github":
             return <Github className={className} />
         case "playstore":
