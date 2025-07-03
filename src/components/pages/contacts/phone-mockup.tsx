@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "@/utils/cn";
 import type { Contact } from "@/types/contact";
 import { X } from "lucide-react";
+import { ProfileAvatar } from "../profile-avatar";
 
 interface PhoneMockupProps {
     data: Contact["Profile"];
@@ -28,19 +29,12 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ data, className, onClose }) =
                 className,
             )}
         >
-            <div className="relative h-[180px] min-h-[180px] w-full cursor-pointer">
-                <img
-                    src={data.profileCover || "/images/cover_pic.png"}
-                    alt="cover"
-                    className="m-0 h-[140px] w-full rounded-3xl object-cover p-0"
-                />
-                <div className="absolute bottom-0 inline-flex h-fit w-full cursor-pointer flex-col items-center">
+            <div className="relative h-[120px] min-h-[120px] w-full cursor-pointer">
+                <ProfileAvatar profileCover={data.profileCover} />
+
+                <div className="absolute -bottom-12 inline-flex h-fit w-full cursor-pointer flex-col items-center">
                     <div className="relative inline-flex h-[90px] flex-col items-center">
-                        <img
-                            src={data.profilePicture || "/images/person_pic.png"}
-                            alt="profile"
-                            className="m-0 h-[80px] w-[80px] rounded-xl object-cover p-0 border-4 border-white"
-                        />
+                        <ProfileAvatar profilePicture={data.profilePicture} height={80} width={80} />
                         {/* {data.logo && (
                             <img
                                 src={data.logo}
@@ -51,6 +45,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ data, className, onClose }) =
                     </div>
                 </div>
             </div>
+            <div className="h-8" />
             <p className="my-2 text-md font-semibold">
                 {data.fullName || `${data.firstName || ""} ${data.lastName || ""}`}
             </p>

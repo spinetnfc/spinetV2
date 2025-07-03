@@ -1,4 +1,3 @@
-
 import { getFile } from "@/actions/files";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -6,6 +5,7 @@ import avatar from "@/assets/images/user.png";
 
 interface ProfileAvatarProps {
     profilePicture?: string | null;
+    profileCover?: string | null;
     alt?: string;
     width?: number;
     height?: number;
@@ -13,6 +13,7 @@ interface ProfileAvatarProps {
 
 export function ProfileAvatar({
     profilePicture,
+    profileCover,
     alt = "Profile Picture",
     width = 40,
     height = 40,
@@ -22,7 +23,14 @@ export function ProfileAvatar({
     useEffect(() => {
         let isMounted = true;
         async function fetchImage() {
-            if (profilePicture) {
+            if (profileCover) {
+                try {
+                    const url = await getFile(profileCover);
+                    if (isMounted) setImageUrl(url);
+                } catch {
+                    if (isMounted) setImageUrl(avatar.src);
+                }
+            } else if (profilePicture) {
                 try {
                     const url = await getFile(profilePicture);
                     if (isMounted) setImageUrl(url);
@@ -30,23 +38,24 @@ export function ProfileAvatar({
                     if (isMounted) setImageUrl(avatar.src);
                 }
             } else {
-                setImageUrl(avatar.src);
+                setImageUrl(avatar.src)
             }
         }
         fetchImage();
         return () => {
             isMounted = false;
         };
-    }, [profilePicture]);
+    }, [profilePicture, profileCover]);
 
     return (
         <Image
             src={imageUrl}
             alt={alt}
-            width={width}
-            height={height}
-            className="rounded-full object-cover "
+            width={profileCover ? undefined : width}
+            height={profileCover ? undefined : height}
+            className={profileCover ? "w-full h-full object-cover" : "rounded-full object-cover"}
             priority
+            fill={profileCover ? true : false}
         />
     );
 }

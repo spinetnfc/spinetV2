@@ -179,7 +179,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
                             try {
                                 const res = await axios.post(
-                                    "https://api.spinet.app/auth/signup",
+                                    `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
                                     userData,
                                     { withCredentials: true }
                                 );
