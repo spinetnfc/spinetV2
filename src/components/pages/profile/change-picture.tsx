@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { Edit, X } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { toast } from 'sonner';
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import StyledFileInput from '@/components/ui/image-input';
+import { uploadFile } from '@/actions/files';
 import { updateProfileAction } from '@/actions/profile';
 
 interface ChangePictureProps {
@@ -29,33 +29,7 @@ export default function ChangePicture({ profileId, pictureType }: ChangePictureP
         formData.append('type', pictureType === 'profilePicture' ? 'profile' : 'cover');
 
         try {
-            // Get fileApiToken from cookies
-            const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-                const [key, value] = cookie.trim().split('=');
-                acc[key] = value;
-                return acc;
-            }, {} as Record<string, string>);
-
-            const fileApiToken = cookies['current-user'];
-            if (!fileApiToken) {
-                throw new Error('No fileApiToken found in cookies');
-            }
-
-            const user = JSON.parse(decodeURIComponent(fileApiToken));
-            const token = user?.tokens?.fileApiToken;
-            if (!token) {
-                throw new Error('No fileApiToken available');
-            }
-
-            // Client-side file upload
-            const response = await axios.post('https://files.spinetnfc.com/upload', formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            const fileId = response.data;
+            const fileId = await uploadFile(formData);
             if (!fileId) throw new Error('No file ID returned');
 
             const updateData = { [pictureType]: fileId };
@@ -64,7 +38,7 @@ export default function ChangePicture({ profileId, pictureType }: ChangePictureP
             if (result.success) {
                 toast.success(
                     intl.formatMessage({
-                        id: pictureType === 'profilePicture' ? 'profile_picture_updated' : 'cover_picture_updated',
+                        id: pictureType === 'profilePicture' ? 'profile-picture-updated' : 'cover-picture-updated',
                         defaultMessage: pictureType === 'profilePicture' ? 'Profile picture updated successfully' : 'Cover picture updated successfully',
                     })
                 );
@@ -72,15 +46,11 @@ export default function ChangePicture({ profileId, pictureType }: ChangePictureP
             } else {
                 throw new Error(result.message || 'Failed to update profile');
             }
-        } catch (error: any) {
-            console.error('Error uploading or updating picture:', {
-                message: error.message,
-                status: error.response?.status,
-                data: error.response?.data,
-            });
+        } catch (error) {
+            console.error('Error uploading or updating picture:', error);
             toast.error(
                 intl.formatMessage({
-                    id: pictureType === 'profilePicture' ? 'profile_picture_update_failed' : 'cover_picture_update_failed',
+                    id: pictureType === 'profilePicture' ? 'profile-picture-update-failed' : 'cover-picture-update-failed',
                     defaultMessage: pictureType === 'profilePicture' ? 'Failed to update profile picture' : 'Failed to update cover picture',
                 })
             );
@@ -120,7 +90,7 @@ export default function ChangePicture({ profileId, pictureType }: ChangePictureP
                         <StyledFileInput
                             onChange={handleFileChange}
                             accept="image/png,image/jpeg,image/gif"
-                            isRegisterPage={false}
+                            isRegisterPage={false} // Upload file immediately
                             className="mb-4"
                         />
                         <div className="flex justify-end gap-2">
