@@ -19,8 +19,7 @@ type Props = {
 function StepCard({ imageUrl, text, ordinal }: Props) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const params = useParams();
-  const locale = params.locale;
+  const { locale } = useParams();
 
 
   // Handle mounting state
