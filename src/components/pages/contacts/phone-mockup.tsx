@@ -3,6 +3,7 @@ import { cn } from "@/utils/cn";
 import type { Contact } from "@/types/contact";
 import { X } from "lucide-react";
 import { ProfileAvatar } from "../profile-avatar";
+import { RenderIcon } from "@/components/ui/renderIcon";
 
 interface PhoneMockupProps {
     data: Contact["Profile"];
@@ -68,9 +69,9 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ data, className, onClose }) =
                         onClick={() => window.open(link.link, "_blank")}
                     >
                         <div className="flex justify-between">
-                            <div className="relative m-2 flex h-[35px] w-[35px] min-w-[35px] flex-col justify-center">
-                                {/* Icon placeholder */}
-                                <div className="bg-gray-300 rounded-sm w-full h-full" />
+                            <div className="relative m-2 flex h-5 w-5 min-w-5 flex-col justify-center">
+                                <RenderIcon iconType={link.title} />
+
                             </div>
                         </div>
                         <p className="mx-2 max-w-full truncate text-sm font-bold">{link.title}</p>

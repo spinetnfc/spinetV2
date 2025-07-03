@@ -160,7 +160,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
         filter = "all",
         sort = "name-asc",
         page = "1",
-        rowsPerPage = dynamicRowsPerPage.toString()
+        rowsPerPage = contacts.length < dynamicRowsPerPage ? contacts.length : dynamicRowsPerPage.toString()
     } = searchParams
     const currentRowsPerPage = Number(rowsPerPage)
     const router = useRouter()
