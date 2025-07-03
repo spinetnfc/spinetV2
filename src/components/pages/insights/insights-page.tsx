@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-// import { Linkedin, Globe, Phone, Facebook, Instagram, Youtube, Mail, Twitter, Store, Github, ArrowDownUp, Eye, UserPlus } from "lucide-react"
 import { ArrowDownUp, Eye, UserPlus } from "lucide-react"
 import { getInsightsAction } from "@/actions/profile"
 import { format, subDays } from "date-fns"
@@ -16,21 +15,6 @@ import bronzeMedal from "@/assets/images/medals/medal_Bronze.png";
 import Image from "next/image"
 import { RenderIcon } from "@/components/ui/renderIcon"
 
-// const getLinkIcon = (name: string) => {
-//     const iconComponents: { [key: string]: any } = {
-//         linkedin: Linkedin,
-//         website: Globe,
-//         email: Mail,
-//         facebook: Facebook,
-//         github: Github,
-//         phone: Phone,
-//         instagram: Instagram,
-//         youtuibe: Youtube,
-//         twitter: Twitter,
-//         store: Store,
-//     }
-//     return iconComponents[name] || Globe
-// }
 
 const getUserLevel = (score: number) => {
     if (score >= 1000) return { level: "Gold", progress: score / 2000 * 100 }

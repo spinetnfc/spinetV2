@@ -1,32 +1,15 @@
 import Image from "next/image"
-import {
-    Linkedin,
-    Globe,
-    Phone,
-    Facebook,
-    Instagram,
-    Youtube,
-    Mail,
-    Twitter,
-    Store,
-    MapPinned,
-    UserPlus,
-    Send,
-    Github,
-} from "lucide-react"
 import Link from "next/link"
 import PlayStoreIcon from "@/components/icons/play-store"
 import AppStoreIcon from "@/components/icons/app-store"
-import Whatsapp from "@/components/icons/whatsapp"
-import Telegram from "@/components/icons/telegram"
-import Viber from "@/components/icons/viber"
-import Tiktok from "@/components/icons/tiktok"
 import { EmailLink } from "@/components/pages/profile/email-link-wrapper"
 import useTranslate from "@/hooks/use-translate"
 import type { ProfileData } from "@/types/profile"
 import { getProfile } from "@/lib/api/profile"
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 import AddContactButton from "@/components/pages/contacts/add-contact-button"
+import { RenderIcon } from "@/components/ui/renderIcon"
+import { Send, UserPlus } from "lucide-react"
 
 export default async function ProfilePage({
     params,
@@ -54,6 +37,7 @@ export default async function ProfilePage({
     const position = profileData?.position
     const company = profileData?.companyName
     const themeColor = profileData?.theme?.color || "azure" // Default to azure if undefined
+
     // Replace the hardcoded links array with dynamic links from profileData
     const links = profileData.links.map((link) => {
         const iconType = link.name.toLowerCase()
@@ -70,46 +54,7 @@ export default async function ProfilePage({
         }
     })
 
-    // Function to render the appropriate icon based on iconType
-    const renderIcon = (iconType: string) => {
-        switch (iconType) {
-            case "linkedin":
-                return <Linkedin className="w-5 h-5 text-azure" />
-            case "facebook":
-                return <Facebook className="w-5 h-5 text-azure" />
-            case "instagram":
-                return <Instagram className="w-5 h-5 text-azure" />
-            case "youtube":
-                return <Youtube className="w-5 h-5 text-azure" />
-            case "twitter":
-                return <Twitter className="w-5 h-5 text-azure" />
-            case "email":
-                return <Mail className="w-5 h-5 text-azure" />
-            case "phone":
-                return <Phone className="w-5 h-5 text-azure" />
-            case "github":
-                return <Github className="w-5 h-5 text-azure" />
-            case "playstore":
-                return <PlayStoreIcon className="w-5 h-5 text-azure" />
-            case "appstore":
-                return <AppStoreIcon className="w-5 h-5 text-azure" />
-            case "store":
-                return <Store className="w-5 h-5 text-azure" />
-            case "location":
-                return <MapPinned className="w-5 h-5 text-azure" />
-            case "whatsapp":
-                return <Whatsapp className="w-6 h-6 text-azure" />
-            case "telegram":
-                return <Telegram className="w-6 h-6 text-azure" />
-            case "viber":
-                return <Viber className="w-6 h-6 text-azure" />
-            case "tiktok":
-                return <Tiktok className="w-6 h-6 text-azure" />
-            case "globe":
-            default:
-                return <Globe className="w-5 h-5 text-azure" />
-        }
-    }
+
 
     // Check if the link is a phone or messaging app type
     const isNumberOrEmail = (iconType: string) => {
@@ -119,7 +64,7 @@ export default async function ProfilePage({
     // Render a single link
     const renderLink = (link: any, index: number) => {
         if (link.isEmail && link.email) {
-            return <EmailLink key={index} email={link.email} label={link.label} icon={renderIcon(link.iconType)} />
+            return <EmailLink key={index} email={link.email} label={link.label} icon={<RenderIcon iconType={link.iconType} className="w-5 h-5 text-azure" />} />
         }
 
         return (
@@ -129,7 +74,7 @@ export default async function ProfilePage({
                 target="_blank"
                 className="flex items-center w-full h-12 px-3 bg-blue-200 rounded-md hover:bg-gray-200 transition-colors"
             >
-                {renderIcon(link.iconType)}
+                <RenderIcon iconType={link.iconType} className="w-5 h-5 text-azure" />
                 <div className="ms-3 overflow-hidden">
                     <span className="font-medium text-gray-700 truncate block">{link.label}</span>
                     {isNumberOrEmail(link.iconType) && (link.phoneNumber || link.email) && (

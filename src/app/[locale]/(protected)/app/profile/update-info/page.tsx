@@ -4,12 +4,10 @@ import {
     Edit,
     Settings,
     LinkIcon,
-    Globe, Linkedin, Instagram, Twitter, Github, Facebook, MapPin, ShoppingCart, Store, Smartphone, MessageCircle, Send
 
 } from "lucide-react";
 import useTranslate from "@/hooks/use-translate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { Button } from "@/components/ui/button";
 import { getAllProfiles, getProfile } from "@/lib/api/profile";
 import type { ProfileData } from "@/types/profile";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
@@ -18,43 +16,7 @@ import PreferencesForm from "@/components/pages/profile/preferences-form";
 import AddLinkButton from "@/components/pages/profile/add-link-button";
 import LinkItem from "@/components/pages/profile/link-item";
 import ChangePicture from "@/components/pages/profile/change-picture";
-// import ChangeEmailForm from "@/components/pages/profile/change-email-form";
-// import Link from "next/link";
-// import { deleteProfileAction, getAllProfilesAction } from "@/actions/profile";
-// import { profile } from "console";
-
-function getLinkIcon(linkName: string, themeColor: string) {
-    switch (linkName.toLowerCase()) {
-        case "website":
-            return <Globe style={{ color: themeColor }} size={24} />
-        case "linkedin":
-            return <Linkedin style={{ color: themeColor }} size={24} />
-        case "instagram":
-            return <Instagram style={{ color: themeColor }} size={24} />
-        case "twitter":
-            return <Twitter style={{ color: themeColor }} size={24} />
-        case "github":
-            return <Github style={{ color: themeColor }} size={24} />
-        case "facebook":
-            return <Facebook style={{ color: themeColor }} size={24} />
-        case "location":
-            return <MapPin style={{ color: themeColor }} size={24} />
-        case "order now":
-            return <ShoppingCart style={{ color: themeColor }} size={24} />
-        case "play store":
-            return <Store style={{ color: themeColor }} size={24} />
-        case "app store":
-            return <Smartphone style={{ color: themeColor }} size={24} />
-        case "whatsapp":
-            return <MessageCircle style={{ color: themeColor }} size={24} />
-        case "telegram":
-            return <Send style={{ color: themeColor }} size={24} />
-        case "viber":
-            return <MessageCircle style={{ color: themeColor }} size={24} />
-        default:
-            return <LinkIcon style={{ color: themeColor }} size={24} />
-    }
-}
+import { RenderIcon } from "@/components/ui/renderIcon";
 
 
 export default async function UpdateProfilePage({
@@ -198,7 +160,7 @@ export default async function UpdateProfilePage({
                                     profileId={profileId || ""}
                                     profileData={profileData}
                                     themeColor={themeColor}
-                                    icon={getLinkIcon(link.name, themeColor)}
+                                    icon={<RenderIcon iconType={link.name} className="w-5 h-5 text-azure" />}
                                 />
                             ))}
                         </div>
