@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit } from 'lucide-react';
+import { Edit, X } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -92,7 +92,7 @@ export default function ChangePicture({ profileId, pictureType }: ChangePictureP
     return (
         <>
             <button
-                className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-lg"
+                className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-lg cursor-pointer"
                 onClick={() => setIsModalOpen(true)}
                 disabled={isUploading}
             >
@@ -105,7 +105,7 @@ export default function ChangePicture({ profileId, pictureType }: ChangePictureP
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-lg font-semibold">
                                 <FormattedMessage
-                                    id={pictureType === 'profilePicture' ? 'change_profile_picture' : 'change_cover_picture'}
+                                    id={pictureType === 'profilePicture' ? 'change-profile-picture' : 'change-cover-picture'}
                                     defaultMessage={pictureType === 'profilePicture' ? 'Change Profile Picture' : 'Change Cover Picture'}
                                 />
                             </h2>
@@ -114,7 +114,7 @@ export default function ChangePicture({ profileId, pictureType }: ChangePictureP
                                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                                 disabled={isUploading}
                             >
-                                <FormattedMessage id="close" defaultMessage="Close" />
+                                <X />
                             </button>
                         </div>
                         <StyledFileInput
