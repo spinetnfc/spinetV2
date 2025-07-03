@@ -41,15 +41,16 @@ import { cn } from '@/utils/cn';
 import ColorPicker from '@/components/ui/color-picker';
 import { registerUser, login as apiLogin } from '@/lib/api/auth';
 import { addLinksAction } from '@/actions/links';
-import { useAuth } from "@/context/authContext";
+import { uploadFile } from '@/actions/files'; // Import uploadFile
+import { useAuth } from '@/context/authContext';
 import type { User } from '@/types/user';
 import StyledFileInput from '@/components/ui/image-input';
 import { Spinner } from '@/components/ui/spinner';
 
 const LINK_TYPES = [
-  "website", "linkedin", "instagram", "twitter", "github", "email", "phone",
-  "facebook", "location", "order now", "play store", "app store", "whatsapp",
-  "telegram", "viber", "other",
+  'website', 'linkedin', 'instagram', 'twitter', 'github', 'email', 'phone',
+  'facebook', 'location', 'order now', 'play store', 'app store', 'whatsapp',
+  'telegram', 'viber', 'other',
 ];
 
 const registerSchema = z.object({
@@ -66,7 +67,7 @@ const registerSchema = z.object({
   theme: z.object({
     color: z.string().default('#0F62FE'),
   }).default({ color: '#0F62FE' }),
-  profilePicture: z.instanceof(File).optional(), // Add profile picture to schema
+  profilePicture: z.instanceof(File).optional(), // Store File object
 }).refine((data) => data.password === data.passwordConfirmation, {
   message: 'passwords-must-match',
   path: ['passwordConfirmation'],
@@ -103,7 +104,7 @@ export default function Register({ locale }: { locale: string }) {
       position: ' ',
       language: 'en',
       theme: { color: '#0F62FE' },
-      profilePicture: undefined, // Initialize profile picture
+      profilePicture: undefined,
     },
   });
 
@@ -137,7 +138,6 @@ export default function Register({ locale }: { locale: string }) {
       case 3:
       case 4:
       case 5:
-        // No required fields; bypass validation
         fieldsToValidate = [];
         hasRequiredFields = false;
         break;
@@ -175,7 +175,6 @@ export default function Register({ locale }: { locale: string }) {
       case 3:
       case 4:
       case 5:
-        // No required fields; bypass validation
         fieldsToValidate = [];
         hasRequiredFields = false;
         break;
@@ -193,6 +192,27 @@ export default function Register({ locale }: { locale: string }) {
     }
   };
 
+  const updateProfilePicture = async (profileId: string, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', file.name);
+    formData.append('type', 'profile');
+
+    try {
+      const fileId = await uploadFile(formData);
+      // Assuming an API to update profile with file ID
+      await fetch(`https://api.spinetnfc.com/profiles/${profileId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profilePicture: fileId }),
+      });
+      toast.success(intl.formatMessage({ id: 'profile_picture_updated', defaultMessage: 'Profile picture updated successfully' }));
+    } catch (error) {
+      console.error('Error updating profile picture:', error);
+      toast.error(intl.formatMessage({ id: 'profile_picture_update_failed', defaultMessage: 'Failed to update profile picture' }));
+    }
+  };
+
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsSubmitting(true);
     try {
@@ -207,7 +227,7 @@ export default function Register({ locale }: { locale: string }) {
         position: data.position,
         language: data.language,
         theme: data.theme,
-        profilePicture: data.profilePicture, // Include profile picture
+        // Exclude profilePicture from initial registration
       };
 
       const registerResponse = await registerUser(userData);
@@ -218,7 +238,6 @@ export default function Register({ locale }: { locale: string }) {
       const loginData = { email: data.email, password: data.password };
       const loginResponse = await apiLogin(loginData);
 
-      // Construct user object matching User type
       const user: User = {
         _id: loginResponse._id || registerResponse.profile,
         email: data.email,
@@ -243,13 +262,15 @@ export default function Register({ locale }: { locale: string }) {
         },
       };
 
-      // Set current-user cookie, mirroring AuthContext login
       document.cookie = `current-user=${encodeURIComponent(
         JSON.stringify(user)
       )}; path=/; SameSite=Lax; max-age=${60 * 60 * 24 * 7}`; // 7 days
 
-      // Update AuthContext state
       authLogin(user);
+
+      if (data.profilePicture) {
+        await updateProfilePicture(registerResponse.profile, data.profilePicture);
+      }
 
       if (links.length > 0) {
         await addLinksAction(registerResponse.profile, links);
@@ -270,66 +291,66 @@ export default function Register({ locale }: { locale: string }) {
   const renderStepTitle = () => {
     switch (step) {
       case 1:
-        return <FormattedMessage id="sign-up" defaultMessage="Sign Up" />;
+        return <FormattedMessage id='sign-up' defaultMessage='Sign Up' />;
       case 2:
-        return <FormattedMessage id="personal-information" defaultMessage="Personal Information" />;
+        return <FormattedMessage id='personal-information' defaultMessage='Personal Information' />;
       case 3:
-        return <FormattedMessage id="professional-information" defaultMessage="Professional Information" />;
+        return <FormattedMessage id='professional-information' defaultMessage='Professional Information' />;
       case 4:
-        return <FormattedMessage id="personal-links" defaultMessage="Personal Links" />;
+        return <FormattedMessage id='personal-links' defaultMessage='Personal Links' />;
       case 5:
-        return <FormattedMessage id="customization" defaultMessage="Customization" />;
+        return <FormattedMessage id='customization' defaultMessage='Customization' />;
       default:
-        return <FormattedMessage id="sign-up" />;
+        return <FormattedMessage id='sign-up' />;
     }
   };
 
   return (
-    <div className="z-50 w-full space-y-2 rounded-lg px-6 py-4 text-[#0D2C60] lg:shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
-      <div className="flex items-center justify-between">
-        <h1 className="text-start text-sm xs:text-base sm:text-2xl font-semibold">{renderStepTitle()}</h1>
-        <div className="text-xs xs:text-sm text-gray-500 dark:text-gray-400 flex items-center">
+    <div className='z-50 w-full space-y-2 rounded-lg px-6 py-4 text-[#0D2C60] lg:shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]'>
+      <div className='flex items-center justify-between'>
+        <h1 className='text-start text-sm xs:text-base sm:text-2xl font-semibold'>{renderStepTitle()}</h1>
+        <div className='text-xs xs:text-sm text-gray-500 dark:text-gray-400 flex items-center'>
           <FormattedMessage
-            id="step-of"
-            defaultMessage="Step {current} of {total}"
+            id='step-of'
+            defaultMessage='Step {current} of {total}'
             values={{ current: step, total: totalSteps }}
           />
           <button
-            type="button"
+            type='button'
             onClick={skipStep}
-            className="flex items-center ps-2 xs:ps-3 text-azure font-medium text-xs xs:text-sm cursor-pointer"
+            className='flex items-center ps-2 xs:ps-3 text-azure font-medium text-xs xs:text-sm cursor-pointer'
             disabled={isSubmitting}
           >
-            <FormattedMessage id="skip" defaultMessage="Skip" />
+            <FormattedMessage id='skip' defaultMessage='Skip' />
             <ChevronsRight strokeWidth={1.5} className={locale === 'ar' ? 'transform rotate-180' : ''} />
           </button>
         </div>
       </div>
 
-      <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full">
+      <div className='w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full'>
         <div
-          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+          className='bg-blue-500 h-2 rounded-full transition-all duration-300'
           style={{ width: `${(step / totalSteps) * 100}%` }}
         ></div>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
           {step === 1 && (
             <>
               <FormField
                 control={form.control}
-                name="email"
+                name='email'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="email-address" />*
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='email-address' />*
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="username@example.com"
+                        placeholder='username@example.com'
                         {...field}
-                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500 h-9"
+                        className='border-gray-200 dark:border-blue-950 focus:border-blue-500 h-9'
                       />
                     </FormControl>
                     <FormMessage />
@@ -339,23 +360,23 @@ export default function Register({ locale }: { locale: string }) {
 
               <FormField
                 control={form.control}
-                name="password"
+                name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="password" />*
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='password' />*
                     </FormLabel>
                     <FormControl>
-                      <div className="relative">
+                      <div className='relative'>
                         <Input
                           type={showPassword ? 'text' : 'password'}
                           {...field}
-                          className="border-gray-200 dark:border-blue-950 pe-10"
+                          className='border-gray-200 dark:border-blue-950 pe-10'
                         />
                         <button
-                          type="button"
+                          type='button'
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 end-0 flex items-center pe-3"
+                          className='absolute inset-y-0 end-0 flex items-center pe-3'
                         >
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
@@ -368,23 +389,23 @@ export default function Register({ locale }: { locale: string }) {
 
               <FormField
                 control={form.control}
-                name="passwordConfirmation"
+                name='passwordConfirmation'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="password-confirmation" />*
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='password-confirmation' />*
                     </FormLabel>
                     <FormControl>
-                      <div className="relative">
+                      <div className='relative'>
                         <Input
                           type={showPassword ? 'text' : 'password'}
                           {...field}
-                          className="border-gray-200 dark:border-blue-950 pe-10"
+                          className='border-gray-200 dark:border-blue-950 pe-10'
                         />
                         <button
-                          type="button"
+                          type='button'
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 end-0 flex items-center pe-3"
+                          className='absolute inset-y-0 end-0 flex items-center pe-3'
                         >
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
@@ -395,56 +416,56 @@ export default function Register({ locale }: { locale: string }) {
                 )}
               />
 
-              <div className="flex justify-between mt-3">
+              <div className='flex justify-between mt-3'>
                 <Button
-                  type="button"
-                  variant="outline"
+                  type='button'
+                  variant='outline'
                   onClick={skipStep}
                   className={`flex items-center gap-2 ${step === 1 ? 'hidden' : ''}`}
                   disabled={isSubmitting}
                 >
-                  <FormattedMessage id="skip" defaultMessage="Skip" />
+                  <FormattedMessage id='skip' defaultMessage='Skip' />
                 </Button>
                 <Button
-                  type="button"
+                  type='button'
                   onClick={nextStep}
-                  className="flex items-center gap-2 ms-auto"
+                  className='flex items-center gap-2 ms-auto'
                   disabled={isSubmitting}
                 >
-                  <FormattedMessage id="next" defaultMessage="Next" />
+                  <FormattedMessage id='next' defaultMessage='Next' />
                   <ChevronRight size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
                 </Button>
               </div>
 
-              <div className="flex items-center justify-center gap-2">
-                <div className="h-px grow bg-gray-300"></div>
-                <span className="text-sm">
-                  <FormattedMessage id="or-continue-with" />
+              <div className='flex items-center justify-center gap-2'>
+                <div className='h-px grow bg-gray-300'></div>
+                <span className='text-sm'>
+                  <FormattedMessage id='or-continue-with' />
                 </span>
-                <div className="h-px grow bg-gray-300"></div>
+                <div className='h-px grow bg-gray-300'></div>
               </div>
 
-              <div className="flex justify-center space-x-4">
+              <div className='flex justify-center space-x-4'>
                 <Button
-                  variant="outline"
-                  type="button"
+                  variant='outline'
+                  type='button'
                   onClick={() => googleLogin()}
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                  className='flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80'
                 >
                   <GoogleIcon />
                 </Button>
                 <Button
-                  variant="outline"
-                  className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                  variant='outline'
+                  className='flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80'
                   onClick={() => facebookLogin()}
                   disabled={isSubmitting}
                 >
                   <FacebookIcon />
                 </Button>
                 <Button
-                  variant="outline"
-                  className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                  variant='outline'
+                  className='flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80'
                   onClick={() => appleLogin()}
                   disabled={isSubmitting}
                 >
@@ -452,12 +473,12 @@ export default function Register({ locale }: { locale: string }) {
                 </Button>
               </div>
 
-              <div className="flex justify-center space-x-1 text-sm mt-2">
+              <div className='flex justify-center space-x-1 text-sm mt-2'>
                 <span>
-                  <FormattedMessage id="you-have-an-account" />
+                  <FormattedMessage id='you-have-an-account' />
                 </span>
-                <Link href={`/${locale}/auth/login`} className="text-[#0F62FE] underline">
-                  <FormattedMessage id="sign-in" />
+                <Link href={`/${locale}/auth/login`} className='text-[#0F62FE] underline'>
+                  <FormattedMessage id='sign-in' />
                 </Link>
               </div>
             </>
@@ -467,11 +488,11 @@ export default function Register({ locale }: { locale: string }) {
             <>
               <FormField
                 control={form.control}
-                name="firstName"
+                name='firstName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="full-name" />*
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='full-name' />*
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -480,7 +501,7 @@ export default function Register({ locale }: { locale: string }) {
                           defaultMessage: 'Enter your full name',
                         })}
                         {...field}
-                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500 h-9"
+                        className='border-gray-200 dark:border-blue-950 focus:border-blue-500 h-9'
                       />
                     </FormControl>
                     <FormMessage />
@@ -490,17 +511,17 @@ export default function Register({ locale }: { locale: string }) {
 
               <FormField
                 control={form.control}
-                name="birthDate"
+                name='birthDate'
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="birth-date" />
+                  <FormItem className='flex flex-col'>
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='birth-date' />
                     </FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant="outline"
+                            variant='outline'
                             className={cn(
                               'w-full ps-3 text-left font-normal border-gray-200 dark:border-blue-950 text-gray-400 dark:text-blue-800',
                               !field.value && 'text-muted-foreground',
@@ -510,16 +531,16 @@ export default function Register({ locale }: { locale: string }) {
                               format(field.value, 'yyyy-MM-dd')
                             ) : (
                               <span>
-                                <FormattedMessage id="pick-a-date" defaultMessage="Pick a date" />
+                                <FormattedMessage id='pick-a-date' defaultMessage='Pick a date' />
                               </span>
                             )}
-                            <CalendarIcon className="ms-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className='ms-auto h-4 w-4 opacity-50' />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className='w-auto p-0' align='start'>
                         <Calendar
-                          mode="single"
+                          mode='single'
                           selected={field.value}
                           onSelect={field.onChange}
                           restrictFutureDates={true}
@@ -533,15 +554,15 @@ export default function Register({ locale }: { locale: string }) {
 
               <FormField
                 control={form.control}
-                name="gender"
+                name='gender'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="gender" />
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='gender' />
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="border-gray-200 dark:border-blue-950 font-regular">
+                        <SelectTrigger className='border-gray-200 dark:border-blue-950 font-regular'>
                           <SelectValue
                             placeholder={intl.formatMessage({
                               id: 'select-gender',
@@ -551,14 +572,14 @@ export default function Register({ locale }: { locale: string }) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="male">
-                          <FormattedMessage id="male" defaultMessage="Male" />
+                        <SelectItem value='male'>
+                          <FormattedMessage id='male' defaultMessage='Male' />
                         </SelectItem>
-                        <SelectItem value="female">
-                          <FormattedMessage id="female" defaultMessage="Female" />
+                        <SelectItem value='female'>
+                          <FormattedMessage id='female' defaultMessage='Female' />
                         </SelectItem>
-                        <SelectItem value="other">
-                          <FormattedMessage id="other" defaultMessage="Other" />
+                        <SelectItem value='other'>
+                          <FormattedMessage id='other' defaultMessage='Other' />
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -567,25 +588,25 @@ export default function Register({ locale }: { locale: string }) {
                 )}
               />
 
-              <div className="flex justify-between mt-3">
+              <div className='flex justify-between mt-3'>
                 <Button
-                  type="button"
-                  variant="outline"
+                  type='button'
+                  variant='outline'
                   onClick={prevStep}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                   disabled={isSubmitting}
                 >
                   <ChevronLeft size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
-                  <FormattedMessage id="previous" defaultMessage="Previous" />
+                  <FormattedMessage id='previous' defaultMessage='Previous' />
                 </Button>
 
                 <Button
-                  type="button"
+                  type='button'
                   onClick={nextStep}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                   disabled={isSubmitting}
                 >
-                  <FormattedMessage id="next" defaultMessage="Next" />
+                  <FormattedMessage id='next' defaultMessage='Next' />
                   <ChevronRight size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
                 </Button>
               </div>
@@ -596,11 +617,11 @@ export default function Register({ locale }: { locale: string }) {
             <>
               <FormField
                 control={form.control}
-                name="companyName"
+                name='companyName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="company-name" />*
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='company-name' />*
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -609,7 +630,7 @@ export default function Register({ locale }: { locale: string }) {
                           defaultMessage: 'Enter company name',
                         })}
                         {...field}
-                        className="border-gray-200 dark:border-blue-950"
+                        className='border-gray-200 dark:border-blue-950'
                       />
                     </FormControl>
                     <FormMessage />
@@ -619,11 +640,11 @@ export default function Register({ locale }: { locale: string }) {
 
               <FormField
                 control={form.control}
-                name="activitySector"
+                name='activitySector'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="activity-sector" />*
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='activity-sector' />*
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -632,7 +653,7 @@ export default function Register({ locale }: { locale: string }) {
                           defaultMessage: 'Enter activity sector',
                         })}
                         {...field}
-                        className="border-gray-200 dark:border-blue-950"
+                        className='border-gray-200 dark:border-blue-950'
                       />
                     </FormControl>
                     <FormMessage />
@@ -642,11 +663,11 @@ export default function Register({ locale }: { locale: string }) {
 
               <FormField
                 control={form.control}
-                name="position"
+                name='position'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="position" />*
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='position' />*
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -655,7 +676,7 @@ export default function Register({ locale }: { locale: string }) {
                           defaultMessage: 'Enter position',
                         })}
                         {...field}
-                        className="border-gray-200 dark:border-blue-950"
+                        className='border-gray-200 dark:border-blue-950'
                       />
                     </FormControl>
                     <FormMessage />
@@ -663,25 +684,25 @@ export default function Register({ locale }: { locale: string }) {
                 )}
               />
 
-              <div className="flex justify-between mt-3">
+              <div className='flex justify-between mt-3'>
                 <Button
-                  type="button"
-                  variant="outline"
+                  type='button'
+                  variant='outline'
                   onClick={prevStep}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                   disabled={isSubmitting}
                 >
                   <ChevronLeft size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
-                  <FormattedMessage id="previous" defaultMessage="Previous" />
+                  <FormattedMessage id='previous' defaultMessage='Previous' />
                 </Button>
 
                 <Button
-                  type="button"
+                  type='button'
                   onClick={nextStep}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                   disabled={isSubmitting}
                 >
-                  <FormattedMessage id="next" defaultMessage="Next" />
+                  <FormattedMessage id='next' defaultMessage='Next' />
                   <ChevronRight size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
                 </Button>
               </div>
@@ -689,19 +710,23 @@ export default function Register({ locale }: { locale: string }) {
           )}
 
           {step === 4 && (
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">
-                  <FormattedMessage id="personal-links" defaultMessage="Personal Links" />
+            <div className='space-y-3'>
+              <div className='flex justify-between items-center'>
+                <h2 className='text-xl font-semibold'>
+                  <FormattedMessage id='personal-links' defaultMessage='Personal Links' />
                 </h2>
               </div>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <span><FormattedMessage id="link-type" /></span>
+              <div className='space-y-4'>
+                <div className='space-y-2'>
+                  <span>
+                    <FormattedMessage id='link-type' />
+                  </span>
                   <Select value={newLink.name} onValueChange={(value) => setNewLink({ ...newLink, name: value })}>
-                    <SelectTrigger id="linkType">
-                      <SelectValue placeholder={intl.formatMessage({ id: "select-link-type", defaultMessage: "Select link type" })} />
+                    <SelectTrigger id='linkType'>
+                      <SelectValue
+                        placeholder={intl.formatMessage({ id: 'select-link-type', defaultMessage: 'Select link type' })}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {LINK_TYPES.map((type) => (
@@ -713,47 +738,50 @@ export default function Register({ locale }: { locale: string }) {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <span ><FormattedMessage id="display-text" /></span>
+                <div className='space-y-2'>
+                  <span>
+                    <FormattedMessage id='display-text' />
+                  </span>
                   <Input
-                    id="linkTitle"
+                    id='linkTitle'
                     value={newLink.title}
                     onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
-                    placeholder={intl.formatMessage({ id: "e.g. My Website, @username", defaultMessage: "e.g. My Website" })}
+                    placeholder={intl.formatMessage({ id: 'e.g. My Website, @username', defaultMessage: 'e.g. My Website' })}
                   />
                 </div>
 
-                {newLink.name !== "email" && newLink.name !== "phone" && (
-                  <div className="space-y-2">
-                    <span ><FormattedMessage id="url" /></span>
+                {newLink.name !== 'email' && newLink.name !== 'phone' && (
+                  <div className='space-y-2'>
+                    <span>
+                      <FormattedMessage id='url' />
+                    </span>
                     <Input
-                      id="linkUrl"
-                      value={newLink.link || ""}
+                      id='linkUrl'
+                      value={newLink.link || ''}
                       onChange={(e) => setNewLink({ ...newLink, link: e.target.value })}
-                      placeholder="https://"
-                      type="url"
+                      placeholder='https://'
+                      type='url'
                     />
                   </div>
                 )}
 
-                <Button type="button" onClick={addLink} className="w-full">
-                  <FormattedMessage id="add-link" defaultMessage="Add Link" />
+                <Button type='button' onClick={addLink} className='w-full'>
+                  <FormattedMessage id='add-link' defaultMessage='Add Link' />
                 </Button>
               </div>
 
               {links.length > 0 && (
-                <div className="mt-4">
-                  <h3 className="text-lg font-semibold"><FormattedMessage id="added-links" defaultMessage="Added Links" /></h3>
-                  <ul className="space-y-2 mt-2">
+                <div className='mt-4'>
+                  <h3 className='text-lg font-semibold'>
+                    <FormattedMessage id='added-links' defaultMessage='Added Links' />
+                  </h3>
+                  <ul className='space-y-2 mt-2'>
                     {links.map((link, index) => (
-                      <li key={index} className="flex justify-between items-center border p-2 rounded">
-                        <span>{link.title} ({link.name})</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeLink(index)}
-                        >
+                      <li key={index} className='flex justify-between items-center border p-2 rounded'>
+                        <span>
+                          {link.title} ({link.name})
+                        </span>
+                        <Button type='button' variant='ghost' size='sm' onClick={() => removeLink(index)}>
                           <X size={16} />
                         </Button>
                       </li>
@@ -762,25 +790,25 @@ export default function Register({ locale }: { locale: string }) {
                 </div>
               )}
 
-              <div className="flex justify-between mt-3">
+              <div className='flex justify-between mt-3'>
                 <Button
-                  type="button"
-                  variant="outline"
+                  type='button'
+                  variant='outline'
                   onClick={prevStep}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                   disabled={isSubmitting}
                 >
                   <ChevronLeft size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
-                  <FormattedMessage id="previous" defaultMessage="Previous" />
+                  <FormattedMessage id='previous' defaultMessage='Previous' />
                 </Button>
 
                 <Button
-                  type="button"
+                  type='button'
                   onClick={nextStep}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                   disabled={isSubmitting}
                 >
-                  <FormattedMessage id="next" defaultMessage="Next" />
+                  <FormattedMessage id='next' defaultMessage='Next' />
                   <ChevronRight size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
                 </Button>
               </div>
@@ -791,23 +819,19 @@ export default function Register({ locale }: { locale: string }) {
             <>
               <FormField
                 control={form.control}
-                name="profilePicture"
+                name='profilePicture'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="profile-picture" defaultMessage="Profile Picture" />
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='profile-picture' defaultMessage='Profile Picture' />
                     </FormLabel>
                     <FormControl>
                       <StyledFileInput
-                        onChange={() => {
-                          const handleFileChange = (file: File | null) => {
-                            if (file) {
-                              console.log("Selected file:", file.name)
-                            } else {
-                              console.log("No file selected")
-                            }
-                          }
+                        onChange={(fileOrId: File | string | null) => {
+                          field.onChange(fileOrId instanceof File ? fileOrId : undefined); // Store File object
                         }}
+                        accept='image/png,image/jpeg,image/gif'
+                        isRegisterPage={true} // Indicate Register page
                       />
                     </FormControl>
                     <FormMessage />
@@ -817,15 +841,15 @@ export default function Register({ locale }: { locale: string }) {
 
               <FormField
                 control={form.control}
-                name="language"
+                name='language'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">
-                      <FormattedMessage id="language" />
+                    <FormLabel className='text-sm'>
+                      <FormattedMessage id='language' />
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="border-gray-200 dark:border-azure">
+                        <SelectTrigger className='border-gray-200 dark:border-azure'>
                           <SelectValue
                             placeholder={intl.formatMessage({
                               id: 'select-language',
@@ -835,14 +859,14 @@ export default function Register({ locale }: { locale: string }) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="en">
-                          <FormattedMessage id="english" defaultMessage="English" />
+                        <SelectItem value='en'>
+                          <FormattedMessage id='english' defaultMessage='English' />
                         </SelectItem>
-                        <SelectItem value="fr">
-                          <FormattedMessage id="french" defaultMessage="French" />
+                        <SelectItem value='fr'>
+                          <FormattedMessage id='french' defaultMessage='French' />
                         </SelectItem>
-                        <SelectItem value="ar">
-                          <FormattedMessage id="arabic" defaultMessage="Arabic" />
+                        <SelectItem value='ar'>
+                          <FormattedMessage id='arabic' defaultMessage='Arabic' />
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -853,11 +877,11 @@ export default function Register({ locale }: { locale: string }) {
 
               <FormField
                 control={form.control}
-                name="theme.color"
+                name='theme.color'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm me-4">
-                      <FormattedMessage id="theme-color" />
+                    <FormLabel className='text-sm me-4'>
+                      <FormattedMessage id='theme-color' />
                     </FormLabel>
                     <FormControl>
                       <ColorPicker color={field.value} onChange={field.onChange} />
@@ -867,28 +891,26 @@ export default function Register({ locale }: { locale: string }) {
                 )}
               />
 
-              <div className="flex justify-between mt-3">
+              <div className='flex justify-between mt-3'>
                 <Button
-                  type="button"
-                  variant="outline"
+                  type='button'
+                  variant='outline'
                   onClick={prevStep}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                   disabled={isSubmitting}
                 >
                   <ChevronLeft size={16} className={locale === 'ar' ? 'transform rotate-180' : ''} />
-                  <FormattedMessage id="previous" defaultMessage="Previous" />
+                  <FormattedMessage id='previous' defaultMessage='Previous' />
                 </Button>
 
                 <Button
-                  type="button"
+                  type='button'
                   onClick={() => onSubmit(form.getValues())}
-                  className="flex items-center gap-2"
+                  className='flex items-center gap-2'
                   disabled={isSubmitting}
                 >
-                  <FormattedMessage id="finish" defaultMessage="Finish" />
-                  {isSubmitting && (
-                    <Spinner className="text-white" size="sm" />
-                  )}
+                  <FormattedMessage id='finish' defaultMessage='Finish' />
+                  {isSubmitting && <Spinner className='text-white' size='sm' />}
                 </Button>
               </div>
             </>

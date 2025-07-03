@@ -17,6 +17,7 @@ import ProfileForm from "@/components/pages/profile/profile-form";
 import PreferencesForm from "@/components/pages/profile/preferences-form";
 import AddLinkButton from "@/components/pages/profile/add-link-button";
 import LinkItem from "@/components/pages/profile/link-item";
+import ChangePicture from "@/components/pages/profile/change-picture";
 // import ChangeEmailForm from "@/components/pages/profile/change-email-form";
 // import Link from "next/link";
 // import { deleteProfileAction, getAllProfilesAction } from "@/actions/profile";
@@ -88,22 +89,7 @@ export default async function UpdateProfilePage({
         : "";
     const themeColor = profileData.theme?.color || "#3b82f6"
 
-    // const handleDeleteProfile = async () => {
-    //     "use server";
-    //     const profiles = getAllProfilesAction(user?._id || "");
-    //     "use client";
-    //     const profilesArr = await profiles;
-    //     const currentIndex = profilesArr.findIndex((p: any) => p._id === profileId);
-    //     if (currentIndex !== -1 && profilesArr.length > 1) {
-    //         const nextIndex = (currentIndex + 1) % profilesArr.length;
-    //         const nextProfileId = profilesArr[nextIndex]._id;
-    //         // Update the user cookie with the new selected profile (client-side)
-    //         document.cookie = `current-user=${JSON.stringify({ ...user, selectedProfile: nextProfileId })}; path=/`;
-    //     }
-    //     await deleteProfileAction(profileId || "");
-    // }
-
-    return (
+    if (profileId) return (
         <div className="min-h-screen w-full -mt-12">
             {/* Profile Header */}
             <div
@@ -124,9 +110,7 @@ export default async function UpdateProfilePage({
                             height={128}
                             className="w-24 xs:w-28 sm:w-32 rounded-full border-4 bg-white border-white dark:border-gray-800"
                         />
-                        <button className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-lg">
-                            <Edit className="w-4 h-4" />
-                        </button>
+                        <ChangePicture profileId={profileId} pictureType="profilePicture" />
                     </div>
                 </div>
             </div>
@@ -162,13 +146,6 @@ export default async function UpdateProfilePage({
                             <User className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
                             {t("information")}
                         </TabsTrigger>
-                        {/* <TabsTrigger
-                            value="security"
-                            className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
-                        >
-                            <Shield className="xs:h-3 xs:w-3 sm:w-4 sm:h-4" />
-                            {t("security")}
-                        </TabsTrigger> */}
                         <TabsTrigger
                             value="preferences"
                             className="flex items-center gap-[1px] sm:gap-2 text-[10px] xs:text-[11px] sm:text-sm px-0"
@@ -193,15 +170,6 @@ export default async function UpdateProfilePage({
                             locale={locale}
                         />
                     </TabsContent>
-
-                    {/* <TabsContent value="security" className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Button variant="destructive" className="w-fit" onClick={handleDeleteProfile}>
-                                {t("delete-profile")}
-                                <Edit className="me-2 h-4 w-4" />
-                            </Button>
-                        </div>
-                    </TabsContent> */}
 
 
                     <TabsContent value="preferences" className="space-y-6">

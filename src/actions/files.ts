@@ -1,14 +1,39 @@
 "use server";
+import { getUserCookieOnServer } from '@/utils/server-cookie';
+import { filesApi } from './../lib/axios';
 
 export const getFile = async (fileId: string): Promise<string> => {
     if (fileId) {
         const filesApi = process.env.FILES_API || 'https://files.spinetnfc.com';
-        // console.log('FILES_API in getFile:', filesApi); 
         const url = `${filesApi}/files/${fileId}`;
-        // console.log('Generated URL:', url); 
         return url;
     } else {
         console.error("File ID is required to fetch the file.");
         return "";
     }
 };
+
+export const uploadFile = async (data: FormData): Promise<string> => {
+    if (!data) {
+        throw new Error("No file provided for upload.");
+    }
+    const userCookie = await getUserCookieOnServer();
+    const fileApiToken = userCookie?.tokens?.fileApiToken;
+    if (!fileApiToken) {
+        throw new Error("File API token is required for file uploads. Please log in again.");
+    }
+    try {
+        const response = await filesApi.post("/upload", data, {
+            headers: {
+                "file-api-token": fileApiToken,
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error('Error uploading file:', {
+            message: error.message,
+            status: error.response?.status,
+            data: error.response?.data,
+        }); throw error;
+    }
+}
