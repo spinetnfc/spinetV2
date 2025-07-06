@@ -34,7 +34,7 @@ export default async function Leads({ params, searchParams }: ContactsPageProps)
 
     return (
         <div>
-            <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-2">
+            <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-4">
                 <ContactsDataTable
                     contacts={contacts}
                     locale={locale}

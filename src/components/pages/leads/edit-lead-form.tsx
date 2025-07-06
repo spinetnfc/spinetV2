@@ -25,12 +25,12 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import type { Contact, ContactInput } from "@/types/contact";
-import { editContact } from "@/actions/contacts"
+import type { Contact, ContactInput } from "@/types/lead";
+import { editContact } from "@/actions/leads"
 import { useAuth } from "@/context/authContext";
 
-// Define the contact schema with Zod
-const contactSchema = z.object({
+// Define the lead schema with Zod
+const leadSchema = z.object({
     fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
     phoneNumber: z
         .string()
@@ -50,7 +50,7 @@ const contactSchema = z.object({
     notes: z.string().optional(),
 });
 
-type ContactFormValues = z.infer<typeof contactSchema>;
+type ContactFormValues = z.infer<typeof leadSchema>;
 
 type LinkType = {
     title: string;
@@ -60,13 +60,13 @@ type LinkType = {
 };
 
 interface EditContactFormProps {
-    contact: Contact;
+    lead: Contact;
     onSuccess: () => void;
     onCancel: () => void;
 }
 
 export default function EditContactForm({
-    contact,
+    lead,
     onSuccess,
     onCancel,
 }: EditContactFormProps) {
@@ -77,34 +77,34 @@ export default function EditContactForm({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showLinkForm, setShowLinkForm] = useState(false);
     const [links, setLinks] = useState<LinkType[]>(
-        contact.Profile?.links || []
+        lead.Profile?.links || []
     );
     const [tags, setTags] = useState<string[]>(
-        contact.leadCaptions?.tags || []
+        lead.leadCaptions?.tags || []
     );
     const [tagInput, setTagInput] = useState("");
     const [newLink, setNewLink] = useState<LinkType>({ title: "", link: "" });
 
     const form = useForm<ContactFormValues>({
-        resolver: zodResolver(contactSchema),
+        resolver: zodResolver(leadSchema),
         defaultValues: {
-            fullName: contact.Profile?.fullName || "",
+            fullName: lead.Profile?.fullName || "",
             phoneNumber:
-                contact.Profile?.links?.find((link) =>
+                lead.Profile?.links?.find((link) =>
                     ["phone", "phone number", "mobile"].some((t) => link.title.toLowerCase().includes(t))
                 )?.link || "",
             email:
-                contact.Profile?.links?.find((link) =>
+                lead.Profile?.links?.find((link) =>
                     ["email", "e-mail"].some((t) => link.title.toLowerCase().includes(t))
                 )?.link || "",
-            position: contact.Profile?.position || "",
-            companyName: contact.Profile?.companyName || "",
-            metIn: contact.leadCaptions?.metIn || "",
-            nextAction: contact.leadCaptions?.nextAction || "",
-            dateOfNextAction: contact.leadCaptions?.dateOfNextAction
-                ? new Date(contact.leadCaptions.dateOfNextAction)
+            position: lead.Profile?.position || "",
+            companyName: lead.Profile?.companyName || "",
+            metIn: lead.leadCaptions?.metIn || "",
+            nextAction: lead.leadCaptions?.nextAction || "",
+            dateOfNextAction: lead.leadCaptions?.dateOfNextAction
+                ? new Date(lead.leadCaptions.dateOfNextAction)
                 : null,
-            notes: contact.leadCaptions?.notes || "",
+            notes: lead.leadCaptions?.notes || "",
         },
     });
 
@@ -168,17 +168,17 @@ export default function EditContactForm({
 
             const editedContact: ContactInput = {
                 name: data.fullName,
-                type: contact.type,
+                type: lead.type,
                 profile: {
                     fullName: data.fullName,
                     position: data.position || undefined,
                     companyName: data.companyName || undefined,
-                    profilePicture: contact.Profile?.profilePicture,
+                    profilePicture: lead.Profile?.profilePicture,
                     links: formLinks.length > 0 ? formLinks : undefined,
                 },
                 leadCaptions: {
                     metIn: data.metIn || undefined,
-                    date: contact.leadCaptions?.date || new Date().toISOString(),
+                    date: lead.leadCaptions?.date || new Date().toISOString(),
                     tags: tags.length > 0 ? tags : undefined,
                     nextAction: data.nextAction || undefined,
                     dateOfNextAction: data.dateOfNextAction
@@ -189,9 +189,9 @@ export default function EditContactForm({
             };
 
             // Log payload for debugging
-            console.log("Edit contact payload:", JSON.stringify(editedContact, null, 2));
+            console.log("Edit lead payload:", JSON.stringify(editedContact, null, 2));
 
-            const result = await editContact(profileId, contact._id, editedContact);
+            const result = await editContact(profileId, lead._id, editedContact);
 
             if (result.success) {
                 toast.success(intl.formatMessage({ id: "Contact updated successfully" }));
@@ -202,10 +202,10 @@ export default function EditContactForm({
                 setShowLinkForm(false);
                 onSuccess();
             } else {
-                toast.error(result.message || intl.formatMessage({ id: "Failed to update contact" }));
+                toast.error(result.message || intl.formatMessage({ id: "Failed to update lead" }));
             }
         } catch (error: any) {
-            console.error("Error updating contact:", {
+            console.error("Error updating lead:", {
                 message: error.message,
                 response: error.response
                     ? {
@@ -219,7 +219,7 @@ export default function EditContactForm({
             toast.error(
                 error.response?.data?.message ||
                 error.message ||
-                intl.formatMessage({ id: "Failed to update contact. Please try again." })
+                intl.formatMessage({ id: "Failed to update lead. Please try again." })
             );
         } finally {
             setIsSubmitting(false);
@@ -256,7 +256,7 @@ export default function EditContactForm({
                 <div className="rounded-lg p-4">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-semibold">
-                            <FormattedMessage id="edit-contact" />
+                            <FormattedMessage id="edit-lead" />
                         </h3>
                         <button onClick={onCancel} className="text-gray-500" aria-label="Close form">
                             <X size={20} />

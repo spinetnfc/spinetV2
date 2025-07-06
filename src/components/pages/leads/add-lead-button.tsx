@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { InviteContact } from "@/types/contact";
 import { sendInvitationAction } from "@/actions/contacts";
 
-const contactSchema = z.object({
+const leadSchema = z.object({
     profile: z.string().length(24, { message: "Profile ID must be 24 characters" }),
     metIn: z.string().optional(),
     date: z.string().optional(),
@@ -28,7 +28,7 @@ const contactSchema = z.object({
     dateOfNextAction: z.date().optional().nullable(),
     notes: z.string().optional(),
 });
-type ContactFormValues = z.infer<typeof contactSchema>;
+type ContactFormValues = z.infer<typeof leadSchema>;
 
 
 const AddContactButton = () => {
@@ -42,7 +42,7 @@ const AddContactButton = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<ContactFormValues>({
-        resolver: zodResolver(contactSchema),
+        resolver: zodResolver(leadSchema),
         defaultValues: {
             profile: newContactId || "",
             metIn: "",
@@ -74,13 +74,13 @@ const AddContactButton = () => {
             };
 
             // Log payload for debugging
-            console.log("Add contact payload:", JSON.stringify(addedContact, null, 2));
+            console.log("Add lead payload:", JSON.stringify(addedContact, null, 2));
 
             const response = await sendInvitationAction(profileId, addedContact);
             toast.success(intl.formatMessage({ id: "invitation-sent", defaultMessage: "Invitation sent" }));
 
         } catch (error: any) {
-            toast.error(intl.formatMessage({ id: "Failed to add contact. Please try again." }));
+            toast.error(intl.formatMessage({ id: "Failed to add lead. Please try again." }));
         } finally {
             setIsSubmitting(false);
             setShowAddContact(false);
@@ -93,14 +93,14 @@ const AddContactButton = () => {
              flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer"
                 onClick={() => {
                     if (!isAuthenticated) {
-                        toast.error(intl.formatMessage({ id: "login-to-add-contact", defaultMessage: "Please login to add a contact" }));
+                        toast.error(intl.formatMessage({ id: "login-to-add-lead", defaultMessage: "Please login to add a lead" }));
                         return;
                     }
                     setShowAddContact(true);
                 }}>
                 <UserPlus className="h-8 w-8 xs:h-5 xs:w-5" />
                 <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">
-                    <FormattedMessage id="add-contact" defaultMessage="Add Contact" />
+                    <FormattedMessage id="add-lead" defaultMessage="Add Lead" />
                 </span>
             </button>
             {showAddContact && (
@@ -109,7 +109,7 @@ const AddContactButton = () => {
                         <div className="rounded-lg p-4">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-lg font-semibold">
-                                    <FormattedMessage id="add-contact" />
+                                    <FormattedMessage id="add-lead" />
                                 </h3>
                                 <button onClick={() => setShowAddContact(false)} className="text-gray-500 cursor-pointer" aria-label="Close form">
                                     <X size={20} />
@@ -211,9 +211,9 @@ const AddContactButton = () => {
                                         </Button>
                                         <Button type="submit" disabled={isSubmitting}>
                                             {isSubmitting ? (
-                                                <FormattedMessage id="adding-contact" />
+                                                <FormattedMessage id="adding-lead" />
                                             ) : (
-                                                <FormattedMessage id="add-contact" />
+                                                <FormattedMessage id="add-lead" />
                                             )}
                                         </Button>
                                     </div>

@@ -22,10 +22,10 @@ import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
 import { removeContacts, removeContact } from "@/actions/contacts"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { ContactFilters } from "./contact-filters"
-import { ContactSortDropdown } from "./contact-sort-dropdown"
-import { contactColumns } from "./contact-columns"
-import EditContactForm from "../edit-contact-form"
+import { ContactFilters } from "./lead-filters"
+import { ContactSortDropdown } from "./lead-sort-dropdown"
+import { leadColumns } from "./lead-columns"
+import EditContactForm from "../edit-lead-form"
 import type { Contact } from "@/types/contact"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import { PaginationControls } from "@/components/ui/table-pagination"
@@ -36,7 +36,7 @@ import PhoneMockup from "../phone-mockup"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 
 interface ContactsDataTableProps {
-    contacts: Contact[]
+    leads: Contact[]
     locale: string
     searchParams: {
         query?: string
@@ -65,10 +65,10 @@ function useisSmallScreen() {
 }
 
 function ActionCell({
-    contact,
+    lead,
     locale,
     profileId,
-}: { contact: Contact; locale: string; profileId: string | undefined }) {
+}: { lead: Contact; locale: string; profileId: string | undefined }) {
     const router = useRouter()
     const intl = useIntl()
     const [isDeleting, setIsDeleting] = React.useState(false)
@@ -80,7 +80,7 @@ function ActionCell({
 
         try {
             setIsDeleting(true)
-            const response = await removeContact(profileId, contact._id)
+            const response = await removeContact(profileId, lead._id)
 
             if (response.success) {
                 toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
@@ -89,8 +89,8 @@ function ActionCell({
                 throw new Error(response.message)
             }
         } catch (error) {
-            console.error("Error deleting contact:", error)
-            toast.error(intl.formatMessage({ id: "Failed to delete contact. Please try again." }))
+            console.error("Error deleting lead:", error)
+            toast.error(intl.formatMessage({ id: "Failed to delete lead. Please try again." }))
         } finally {
             setIsDeleting(false)
             setShowDeleteModal(false)
@@ -110,14 +110,14 @@ function ActionCell({
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteConfirm}
-                    itemName={contact.Profile.fullName}
+                    itemName={lead.Profile.fullName}
                     isDeleting={isDeleting}
-                    message="delete-contact-message"
+                    message="delete-lead-message"
                 />
             )}
             {showEditModal && (
                 <EditContactForm
-                    contact={contact}
+                    lead={lead}
                     onSuccess={() => setShowEditModal(false)}
                     onCancel={() => setShowEditModal(false)}
                 />
@@ -152,7 +152,7 @@ function ActionCell({
     )
 }
 
-export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDataTableProps) {
+export function ContactsDataTable({ leads, locale, searchParams }: ContactsDataTableProps) {
     const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20) // Min 5, Max 50
 
     const {
@@ -160,7 +160,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
         filter = "all",
         sort = "name-asc",
         page = "1",
-        rowsPerPage = contacts.length < dynamicRowsPerPage ? contacts.length : dynamicRowsPerPage.toString()
+        rowsPerPage = leads.length < dynamicRowsPerPage ? leads.length : dynamicRowsPerPage.toString()
     } = searchParams
     const currentRowsPerPage = Number(rowsPerPage)
     const router = useRouter()
@@ -182,29 +182,29 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(initialFiltering)
 
     const filteredByTypeContacts = React.useMemo(() => {
-        if (filter === "all") return contacts
-        return contacts.filter((contact) => {
-            if ("id" in contact.Profile) return false
-            return contact.type === filter
+        if (filter === "all") return leads
+        return leads.filter((lead) => {
+            if ("id" in lead.Profile) return false
+            return lead.type === filter
         })
-    }, [contacts, filter])
+    }, [leads, filter])
 
     const sortedContacts = React.useMemo(() => {
-        const contactsToSort = [...filteredByTypeContacts]
+        const leadsToSort = [...filteredByTypeContacts]
         switch (sort) {
             case "name-desc":
-                return contactsToSort.sort((a, b) => (b.Profile.fullName || "").localeCompare(a.Profile.fullName || ""))
+                return leadsToSort.sort((a, b) => (b.Profile.fullName || "").localeCompare(a.Profile.fullName || ""))
             case "date-asc":
-                return contactsToSort
+                return leadsToSort
             case "date-desc":
-                return contactsToSort.reverse()
+                return leadsToSort.reverse()
             case "name-asc":
             default:
-                return contactsToSort.sort((a, b) => (a.Profile.fullName || "").localeCompare(b.Profile.fullName || ""))
+                return leadsToSort.sort((a, b) => (a.Profile.fullName || "").localeCompare(b.Profile.fullName || ""))
         }
     }, [filteredByTypeContacts, sort])
 
-    const allColumns = React.useMemo(() => contactColumns(locale), [locale])
+    const allColumns = React.useMemo(() => leadColumns(locale), [locale])
     const columns = allColumns
 
     const table = useReactTable({
@@ -267,8 +267,8 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                 throw new Error(response.message)
             }
         } catch (error) {
-            console.error("Error deleting contacts:", error)
-            toast.error(intl.formatMessage({ id: "Failed to delete contacts. Please try again." }))
+            console.error("Error deleting leads:", error)
+            toast.error(intl.formatMessage({ id: "Failed to delete leads. Please try again." }))
         } finally {
             setIsDeleting(false)
             setShowDeleteModal(false)
@@ -298,7 +298,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                 <div className="ms-auto flex items-center gap-2">
                     <div className="flex gap-4 items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
                         <Input
-                            placeholder={intl.formatMessage({ id: "search-contacts", defaultMessage: "Search contacts..." })}
+                            placeholder={intl.formatMessage({ id: "search-leads", defaultMessage: "Search leads..." })}
                             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                             onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
                             className="max-w-sm border-none min-w-60 sm:min-w-80"
@@ -306,9 +306,9 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                         <ContactFilters />
                     </div>
                     <Button asChild className="flex items-center h-10 gap-1 bg-azure">
-                        <Link href="./contacts/add-contact">
+                        <Link href="./leads/add-lead">
                             <Plus size={16} />
-                            <FormattedMessage id="add-contact" defaultMessage="Add contact" />
+                            <FormattedMessage id="add-lead" defaultMessage="Add lead" />
                         </Link>
                     </Button>
                 </div>
@@ -363,14 +363,14 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                                 </TableCell>
                                             ))}
                                             <TableCell className="px-2 w-12">
-                                                <ActionCell contact={row.original} locale={locale} profileId={profileId} />
+                                                <ActionCell lead={row.original} locale={locale} profileId={profileId} />
                                             </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
                                         <TableCell colSpan={columns.length + 1} className="h-24 text-center">
-                                            <FormattedMessage id="no-contacts-found" defaultMessage="No contacts found" />
+                                            <FormattedMessage id="no-leads-found" defaultMessage="No leads found" />
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -381,7 +381,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                         <PaginationControls
                                             currentPage={table.getState().pagination.pageIndex + 1}
                                             totalPages={table.getPageCount()}
-                                            totalElements={contacts.length}
+                                            totalElements={leads.length}
                                             rowsPerPage={Number(rowsPerPage)}
                                         />
                                     </TableCell>
@@ -394,9 +394,9 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                             isOpen={showDeleteModal}
                             onClose={() => setShowDeleteModal(false)}
                             onConfirm={handleBulkDelete}
-                            itemName={"contacts"}
+                            itemName={"leads"}
                             isDeleting={isDeleting}
-                            message="delete-contacts-message"
+                            message="delete-leads-message"
                         />
                     )}
                 </div>

@@ -26,11 +26,11 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { createContact } from "@/actions/contacts";
+import { createContact } from "@/actions/leads";
 import { useAuth } from "@/context/authContext";
 
-// Define the contact schema with Zod
-const contactSchema = z.object({
+// Define the lead schema with Zod
+const leadSchema = z.object({
     fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
     phoneNumber: z
         .string()
@@ -50,7 +50,7 @@ const contactSchema = z.object({
     notes: z.string().optional(),
 });
 
-type ContactFormValues = z.infer<typeof contactSchema>;
+type ContactFormValues = z.infer<typeof leadSchema>;
 
 type LinkType = {
     title: string;
@@ -75,7 +75,7 @@ export default function AddContactForm({ locale }: { locale: string }) {
     });
 
     const form = useForm<ContactFormValues>({
-        resolver: zodResolver(contactSchema),
+        resolver: zodResolver(leadSchema),
         defaultValues: {
             fullName: "",
             phoneNumber: "",
@@ -158,9 +158,9 @@ export default function AddContactForm({ locale }: { locale: string }) {
                 setLinks([]);
                 setTagInput("");
                 setShowLinkForm(false);
-                router.push(`/${locale}/app/contacts`);
+                router.push(`/${locale}/app/leads`);
             } else {
-                toast.error(intl.formatMessage({ id: "Failed to add contact" }));
+                toast.error(intl.formatMessage({ id: "Failed to add lead" }));
             }
         } catch (error: any) {
             console.error("Error submitting form:", {

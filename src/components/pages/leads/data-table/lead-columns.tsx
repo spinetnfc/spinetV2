@@ -3,10 +3,10 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { FormattedMessage } from "react-intl"
 import Link from "next/link"
-import ContactAvatar from "../contact-avatar"
-import type { Contact } from "@/types/contact"
+import ContactAvatar from "../lead-avatar"
+import type { Contact } from "@/types/lead"
 
-export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
+export const leadColumns = (locale: string): ColumnDef<Contact>[] => {
     return [
         {
             id: "select",
@@ -31,12 +31,12 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
         },
         {
             accessorKey: "name",
-            header: () => <FormattedMessage id="contact" defaultMessage="Contact" />,
+            header: () => <FormattedMessage id="lead" defaultMessage="Contact" />,
             cell: ({ row }) => {
-                const contact = row.original
-                const name = contact.Profile.fullName || "Unnamed Contact"
-                const Profile = contact.Profile || {}
-                const email = contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link || ""
+                const lead = row.original
+                const name = lead.Profile.fullName || "Unnamed Contact"
+                const Profile = lead.Profile || {}
+                const email = lead.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link || ""
 
                 const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
                 const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
@@ -45,7 +45,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
 
                 return (
                     <div
-                        // href={`/${locale}/public-profile/${contact.Profile._id}`}
+                        // href={`/${locale}/public-profile/${lead.Profile._id}`}
                         className="flex items-center gap-2 w-full"
                     >
                         <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} />
@@ -62,12 +62,12 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
                 )
             },
             filterFn: (row, id, value) => {
-                const contact = row.original
+                const lead = row.original
                 const searchValue = value.toLowerCase()
-                const name = contact.Profile.fullName?.toLowerCase() || ""
+                const name = lead.Profile.fullName?.toLowerCase() || ""
                 const email =
-                    contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link?.toLowerCase() || ""
-                const Profile = contact.Profile || {}
+                    lead.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link?.toLowerCase() || ""
+                const Profile = lead.Profile || {}
                 const companyName = typeof Profile.companyName === "string" ? Profile.companyName.toLowerCase() : ""
                 const position = typeof Profile.position === "string" ? Profile.position.toLowerCase() : ""
 
@@ -83,8 +83,8 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
             accessorKey: "company",
             header: () => <FormattedMessage id="company" defaultMessage="Company" />,
             cell: ({ row }) => {
-                const contact = row.original
-                const Profile = contact.Profile || {}
+                const lead = row.original
+                const Profile = lead.Profile || {}
                 const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
                 return <div className="truncate text-xs sm:text-base">{companyName || "-"}</div>
             },
@@ -93,8 +93,8 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
             accessorKey: "position",
             header: () => <FormattedMessage id="position" defaultMessage="Position" />,
             cell: ({ row }) => {
-                const contact = row.original
-                const Profile = contact.Profile || {}
+                const lead = row.original
+                const Profile = lead.Profile || {}
                 const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
                 return <div className="truncate text-sm sm:text-base">{position || "-"}</div>
             },
