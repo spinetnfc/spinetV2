@@ -26,7 +26,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ data, className, onClose }) =
     return (
         <div
             className={cn(
-                "inline-flex h-full min-w-[290px] max-w-[290px] flex-col items-center overflow-y-auto rounded-3xl  pb-20 border-6 bg-background border-gray-300",
+                "inline-flex h-full min-w-[290px] max-w-[290px] flex-col items-center overflow-y-auto rounded-3xl shadow pb-20 border-6 bg-background border-gray-300",
                 className,
             )}
         >

@@ -338,7 +338,13 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                         <TableRow
                                             key={row.id}
                                             data-state={row.getIsSelected() && "selected"}
-                                            onClick={() => setSelectedContact(row.original)}
+                                            onClick={() => {
+                                                if (selectedContact?._id === row.original._id) {
+                                                    setSelectedContact(null); // Unselect if already selected
+                                                } else {
+                                                    setSelectedContact(row.original);
+                                                }
+                                            }}
                                             className="cursor-pointer"
                                         >
                                             {row.getVisibleCells().map((cell) => (
