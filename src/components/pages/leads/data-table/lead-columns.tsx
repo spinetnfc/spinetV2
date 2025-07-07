@@ -49,8 +49,7 @@ export const leadColumns = (locale: string): ColumnDef<Lead>[] => {
                 const lead = row.original
                 const searchValue = value.toLowerCase()
                 const name = lead.name?.toLowerCase() || ""
-                const description = lead.description?.toLowerCase() || ""
-                return name.includes(searchValue) || description.includes(searchValue)
+                return name.includes(searchValue)
             },
         },
         {
