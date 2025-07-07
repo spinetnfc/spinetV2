@@ -3,10 +3,9 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { FormattedMessage } from "react-intl"
 import Link from "next/link"
-import ContactAvatar from "../lead-avatar"
-import type { Contact } from "@/types/lead"
+import type { Lead } from "@/types/leads"
 
-export const leadColumns = (locale: string): ColumnDef<Contact>[] => {
+export const leadColumns = (locale: string): ColumnDef<Lead>[] => {
     return [
         {
             id: "select",
@@ -31,32 +30,17 @@ export const leadColumns = (locale: string): ColumnDef<Contact>[] => {
         },
         {
             accessorKey: "name",
-            header: () => <FormattedMessage id="lead" defaultMessage="Contact" />,
+            header: () => <FormattedMessage id="lead" defaultMessage="Lead" />,
             cell: ({ row }) => {
                 const lead = row.original
-                const name = lead.Profile.fullName || "Unnamed Contact"
-                const Profile = lead.Profile || {}
-                const email = lead.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link || ""
-
-                const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
-                const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
-                const positionCompanyText =
-                    position && companyName ? `${position} at ${companyName}` : position || companyName || ""
-
+                const name = lead.name || "Unnamed Lead"
                 return (
-                    <div
-                        // href={`/${locale}/public-profile/${lead.Profile._id}`}
-                        className="flex items-center gap-2 w-full"
-                    >
-                        <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} />
+                    <div className="flex items-center gap-2 w-full">
+                        <div className="rounded-full bg-gray-200 w-8 h-8 flex items-center justify-center text-xs font-bold">
+                            {name.slice(0, 2).toUpperCase()}
+                        </div>
                         <div className="min-w-0 overflow-hidden">
                             <div className="font-medium truncate text-xs xs:text-sm sm:text-base">{name}</div>
-                            {/* show email on larger screens */}
-                            {email && <div className="text-xs text-muted-foreground lowercase hidden sm:block truncate">{email}</div>}
-                            {/* show position at company on small screens */}
-                            {positionCompanyText && (
-                                <div className="text-xs text-muted-foreground block sm:hidden truncate">{positionCompanyText}</div>
-                            )}
                         </div>
                     </div>
                 )
@@ -64,19 +48,9 @@ export const leadColumns = (locale: string): ColumnDef<Contact>[] => {
             filterFn: (row, id, value) => {
                 const lead = row.original
                 const searchValue = value.toLowerCase()
-                const name = lead.Profile.fullName?.toLowerCase() || ""
-                const email =
-                    lead.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link?.toLowerCase() || ""
-                const Profile = lead.Profile || {}
-                const companyName = typeof Profile.companyName === "string" ? Profile.companyName.toLowerCase() : ""
-                const position = typeof Profile.position === "string" ? Profile.position.toLowerCase() : ""
-
-                return (
-                    name.includes(searchValue) ||
-                    email.includes(searchValue) ||
-                    companyName.includes(searchValue) ||
-                    position.includes(searchValue)
-                )
+                const name = lead.name?.toLowerCase() || ""
+                const description = lead.description?.toLowerCase() || ""
+                return name.includes(searchValue) || description.includes(searchValue)
             },
         },
         {
@@ -84,9 +58,8 @@ export const leadColumns = (locale: string): ColumnDef<Contact>[] => {
             header: () => <FormattedMessage id="company" defaultMessage="Company" />,
             cell: ({ row }) => {
                 const lead = row.original
-                const Profile = lead.Profile || {}
-                const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
-                return <div className="truncate text-xs sm:text-base">{companyName || "-"}</div>
+                const companyName = (lead as any).companyName || "-"
+                return <div className="truncate text-xs sm:text-base">{companyName}</div>
             },
         },
         {
@@ -94,9 +67,8 @@ export const leadColumns = (locale: string): ColumnDef<Contact>[] => {
             header: () => <FormattedMessage id="position" defaultMessage="Position" />,
             cell: ({ row }) => {
                 const lead = row.original
-                const Profile = lead.Profile || {}
-                const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
-                return <div className="truncate text-sm sm:text-base">{position || "-"}</div>
+                const position = (lead as any).position || "-"
+                return <div className="truncate text-sm sm:text-base">{position}</div>
             },
         },
     ]

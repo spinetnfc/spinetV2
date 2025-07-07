@@ -10,6 +10,7 @@ import {
     Store,
     MapPinned,
     Github,
+
 } from "lucide-react"
 import PlayStoreIcon from "@/components/icons/play-store"
 import AppStoreIcon from "@/components/icons/app-store"

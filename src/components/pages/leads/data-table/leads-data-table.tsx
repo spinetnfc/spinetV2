@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import {
     type ColumnFiltersState,
@@ -26,7 +26,7 @@ import { ContactFilters } from "./lead-filters"
 import { ContactSortDropdown } from "./lead-sort-dropdown"
 import { leadColumns } from "./lead-columns"
 import EditContactForm from "../edit-lead-form"
-import type { Contact } from "@/types/contact"
+import type { Lead } from "@/types/leads"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import { PaginationControls } from "@/components/ui/table-pagination"
 import { TableFooter } from "@/components/ui/table"
@@ -34,13 +34,28 @@ import { cn } from "@/utils/cn"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import PhoneMockup from "../phone-mockup"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
+import { filterLeads } from "@/actions/leads"
+import { getUserFromCookie } from "@/utils/cookie"
 
-interface ContactsDataTableProps {
-    leads: Contact[]
+interface LeadsDataTableProps {
     locale: string
     searchParams: {
-        query?: string
-        filter?: string
+        types?: string[];
+        status?: Array<"in-progress" | "pending">;
+        priority?: Array<"high" | "critical">;
+        lifeTime?: {
+            begins: {
+                start: string;
+                end: string;
+            };
+            ends: {
+                start: string;
+                end: string;
+            };
+        };
+        tags?: string[];
+        contacts?: string[];
+        search?: string
         sort?: string
         page?: string
         rowsPerPage?: string
@@ -68,7 +83,7 @@ function ActionCell({
     lead,
     locale,
     profileId,
-}: { lead: Contact; locale: string; profileId: string | undefined }) {
+}: { lead: Lead; locale: string; profileId: string | undefined }) {
     const router = useRouter()
     const intl = useIntl()
     const [isDeleting, setIsDeleting] = React.useState(false)
@@ -110,7 +125,7 @@ function ActionCell({
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteConfirm}
-                    itemName={lead.Profile.fullName}
+                    itemName={lead.name}
                     isDeleting={isDeleting}
                     message="delete-lead-message"
                 />
@@ -152,17 +167,25 @@ function ActionCell({
     )
 }
 
-export function ContactsDataTable({ leads, locale, searchParams }: ContactsDataTableProps) {
+export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
+    const [leads, setLeads] = useState<Lead[]>([])
+    const [loading, setLoading] = useState(false)
+
     const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20) // Min 5, Max 50
 
     const {
-        query = "",
-        filter = "all",
-        sort = "name-asc",
+        search = "",
+        types,
+        status,
+        priority,
+        lifeTime,
+        tags,
+        contacts,
         page = "1",
-        rowsPerPage = leads.length < dynamicRowsPerPage ? leads.length : dynamicRowsPerPage.toString()
+        rowsPerPage
     } = searchParams
-    const currentRowsPerPage = Number(rowsPerPage)
+    const currentRowsPerPage = Number(rowsPerPage) || dynamicRowsPerPage
+
     const router = useRouter()
     const pathname = usePathname()
     const urlSearchParams = useSearchParams()
@@ -173,42 +196,36 @@ export function ContactsDataTable({ leads, locale, searchParams }: ContactsDataT
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
     const isSmallScreen = useisSmallScreen()
-    const [selectedContact, setSelectedContact] = React.useState<Contact | null>(null)
+    const [selectedLead, setSelectedLead] = React.useState<Lead | null>(null)
 
     const initialFiltering: ColumnFiltersState = []
-    if (query) {
-        initialFiltering.push({ id: "name", value: query })
+    if (search) {
+        initialFiltering.push({ id: "name", value: search })
     }
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(initialFiltering)
 
-    const filteredByTypeContacts = React.useMemo(() => {
-        if (filter === "all") return leads
-        return leads.filter((lead) => {
-            if ("id" in lead.Profile) return false
-            return lead.type === filter
-        })
-    }, [leads, filter])
+    const filteredByTypeLeads = React.useMemo(() => Array.isArray(leads) ? leads : [], [leads])
 
-    const sortedContacts = React.useMemo(() => {
-        const leadsToSort = [...filteredByTypeContacts]
-        switch (sort) {
+    const sortedLeads = React.useMemo(() => {
+        const leadsToSort = [...filteredByTypeLeads]
+        switch (searchParams.sort) {
             case "name-desc":
-                return leadsToSort.sort((a, b) => (b.Profile.fullName || "").localeCompare(a.Profile.fullName || ""))
+                return leadsToSort.sort((a, b) => (b.name || "").localeCompare(a.name || ""))
             case "date-asc":
                 return leadsToSort
             case "date-desc":
                 return leadsToSort.reverse()
             case "name-asc":
             default:
-                return leadsToSort.sort((a, b) => (a.Profile.fullName || "").localeCompare(b.Profile.fullName || ""))
+                return leadsToSort.sort((a, b) => (a.name || "").localeCompare(b.name || ""))
         }
-    }, [filteredByTypeContacts, sort])
+    }, [filteredByTypeLeads, searchParams.sort])
 
     const allColumns = React.useMemo(() => leadColumns(locale), [locale])
     const columns = allColumns
 
     const table = useReactTable({
-        data: sortedContacts,
+        data: sortedLeads,
         columns,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
@@ -232,13 +249,43 @@ export function ContactsDataTable({ leads, locale, searchParams }: ContactsDataT
         },
     })
 
+    useEffect(() => {
+        async function fetchLeads() {
+            setLoading(true)
+            try {
+                const user = await getUserFromCookie()
+                const profileId = user?.selectedProfile || null
+                const skip = (Number(page) - 1) * currentRowsPerPage
+                const limit = currentRowsPerPage
+                const filters = {
+                    search,
+                    types,
+                    status,
+                    priority,
+                    lifeTime,
+                    tags,
+                    contacts,
+                    limit,
+                    skip,
+                }
+                const result = await filterLeads(profileId, filters)
+                setLeads(result)
+            } catch (error) {
+                setLeads([])
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchLeads()
+    }, [search, types, status, priority, lifeTime, tags, contacts, page, currentRowsPerPage])
+
     React.useEffect(() => {
         const params = new URLSearchParams(urlSearchParams.toString())
         const searchValue = columnFilters.find((filter) => filter.id === "name")?.value as string
         if (searchValue) {
-            params.set("query", searchValue)
+            params.set("search", searchValue)
         } else {
-            params.delete("query")
+            params.delete("search")
         }
         const currentPage = table.getState().pagination.pageIndex + 1
         params.set("page", currentPage.toString())
@@ -256,16 +303,17 @@ export function ContactsDataTable({ leads, locale, searchParams }: ContactsDataT
             setIsDeleting(true)
             const selectedRows = Object.keys(rowSelection)
                 .filter((index) => rowSelection[index as any])
-                .map((index) => sortedContacts[Number.parseInt(index)]._id)
+                .map((index) => sortedLeads[Number.parseInt(index)]._id)
 
-            const response = await removeContacts(profileId, selectedRows)
+            // TODO: Use removeLeads for bulk delete
+            // const response = await removeLeads(profileId, selectedRows)
 
-            if (response.success) {
-                toast.success(intl.formatMessage({ id: "Contacts deleted successfully" }))
-                router.refresh()
-            } else {
-                throw new Error(response.message)
-            }
+            // if (response.success) {
+            //     toast.success(intl.formatMessage({ id: "Leads deleted successfully" }))
+            //     router.refresh()
+            // } else {
+            //     throw new Error(response.message)
+            // }
         } catch (error) {
             console.error("Error deleting leads:", error)
             toast.error(intl.formatMessage({ id: "Failed to delete leads. Please try again." }))
@@ -339,10 +387,10 @@ export function ContactsDataTable({ leads, locale, searchParams }: ContactsDataT
                                             key={row.id}
                                             data-state={row.getIsSelected() && "selected"}
                                             onClick={() => {
-                                                if (selectedContact?._id === row.original._id) {
-                                                    setSelectedContact(null); // Unselect if already selected
+                                                if (selectedLead?._id === row.original._id) {
+                                                    setSelectedLead(null); // Unselect if already selected
                                                 } else {
-                                                    setSelectedContact(row.original);
+                                                    setSelectedLead(row.original);
                                                 }
                                             }}
                                             className="cursor-pointer"
@@ -382,7 +430,7 @@ export function ContactsDataTable({ leads, locale, searchParams }: ContactsDataT
                                             currentPage={table.getState().pagination.pageIndex + 1}
                                             totalPages={table.getPageCount()}
                                             totalElements={leads.length}
-                                            rowsPerPage={Number(rowsPerPage)}
+                                            rowsPerPage={currentRowsPerPage}
                                         />
                                     </TableCell>
                                 </TableRow>
@@ -401,21 +449,21 @@ export function ContactsDataTable({ leads, locale, searchParams }: ContactsDataT
                     )}
                 </div>
                 {/* PhoneMockup on desktop */}
-                {selectedContact && !isSmallScreen && (
+                {/* {selectedLead && !isSmallScreen && (
                     <div className="hidden xl:block h-fit">
-                        <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
+                        <PhoneMockup data={{ ...selectedLead, fullName: selectedLead.name, name: undefined }} onClose={() => setSelectedLead(null)} />
                     </div>
-                )}
+                )} */}
             </div>
             {/* PhoneMockup in modal on mobile */}
-            {selectedContact && isSmallScreen && (
-                <Dialog open={!!selectedContact} onOpenChange={() => setSelectedContact(null)} >
+            {/* {selectedLead && isSmallScreen && (
+                <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)} >
                     <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none  max-w-xs [&>button]:hidden">
-                        <DialogTitle className="sr-only">Contact Details</DialogTitle>
-                        <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
+                        <DialogTitle className="sr-only">Lead Details</DialogTitle>
+                        <PhoneMockup data={{ ...selectedLead, fullName: selectedLead.name, name: undefined }} onClose={() => setSelectedLead(null)} />
                     </DialogContent>
                 </Dialog>
-            )}
+            )} */}
         </div>
     )
 }

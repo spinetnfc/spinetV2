@@ -1,7 +1,6 @@
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 import { getContacts } from "@/lib/api/contacts"
 import type { Contact } from "@/types/contact"
-import useTranslate from "@/hooks/use-translate"
 import { ContactsDataTable } from "@/components/pages/contacts/data-table/contacts-data-table"
 
 type SearchParams = {

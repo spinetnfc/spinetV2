@@ -1,4 +1,4 @@
-export type Lead = {
+export type LeadInput = {
     name: string;
     description?: string;
     Contacts?: string[];
@@ -19,4 +19,29 @@ export type Lead = {
         ends?: string | null;
     };
     Tags?: string[];
+};
+
+export type Lead = LeadInput & {
+    _id: string;
+};
+
+export type LeadFilters = {
+    search: string;
+    types?: string[];
+    status?: Array<"in-progress" | "pending">;
+    priority?: Array<"high" | "critical">;
+    lifeTime?: {
+        begins: {
+            start: string;
+            end: string;
+        };
+        ends: {
+            start: string;
+            end: string;
+        };
+    };
+    tags?: string[];
+    contacts?: string[];
+    limit: number;
+    skip: number;
 };

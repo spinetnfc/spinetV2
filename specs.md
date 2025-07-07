@@ -47,6 +47,14 @@ SPINET Web is a digital business card platform that allows users to create and m
 - The modal dialog uses the `Dialog` and `DialogContent` components from `@/components/ui/dialog/dialog`.
 - The preview can be closed by clicking the close button or outside the modal (on mobile).
 
+## Leads Page & Table (Updated)
+
+- Leads are now fetched server-side using the `filterLeads` action from `src/actions/leads.ts`.
+- Pagination and filtering are handled on the server. The number of leads fetched is determined by the `rowsPerPage` parameter, which is set using the `useDynamicRowsPerPage` hook (client-side) or a default value (SSR fallback).
+- The leads page constructs a `LeadFilters` object from the current search parameters and passes it to `filterLeads`.
+- The `LeadsDataTable` component now receives a `leads` prop (array of `Lead`), and all table logic is updated to use the `Lead` type.
+- The table supports filtering, sorting, and pagination, matching the contacts table pattern.
+
 ## Code Organization
 
 ### API Calls

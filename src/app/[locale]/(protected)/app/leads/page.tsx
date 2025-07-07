@@ -1,14 +1,25 @@
-import { getUserCookieOnServer } from "@/utils/server-cookie"
-import { getContacts } from "@/lib/api/contacts"
-import type { Contact } from "@/types/contact"
-import useTranslate from "@/hooks/use-translate"
-import { ContactsDataTable } from "@/components/pages/contacts/data-table/contacts-data-table"
+import { LeadsDataTable } from "@/components/pages/leads/data-table/leads-data-table"
 
 type SearchParams = {
-    query?: string
+    types?: string[];
+    status?: Array<"in-progress" | "pending">;
+    priority?: Array<"high" | "critical">;
+    lifeTime?: {
+        begins: {
+            start: string;
+            end: string;
+        };
+        ends: {
+            start: string;
+            end: string;
+        };
+    };
+    tags?: string[];
+    contacts?: string[];
+    search?: string
     filter?: string
     sort?: string
-    order?: "asc" | "desc"
+    page?: string
     rowsPerPage?: string
 }
 
@@ -19,26 +30,14 @@ type ContactsPageProps = {
 
 export default async function Leads({ params, searchParams }: ContactsPageProps) {
     const { locale } = await params
-
-    // Get user and profile data
-    const user = await getUserCookieOnServer()
-    const profileId = user?.selectedProfile || null
-
-    // Fetch contacts data
-    let contacts: Contact[] = []
-    try {
-        contacts = await getContacts(profileId)
-    } catch (error) {
-        console.error("Error fetching contacts:", error)
-    }
+    const sp = await searchParams
 
     return (
         <div>
             <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-4">
-                <ContactsDataTable
-                    contacts={contacts}
+                <LeadsDataTable
                     locale={locale}
-                    searchParams={await searchParams}
+                    searchParams={sp}
                 />
             </div>
         </div>

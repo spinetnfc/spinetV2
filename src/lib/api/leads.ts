@@ -1,8 +1,8 @@
 import { ServerApi } from '@/lib/axios';
-import type { Lead } from '@/types/leads';
+import type { Lead, LeadFilters, LeadInput } from '@/types/leads';
 import { withServerCookies } from '@/utils/withServerCookies';
 
-export const filterLeads = async (profileId: string | null, filters: any): Promise<Lead[]> => {
+export const filterLeads = async (profileId: string | null, filters: LeadFilters): Promise<Lead[]> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
@@ -30,7 +30,7 @@ export const getLead = async (profileId: string | null, leadId: string): Promise
     }
 };
 
-export const addLead = async (profileId: string, contact: Lead): Promise<{ message: string }> => {
+export const addLead = async (profileId: string, contact: LeadInput): Promise<{ message: string }> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
