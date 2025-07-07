@@ -150,3 +150,11 @@ SPINET Web is a digital business card platform that allows users to create and m
 - React Intl for internationalization
 - Sonner for toast notifications
 - Lucide React for icons
+
+## [Update] Lead Type Structure (2024-07-07)
+
+- The `Lead` type now matches the API response for listing/filtering leads.
+- The structure includes nested Employees, createdBy, and all fields as returned by the API.
+- `LeadApiResponse` uses `Lead[]` for its `data` property.
+- The old `LeadListItem` type has been removed.
+- All frontend code handling leads should use the new `Lead` type for consistency with the backend.

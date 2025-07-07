@@ -10,6 +10,7 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     useReactTable,
+    CellContext,
 } from "@tanstack/react-table"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table/table"
@@ -221,8 +222,29 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         }
     }, [filteredByTypeLeads, searchParams.sort])
 
-    const allColumns = React.useMemo(() => leadColumns(locale), [locale])
-    const columns = allColumns
+    const allColumns = React.useMemo(() => [
+        {
+            accessorKey: "name",
+            header: () => <FormattedMessage id="lead-name" defaultMessage="Name" />,
+            cell: (ctx: CellContext<Lead, unknown>) => ctx.row.original.name || "-"
+        },
+        {
+            accessorKey: "status",
+            header: () => <FormattedMessage id="lead-status" defaultMessage="Status" />,
+            cell: (ctx: CellContext<Lead, unknown>) => ctx.row.original.status || "-"
+        },
+        {
+            accessorKey: "priority",
+            header: () => <FormattedMessage id="lead-priority" defaultMessage="Priority" />,
+            cell: (ctx: CellContext<Lead, unknown>) => ctx.row.original.priority || "-"
+        },
+        {
+            accessorKey: "createdAt",
+            header: () => <FormattedMessage id="lead-created" defaultMessage="Created At" />,
+            cell: (ctx: CellContext<Lead, unknown>) => ctx.row.original.createdAt ? new Date(ctx.row.original.createdAt).toLocaleDateString() : "-"
+        },
+    ], []);
+    const columns = allColumns;
 
     const table = useReactTable({
         data: sortedLeads,
@@ -326,6 +348,8 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
 
     const selectedRowCount = Object.values(rowSelection).filter(Boolean).length
 
+    console.log("Leads to render:", leads);
+
     return (
         <div>
             <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">
@@ -384,7 +408,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                                 {table.getRowModel().rows?.length ? (
                                     table.getRowModel().rows.map((row) => (
                                         <TableRow
-                                            key={row.id}
+                                            key={row.original._id || row.id}
                                             data-state={row.getIsSelected() && "selected"}
                                             onClick={() => {
                                                 if (selectedLead?._id === row.original._id) {

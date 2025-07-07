@@ -2,7 +2,7 @@ import { ServerApi } from '@/lib/axios';
 import type { Lead, LeadFilters, LeadInput } from '@/types/leads';
 import { withServerCookies } from '@/utils/withServerCookies';
 
-export const filterLeads = async (profileId: string | null, filters: LeadFilters): Promise<Lead[]> => {
+export const filterLeads = async (profileId: string | null, filters: LeadFilters): Promise<{data:Lead[]}> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
