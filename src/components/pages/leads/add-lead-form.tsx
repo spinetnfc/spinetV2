@@ -26,7 +26,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { createContact } from "@/actions/leads";
+import { createLead } from "@/actions/leads";
 import { useAuth } from "@/context/authContext";
 
 // Define the lead schema with Zod
@@ -149,7 +149,7 @@ export default function AddContactForm({ locale }: { locale: string }) {
             });
 
             // Submit the form
-            const result = await createContact(profileId, formData, "manual");
+            const result = await createLead(profileId, formData);
 
             if (result?.success) {
                 toast.success(intl.formatMessage({ id: "Contact added successfully" }));

@@ -66,97 +66,97 @@ export const removeLeads = async (profileId: string, leads: string[]) => {
         return { success: false, message: "Error removing leads" }
     }
 }
-// export const createLead = async (profileId: string, formData: FormData) => {
-//     ;
+export const createLead = async (profileId: string, formData: FormData) => {
+    ;
 
-//     if (!profileId) {
-//         return { success: false, message: "Profile ID is missing" };
-//     }
+    if (!profileId) {
+        return { success: false, message: "Profile ID is missing" };
+    }
 
-//     try {
-//         // Extract form data
-//         const fullName = formData.get("fullName") as string;
-//         const phoneNumber = formData.get("phoneNumber") as string;
-//         const email = formData.get("email") as string;
-//         const position = formData.get("position") as string;
-//         const companyName = formData.get("companyName") as string;
-//         const nextAction = formData.get("nextAction") as string;
-//         const nextActionDateStr = formData.get("dateOfNextAction") as string;
-//         const metIn = formData.get("metIn") as string;
-//         const notes = formData.get("notes") as string;
-//         const tagsJson = formData.get("tags") as string;
-//         const linksJson = formData.get("links") as string;
+    try {
+        // Extract form data
+        const fullName = formData.get("fullName") as string;
+        const phoneNumber = formData.get("phoneNumber") as string;
+        const email = formData.get("email") as string;
+        const position = formData.get("position") as string;
+        const companyName = formData.get("companyName") as string;
+        const nextAction = formData.get("nextAction") as string;
+        const nextActionDateStr = formData.get("dateOfNextAction") as string;
+        const metIn = formData.get("metIn") as string;
+        const notes = formData.get("notes") as string;
+        const tagsJson = formData.get("tags") as string;
+        const linksJson = formData.get("links") as string;
 
-//         // Validate required fields
-//         if (!fullName) {
-//             return { success: false, message: "Full name is required" };
-//         }
+        // Validate required fields
+        if (!fullName) {
+            return { success: false, message: "Full name is required" };
+        }
 
-//         // Parse JSON strings
-//         const tags = tagsJson ? JSON.parse(tagsJson) : [];
-//         let links = linksJson ? JSON.parse(linksJson) : [];
+        // Parse JSON strings
+        const tags = tagsJson ? JSON.parse(tagsJson) : [];
+        let links = linksJson ? JSON.parse(linksJson) : [];
 
-//         // Validate links
-//         for (const link of links) {
-//             if (!link.title || !link.link) {
-//                 return { success: false, message: `Incomplete link: ${link.title || "Unknown"}` };
-//             }
-//         }
+        // Validate links
+        for (const link of links) {
+            if (!link.title || !link.link) {
+                return { success: false, message: `Incomplete link: ${link.title || "Unknown"}` };
+            }
+        }
 
-//         // Parse date if exists
-//         let dateOfNextAction: string | undefined = undefined;
-//         if (nextActionDateStr) {
-//             try {
-//                 const parsedDate = parse(nextActionDateStr, "yyyy-MM-dd", new Date());
-//                 dateOfNextAction = format(parsedDate, "yyyy-MM-dd");
-//             } catch (error) {
-//                 console.error("Invalid date format for dateOfNextAction:", nextActionDateStr);
-//             }
-//         }
+        // Parse date if exists
+        let dateOfNextAction: string | undefined = undefined;
+        if (nextActionDateStr) {
+            try {
+                const parsedDate = parse(nextActionDateStr, "yyyy-MM-dd", new Date());
+                dateOfNextAction = format(parsedDate, "yyyy-MM-dd");
+            } catch (error) {
+                console.error("Invalid date format for dateOfNextAction:", nextActionDateStr);
+            }
+        }
 
-//         // Create contact object
-//         const leadData: LeadInput = {
-//             name: fullName, // Derive from fullName
-//             description: notes || undefined,
-//             type: type || "manual", // Default to "manual" if not provided
-//             profile: {
-//                 fullName,
-//                 companyName: companyName || undefined,
-//                 position: position || undefined,
-//                 links: links.length > 0 ? links : undefined,
-//             },
-//             leadCaptions: {
-//                 metIn: metIn || undefined,
-//                 tags: tags.length > 0 ? tags : undefined,
-//                 nextAction: nextAction || undefined,
-//                 dateOfNextAction: dateOfNextAction || undefined,
-//                 notes: notes || undefined,
-//             },
-//         };
+        // Create contact object
+        const leadData: LeadInput = {
+            name: fullName, // Derive from fullName
+            description: notes || undefined,
+            // type: type || "manual", // Default to "manual" if not provided
+            // profile: {
+            //     fullName,
+            //     companyName: companyName || undefined,
+            //     position: position || undefined,
+            //     links: links.length > 0 ? links : undefined,
+            // },
+            // leadCaptions: {
+            //     metIn: metIn || undefined,
+            //     tags: tags.length > 0 ? tags : undefined,
+            //     nextAction: nextAction || undefined,
+            //     dateOfNextAction: dateOfNextAction || undefined,
+            //     notes: notes || undefined,
+            // },
+        };
 
-//         // Log contact data for debugging
-//         console.log("Contact data sent:", JSON.stringify(leadData, null, 2));
+        // Log contact data for debugging
+        console.log("Contact data sent:", JSON.stringify(leadData, null, 2));
 
-//         // Call the external API
-//         const result = await addLead(profileId, leadData);
+        // Call the external API
+        const result = await addLead(profileId, leadData);
 
-//         return { success: true, message: "Contact added successfully" };
-//     } catch (error: any) {
-//         console.error("Error creating lead:", {
-//             message: error.message,
-//             response: error.response
-//                 ? {
-//                     status: error.response.status,
-//                     statusText: error.response.statusText,
-//                     data: JSON.stringify(error.response.data, null, 2),
-//                 }
-//                 : "No response data available",
-//             stack: error.stack,
-//             formData: Object.fromEntries(formData.entries()),
-//         });
-//         return {
-//             success: false,
-//             message: error.response?.data?.message || error.message || "Failed to add contact. Please try again.",
-//         };
-//     }
-// }
+        return { success: true, message: "Contact added successfully" };
+    } catch (error: any) {
+        console.error("Error creating lead:", {
+            message: error.message,
+            response: error.response
+                ? {
+                    status: error.response.status,
+                    statusText: error.response.statusText,
+                    data: JSON.stringify(error.response.data, null, 2),
+                }
+                : "No response data available",
+            stack: error.stack,
+            formData: Object.fromEntries(formData.entries()),
+        });
+        return {
+            success: false,
+            message: error.response?.data?.message || error.message || "Failed to add contact. Please try again.",
+        };
+    }
+}
