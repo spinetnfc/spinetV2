@@ -538,6 +538,7 @@
   "end-date": "Date de fin",
   "description-placeholder": "Entrez la description",
   "Lead added successfully": "Lead ajouté avec succès",
+  "Lead deleted successfully": "Lead supprimé avec succès",
   "Failed to add lead": "Échec de l'ajout du lead ct",
   "switch-profile": "Changer de profil",
   "add-profile": "Ajouter un profil",

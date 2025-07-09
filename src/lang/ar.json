@@ -537,6 +537,7 @@
   "end-date": "تاريخ الانتهاء",
   "description-placeholder": "أدخل الوصف",
   "Lead added successfully": "تمت إضافة العميل المحتمل بنجاح",
+  "Lead deleted successfully": "تم حذف العميل المحتمل بنجاح",
   "Failed to add lead": "فشل في إضافة العميل المحتمل",
   "switch-profile": "تغيير الملف الشخصي",
   "add-profile": "إضافة ملف شخصي",

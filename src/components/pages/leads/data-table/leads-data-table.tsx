@@ -21,7 +21,7 @@ import { FormattedMessage, useIntl } from "react-intl"
 import Link from "next/link"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
-import { removeContacts, removeContact } from "@/actions/contacts"
+import { removeLead } from "@/actions/leads"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
 import { ContactFilters } from "./lead-filters"
 import { ContactSortDropdown } from "./lead-sort-dropdown"
@@ -102,9 +102,9 @@ function ActionCell({
         if (!profileId) return
         try {
             setIsDeleting(true)
-            const response = await removeContact(profileId, lead._id)
+            const response = await removeLead(profileId, lead._id)
             if (response.success) {
-                toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
+                toast.success(intl.formatMessage({ id: "Lead deleted successfully" }))
                 router.refresh()
             } else {
                 throw new Error(response.message)
