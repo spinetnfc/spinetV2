@@ -220,7 +220,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     return (
         <DropdownMenu open={isOpen} onOpenChange={handleDropdownOpenChange}>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full relative bg-white dark:bg-background">
+                <Button variant="outline" size="icon" className="rounded-full relative bg-background">
                     <Bell className="size-5" />
                     {unreadCount > 0 && (
                         <Badge

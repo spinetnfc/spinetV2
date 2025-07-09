@@ -107,7 +107,7 @@ export function MultiCombobox({
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="w-full ps-3 justify-start font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure"
+                        className="w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
                         disabled={disabled}
                     >
                         <span className="truncate">{getDisplayText()}</span>
