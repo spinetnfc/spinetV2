@@ -31,26 +31,21 @@ import { useAuth } from "@/context/authContext";
 
 // Define the lead schema with Zod
 const leadSchema = z.object({
-    fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
-    phoneNumber: z
-        .string()
-        .optional()
-        .refine(
-            (val) =>
-                !val ||
-                /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(val),
-            { message: "Invalid phone number format" }
-        ),
-    email: z.string().email({ message: "Invalid email address" }).optional().or(z.literal("")),
-    position: z.string().optional(),
-    companyName: z.string().optional(),
-    metIn: z.string().optional(),
-    nextAction: z.string().optional(),
-    dateOfNextAction: z.date().optional().nullable(),
-    notes: z.string().optional(),
+    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+    description: z.string().optional(),
+    Contacts: z.array(z.string()).optional(),
+    mainContact: z.string().optional(),
+    amount: z.coerce.number().optional(),
+    status: z.enum(["pending", "prospecting", "offer-sent", "negotiation", "administrative-validation", "done", "failed", "canceled"]).default("pending"),
+    priority: z.enum(["none", "low", "medium", "high", "critical"]).default("none"),
+    lifeTime: z.object({
+        begins: z.string().optional().nullable(),
+        ends: z.string().optional().nullable(),
+    }).optional(),
+    Tags: z.array(z.string()).optional(),
 });
 
-type ContactFormValues = z.infer<typeof leadSchema>;
+type LeadFormValues = z.infer<typeof leadSchema>;
 
 type LinkType = {
     title: string;
@@ -74,22 +69,22 @@ export default function AddContactForm({ locale }: { locale: string }) {
         link: "",
     });
 
-    const form = useForm<ContactFormValues>({
+    const form = useForm<LeadFormValues>({
         resolver: zodResolver(leadSchema),
         defaultValues: {
-            fullName: "",
-            phoneNumber: "",
-            email: "",
-            position: "",
-            companyName: "",
-            metIn: "",
-            nextAction: "",
-            dateOfNextAction: null,
-            notes: "",
+            name: "",
+            description: "",
+            Contacts: [],
+            mainContact: "",
+            amount: undefined,
+            status: "pending",
+            priority: "none",
+            lifeTime: { begins: undefined, ends: undefined },
+            Tags: [],
         },
     });
 
-    const onSubmit = async (data: ContactFormValues) => {
+    const onSubmit = async (data: LeadFormValues) => {
         try {
             setIsSubmitting(true);
 
@@ -142,14 +137,13 @@ export default function AddContactForm({ locale }: { locale: string }) {
             }
 
             // Log form data for debugging
-            console.log("Form data submitted:", {
-                ...Object.fromEntries(formData.entries()),
-                tags,
-                links: formLinks,
-            });
+            console.log("[AddLeadForm] Form values:", data);
+            console.log("[AddLeadForm] FormData entries:", Array.from(formData.entries()));
+            console.log("[AddLeadForm] ProfileId:", profileId);
 
             // Submit the form
             const result = await createLead(profileId, formData);
+            console.log("[AddLeadForm] createLead result:", result);
 
             if (result?.success) {
                 toast.success(intl.formatMessage({ id: "Contact added successfully" }));
@@ -163,7 +157,7 @@ export default function AddContactForm({ locale }: { locale: string }) {
                 toast.error(intl.formatMessage({ id: "Failed to add lead" }));
             }
         } catch (error: any) {
-            console.error("Error submitting form:", {
+            console.error("[AddLeadForm] Error submitting form:", {
                 message: error.message,
                 response: error.response
                     ? {
@@ -213,17 +207,17 @@ export default function AddContactForm({ locale }: { locale: string }) {
         <Form {...form}>
             <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Full Name */}
+                    {/* Name */}
                     <FormField
                         control={form.control}
-                        name="fullName"
+                        name="name"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    <FormattedMessage id="full-name" />
+                                    <FormattedMessage id="name" />
                                 </FormLabel>
                                 <FormControl>
-                                    <Input placeholder={intl.formatMessage({ id: "full-name-placeholder" })} {...field} />
+                                    <Input placeholder={intl.formatMessage({ id: "name-placeholder" })} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
