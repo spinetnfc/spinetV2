@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, LinkIcon, Plus, Tag, X } from "lucide-react";
+import { CalendarIcon, Tag, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,59 +28,46 @@ import {
 import { useRouter } from "next/navigation";
 import { createLead } from "@/actions/leads";
 import { useAuth } from "@/context/authContext";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 // Define the lead schema with Zod
 const leadSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters" }),
     description: z.string().optional(),
-    Contacts: z.array(z.string()).optional(),
-    mainContact: z.string().optional(),
-    amount: z.coerce.number().optional(),
-    status: z.enum(["pending", "prospecting", "offer-sent", "negotiation", "administrative-validation", "done", "failed", "canceled"]).default("pending"),
-    priority: z.enum(["none", "low", "medium", "high", "critical"]).default("none"),
-    lifeTime: z.object({
-        begins: z.string().optional().nullable(),
-        ends: z.string().optional().nullable(),
-    }).optional(),
-    Tags: z.array(z.string()).optional(),
+    mainContact: z.string().nullable().optional(),
+    status: z.enum(["pending", "prospecting", "offer-sent", "negotiation", "administrative-validation", "done", "failed", "canceled"]).optional(),
+    priority: z.enum(["none", "low", "medium", "high", "critical"]).optional(),
+    lifeTimeBegins: z.date().optional().nullable(),
+    lifeTimeEnds: z.date().optional().nullable(),
 });
 
 type LeadFormValues = z.infer<typeof leadSchema>;
 
-type LinkType = {
-    title: string;
-    link: string;
-};
-
-
-
-export default function AddContactForm({ locale }: { locale: string }) {
+export default function AddLeadForm({ locale }: { locale: string }) {
     const intl = useIntl();
-    const profileId = useAuth().user.selectedProfile;;
+    const profileId = useAuth().user.selectedProfile;
     const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showLinkForm, setShowLinkForm] = useState(false);
-    const [links, setLinks] = useState<LinkType[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState("");
-    const [newLink, setNewLink] = useState<LinkType>({
-        title: "",
-        link: "",
-    });
 
     const form = useForm<LeadFormValues>({
         resolver: zodResolver(leadSchema),
         defaultValues: {
             name: "",
             description: "",
-            Contacts: [],
-            mainContact: "",
-            amount: undefined,
+            mainContact: null,
             status: "pending",
             priority: "none",
-            lifeTime: { begins: undefined, ends: undefined },
-            Tags: [],
+            lifeTimeBegins: null,
+            lifeTimeEnds: null,
         },
     });
 
@@ -93,71 +80,37 @@ export default function AddContactForm({ locale }: { locale: string }) {
             // Create a FormData object
             const formData = new FormData(formRef.current);
 
-            // Add phoneNumber and email to links
-            const formLinks = [...links];
-            if (data.phoneNumber) {
-                formLinks.push({ title: "phone", link: data.phoneNumber });
-            }
-            if (data.email) {
-                formLinks.push({ title: "Email", link: data.email });
-            }
-
-            // Validate links
-            for (const link of formLinks) {
-                if (!link.title || !link.link) {
-                    toast.error(intl.formatMessage({ id: "Incomplete link" }, { title: link.title || "Unknown" }));
-                    setIsSubmitting(false);
-                    return;
-                }
-                if (
-                    ["phone", "phone number", "mobile"].some((t) => link.title.toLowerCase().includes(t)) &&
-                    !/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(link.link)
-                ) {
-                    toast.error(intl.formatMessage({ id: "Invalid phone number format" }));
-                    setIsSubmitting(false);
-                    return;
-                }
-                if (
-                    ["email", "e-mail"].some((t) => link.title.toLowerCase().includes(t)) &&
-                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(link.link)
-                ) {
-                    toast.error(intl.formatMessage({ id: "Invalid email format" }));
-                    setIsSubmitting(false);
-                    return;
-                }
-            }
-
-            // Add tags and links as JSON strings
+            // Add tags as JSON string
             formData.append("tags", JSON.stringify(tags));
-            formData.append("links", JSON.stringify(formLinks));
 
-            // Format the date as 'yyyy-MM-dd' if it exists
-            if (data.dateOfNextAction) {
-                formData.set("dateOfNextAction", format(data.dateOfNextAction, "yyyy-MM-dd"));
+            // Format the dates as 'yyyy-MM-dd' if they exist
+            if (data.lifeTimeBegins) {
+                formData.set("lifeTimeBegins", format(data.lifeTimeBegins, "yyyy-MM-dd"));
+            }
+            if (data.lifeTimeEnds) {
+                formData.set("lifeTimeEnds", format(data.lifeTimeEnds, "yyyy-MM-dd"));
             }
 
             // Log form data for debugging
-            console.log("[AddLeadForm] Form values:", data);
-            console.log("[AddLeadForm] FormData entries:", Array.from(formData.entries()));
-            console.log("[AddLeadForm] ProfileId:", profileId);
+            console.log("Form data submitted:", {
+                ...Object.fromEntries(formData.entries()),
+                tags,
+            });
 
             // Submit the form
             const result = await createLead(profileId, formData);
-            console.log("[AddLeadForm] createLead result:", result);
 
             if (result?.success) {
-                toast.success(intl.formatMessage({ id: "Contact added successfully" }));
+                toast.success(intl.formatMessage({ id: "Lead added successfully" }));
                 form.reset();
                 setTags([]);
-                setLinks([]);
                 setTagInput("");
-                setShowLinkForm(false);
                 router.push(`/${locale}/app/leads`);
             } else {
                 toast.error(intl.formatMessage({ id: "Failed to add lead" }));
             }
         } catch (error: any) {
-            console.error("[AddLeadForm] Error submitting form:", {
+            console.error("Error submitting form:", {
                 message: error.message,
                 response: error.response
                     ? {
@@ -192,17 +145,6 @@ export default function AddContactForm({ locale }: { locale: string }) {
         setTags(tags.filter((tag) => tag !== tagToRemove));
     };
 
-    const handleAddLinkSubmit = () => {
-        if (!newLink.title || !newLink.link) {
-            toast.error(intl.formatMessage({ id: "Please fill in all required fields" }));
-            return;
-        }
-        setLinks([...links, newLink]);
-        setShowLinkForm(false);
-        setNewLink({ title: "", link: "" });
-        toast.success(intl.formatMessage({ id: "Link added successfully" }));
-    };
-
     return (
         <Form {...form}>
             <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -224,116 +166,153 @@ export default function AddContactForm({ locale }: { locale: string }) {
                         )}
                     />
 
-                    {/* Phone Number */}
+                    {/* Main Contact */}
                     <FormField
                         control={form.control}
-                        name="phoneNumber"
+                        name="mainContact"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    <FormattedMessage id="phone-number" />
+                                    <FormattedMessage id="main-contact" />
                                 </FormLabel>
                                 <FormControl>
-                                    <Input placeholder={intl.formatMessage({ id: "phone-number-placeholder" })} {...field} />
+                                    <Input placeholder={intl.formatMessage({ id: "main-contact-placeholder" })} {...field} value={field.value || ""} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
 
-                    {/* Email */}
+                    {/* Status */}
                     <FormField
                         control={form.control}
-                        name="email"
+                        name="status"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    <FormattedMessage id="email" />
+                                    <FormattedMessage id="status" />
                                 </FormLabel>
-                                <FormControl>
-                                    <Input type="email" placeholder={intl.formatMessage({ id: "email-placeholder" })} {...field} />
-                                </FormControl>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={intl.formatMessage({ id: "status-placeholder" })} />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="pending">
+                                            <FormattedMessage id="pending" />
+                                        </SelectItem>
+                                        <SelectItem value="prospecting">
+                                            <FormattedMessage id="prospecting" />
+                                        </SelectItem>
+                                        <SelectItem value="offer-sent">
+                                            <FormattedMessage id="offer-sent" />
+                                        </SelectItem>
+                                        <SelectItem value="negotiation">
+                                            <FormattedMessage id="negotiation" />
+                                        </SelectItem>
+                                        <SelectItem value="administrative-validation">
+                                            <FormattedMessage id="administrative-validation" />
+                                        </SelectItem>
+                                        <SelectItem value="done">
+                                            <FormattedMessage id="done" />
+                                        </SelectItem>
+                                        <SelectItem value="failed">
+                                            <FormattedMessage id="failed" />
+                                        </SelectItem>
+                                        <SelectItem value="canceled">
+                                            <FormattedMessage id="canceled" />
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
 
-                    {/* Position */}
+                    {/* Priority */}
                     <FormField
                         control={form.control}
-                        name="position"
+                        name="priority"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    <FormattedMessage id="position" />
+                                    <FormattedMessage id="priority" />
                                 </FormLabel>
-                                <FormControl>
-                                    <Input placeholder={intl.formatMessage({ id: "position-placeholder" })} {...field} />
-                                </FormControl>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={intl.formatMessage({ id: "priority-placeholder" })} />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="none">
+                                            <FormattedMessage id="none" />
+                                        </SelectItem>
+                                        <SelectItem value="low">
+                                            <FormattedMessage id="low" />
+                                        </SelectItem>
+                                        <SelectItem value="medium">
+                                            <FormattedMessage id="medium" />
+                                        </SelectItem>
+                                        <SelectItem value="high">
+                                            <FormattedMessage id="high" />
+                                        </SelectItem>
+                                        <SelectItem value="critical">
+                                            <FormattedMessage id="critical" />
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
 
-                    {/* Company Name */}
+                    {/* LifeTime Begins */}
                     <FormField
                         control={form.control}
-                        name="companyName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    <FormattedMessage id="company-name" />
-                                </FormLabel>
-                                <FormControl>
-                                    <Input placeholder={intl.formatMessage({ id: "company-name-placeholder" })} {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Met In (Location) */}
-                    <FormField
-                        control={form.control}
-                        name="metIn"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    <FormattedMessage id="met-in" />
-                                </FormLabel>
-                                <FormControl>
-                                    <Input placeholder={intl.formatMessage({ id: "met-in-placeholder" })} {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Next Action */}
-                    <FormField
-                        control={form.control}
-                        name="nextAction"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    <FormattedMessage id="next-action" />
-                                </FormLabel>
-                                <FormControl>
-                                    <Input placeholder={intl.formatMessage({ id: "next-action-placeholder" })} {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Date of Next Action */}
-                    <FormField
-                        control={form.control}
-                        name="dateOfNextAction"
+                        name="lifeTimeBegins"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
                                 <FormLabel>
-                                    <FormattedMessage id="date-of-next-action" />
+                                    <FormattedMessage id="start-date" />
+                                </FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant="outline"
+                                                className={cn(
+                                                    "w-full ps-3 text-left font-normal border-gray-200 dark:border-blue-950 text-gray-400 dark:text-blue-800",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
+                                                <CalendarIcon className="ms-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value || undefined}
+                                            onSelect={field.onChange}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* LifeTime Ends */}
+                    <FormField
+                        control={form.control}
+                        name="lifeTimeEnds"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>
+                                    <FormattedMessage id="end-date" />
                                 </FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -397,114 +376,21 @@ export default function AddContactForm({ locale }: { locale: string }) {
                     )}
                 </div>
 
-                {/* Links */}
-                <div>
-                    <div className="flex justify-between items-center">
-                        <Label>
-                            <FormattedMessage id="links" />
-                        </Label>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowLinkForm(true)}
-                            className="flex items-center gap-1 text-azure border-azure"
-                        >
-                            <Plus className="h-4 w-4" />
-                            <FormattedMessage id="add-link" />
-                        </Button>
-                    </div>
-
-                    {links.length > 0 && (
-                        <div className="mt-2 space-y-2">
-                            {links.map((link, index) => (
-                                <div key={index} className="flex items-center gap-2 p-2 border rounded-md">
-                                    <LinkIcon className="h-4 w-4 text-gray-500" aria-label="Link icon" />
-                                    <div className="flex-1">
-                                        <div className="font-medium">{link.title}</div>
-                                        <div className="text-sm text-muted-foreground">{link.link}</div>
-                                    </div>
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setLinks(links.filter((_, i) => i !== index))}
-                                        aria-label={intl.formatMessage({ id: "remove-link" }, { title: link.title })}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    {showLinkForm && (
-                        <div className="mt-2 border rounded-md p-4">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-semibold">
-                                    <FormattedMessage id="add-link" />
-                                </h3>
-                                <button
-                                    onClick={() => setShowLinkForm(false)}
-                                    className="text-gray-500"
-                                    aria-label={intl.formatMessage({ id: "close-link-form" })}
-                                >
-                                    <X size={20} />
-                                </button>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div>
-                                    <Label htmlFor="linkTitle">
-                                        <FormattedMessage id="display-text" />
-                                    </Label>
-                                    <Input
-                                        id="linkTitle"
-                                        value={newLink.title}
-                                        onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
-                                        placeholder={intl.formatMessage({ id: "display-text-placeholder" })}
-                                    />
-                                </div>
-
-                                <div>
-                                    <Label htmlFor="linkUrl">
-                                        <FormattedMessage id="url" />
-                                    </Label>
-                                    <Input
-                                        id="linkUrl"
-                                        value={newLink.link || ""}
-                                        onChange={(e) => setNewLink({ ...newLink, link: e.target.value })}
-                                        placeholder={intl.formatMessage({ id: "url-placeholder" })}
-                                    />
-                                </div>
-
-                                <div className="flex justify-end gap-2">
-                                    <Button type="button" variant="outline" onClick={() => setShowLinkForm(false)}>
-                                        <FormattedMessage id="cancel" />
-                                    </Button>
-                                    <Button type="button" onClick={handleAddLinkSubmit}>
-                                        <FormattedMessage id="save" />
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Notes */}
+                {/* Description */}
                 <FormField
                     control={form.control}
-                    name="notes"
+                    name="description"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>
-                                <FormattedMessage id="notes" />
+                                <FormattedMessage id="description" />
                             </FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder={intl.formatMessage({ id: "notes-placeholder" })}
+                                    placeholder={intl.formatMessage({ id: "description-placeholder" })}
                                     className="min-h-[100px]"
                                     {...field}
+                                    value={field.value || ""}
                                 />
                             </FormControl>
                             <FormMessage />
