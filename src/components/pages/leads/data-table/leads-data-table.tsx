@@ -33,7 +33,6 @@ import { PaginationControls } from "@/components/ui/table-pagination"
 import { TableFooter } from "@/components/ui/table"
 import { cn } from "@/utils/cn"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
-import PhoneMockup from "../phone-mockup"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 import { filterLeads } from "@/actions/leads"
 import { getUserFromCookie } from "@/utils/cookie"
@@ -222,28 +221,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         }
     }, [filteredByTypeLeads, searchParams.sort])
 
-    const allColumns = React.useMemo(() => [
-        {
-            accessorKey: "name",
-            header: () => <FormattedMessage id="lead-name" defaultMessage="Name" />,
-            cell: (ctx: CellContext<Lead, unknown>) => ctx.row.original.name || "-"
-        },
-        {
-            accessorKey: "status",
-            header: () => <FormattedMessage id="lead-status" defaultMessage="Status" />,
-            cell: (ctx: CellContext<Lead, unknown>) => ctx.row.original.status || "-"
-        },
-        {
-            accessorKey: "priority",
-            header: () => <FormattedMessage id="lead-priority" defaultMessage="Priority" />,
-            cell: (ctx: CellContext<Lead, unknown>) => ctx.row.original.priority || "-"
-        },
-        {
-            accessorKey: "createdAt",
-            header: () => <FormattedMessage id="lead-created" defaultMessage="Created At" />,
-            cell: (ctx: CellContext<Lead, unknown>) => ctx.row.original.createdAt ? new Date(ctx.row.original.createdAt).toLocaleDateString() : "-"
-        },
-    ], []);
+    const allColumns = React.useMemo(() => leadColumns(locale), [locale])
     const columns = allColumns;
 
     const table = useReactTable({

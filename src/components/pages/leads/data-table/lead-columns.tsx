@@ -30,45 +30,23 @@ export const leadColumns = (locale: string): ColumnDef<Lead>[] => {
         },
         {
             accessorKey: "name",
-            header: () => <FormattedMessage id="lead" defaultMessage="Lead" />,
-            cell: ({ row }) => {
-                const lead = row.original
-                const name = lead.name || "Unnamed Lead"
-                return (
-                    <div className="flex items-center gap-2 w-full">
-                        <div className="rounded-full bg-gray-200 w-8 h-8 flex items-center justify-center text-xs font-bold">
-                            {name.slice(0, 2).toUpperCase()}
-                        </div>
-                        <div className="min-w-0 overflow-hidden">
-                            <div className="font-medium truncate text-xs xs:text-sm sm:text-base">{name}</div>
-                        </div>
-                    </div>
-                )
-            },
-            filterFn: (row, id, value) => {
-                const lead = row.original
-                const searchValue = value.toLowerCase()
-                const name = lead.name?.toLowerCase() || ""
-                return name.includes(searchValue)
-            },
+            header: () => <FormattedMessage id="lead-name" defaultMessage="Name" />,
+            cell: (ctx) => ctx.row.original.name || "-"
         },
         {
-            accessorKey: "company",
-            header: () => <FormattedMessage id="company" defaultMessage="Company" />,
-            cell: ({ row }) => {
-                const lead = row.original
-                const companyName = (lead as any).companyName || "-"
-                return <div className="truncate text-xs sm:text-base">{companyName}</div>
-            },
+            accessorKey: "status",
+            header: () => <FormattedMessage id="lead-status" defaultMessage="Status" />,
+            cell: (ctx) => ctx.row.original.status || "-"
         },
         {
-            accessorKey: "position",
-            header: () => <FormattedMessage id="position" defaultMessage="Position" />,
-            cell: ({ row }) => {
-                const lead = row.original
-                const position = (lead as any).position || "-"
-                return <div className="truncate text-sm sm:text-base">{position}</div>
-            },
+            accessorKey: "priority",
+            header: () => <FormattedMessage id="lead-priority" defaultMessage="Priority" />,
+            cell: (ctx) => ctx.row.original.priority || "-"
+        },
+        {
+            accessorKey: "createdAt",
+            header: () => <FormattedMessage id="lead-created" defaultMessage="Created At" />,
+            cell: (ctx) => ctx.row.original.createdAt ? new Date(ctx.row.original.createdAt).toLocaleDateString() : "-"
         },
     ]
 }
