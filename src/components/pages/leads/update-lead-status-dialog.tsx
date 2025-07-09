@@ -35,9 +35,13 @@ export const UpdateLeadStatusDialog: React.FC<UpdateLeadStatusDialogProps> = ({ 
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const result = await editLead(lead.createdBy?.creator?.selectedProfile || lead.createdBy?.creator?._id, lead._id, { ...lead, status });
+            const result = await editLead(
+                lead.createdBy?.creator?.selectedProfile || lead.createdBy?.creator?._id,
+                lead._id,
+                { status }
+            );
             if (result.success) {
-                toast.success(intl.formatMessage({ id: "Lead status updated successfully" }));
+                toast.success(intl.formatMessage({ id: "Lead status updated successfully", defaultMessage: "Lead status updated successfully" }));
                 onOpenChange(false);
                 onStatusUpdated?.(status);
             } else {

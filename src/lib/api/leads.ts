@@ -47,7 +47,7 @@ export const addLead = async (profileId: string, contact: LeadInput): Promise<{ 
     }
 }
 
-export const updateLead = async (profileId: string, leadId: string, lead: Lead): Promise<{ message: string }> => {
+export const updateLead = async (profileId: string, leadId: string, lead: any): Promise<{ message: string }> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
