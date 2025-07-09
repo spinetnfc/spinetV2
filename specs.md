@@ -158,3 +158,17 @@ SPINET Web is a digital business card platform that allows users to create and m
 - `LeadApiResponse` uses `Lead[]` for its `data` property.
 - The old `LeadListItem` type has been removed.
 - All frontend code handling leads should use the new `Lead` type for consistency with the backend.
+
+## Edit Lead Form (2024-07-08)
+
+- The edit lead form allows editing only the following fields:
+  - name (string)
+  - Contacts (array of contact IDs, using MultiCombobox)
+  - status (enum, select dropdown)
+  - priority (enum, select dropdown)
+  - lifeTime (object: begins/ends as date, using calendar popover)
+  - Tags (array of strings, free text input)
+- All other fields are not editable in the edit form.
+- The form UI and validation match the add-lead-form for these fields.
+- Tags remain free text, as there is no tag master list or tag selection component.
+- The form submits the correct structure to the backend using the editContact action, matching the LeadInput type.

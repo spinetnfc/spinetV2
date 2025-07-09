@@ -25,8 +25,16 @@ export type Lead = {
     _id: string;
     name: string;
     Contacts?: any[];
-    status?: string;
-    priority?: string;
+    status?: 
+    | "pending"
+    | "prospecting"
+    | "offer-sent"
+    | "negotiation"
+    | "administrative-validation"
+    | "done"
+    | "failed"
+    | "canceled";
+    priority?: "none" | "low" | "medium" | "high" | "critical";
     Tags?: any[];
     nextActions?: any[];
     Employees?: Array<{
@@ -73,14 +81,21 @@ export type Lead = {
     updatedAt?: string;
     __v?: number;
     mainContact?: any;
-    // Add any other fields you expect from the API response
 };
 
 export type LeadFilters = {
     search: string;
     types?: string[];
-    status?: Array<"in-progress" | "pending">;
-    priority?: Array<"high" | "critical">;
+    status?: Array<
+    | "pending"
+    | "prospecting"
+    | "offer-sent"
+    | "negotiation"
+    | "administrative-validation"
+    | "done"
+    | "failed"
+    | "canceled">;
+    priority?: Array<"none" | "low" | "medium" | "high" | "critical">;
     lifeTime?: {
         begins: {
             start: string;

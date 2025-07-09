@@ -2,8 +2,16 @@ import { LeadsDataTable } from "@/components/pages/leads/data-table/leads-data-t
 
 type SearchParams = {
     types?: string[];
-    status?: Array<"in-progress" | "pending">;
-    priority?: Array<"high" | "critical">;
+    status?: Array<
+        | "pending"
+        | "prospecting"
+        | "offer-sent"
+        | "negotiation"
+        | "administrative-validation"
+        | "done"
+        | "failed"
+        | "canceled">;
+    priority?: Array<"none" | "low" | "medium" | "high" | "critical">;
     lifeTime?: {
         begins: {
             start: string;

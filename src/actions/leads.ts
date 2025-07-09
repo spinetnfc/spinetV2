@@ -22,7 +22,7 @@ export const filterLeads = async (profileId: string | null, filters: LeadFilters
         return [];
     }
 }
-export const editContact = async (profileId: string, leadId: string, updatedLead: Lead) => {
+export const editLead = async (profileId: string, leadId: string, updatedLead: Lead) => {
 
     if (!profileId) {
         return { success: false, message: "Profile ID is missing" };

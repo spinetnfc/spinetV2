@@ -26,7 +26,6 @@ import ConfirmationModal from "@/components/delete-confirmation-modal"
 import { ContactFilters } from "./lead-filters"
 import { ContactSortDropdown } from "./lead-sort-dropdown"
 import { leadColumns } from "./lead-columns"
-import EditContactForm from "../edit-lead-form"
 import type { Lead } from "@/types/leads"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import { PaginationControls } from "@/components/ui/table-pagination"
@@ -36,13 +35,22 @@ import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 import { filterLeads } from "@/actions/leads"
 import { getUserFromCookie } from "@/utils/cookie"
+import { UpdateLeadStatusDialog } from "../update-lead-status-dialog";
 
 interface LeadsDataTableProps {
     locale: string
     searchParams: {
         types?: string[];
-        status?: Array<"in-progress" | "pending">;
-        priority?: Array<"high" | "critical">;
+        status?: Array<
+            | "pending"
+            | "prospecting"
+            | "offer-sent"
+            | "negotiation"
+            | "administrative-validation"
+            | "done"
+            | "failed"
+            | "canceled">;
+        priority?: Array<"none" | "low" | "medium" | "high" | "critical">;
         lifeTime?: {
             begins: {
                 start: string;
@@ -88,15 +96,13 @@ function ActionCell({
     const intl = useIntl()
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
-    const [showEditModal, setShowEditModal] = React.useState(false)
+    const [showStatusDialog, setShowStatusDialog] = React.useState(false)
 
     const handleDeleteConfirm = async () => {
         if (!profileId) return
-
         try {
             setIsDeleting(true)
             const response = await removeContact(profileId, lead._id)
-
             if (response.success) {
                 toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
                 router.refresh()
@@ -112,10 +118,10 @@ function ActionCell({
         }
     }
 
-    const handleEditClick = (e: React.MouseEvent) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setShowEditModal(true)
+    const handleStatusClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowStatusDialog(true);
     }
 
     return (
@@ -130,13 +136,12 @@ function ActionCell({
                     message="delete-lead-message"
                 />
             )}
-            {showEditModal && (
-                <EditContactForm
-                    lead={lead}
-                    onSuccess={() => setShowEditModal(false)}
-                    onCancel={() => setShowEditModal(false)}
-                />
-            )}
+            <UpdateLeadStatusDialog
+                open={showStatusDialog}
+                onOpenChange={setShowStatusDialog}
+                lead={{ ...lead, status: lead.status ?? "pending" }}
+                onStatusUpdated={() => router.refresh()}
+            />
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -146,9 +151,13 @@ function ActionCell({
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleEditClick}>
+                    <DropdownMenuItem onClick={handleStatusClick}>
                         <Edit className="me-2 h-4 w-4" />
-                        <FormattedMessage id="edit" defaultMessage="Edit" />
+                        <FormattedMessage id="edit-status" defaultMessage="Edit Status" />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => { }}>
+                        <Plus className="me-2 h-4 w-4" />
+                        <FormattedMessage id="add-note" defaultMessage="Add Note" />
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={(e: any) => {
