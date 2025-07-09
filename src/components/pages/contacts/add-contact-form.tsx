@@ -347,12 +347,11 @@ export default function AddContactForm({ locale }: { locale: string }) {
                                             <Button
                                                 variant="outline"
                                                 className={cn(
-                                                    "w-full ps-3 text-left font-normal border-gray-200 dark:border-blue-950 text-gray-400 dark:text-blue-800",
-                                                    !field.value && "text-muted-foreground"
+                                                    "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure",
                                                 )}
                                             >
                                                 {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
-                                                <CalendarIcon className="ms-auto h-4 w-4 opacity-50" />
+                                                <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azure" />
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
