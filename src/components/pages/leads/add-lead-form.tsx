@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { createLead } from "@/actions/leads";
+import { getContactsAction } from "@/actions/contacts";
 import { useAuth } from "@/context/authContext";
 import {
     Select,
@@ -35,12 +36,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { MultiCombobox, ComboboxOption } from "@/components/ui/combobox";
 
 // Define the lead schema with Zod
 const leadSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters" }),
     description: z.string().optional(),
     mainContact: z.string().nullable().optional(),
+    Contacts: z.array(z.string()).optional(),
     status: z.enum(["pending", "prospecting", "offer-sent", "negotiation", "administrative-validation", "done", "failed", "canceled"]).optional(),
     priority: z.enum(["none", "low", "medium", "high", "critical"]).optional(),
     lifeTimeBegins: z.date().optional().nullable(),
@@ -51,12 +54,14 @@ type LeadFormValues = z.infer<typeof leadSchema>;
 
 export default function AddLeadForm({ locale }: { locale: string }) {
     const intl = useIntl();
-    const profileId = useAuth().user.selectedProfile;
+    const { user } = useAuth();
+    const profileId = user?.selectedProfile;
     const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [tags, setTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState("");
+    const [contacts, setContacts] = useState<ComboboxOption[]>([]);
 
     const form = useForm<LeadFormValues>({
         resolver: zodResolver(leadSchema),
@@ -64,12 +69,37 @@ export default function AddLeadForm({ locale }: { locale: string }) {
             name: "",
             description: "",
             mainContact: null,
+            Contacts: [],
             status: "pending",
             priority: "none",
             lifeTimeBegins: null,
             lifeTimeEnds: null,
         },
     });
+
+    // Fetch contacts on component mount
+    useEffect(() => {
+        const fetchContacts = async () => {
+            if (profileId) {
+                try {
+                    const response = await getContactsAction(profileId);
+                    if (response?.success && response.data) {
+                        const contactOptions = response.data.map((contact: any) => ({
+                            value: contact._id,
+                            label: contact.Profile?.fullName || "Unknown",
+                        }));
+                        setContacts(contactOptions);
+                    } else {
+                        toast.error(intl.formatMessage({ id: "Failed to fetch contacts" }));
+                    }
+                } catch (error) {
+                    console.error("Error fetching contacts:", error);
+                    toast.error(intl.formatMessage({ id: "An unexpected error occurred. Please try again." }));
+                }
+            }
+        };
+        fetchContacts();
+    }, [profileId, intl]);
 
     const onSubmit = async (data: LeadFormValues) => {
         try {
@@ -80,7 +110,13 @@ export default function AddLeadForm({ locale }: { locale: string }) {
             // Create a FormData object
             const formData = new FormData(formRef.current);
 
-            // Add tags as JSON string
+            // Explicitly append form data fields
+            formData.append("name", data.name);
+            if (data.description) formData.append("description", data.description);
+            if (data.mainContact) formData.append("mainContact", data.mainContact);
+            formData.append("Contacts", JSON.stringify(data.Contacts || []));
+            formData.append("status", data.status || "pending");
+            formData.append("priority", data.priority || "none");
             formData.append("tags", JSON.stringify(tags));
 
             // Format the dates as 'yyyy-MM-dd' if they exist
@@ -95,6 +131,7 @@ export default function AddLeadForm({ locale }: { locale: string }) {
             console.log("Form data submitted:", {
                 ...Object.fromEntries(formData.entries()),
                 tags,
+                contacts: data.Contacts,
             });
 
             // Submit the form
@@ -176,7 +213,15 @@ export default function AddLeadForm({ locale }: { locale: string }) {
                                     <FormattedMessage id="main-contact" />
                                 </FormLabel>
                                 <FormControl>
-                                    <Input placeholder={intl.formatMessage({ id: "main-contact-placeholder" })} {...field} value={field.value || ""} />
+                                    <MultiCombobox
+                                        options={contacts}
+                                        value={field.value || ""}
+                                        onValueChange={field.onChange}
+                                        placeholder={intl.formatMessage({ id: "main-contact-placeholder" })}
+                                        searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
+                                        emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
+                                        multiple={false}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -192,7 +237,7 @@ export default function AddLeadForm({ locale }: { locale: string }) {
                                 <FormLabel>
                                     <FormattedMessage id="status" />
                                 </FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder={intl.formatMessage({ id: "status-placeholder" })} />
@@ -239,7 +284,7 @@ export default function AddLeadForm({ locale }: { locale: string }) {
                                 <FormLabel>
                                     <FormattedMessage id="priority" />
                                 </FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder={intl.formatMessage({ id: "priority-placeholder" })} />
@@ -283,11 +328,11 @@ export default function AddLeadForm({ locale }: { locale: string }) {
                                             <Button
                                                 variant="outline"
                                                 className={cn(
-                                                    "w-full ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure",
+                                                    "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
                                                 )}
                                             >
                                                 {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
-                                                <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azure" />
+                                                <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azurelaceeeeee" />
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
@@ -319,11 +364,11 @@ export default function AddLeadForm({ locale }: { locale: string }) {
                                             <Button
                                                 variant="outline"
                                                 className={cn(
-                                                    "w-full ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure",
+                                                    "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
                                                 )}
                                             >
                                                 {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
-                                                <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azure" />
+                                                <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azurelaceeeeee" />
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
@@ -335,6 +380,31 @@ export default function AddLeadForm({ locale }: { locale: string }) {
                                         />
                                     </PopoverContent>
                                 </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* Contacts */}
+                    <FormField
+                        control={form.control}
+                        name="Contacts"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>
+                                    <FormattedMessage id="contacts" />
+                                </FormLabel>
+                                <FormControl>
+                                    <MultiCombobox
+                                        options={contacts}
+                                        value={field.value || []}
+                                        onValueChange={field.onChange}
+                                        placeholder={intl.formatMessage({ id: "contacts-placeholder" })}
+                                        searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
+                                        emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
+                                        multiple={true}
+                                    />
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}

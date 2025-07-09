@@ -347,7 +347,7 @@ export default function AddContactForm({ locale }: { locale: string }) {
                                             <Button
                                                 variant="outline"
                                                 className={cn(
-                                                    "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure",
+                                                    "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
                                                 )}
                                             >
                                                 {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}

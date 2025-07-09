@@ -1,8 +1,21 @@
 "use server";
-import { addContact, deleteContact, deleteContacts, sendInvitation, updateContact } from "@/lib/api/contacts";
-import { ContactInput, InviteContact } from "@/types/contact";
+import { addContact, deleteContact, deleteContacts, getContacts, sendInvitation, updateContact } from "@/lib/api/contacts";
+import { Contact, ContactInput, InviteContact } from "@/types/contact";
 import { format, parse } from "date-fns";
 
+
+export const getContactsAction = async (profileId: string | null): Promise<{ success: boolean; data?: Contact[]; error?: string }> => {
+    try {
+        const profiles = await getContacts(profileId);
+        return { success: true, data: profiles };
+    } catch (error: any) {
+        console.error('Error fetching contacts:', {
+            message: error.message,
+            stack: error.stack,
+        });
+        return { success: false, error: error.message || "Failed to fetch contacts" };
+    }
+};
 
 export const editContact = async (profileId: string, contactId: string, updatedContact: ContactInput) => {
 
