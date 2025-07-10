@@ -6,12 +6,10 @@ interface ContactAvatarProps {
     name: string
     profilePicture?: string | null
     initials?: string | null
-    size?: "sm" | "md" | "lg"
 }
 
-export default function ContactAvatar({ name, profilePicture, initials, size = "md" }: ContactAvatarProps) {
+export default function ContactAvatar({ name, profilePicture, initials }: ContactAvatarProps) {
     // Determine size in pixels
-    const sizeInPx = size === "sm" ? 32 : size === "md" ? 44 : 64
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     useEffect(() => {
         async function fetchImage() {
@@ -38,9 +36,9 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
             <Image
                 src={imageUrl}
                 alt={name}
-                width={sizeInPx}
-                height={sizeInPx}
-                className="object-cover rounded-md aspect-square w-10 sm:w-14 min-w-10 sm:min-w-14"
+                width={32}
+                height={32}
+                className="object-cover rounded-md aspect-square w-10 sm:w-14 min-w-10 "
             />
         );
     }
@@ -48,7 +46,7 @@ export default function ContactAvatar({ name, profilePicture, initials, size = "
     return (
         <div
             className="rounded-md flex items-center justify-center text-white bg-azure font-light
-             sm:text-lg aspect-square w-10 sm:w-14 min-w-10 sm:min-w-14"
+              aspect-square w-10 min-w-10 "
         >
             {displayInitials}
         </div>

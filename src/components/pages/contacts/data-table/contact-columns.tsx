@@ -2,7 +2,6 @@
 import type { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { FormattedMessage } from "react-intl"
-import Link from "next/link"
 import ContactAvatar from "../contact-avatar"
 import type { Contact } from "@/types/contact"
 
