@@ -453,6 +453,14 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                                                 params.delete('page')
                                                 router.replace(`${pathname}?${params.toString()}`, { scroll: false })
                                             }}
+                                            onLimitChange={(newLimit) => {
+                                                const params = new URLSearchParams(urlSearchParams.toString())
+                                                params.set('rowsPerPage', String(newLimit))
+                                                params.set('skip', '0') // Reset skip to 0 when changing page size
+                                                // Remove page param if present
+                                                params.delete('page')
+                                                router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+                                            }}
                                         />
                                     </TableCell>
                                 </TableRow>

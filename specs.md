@@ -64,6 +64,15 @@ SPINET Web is a digital business card platform that allows users to create and m
 - All filters/search update the URL params and cause the table to refetch with new data.
 - Implementation is consistent with the contacts table for UX and code style.
 
+## Leads Table Pagination Controls (2024-07-09)
+
+- The leads table pagination controls now match the contacts table for UI and UX:
+  - Page numbers are rendered (currently only the current page is shown, as totalPages is not yet available).
+  - The current page is highlighted in blue.
+  - RTL/Arabic support: icon direction and button order are reversed for Arabic locale.
+  - Uses the same button and layout classes as the contacts table.
+  - A TODO comment is left in the code to implement totalPages/page numbers logic when the backend provides total count.
+
 ## Code Organization
 
 ### API Calls
