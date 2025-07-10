@@ -44,9 +44,16 @@ export const leadColumns = (locale: string): ColumnDef<Lead>[] => {
             cell: (ctx) => ctx.row.original.priority || "-"
         },
         {
-            accessorKey: "createdAt",
-            header: () => <FormattedMessage id="lead-created" defaultMessage="Created At" />,
-            cell: (ctx) => ctx.row.original.createdAt ? new Date(ctx.row.original.createdAt).toLocaleDateString() : "-"
+            accessorKey: "mainContact",
+            header: () => <FormattedMessage id="lead-main-contact" defaultMessage="Main Contact" />,
+            cell: (ctx) => {
+                const mc = ctx.row.original.mainContact;
+                if (!mc) return "-";
+                // Try to display fullName, name, or string value
+                if (typeof mc === "string") return mc;
+                if (typeof mc === "object" && (mc.fullName || mc.name)) return mc.fullName || mc.name;
+                return "-";
+            }
         },
     ]
 }

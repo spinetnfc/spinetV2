@@ -55,6 +55,15 @@ SPINET Web is a digital business card platform that allows users to create and m
 - The `LeadsDataTable` component now receives a `leads` prop (array of `Lead`), and all table logic is updated to use the `Lead` type.
 - The table supports filtering, sorting, and pagination, matching the contacts table pattern.
 
+## Leads Table Filtering and Search (2024-06-09)
+
+- The leads table now supports:
+  - **Status filter**: Dropdown filter for lead status (pending, prospecting, offer-sent, negotiation, administrative-validation, done, failed, canceled) using `LeadStatusFilter`. Updates the `status` URL param and triggers refetch.
+  - **Search bar**: Updates the `search` URL param directly (not a column filter) and triggers refetch, matching the contacts table UX.
+  - **Date range filter**: Calendar icon opens a popover with two date pickers (start/end). Selecting both sets the `lifeTime` param in the URL and triggers refetch.
+- All filters/search update the URL params and cause the table to refetch with new data.
+- Implementation is consistent with the contacts table for UX and code style.
+
 ## Code Organization
 
 ### API Calls

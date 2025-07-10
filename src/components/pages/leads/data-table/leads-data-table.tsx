@@ -16,14 +16,14 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { MoreVertical, Edit, Trash2, Plus } from "lucide-react"
+import { MoreVertical, Edit, Trash2, Plus, CalendarIcon } from "lucide-react"
 import { FormattedMessage, useIntl } from "react-intl"
 import Link from "next/link"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
 import { removeLead } from "@/actions/leads"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { ContactFilters } from "./lead-filters"
+import { LeadStatusFilter } from "./lead-filters"
 import { ContactSortDropdown } from "./lead-sort-dropdown"
 import { leadColumns } from "./lead-columns"
 import type { Lead } from "@/types/leads"
@@ -36,6 +36,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialo
 import { filterLeads } from "@/actions/leads"
 import { getUserFromCookie } from "@/utils/cookie"
 import { UpdateLeadStatusDialog } from "../update-lead-status-dialog";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
 
 interface LeadsDataTableProps {
     locale: string
@@ -185,7 +187,6 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const {
         search = "",
         types,
-        status,
         priority,
         lifeTime,
         tags,
@@ -193,6 +194,12 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         page = "1",
         rowsPerPage
     } = searchParams
+    // Always treat status as an array
+    const status = Array.isArray(searchParams.status)
+        ? searchParams.status
+        : searchParams.status
+            ? [searchParams.status]
+            : []
     const currentRowsPerPage = Number(rowsPerPage) || dynamicRowsPerPage
 
     const router = useRouter()
@@ -206,12 +213,11 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
     const isSmallScreen = useisSmallScreen()
     const [selectedLead, setSelectedLead] = React.useState<Lead | null>(null)
-
-    const initialFiltering: ColumnFiltersState = []
-    if (search) {
-        initialFiltering.push({ id: "name", value: search })
-    }
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(initialFiltering)
+    const [datePopoverOpen, setDatePopoverOpen] = React.useState(false)
+    const [dateRange, setDateRange] = React.useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+    const [searchValue, setSearchValue] = React.useState(search || "")
+    const searchInputRef = React.useRef<HTMLInputElement>(null)
+    const isTypingRef = React.useRef(false)
 
     const filteredByTypeLeads = React.useMemo(() => Array.isArray(leads) ? leads : [], [leads])
 
@@ -236,14 +242,12 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const table = useReactTable({
         data: sortedLeads,
         columns,
-        onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
-            columnFilters,
             columnVisibility: {
                 ...columnVisibility,
                 company: !isSmallScreen,
@@ -253,10 +257,17 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
             pagination: {
                 pageIndex: Number(page) - 1,
                 pageSize: currentRowsPerPage,
-
             },
         },
     })
+
+    // Memoize all filter values to prevent infinite fetch loops
+    const memoizedStatus = React.useMemo(() => status, [JSON.stringify(status)])
+    const memoizedTypes = React.useMemo(() => types, [JSON.stringify(types)])
+    const memoizedPriority = React.useMemo(() => priority, [JSON.stringify(priority)])
+    const memoizedTags = React.useMemo(() => tags, [JSON.stringify(tags)])
+    const memoizedContacts = React.useMemo(() => contacts, [JSON.stringify(contacts)])
+    const memoizedLifeTime = React.useMemo(() => lifeTime, [JSON.stringify(lifeTime)])
 
     useEffect(() => {
         async function fetchLeads() {
@@ -268,12 +279,12 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 const limit = currentRowsPerPage
                 const filters = {
                     search,
-                    types,
-                    status,
-                    priority,
-                    lifeTime,
-                    tags,
-                    contacts,
+                    types: memoizedTypes,
+                    status: memoizedStatus,
+                    priority: memoizedPriority,
+                    lifeTime: memoizedLifeTime,
+                    tags: memoizedTags,
+                    contacts: memoizedContacts,
                     limit,
                     skip,
                 }
@@ -286,24 +297,42 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
             }
         }
         fetchLeads()
-    }, [search, types, status, priority, lifeTime, tags, contacts, page, currentRowsPerPage])
+    }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, page, currentRowsPerPage])
 
-    React.useEffect(() => {
+    // Handle search input change and update URL param
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchValue(event.target.value)
+        isTypingRef.current = true
         const params = new URLSearchParams(urlSearchParams.toString())
-        const searchValue = columnFilters.find((filter) => filter.id === "name")?.value as string
-        if (searchValue) {
-            params.set("search", searchValue)
+        if (event.target.value) {
+            params.set("search", event.target.value)
         } else {
             params.delete("search")
         }
-        const currentPage = table.getState().pagination.pageIndex + 1
-        params.set("page", currentPage.toString())
-        const newParamsString = params.toString()
-        const currentParamsString = urlSearchParams.toString()
-        if (newParamsString !== currentParamsString) {
-            router.replace(`${pathname}?${newParamsString} `, { scroll: false })
+        params.set("page", "1")
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    }
+
+    // Sync searchValue with URL param only if not typing
+    React.useEffect(() => {
+        if (!isTypingRef.current) {
+            setSearchValue(search || "")
         }
-    }, [columnFilters, table.getState().pagination.pageIndex, pathname, router, urlSearchParams])
+        isTypingRef.current = false
+    }, [search])
+    // Handle date range change and update URL param
+    const handleDateChange = (type: "start" | "end", date: Date | undefined) => {
+        const newRange = { ...dateRange, [type]: date || null }
+        setDateRange(newRange)
+        const params = new URLSearchParams(urlSearchParams.toString())
+        if (newRange.start && newRange.end) {
+            params.set("lifeTime", JSON.stringify({ begins: { start: newRange.start.toISOString().slice(0, 10), end: newRange.end.toISOString().slice(0, 10) } }))
+        } else {
+            params.delete("lifeTime")
+        }
+        params.set("page", "1")
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    }
 
     const handleBulkDelete = async () => {
         if (!profileId) return
@@ -358,11 +387,38 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     <div className="flex gap-4 items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
                         <Input
                             placeholder={intl.formatMessage({ id: "search-leads", defaultMessage: "Search leads..." })}
-                            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                            onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
+                            value={searchValue}
+                            onChange={handleSearchChange}
                             className="max-w-sm border-none min-w-60 sm:min-w-80"
                         />
-                        <ContactFilters />
+                        <LeadStatusFilter />
+                        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                            <PopoverTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <CalendarIcon className="h-6 w-6 text-gray-400 dark:text-azure" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent align="start" className="flex flex-col gap-2 w-auto p-4">
+                                <div className="flex gap-2 items-center">
+                                    <div>
+                                        <span className="block text-xs mb-1"><FormattedMessage id="start-date" /></span>
+                                        <Calendar
+                                            mode="single"
+                                            selected={dateRange.start || undefined}
+                                            onSelect={(date) => handleDateChange("start", date)}
+                                        />
+                                    </div>
+                                    <div>
+                                        <span className="block text-xs mb-1"><FormattedMessage id="end-date" /></span>
+                                        <Calendar
+                                            mode="single"
+                                            selected={dateRange.end || undefined}
+                                            onSelect={(date) => handleDateChange("end", date)}
+                                        />
+                                    </div>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
                     </div>
                     <Button asChild className="flex items-center h-10 gap-1 bg-azure">
                         <Link href="./leads/add-lead">
