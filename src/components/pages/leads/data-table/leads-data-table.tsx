@@ -38,6 +38,7 @@ import { getUserFromCookie } from "@/utils/cookie"
 import { UpdateLeadStatusDialog } from "../update-lead-status-dialog";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns"
 
 interface LeadsDataTableProps {
     locale: string
@@ -277,21 +278,45 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 const profileId = user?.selectedProfile || null
                 const skip = (Number(page) - 1) * currentRowsPerPage
                 const limit = currentRowsPerPage
+
+                // Format lifeTime dates if present
+                let formattedLifeTime = memoizedLifeTime
+                if (memoizedLifeTime && typeof memoizedLifeTime === "string") {
+                    try {
+                        const parsed = JSON.parse(memoizedLifeTime)
+                        if (parsed && typeof parsed === "object") {
+                            if (parsed.begins && parsed.begins.start) {
+                                const d = new Date(parsed.begins.start)
+                                if (!isNaN(d.getTime())) parsed.begins.start = d.toISOString()
+                            }
+                            if (parsed.ends && parsed.ends.end) {
+                                const d = new Date(parsed.ends.end)
+                                if (!isNaN(d.getTime())) parsed.ends.end = d.toISOString()
+                            }
+                            formattedLifeTime = parsed
+                        }
+                    } catch (e) {
+                        // ignore parse error, use as is
+                    }
+                }
+
                 const filters = {
                     search,
                     types: memoizedTypes,
                     status: memoizedStatus,
                     priority: memoizedPriority,
-                    lifeTime: memoizedLifeTime,
+                    lifeTime: formattedLifeTime ? { lifeTime: formattedLifeTime } : undefined,
                     tags: memoizedTags,
                     contacts: memoizedContacts,
                     limit,
                     skip,
                 }
+                console.log("Payload being sent:", filters)
                 const result = await filterLeads(profileId, filters)
                 setLeads(result)
             } catch (error) {
                 setLeads([])
+                console.error(error)
             } finally {
                 setLoading(false)
             }
@@ -325,8 +350,10 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         const newRange = { ...dateRange, [type]: date || null }
         setDateRange(newRange)
         const params = new URLSearchParams(urlSearchParams.toString())
-        if (newRange.start && newRange.end) {
-            params.set("lifeTime", JSON.stringify({ begins: { start: newRange.start.toISOString().slice(0, 10), end: newRange.end.toISOString().slice(0, 10) } }))
+        if (newRange.start || newRange.end) {
+            const begins = { start: newRange.start ? newRange.start.toISOString().slice(0, 10) : "", end: "" }
+            const ends = { start: "", end: newRange.end ? newRange.end.toISOString().slice(0, 10) : "" }
+            params.set("lifeTime", JSON.stringify({ begins, ends }))
         } else {
             params.delete("lifeTime")
         }
