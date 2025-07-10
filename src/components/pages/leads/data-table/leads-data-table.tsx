@@ -32,13 +32,9 @@ import { LeadsPaginationControls } from "@/components/pages/leads/data-table/lea
 import { TableFooter } from "@/components/ui/table"
 import { cn } from "@/utils/cn"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 import { filterLeads } from "@/actions/leads"
 import { getUserFromCookie } from "@/utils/cookie"
 import { UpdateLeadStatusDialog } from "../update-lead-status-dialog";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { format } from "date-fns"
 
 interface LeadsDataTableProps {
     locale: string
@@ -417,7 +413,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                                                 <TableCell
                                                     key={cell.id}
                                                     className={cn(
-                                                        "min-w-0",
+                                                        "min-w-0 h-14 max-h-14",
                                                         cell.column.id === "select"
                                                             ? "w-12 px-2"
                                                             : cell.column.id === "name"

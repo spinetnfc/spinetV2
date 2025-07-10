@@ -6,12 +6,12 @@ export function useDynamicRowsPerPage(minRows: number = 5, maxRows: number = 100
 
     useEffect(() => {
         const calculateOptimalRows = () => {
-            const availableHeight = window.innerHeight - 150
+            const availableHeight = window.innerHeight - 30;
 
             const headerHeight = 40 // search bar, filters, add contact button
             const tableHeaderHeight = 48 // table header 
             const tableFooterHeight = 48 // pagination controls
-            const rowHeight = 60 // table row height
+            const rowHeight = 56 // table row height
             const sapcing = 20 // spacing between content
 
             // remaining height for rows

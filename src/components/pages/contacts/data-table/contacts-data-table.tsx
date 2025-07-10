@@ -356,7 +356,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                                 <TableCell
                                                     key={cell.id}
                                                     className={cn(
-                                                        "min-w-0",
+                                                        "min-w-0 h-14 max-h-14",
                                                         cell.column.id === "select"
                                                             ? "w-12 px-2"
                                                             : cell.column.id === "name"
