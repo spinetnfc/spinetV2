@@ -21,7 +21,7 @@ import { FormattedMessage, useIntl } from "react-intl"
 import Link from "next/link"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
-import { removeLead } from "@/actions/leads"
+import { removeLead, removeLeads } from "@/actions/leads"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
 import { LeadFilters } from "./lead-filters"
 import { ContactSortDropdown } from "./lead-sort-dropdown"
@@ -90,7 +90,8 @@ function ActionCell({
     lead,
     locale,
     profileId,
-}: { lead: Lead; locale: string; profileId: string | undefined }) {
+    setRefreshKey,
+}: { lead: Lead; locale: string; profileId: string | undefined; setRefreshKey: React.Dispatch<React.SetStateAction<number>> }) {
     const router = useRouter()
     const intl = useIntl()
     const [isDeleting, setIsDeleting] = React.useState(false)
@@ -104,7 +105,7 @@ function ActionCell({
             const response = await removeLead(profileId, lead._id)
             if (response.success) {
                 toast.success(intl.formatMessage({ id: "Lead deleted successfully" }))
-                router.refresh()
+                setRefreshKey(k => k + 1);
             } else {
                 throw new Error(response.message)
             }
@@ -178,6 +179,7 @@ function ActionCell({
 export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const [leads, setLeads] = useState<Lead[]>([])
     const [loading, setLoading] = useState(false)
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20) // Min 5, Max 50
 
@@ -314,7 +316,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
             }
         }
         fetchLeads()
-    }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, skip, currentRowsPerPage])
+    }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, skip, currentRowsPerPage, refreshKey])
 
     const handleBulkDelete = async () => {
         if (!profileId) return
@@ -325,15 +327,13 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 .filter((index) => rowSelection[index as any])
                 .map((index) => sortedLeads[Number.parseInt(index)]._id)
 
-            // TODO: Use removeLeads for bulk delete
-            // const response = await removeLeads(profileId, selectedRows)
-
-            // if (response.success) {
-            //     toast.success(intl.formatMessage({ id: "Leads deleted successfully" }))
-            //     router.refresh()
-            // } else {
-            //     throw new Error(response.message)
-            // }
+            const response = await removeLeads(profileId, selectedRows)
+            if (response.success) {
+                toast.success(intl.formatMessage({ id: "Leads deleted successfully" }))
+                setRefreshKey(k => k + 1);
+            } else {
+                throw new Error(response.message)
+            }
         } catch (error) {
             console.error("Error deleting leads:", error)
             toast.error(intl.formatMessage({ id: "Failed to delete leads. Please try again." }))
@@ -425,7 +425,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                                                 </TableCell>
                                             ))}
                                             <TableCell className="px-2 w-12">
-                                                <ActionCell lead={row.original} locale={locale} profileId={profileId} />
+                                                <ActionCell lead={row.original} locale={locale} profileId={profileId} setRefreshKey={setRefreshKey} />
                                             </TableCell>
                                         </TableRow>
                                     ))
