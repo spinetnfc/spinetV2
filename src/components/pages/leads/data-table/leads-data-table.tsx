@@ -23,7 +23,7 @@ import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
 import { removeLead } from "@/actions/leads"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { LeadStatusFilter } from "./lead-filters"
+import { LeadFilters } from "./lead-filters"
 import { ContactSortDropdown } from "./lead-sort-dropdown"
 import { leadColumns } from "./lead-columns"
 import type { Lead } from "@/types/leads"
@@ -214,11 +214,6 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
     const isSmallScreen = useisSmallScreen()
     const [selectedLead, setSelectedLead] = React.useState<Lead | null>(null)
-    const [datePopoverOpen, setDatePopoverOpen] = React.useState(false)
-    const [dateRange, setDateRange] = React.useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
-    const [searchValue, setSearchValue] = React.useState(search || "")
-    const searchInputRef = React.useRef<HTMLInputElement>(null)
-    const isTypingRef = React.useRef(false)
 
     const filteredByTypeLeads = React.useMemo(() => Array.isArray(leads) ? leads : [], [leads])
 
@@ -324,43 +319,6 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         fetchLeads()
     }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, page, currentRowsPerPage])
 
-    // Handle search input change and update URL param
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchValue(event.target.value)
-        isTypingRef.current = true
-        const params = new URLSearchParams(urlSearchParams.toString())
-        if (event.target.value) {
-            params.set("search", event.target.value)
-        } else {
-            params.delete("search")
-        }
-        params.set("page", "1")
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-    }
-
-    // Sync searchValue with URL param only if not typing
-    React.useEffect(() => {
-        if (!isTypingRef.current) {
-            setSearchValue(search || "")
-        }
-        isTypingRef.current = false
-    }, [search])
-    // Handle date range change and update URL param
-    const handleDateChange = (type: "start" | "end", date: Date | undefined) => {
-        const newRange = { ...dateRange, [type]: date || null }
-        setDateRange(newRange)
-        const params = new URLSearchParams(urlSearchParams.toString())
-        if (newRange.start || newRange.end) {
-            const begins = { start: newRange.start ? newRange.start.toISOString().slice(0, 10) : "", end: "" }
-            const ends = { start: "", end: newRange.end ? newRange.end.toISOString().slice(0, 10) : "" }
-            params.set("lifeTime", JSON.stringify({ begins, ends }))
-        } else {
-            params.delete("lifeTime")
-        }
-        params.set("page", "1")
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-    }
-
     const handleBulkDelete = async () => {
         if (!profileId) return
 
@@ -411,42 +369,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     )}
                 </div>
                 <div className="ms-auto flex items-center gap-2">
-                    <div className="flex gap-4 items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
-                        <Input
-                            placeholder={intl.formatMessage({ id: "search-leads", defaultMessage: "Search leads..." })}
-                            value={searchValue}
-                            onChange={handleSearchChange}
-                            className="max-w-sm border-none min-w-60 sm:min-w-80"
-                        />
-                        <LeadStatusFilter />
-                        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                            <PopoverTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <CalendarIcon className="h-6 w-6 text-gray-400 dark:text-azure" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent align="start" className="flex flex-col gap-2 w-auto p-4">
-                                <div className="flex gap-2 items-center">
-                                    <div>
-                                        <span className="block text-xs mb-1"><FormattedMessage id="start-date" /></span>
-                                        <Calendar
-                                            mode="single"
-                                            selected={dateRange.start || undefined}
-                                            onSelect={(date) => handleDateChange("start", date)}
-                                        />
-                                    </div>
-                                    <div>
-                                        <span className="block text-xs mb-1"><FormattedMessage id="end-date" /></span>
-                                        <Calendar
-                                            mode="single"
-                                            selected={dateRange.end || undefined}
-                                            onSelect={(date) => handleDateChange("end", date)}
-                                        />
-                                    </div>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                    </div>
+                    <LeadFilters />
                     <Button asChild className="flex items-center h-10 gap-1 bg-azure">
                         <Link href="./leads/add-lead">
                             <Plus size={16} />
