@@ -350,8 +350,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                                     setSelectedContact(row.original);
                                                 }
                                             }}
-                                            className="cursor-pointer"
-                                        >
+                                            className={`cursor-pointer ${row.original._id === selectedContact?._id ? "bg-azure/50" : ""}`}                                        >
                                             {row.getVisibleCells().map((cell) => (
                                                 <TableCell
                                                     key={cell.id}
