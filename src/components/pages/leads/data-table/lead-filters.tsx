@@ -84,13 +84,13 @@ export function LeadFilters() {
     }
 
     return (
-        <div className="flex gap-4 items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
+        <div className="flex items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
             <input
                 type="text"
                 placeholder="Search leads..."
                 value={searchValue}
                 onChange={handleSearchChange}
-                className="max-w-sm border-none min-w-60 sm:min-w-80 px-2 py-1 rounded"
+                className="max-w-sm border-none h-10 min-w-60 sm:min-w-80 px-2 py-1 rounded text-sm"
             />
             <div className="flex">
                 <DropdownMenu>

@@ -28,7 +28,7 @@ import { ContactSortDropdown } from "./lead-sort-dropdown"
 import { leadColumns } from "./lead-columns"
 import type { Lead } from "@/types/leads"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
-import { PaginationControls } from "@/components/ui/table-pagination"
+import { LeadsPaginationControls } from "@/components/pages/leads/data-table/leads-pagination-controls"
 import { TableFooter } from "@/components/ui/table"
 import { cn } from "@/utils/cn"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
@@ -265,13 +265,14 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const memoizedContacts = React.useMemo(() => contacts, [JSON.stringify(contacts)])
     const memoizedLifeTime = React.useMemo(() => lifeTime, [JSON.stringify(lifeTime)])
 
+    const skip = Number(urlSearchParams.get('skip')) || 0;
+
     useEffect(() => {
         async function fetchLeads() {
             setLoading(true)
             try {
                 const user = await getUserFromCookie()
                 const profileId = user?.selectedProfile || null
-                const skip = (Number(page) - 1) * currentRowsPerPage
                 const limit = currentRowsPerPage
 
                 // Format lifeTime dates if present
@@ -317,7 +318,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
             }
         }
         fetchLeads()
-    }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, page, currentRowsPerPage])
+    }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, skip, currentRowsPerPage])
 
     const handleBulkDelete = async () => {
         if (!profileId) return
@@ -443,11 +444,19 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                             <TableFooter>
                                 <TableRow>
                                     <TableCell colSpan={100} className="h-12 p-2 bg-gray-100 dark:bg-navy">
-                                        <PaginationControls
-                                            currentPage={table.getState().pagination.pageIndex + 1}
-                                            totalPages={table.getPageCount()}
-                                            totalElements={leads.length}
-                                            rowsPerPage={currentRowsPerPage}
+                                        <LeadsPaginationControls
+                                            skip={Number(urlSearchParams.get('skip')) || 0}
+                                            limit={currentRowsPerPage}
+                                            rowCount={leads.length}
+                                            totalCount={Number(urlSearchParams.get('totalCount')) || (Number(urlSearchParams.get('skip')) || 0) + leads.length}
+                                            onSkipChange={(newSkip) => {
+                                                const params = new URLSearchParams(urlSearchParams.toString())
+                                                params.set('skip', String(newSkip))
+                                                params.set('rowsPerPage', String(currentRowsPerPage))
+                                                // Remove page param if present
+                                                params.delete('page')
+                                                router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+                                            }}
                                         />
                                     </TableCell>
                                 </TableRow>
