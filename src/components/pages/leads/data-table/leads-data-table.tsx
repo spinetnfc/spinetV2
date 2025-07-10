@@ -305,7 +305,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     types: memoizedTypes,
                     status: memoizedStatus,
                     priority: memoizedPriority,
-                    lifeTime: formattedLifeTime ? { lifeTime: formattedLifeTime } : undefined,
+                    lifeTime: formattedLifeTime,
                     tags: memoizedTags,
                     contacts: memoizedContacts,
                     limit,

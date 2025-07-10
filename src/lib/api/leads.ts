@@ -8,7 +8,12 @@ export const filterLeads = async (profileId: string | null, filters: LeadFilters
         if (!profileId || typeof profileId !== 'string') {
             throw new Error(`Invalid profileId: ${profileId}`);
         }
-        const response = await ServerApi.post(`/profile/${profileId}/opportunities/filter`, filters, { headers });
+        // Wrap lifeTime as required by backend
+        const payload = {
+            ...filters,
+            lifeTime: filters.lifeTime ? { lifeTime: filters.lifeTime } : undefined,
+        };
+        const response = await ServerApi.post(`/profile/${profileId}/opportunities/filter`, payload, { headers });
         return response.data;
     } catch (error) {
         console.error('Leads fetch error:', error);
