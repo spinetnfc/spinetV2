@@ -4,7 +4,7 @@ import React from "react"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { SlidersHorizontal } from "lucide-react"
-import { FormattedMessage } from "react-intl"
+import { FormattedMessage, useIntl } from "react-intl"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -32,7 +32,7 @@ export function LeadFilters() {
     const [dateRange, setDateRange] = React.useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
     const [searchValue, setSearchValue] = React.useState(searchParams.get("search") || "")
     const currentStatuses = searchParams.getAll("status")
-
+    const intl = useIntl();
     // Search logic
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value)
@@ -87,7 +87,7 @@ export function LeadFilters() {
         <div className="flex items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
             <input
                 type="text"
-                placeholder="Search leads..."
+                placeholder={intl.formatMessage({ id: "search-leads" })}
                 value={searchValue}
                 onChange={handleSearchChange}
                 className="max-w-sm border-none h-10 min-w-60 sm:min-w-80 px-2 py-1 rounded text-sm"

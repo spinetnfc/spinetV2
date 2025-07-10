@@ -516,6 +516,7 @@
   "app": "App",
   "contacts": "Contacts",
   "leads": "Leads",
+  "no-leads-found": "No leads found",
   "name": "Name",
   "name-placeholder": "Enter lead name",
   "main-contact": "Main Contact",

@@ -30,22 +30,22 @@ export const leadColumns = (locale: string): ColumnDef<Lead>[] => {
         },
         {
             accessorKey: "name",
-            header: () => <FormattedMessage id="lead-name" defaultMessage="Name" />,
+            header: () => <FormattedMessage id="name" defaultMessage="Name" />,
             cell: (ctx) => ctx.row.original.name || "-"
         },
         {
             accessorKey: "status",
-            header: () => <FormattedMessage id="lead-status" defaultMessage="Status" />,
-            cell: (ctx) => ctx.row.original.status || "-"
+            header: () => <FormattedMessage id="status" defaultMessage="Status" />,
+            cell: (ctx) => ctx.row.original.status ? <FormattedMessage id={ctx.row.original.status} defaultMessage={ctx.row.original.status} /> : "-"
         },
         {
             accessorKey: "priority",
-            header: () => <FormattedMessage id="lead-priority" defaultMessage="Priority" />,
-            cell: (ctx) => ctx.row.original.priority || "-"
+            header: () => <FormattedMessage id="priority" defaultMessage="Priority" />,
+            cell: (ctx) => ctx.row.original.priority ? <FormattedMessage id={ctx.row.original.priority} defaultMessage={ctx.row.original.priority} /> : "-"
         },
         {
             accessorKey: "mainContact",
-            header: () => <FormattedMessage id="lead-main-contact" defaultMessage="Main Contact" />,
+            header: () => <FormattedMessage id="main-contact" defaultMessage="Main Contact" />,
             cell: (ctx) => {
                 const mc = ctx.row.original.mainContact;
                 if (!mc) return "-";
