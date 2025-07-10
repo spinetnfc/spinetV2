@@ -47,21 +47,26 @@ interface ContactsDataTableProps {
     }
 }
 
-function useisSmallScreen() {
-    const [isSmallScreen, setisSmallScreen] = React.useState(false)
-
+function useIsSmallScreen() {
+    const [isSmall, setIsSmall] = React.useState(false);
     React.useEffect(() => {
-        const checkisSmallScreen = () => {
-            setisSmallScreen(window.innerWidth < 1280)
-        }
+        const check = () => setIsSmall(window.innerWidth < 640);
+        window.addEventListener("resize", check);
+        check();
+        return () => window.removeEventListener("resize", check);
+    }, []);
+    return isSmall;
+}
 
-        checkisSmallScreen()
-        window.addEventListener("resize", checkisSmallScreen)
-
-        return () => window.removeEventListener("resize", checkisSmallScreen)
-    }, [])
-
-    return isSmallScreen
+function useIsXLScreen() {
+    const [isXL, setIsXL] = React.useState(window.innerWidth >= 1280);
+    React.useEffect(() => {
+        const check = () => setIsXL(window.innerWidth >= 1280);
+        window.addEventListener("resize", check);
+        check();
+        return () => window.removeEventListener("resize", check);
+    }, []);
+    return isXL;
 }
 
 function ActionCell({
@@ -172,7 +177,8 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
-    const isSmallScreen = useisSmallScreen()
+    const isSmallScreen = useIsSmallScreen(); // for columns
+    const isXLScreen = useIsXLScreen();       // for PhoneMockup
     const [selectedContact, setSelectedContact] = React.useState<Contact | null>(null)
 
     const initialFiltering: ColumnFiltersState = []
@@ -227,7 +233,6 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
             pagination: {
                 pageIndex: Number(page) - 1,
                 pageSize: currentRowsPerPage,
-
             },
         },
     })
@@ -401,14 +406,14 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                     )}
                 </div>
                 {/* PhoneMockup on desktop */}
-                {selectedContact && !isSmallScreen && (
+                {selectedContact && isXLScreen && (
                     <div className="hidden xl:block h-fit">
                         <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
                     </div>
                 )}
             </div>
             {/* PhoneMockup in modal on mobile */}
-            {selectedContact && isSmallScreen && (
+            {selectedContact && !isXLScreen && (
                 <Dialog open={!!selectedContact} onOpenChange={() => setSelectedContact(null)} >
                     <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none  max-w-xs [&>button]:hidden">
                         <DialogTitle className="sr-only">Contact Details</DialogTitle>
