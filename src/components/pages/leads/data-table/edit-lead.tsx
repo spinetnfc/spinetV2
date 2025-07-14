@@ -37,6 +37,7 @@ import { getContactsAction } from "@/actions/contacts"
 import { editLead } from "@/actions/leads"
 import { useAuth } from "@/context/authContext"
 import type { Lead } from "@/types/leads"
+import { ProfileAvatar } from "../../profile-avatar"
 
 // Define the lead schema with Zod - only name is required, everything else is optional
 const leadSchema = z.object({
@@ -222,34 +223,29 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
     }
 
     return (
-        <Card className="w-80 max-h-[calc(100vh-2rem)] overflow-y-auto">
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
-                <CardTitle className="text-lg font-semibold">
-                    <FormattedMessage id="edit-lead" defaultMessage="Edit Lead" />
-                </CardTitle>
+        <Card className="w-96 lg:w-80 max-h-[calc(100vh-2rem)] overflow-y-auto xl:bg-transparent">
+            <CardHeader className="w-full p-2 pb-0">
                 <Button
                     variant="ghost"
                     size="sm"
                     onClick={onClose}
-                    className="h-8 w-8 p-0"
+                    className="ms-auto h-8 w-8 p-0"
                 >
-                    <X className="h-4 w-4" />
+                    <X className="h-6 w-6" />
                 </Button>
             </CardHeader>
             <CardContent className="space-y-4">
                 {/* Main Contact Display */}
                 {mainContactData && (
                     <div className="space-y-2">
-                        <Label>
-                            <FormattedMessage id="main-contact" defaultMessage="Main Contact" />
-                        </Label>
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div className="flex flex-col items-center gap-2">
+                            <ProfileAvatar profilePicture={mainContactData.Profile.profilePicture} height={64} width={64} />
                             <div className="flex-1">
-                                <p className="font-medium text-sm">
+                                <p className="font-medium">
                                     {mainContactData.Profile?.fullName || "Unknown"}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                    {mainContactData.Profile?.position || "No position"}
+                                    {mainContactData.Profile?.position}
                                 </p>
                             </div>
                         </div>
@@ -308,163 +304,167 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                 )}
                             />
                         )}
-
-                        {/* Status - OPTIONAL */}
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>
-                                        <FormattedMessage id="status" />
-                                    </FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={intl.formatMessage({ id: "status-placeholder", defaultMessage: "Select status (optional)" })} />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="pending">
-                                                <FormattedMessage id="pending" />
-                                            </SelectItem>
-                                            <SelectItem value="prospecting">
-                                                <FormattedMessage id="prospecting" />
-                                            </SelectItem>
-                                            <SelectItem value="offer-sent">
-                                                <FormattedMessage id="offer-sent" />
-                                            </SelectItem>
-                                            <SelectItem value="negotiation">
-                                                <FormattedMessage id="negotiation" />
-                                            </SelectItem>
-                                            <SelectItem value="administrative-validation">
-                                                <FormattedMessage id="administrative-validation" />
-                                            </SelectItem>
-                                            <SelectItem value="done">
-                                                <FormattedMessage id="done" />
-                                            </SelectItem>
-                                            <SelectItem value="failed">
-                                                <FormattedMessage id="failed" />
-                                            </SelectItem>
-                                            <SelectItem value="canceled">
-                                                <FormattedMessage id="canceled" />
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Priority - OPTIONAL */}
-                        <FormField
-                            control={form.control}
-                            name="priority"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>
-                                        <FormattedMessage id="priority" />
-                                    </FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={intl.formatMessage({ id: "priority-placeholder", defaultMessage: "Select priority (optional)" })} />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="none">
-                                                <FormattedMessage id="none" />
-                                            </SelectItem>
-                                            <SelectItem value="low">
-                                                <FormattedMessage id="low" />
-                                            </SelectItem>
-                                            <SelectItem value="medium">
-                                                <FormattedMessage id="medium" />
-                                            </SelectItem>
-                                            <SelectItem value="high">
-                                                <FormattedMessage id="high" />
-                                            </SelectItem>
-                                            <SelectItem value="critical">
-                                                <FormattedMessage id="critical" />
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Start Date - OPTIONAL */}
-                        <FormField
-                            control={form.control}
-                            name="lifeTimeBegins"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>
-                                        <FormattedMessage id="start-date" />
-                                    </FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
+                        <div className="flex gap-2">
+                            {/* Status - OPTIONAL */}
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <FormattedMessage id="status" />
+                                        </FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
-                                                <Button
-                                                    variant="outline"
-                                                    className={cn(
-                                                        "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
-                                                    )}
-                                                >
-                                                    {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
-                                                    <CalendarIcon className="ms-auto h-4 w-4" />
-                                                </Button>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={intl.formatMessage({ id: "status-placeholder", defaultMessage: "Select status (optional)" })} />
+                                                </SelectTrigger>
                                             </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value || undefined}
-                                                onSelect={field.onChange}
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                            <SelectContent>
+                                                <SelectItem value="pending">
+                                                    <FormattedMessage id="pending" />
+                                                </SelectItem>
+                                                <SelectItem value="prospecting">
+                                                    <FormattedMessage id="prospecting" />
+                                                </SelectItem>
+                                                <SelectItem value="offer-sent">
+                                                    <FormattedMessage id="offer-sent" />
+                                                </SelectItem>
+                                                <SelectItem value="negotiation">
+                                                    <FormattedMessage id="negotiation" />
+                                                </SelectItem>
+                                                <SelectItem value="administrative-validation">
+                                                    <FormattedMessage id="administrative-validation" />
+                                                </SelectItem>
+                                                <SelectItem value="done">
+                                                    <FormattedMessage id="done" />
+                                                </SelectItem>
+                                                <SelectItem value="failed">
+                                                    <FormattedMessage id="failed" />
+                                                </SelectItem>
+                                                <SelectItem value="canceled">
+                                                    <FormattedMessage id="canceled" />
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        {/* End Date - OPTIONAL */}
-                        <FormField
-                            control={form.control}
-                            name="lifeTimeEnds"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>
-                                        <FormattedMessage id="end-date" />
-                                    </FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
+                            {/* Priority - OPTIONAL */}
+                            <FormField
+                                control={form.control}
+                                name="priority"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <FormattedMessage id="priority" />
+                                        </FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
-                                                <Button
-                                                    variant="outline"
-                                                    className={cn(
-                                                        "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
-                                                    )}
-                                                >
-                                                    {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
-                                                    <CalendarIcon className="ms-auto h-4 w-4" />
-                                                </Button>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={intl.formatMessage({ id: "priority-placeholder", defaultMessage: "Select priority (optional)" })} />
+                                                </SelectTrigger>
                                             </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value || undefined}
-                                                onSelect={field.onChange}
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                            <SelectContent>
+                                                <SelectItem value="none">
+                                                    <FormattedMessage id="none" />
+                                                </SelectItem>
+                                                <SelectItem value="low">
+                                                    <FormattedMessage id="low" />
+                                                </SelectItem>
+                                                <SelectItem value="medium">
+                                                    <FormattedMessage id="medium" />
+                                                </SelectItem>
+                                                <SelectItem value="high">
+                                                    <FormattedMessage id="high" />
+                                                </SelectItem>
+                                                <SelectItem value="critical">
+                                                    <FormattedMessage id="critical" />
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="flex gap-2">
+                            {/* Start Date - OPTIONAL */}
+                            <FormField
+                                control={form.control}
+                                name="lifeTimeBegins"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>
+                                            <FormattedMessage id="start-date" />
+                                        </FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant="outline"
+                                                        className={cn(
+                                                            "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
+                                                        )}
+                                                    >
+                                                        {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
+                                                        <CalendarIcon className="ms-auto h-4 w-4" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value || undefined}
+                                                    onSelect={field.onChange}
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* End Date - OPTIONAL */}
+                            <FormField
+                                control={form.control}
+                                name="lifeTimeEnds"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>
+                                            <FormattedMessage id="end-date" />
+                                        </FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant="outline"
+                                                        className={cn(
+                                                            "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
+                                                        )}
+                                                    >
+                                                        {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
+                                                        <CalendarIcon className="ms-auto h-4 w-4" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value || undefined}
+                                                    onSelect={field.onChange}
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
 
                         {/* Additional Contacts - OPTIONAL */}
                         <FormField
