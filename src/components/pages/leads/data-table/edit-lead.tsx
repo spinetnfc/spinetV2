@@ -14,8 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-// import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { useIntl, FormattedMessage } from "react-intl"
@@ -40,11 +38,11 @@ import { editLead } from "@/actions/leads"
 import { useAuth } from "@/context/authContext"
 import type { Lead } from "@/types/leads"
 
-// Define the lead schema with Zod
+// Define the lead schema with Zod - only name is required, everything else is optional
 const leadSchema = z.object({
-    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+    name: z.string().min(1, { message: "Name is required" }),
     description: z.string().optional(),
-    mainContact: z.string().nullable().optional(),
+    mainContact: z.string().optional(), // Remove nullable() and make it truly optional
     Contacts: z.array(z.string()).optional(),
     status: z.enum(["pending", "prospecting", "offer-sent", "negotiation", "administrative-validation", "done", "failed", "canceled"]).optional(),
     priority: z.enum(["none", "low", "medium", "high", "critical"]).optional(),
@@ -73,13 +71,20 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
     const [noteInput, setNoteInput] = useState("")
     const [mainContactData, setMainContactData] = useState<any>(null)
 
+    // Helper function to extract contact ID from potentially nested object
+    const getContactId = (contact: any): string => {
+        if (typeof contact === 'string') return contact
+        if (typeof contact === 'object' && contact?._id) return contact._id
+        return ""
+    }
+
     const form = useForm<LeadFormValues>({
         resolver: zodResolver(leadSchema),
         defaultValues: {
             name: lead.name || "",
             description: lead.description || "",
-            mainContact: lead.mainContact || null,
-            Contacts: lead.Contacts || [],
+            mainContact: getContactId(lead.mainContact) || undefined, // Use undefined instead of null
+            Contacts: (lead.Contacts || []).map(contact => getContactId(contact)),
             status: lead.status || "pending",
             priority: lead.priority || "none",
             lifeTimeBegins: lead.lifeTime?.begins ? new Date(lead.lifeTime.begins) : null,
@@ -102,8 +107,9 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                         setContacts(contactOptions)
 
                         // Find main contact data if exists
-                        if (lead.mainContact) {
-                            const mainContact = response.data.find((contact: any) => contact._id === lead.mainContact)
+                        const mainContactId = getContactId(lead.mainContact)
+                        if (mainContactId) {
+                            const mainContact = response.data.find((contact: any) => contact._id === mainContactId)
                             if (mainContact) {
                                 setMainContactData(mainContact)
                             }
@@ -124,24 +130,45 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
             if (!formRef.current) return
 
             // Create a FormData object
-            const formData = new FormData(formRef.current)
+            const formData = new FormData()
 
-            // Explicitly append form data fields
+            // Only append form data fields that have values
             formData.append("name", data.name)
-            if (data.description) formData.append("description", data.description)
-            if (data.mainContact) formData.append("mainContact", data.mainContact)
-            formData.append("Contacts", JSON.stringify(data.Contacts || []))
-            formData.append("status", data.status || "pending")
-            formData.append("priority", data.priority || "none")
-            formData.append("tags", JSON.stringify(tags))
-            formData.append("notes", JSON.stringify(notes))
+
+            if (data.description && data.description.trim()) {
+                formData.append("description", data.description)
+            }
+
+            if (data.mainContact && data.mainContact.trim()) {
+                formData.append("mainContact", data.mainContact)
+            }
+
+            if (data.Contacts && data.Contacts.length > 0) {
+                formData.append("Contacts", JSON.stringify(data.Contacts))
+            }
+
+            if (data.status && data.status !== "pending") {
+                formData.append("status", data.status)
+            }
+
+            if (data.priority && data.priority !== "none") {
+                formData.append("priority", data.priority)
+            }
+
+            if (tags.length > 0) {
+                formData.append("tags", JSON.stringify(tags))
+            }
+
+            if (notes.length > 0) {
+                formData.append("notes", JSON.stringify(notes))
+            }
 
             // Format the dates as 'yyyy-MM-dd' if they exist
             if (data.lifeTimeBegins) {
-                formData.set("lifeTimeBegins", format(data.lifeTimeBegins, "yyyy-MM-dd"))
+                formData.append("lifeTimeBegins", format(data.lifeTimeBegins, "yyyy-MM-dd"))
             }
             if (data.lifeTimeEnds) {
-                formData.set("lifeTimeEnds", format(data.lifeTimeEnds, "yyyy-MM-dd"))
+                formData.append("lifeTimeEnds", format(data.lifeTimeEnds, "yyyy-MM-dd"))
             }
 
             // Submit the form
@@ -149,6 +176,9 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
 
             if (result?.success) {
                 toast.success(intl.formatMessage({ id: "Lead updated successfully" }))
+                // if (onSave && result.data) {
+                //     onSave(result.data)
+                // }
                 onClose()
             } else {
                 toast.error(intl.formatMessage({ id: "Failed to update lead" }))
@@ -214,12 +244,6 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             <FormattedMessage id="main-contact" defaultMessage="Main Contact" />
                         </Label>
                         <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                            {/* <Avatar className="h-10 w-10">
-                                <AvatarImage src={mainContactData.Profile?.profilePicture} />
-                                <AvatarFallback>
-                                    {mainContactData.Profile?.fullName?.charAt(0) || "?"}
-                                </AvatarFallback>
-                            </Avatar> */}
                             <div className="flex-1">
                                 <p className="font-medium text-sm">
                                     {mainContactData.Profile?.fullName || "Unknown"}
@@ -234,7 +258,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
 
                 <Form {...form}>
                     <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        {/* Name */}
+                        {/* Name - REQUIRED */}
                         <FormField
                             control={form.control}
                             name="name"
@@ -242,6 +266,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                 <FormItem>
                                     <FormLabel>
                                         <FormattedMessage id="name" />
+                                        <span className="text-red-500 ml-1">*</span>
                                     </FormLabel>
                                     <FormControl>
                                         <Input
@@ -254,7 +279,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         />
 
-                        {/* Main Contact Selection (only if no main contact exists) */}
+                        {/* Main Contact Selection (only if no main contact exists) - OPTIONAL */}
                         {!mainContactData && (
                             <FormField
                                 control={form.control}
@@ -268,8 +293,11 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                             <MultiCombobox
                                                 options={contacts}
                                                 value={field.value || ""}
-                                                onValueChange={field.onChange}
-                                                placeholder={intl.formatMessage({ id: "main-contact-placeholder" })}
+                                                onValueChange={(value) => {
+                                                    // If empty string is selected, set to undefined
+                                                    field.onChange(value === "" ? undefined : value)
+                                                }}
+                                                placeholder={intl.formatMessage({ id: "main-contact-placeholder", defaultMessage: "Select a main contact (optional)" })}
                                                 searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
                                                 emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
                                                 multiple={false}
@@ -281,7 +309,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             />
                         )}
 
-                        {/* Status */}
+                        {/* Status - OPTIONAL */}
                         <FormField
                             control={form.control}
                             name="status"
@@ -293,7 +321,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue placeholder={intl.formatMessage({ id: "status-placeholder" })} />
+                                                <SelectValue placeholder={intl.formatMessage({ id: "status-placeholder", defaultMessage: "Select status (optional)" })} />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
@@ -328,7 +356,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         />
 
-                        {/* Priority */}
+                        {/* Priority - OPTIONAL */}
                         <FormField
                             control={form.control}
                             name="priority"
@@ -340,7 +368,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue placeholder={intl.formatMessage({ id: "priority-placeholder" })} />
+                                                <SelectValue placeholder={intl.formatMessage({ id: "priority-placeholder", defaultMessage: "Select priority (optional)" })} />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
@@ -366,7 +394,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         />
 
-                        {/* Start Date */}
+                        {/* Start Date - OPTIONAL */}
                         <FormField
                             control={form.control}
                             name="lifeTimeBegins"
@@ -384,7 +412,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                                         "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
                                                     )}
                                                 >
-                                                    {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
+                                                    {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
                                                     <CalendarIcon className="ms-auto h-4 w-4" />
                                                 </Button>
                                             </FormControl>
@@ -402,7 +430,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         />
 
-                        {/* End Date */}
+                        {/* End Date - OPTIONAL */}
                         <FormField
                             control={form.control}
                             name="lifeTimeEnds"
@@ -420,7 +448,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                                         "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
                                                     )}
                                                 >
-                                                    {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
+                                                    {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
                                                     <CalendarIcon className="ms-auto h-4 w-4" />
                                                 </Button>
                                             </FormControl>
@@ -438,7 +466,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         />
 
-                        {/* Additional Contacts */}
+                        {/* Additional Contacts - OPTIONAL */}
                         <FormField
                             control={form.control}
                             name="Contacts"
@@ -452,7 +480,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                             options={contacts}
                                             value={field.value || []}
                                             onValueChange={field.onChange}
-                                            placeholder={intl.formatMessage({ id: "contacts-placeholder" })}
+                                            placeholder={intl.formatMessage({ id: "contacts-placeholder", defaultMessage: "Select contacts (optional)" })}
                                             searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
                                             emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
                                             multiple={true}
@@ -463,7 +491,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         />
 
-                        {/* Tags */}
+                        {/* Tags - OPTIONAL */}
                         <div>
                             <Label htmlFor="tags">
                                 <FormattedMessage id="tags" />
@@ -472,7 +500,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                 <Tag className="me-2 h-4 w-4" />
                                 <Input
                                     id="tags"
-                                    placeholder={intl.formatMessage({ id: "add-tags-placeholder" })}
+                                    placeholder={intl.formatMessage({ id: "add-tags-placeholder", defaultMessage: "Add tags (optional)" })}
                                     value={tagInput}
                                     onChange={(e) => setTagInput(e.target.value)}
                                     onKeyDown={handleAddTag}
@@ -496,7 +524,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         </div>
 
-                        {/* Description */}
+                        {/* Description - OPTIONAL */}
                         <FormField
                             control={form.control}
                             name="description"
@@ -507,7 +535,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                     </FormLabel>
                                     <FormControl>
                                         <Textarea
-                                            placeholder={intl.formatMessage({ id: "description-placeholder" })}
+                                            placeholder={intl.formatMessage({ id: "description-placeholder", defaultMessage: "Add description (optional)" })}
                                             className="min-h-[80px]"
                                             {...field}
                                             value={field.value || ""}
@@ -518,7 +546,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         />
 
-                        {/* Notes */}
+                        {/* Notes - OPTIONAL */}
                         <div>
                             <Label htmlFor="notes">
                                 <FormattedMessage id="notes" defaultMessage="Notes" />
@@ -527,7 +555,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                 <FileText className="me-2 h-4 w-4" />
                                 <Input
                                     id="notes"
-                                    placeholder={intl.formatMessage({ id: "add-note-placeholder" }, { default: "Add a note..." })}
+                                    placeholder={intl.formatMessage({ id: "add-note-placeholder", defaultMessage: "Add a note (optional)" })}
                                     value={noteInput}
                                     onChange={(e) => setNoteInput(e.target.value)}
                                     onKeyDown={handleAddNote}
