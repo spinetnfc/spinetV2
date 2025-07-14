@@ -34,7 +34,9 @@ import { cn } from "@/utils/cn"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import { filterLeads } from "@/actions/leads"
 import { getUserFromCookie } from "@/utils/cookie"
-import { UpdateLeadStatusDialog } from "../update-lead-status-dialog";
+import { UpdateLeadStatusDialog } from "../update-lead-status-dialog"
+import { EditLeadPanel } from "./edit-lead"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 
 interface LeadsDataTableProps {
     locale: string
@@ -84,6 +86,23 @@ function useisSmallScreen() {
     }, [])
 
     return isSmallScreen
+}
+
+function useIsXLScreen() {
+    const [isXL, setIsXL] = React.useState(false)
+
+    React.useEffect(() => {
+        const checkIsXL = () => {
+            setIsXL(window.innerWidth >= 1280)
+        }
+
+        checkIsXL()
+        window.addEventListener("resize", checkIsXL)
+
+        return () => window.removeEventListener("resize", checkIsXL)
+    }, [])
+
+    return isXL
 }
 
 function ActionCell({
@@ -155,10 +174,6 @@ function ActionCell({
                         <Edit className="me-2 h-4 w-4" />
                         <FormattedMessage id="edit-status" defaultMessage="Edit Status" />
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => { }}>
-                        <Plus className="me-2 h-4 w-4" />
-                        <FormattedMessage id="add-note" defaultMessage="Add Note" />
-                    </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={(e: any) => {
                             e.preventDefault()
@@ -179,9 +194,10 @@ function ActionCell({
 export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const [leads, setLeads] = useState<Lead[]>([])
     const [loading, setLoading] = useState(false)
-    const [refreshKey, setRefreshKey] = useState(0);
+    const [refreshKey, setRefreshKey] = useState(0)
+    const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
 
-    const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20) // Min 5, Max 50
+    const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
 
     const {
         search = "",
@@ -193,7 +209,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         page = "1",
         rowsPerPage
     } = searchParams
-    // Always treat status as an array
+
     const status = Array.isArray(searchParams.status)
         ? searchParams.status
         : searchParams.status
@@ -211,7 +227,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
     const isSmallScreen = useisSmallScreen()
-    const [selectedLead, setSelectedLead] = React.useState<Lead | null>(null)
+    const isXLScreen = useIsXLScreen()
 
     const filteredByTypeLeads = React.useMemo(() => Array.isArray(leads) ? leads : [], [leads])
 
@@ -318,6 +334,27 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         fetchLeads()
     }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, skip, currentRowsPerPage, refreshKey])
 
+    const handleRowClick = (lead: Lead, e: React.MouseEvent) => {
+        // Don't trigger if clicking on dropdown or checkbox
+        const target = e.target as HTMLElement
+        if (target.closest('button') || target.closest('[role="checkbox"]')) {
+            return
+        }
+
+        if (selectedLead?._id === lead._id) {
+            setSelectedLead(null) // Unselect if already selected
+        } else {
+            setSelectedLead(lead)
+        }
+    }
+
+    const handleLeadSave = (updatedLead: Lead) => {
+        // Handle lead save logic here
+        console.log("Saving lead:", updatedLead)
+        setSelectedLead(null)
+        setRefreshKey(k => k + 1)
+    }
+
     const handleBulkDelete = async () => {
         if (!profileId) return
 
@@ -375,7 +412,8 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     </Button>
                 </div>
             </div>
-            {/* Table and PhoneMockup aligned at the top */}
+
+            {/* Table and EditLeadPanel aligned at the top */}
             <div className="sm:flex sm:gap-4 sm:items-start mt-2">
                 <div className="flex-1">
                     <div className="rounded-md border bordr-gray-300 overflow-x-auto">
@@ -400,14 +438,8 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                                         <TableRow
                                             key={row.original._id || row.id}
                                             data-state={row.getIsSelected() && "selected"}
-                                            onClick={() => {
-                                                if (selectedLead?._id === row.original._id) {
-                                                    setSelectedLead(null); // Unselect if already selected
-                                                } else {
-                                                    setSelectedLead(row.original);
-                                                }
-                                            }}
-                                            className="cursor-pointer"
+                                            onClick={(e) => handleRowClick(row.original, e)}
+                                            className={`cursor-pointer ${row.original._id === selectedLead?._id ? "bg-azure/10" : ""}`}
                                         >
                                             {row.getVisibleCells().map((cell) => (
                                                 <TableCell
@@ -449,15 +481,13 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                                                 const params = new URLSearchParams(urlSearchParams.toString())
                                                 params.set('skip', String(newSkip))
                                                 params.set('rowsPerPage', String(currentRowsPerPage))
-                                                // Remove page param if present
                                                 params.delete('page')
                                                 router.replace(`${pathname}?${params.toString()}`, { scroll: false })
                                             }}
                                             onLimitChange={(newLimit) => {
                                                 const params = new URLSearchParams(urlSearchParams.toString())
                                                 params.set('rowsPerPage', String(newLimit))
-                                                params.set('skip', '0') // Reset skip to 0 when changing page size
-                                                // Remove page param if present
+                                                params.set('skip', '0')
                                                 params.delete('page')
                                                 router.replace(`${pathname}?${params.toString()}`, { scroll: false })
                                             }}
@@ -478,22 +508,32 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                         />
                     )}
                 </div>
-                {/* PhoneMockup on desktop */}
-                {/* {selectedLead && !isSmallScreen && (
+
+                {/* EditLeadPanel on desktop */}
+                {selectedLead && isXLScreen && (
                     <div className="hidden xl:block h-fit">
-                        <PhoneMockup data={{ ...selectedLead, fullName: selectedLead.name, name: undefined }} onClose={() => setSelectedLead(null)} />
+                        <EditLeadPanel
+                            lead={selectedLead}
+                            onClose={() => setSelectedLead(null)}
+                            onSave={handleLeadSave}
+                        />
                     </div>
-                )} */}
+                )}
             </div>
-            {/* PhoneMockup in modal on mobile */}
-            {/* {selectedLead && isSmallScreen && (
-                <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)} >
-                    <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none  max-w-xs [&>button]:hidden">
-                        <DialogTitle className="sr-only">Lead Details</DialogTitle>
-                        <PhoneMockup data={{ ...selectedLead, fullName: selectedLead.name, name: undefined }} onClose={() => setSelectedLead(null)} />
+
+            {/* EditLeadPanel in modal on mobile */}
+            {selectedLead && !isXLScreen && (
+                <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
+                    <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-sm [&>button]:hidden">
+                        <DialogTitle className="sr-only">Edit Lead</DialogTitle>
+                        <EditLeadPanel
+                            lead={selectedLead}
+                            onClose={() => setSelectedLead(null)}
+                            onSave={handleLeadSave}
+                        />
                     </DialogContent>
                 </Dialog>
-            )} */}
+            )}
         </div>
     )
 }
