@@ -22,18 +22,82 @@ export const filterLeads = async (profileId: string | null, filters: LeadFilters
         return [];
     }
 }
-export const editLead = async (profileId: string, leadId: string, updatedLead: any) => {
 
+export const editLead = async (profileId: string, leadId: string, formData: FormData) => {
     if (!profileId) {
         return { success: false, message: "Profile ID is missing" };
     }
+
     try {
-        console.log("Updating lead:", leadId)
-        const response = await updateLead(profileId, leadId, updatedLead)
-        return { success: true, message: response.message }
-    } catch (error) {
-        console.error("Error updating lead:", error)
-        return { success: false, message: "Error updating lead" }
+        // Extract form data for LeadInput (same as createLead)
+        const name = formData.get("name") as string;
+        const description = formData.get("description") as string | null;
+        const contactsJson = formData.get("Contacts") as string | null;
+        const mainContact = formData.get("mainContact") as string | null;
+        const amountStr = formData.get("amount") as string | null;
+        const status = formData.get("status") as string | null;
+        const priority = formData.get("priority") as string | null;
+        const lifeTimeBegins = formData.get("lifeTimeBegins") as string | null;
+        const lifeTimeEnds = formData.get("lifeTimeEnds") as string | null;
+        const tagsJson = formData.get("tags") as string | null;
+        const notesJson = formData.get("notes") as string | null;
+
+        if (!name) {
+            return { success: false, message: "Name is required" };
+        }
+
+        // Parse JSON fields
+        const Contacts = contactsJson ? JSON.parse(contactsJson) : undefined;
+        const tags = tagsJson ? JSON.parse(tagsJson) : undefined;
+        const notes = notesJson ? JSON.parse(notesJson) : undefined;
+        const amount = amountStr ? parseFloat(amountStr) : undefined;
+
+        // Build lifeTime object from separate date fields
+        let lifeTime = undefined;
+        if (lifeTimeBegins || lifeTimeEnds) {
+            lifeTime = {
+                begins: lifeTimeBegins || undefined,
+                ends: lifeTimeEnds || undefined,
+            };
+        }
+
+        const leadData: LeadInput = {
+            name,
+            description: description || undefined,
+            Contacts,
+            mainContact: mainContact || undefined,
+            amount,
+            status: status as LeadInput["status"] || undefined,
+            priority: priority as LeadInput["priority"] || undefined,
+            lifeTime,
+            Tags: tags,
+            notes,
+        };
+
+        // Log lead data for debugging
+        console.log("Lead data sent for update:", JSON.stringify(leadData, null, 2));
+
+        // Call the external API
+        const response = await updateLead(profileId, leadId, leadData);
+
+        return { success: true, message: response.message };
+    } catch (error: any) {
+        console.error("Error updating lead:", {
+            message: error.message,
+            response: error.response
+                ? {
+                    status: error.response.status,
+                    statusText: error.response.statusText,
+                    data: JSON.stringify(error.response.data, null, 2),
+                }
+                : "No response data available",
+            stack: error.stack,
+            formData: Object.fromEntries(formData.entries()),
+        });
+        return {
+            success: false,
+            message: error.response?.data?.message || error.message || "Failed to update lead. Please try again.",
+        };
     }
 }
 

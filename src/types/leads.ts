@@ -19,13 +19,15 @@ export type LeadInput = {
         ends?: string | null;
     };
     Tags?: string[];
+    notes?: string[];
 };
 
 export type Lead = {
     _id: string;
     name: string;
+    description?: string;
     Contacts?: any[];
-    status?: 
+    status?:
     | "pending"
     | "prospecting"
     | "offer-sent"
@@ -35,6 +37,10 @@ export type Lead = {
     | "failed"
     | "canceled";
     priority?: "none" | "low" | "medium" | "high" | "critical";
+    lifeTime?: {
+        begins?: string | null;
+        ends?: string | null;
+    };
     Tags?: any[];
     nextActions?: any[];
     Employees?: Array<{
@@ -87,14 +93,14 @@ export type LeadFilters = {
     search: string;
     types?: string[];
     status?: Array<
-    | "pending"
-    | "prospecting"
-    | "offer-sent"
-    | "negotiation"
-    | "administrative-validation"
-    | "done"
-    | "failed"
-    | "canceled">;
+        | "pending"
+        | "prospecting"
+        | "offer-sent"
+        | "negotiation"
+        | "administrative-validation"
+        | "done"
+        | "failed"
+        | "canceled">;
     priority?: Array<"none" | "low" | "medium" | "high" | "critical">;
     lifeTime?: {
         begins: {
