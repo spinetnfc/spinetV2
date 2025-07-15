@@ -4,15 +4,7 @@ export type LeadInput = {
     Contacts?: string[];
     mainContact?: string | null;
     amount?: number;
-    status?:
-    | "pending"
-    | "prospecting"
-    | "offer-sent"
-    | "negotiation"
-    | "administrative-validation"
-    | "done"
-    | "failed"
-    | "canceled";
+    status?: | "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled";
     priority?: "none" | "low" | "medium" | "high" | "critical";
     lifeTime?: {
         begins?: string | null;
@@ -26,23 +18,30 @@ export type Lead = {
     _id: string;
     name: string;
     description?: string;
-    Contacts?: any[];
-    status?:
-    | "pending"
-    | "prospecting"
-    | "offer-sent"
-    | "negotiation"
-    | "administrative-validation"
-    | "done"
-    | "failed"
-    | "canceled";
+    amount?: number;
+    mainContact?: string;
+    Contacts?: string[];
+    status?: | "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled";
+    Attachments?: Array<{
+        name: string;
+        file: string;
+        type?: | "proposal" | "contract" | "invoice" | "receipt" | "report" | "quotation-estimate" | "documentation" | "presentation" | "project-plan" | "meeting-notes" | "product-info" | "legal-document" | "correspondence" | "technical-documentation" | "document";
+        fileType?: | "document" | "pdf" | "doc" | "xls" | "csv" | "pptx" | "image" | "email" | "video" | "compressed";
+        createdBy?: {
+            type?: "admin" | "employee";
+            creator?: string;
+            refModel?: "CompanyAdmin" | "Profile";
+        };
+        createdAt?: string;
+    }>;
     priority?: "none" | "low" | "medium" | "high" | "critical";
     lifeTime?: {
         begins?: string | null;
         ends?: string | null;
     };
-    Tags?: any[];
-    nextActions?: any[];
+    Tags?: string[];
+    notes?: Note[];
+    nextActions?: string[];
     Employees?: Array<{
         _id: string;
         type: string;
@@ -76,31 +75,23 @@ export type Lead = {
             color: string;
         };
     }>;
+    Company?: string;
+    Group?: string;
     createdBy?: {
-        type: string;
-        creator: any;
-        refModel?: string;
+        type?: "admin" | "employee";
+        creator?: string;
+        refModel?: "CompanyAdmin" | "Profile";
     };
-    Attachments?: any[];
-    notes?: any[];
     createdAt?: string;
     updatedAt?: string;
     __v?: number;
-    mainContact?: any;
 };
+
 
 export type LeadFilters = {
     search: string;
     types?: string[];
-    status?: Array<
-        | "pending"
-        | "prospecting"
-        | "offer-sent"
-        | "negotiation"
-        | "administrative-validation"
-        | "done"
-        | "failed"
-        | "canceled">;
+    status?: Array<| "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled">;
     priority?: Array<"none" | "low" | "medium" | "high" | "critical">;
     lifeTime?: {
         begins: {
@@ -125,3 +116,14 @@ export type LeadApiResponse = {
     current_count: number;
     skip_count: number;
 };
+
+export type Note = {
+    _id?: string;
+    note?: string;
+    createdBy?: {
+        type?: "admin" | "employee";
+        creator?: string;
+        refModel?: "CompanyAdmin" | "Profile";
+    };
+    createdAt?: string;
+}

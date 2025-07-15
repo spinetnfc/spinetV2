@@ -1,8 +1,8 @@
 import { ServerApi } from '@/lib/axios';
-import type { Lead, LeadFilters, LeadInput } from '@/types/leads';
+import type { Lead, LeadFilters, LeadInput, Note } from '@/types/leads';
 import { withServerCookies } from '@/utils/withServerCookies';
 
-export const filterLeads = async (profileId: string | null, filters: LeadFilters): Promise<{data:Lead[]}> => {
+export const filterLeads = async (profileId: string | null, filters: LeadFilters): Promise<{ data: Lead[] }> => {
     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
@@ -115,6 +115,24 @@ export const deleteLeads = async (profileId: string, leads: string[]): Promise<{
         return response.data;
     } catch (error) {
         console.error('Error deleting leads:', error);
+        throw error;
+    }
+}
+
+export const addNote = async (profileId: string, leadId: string, note: string): Promise<{ message: Note }> => {
+    const headers = await withServerCookies();
+    try {
+        if (!profileId || typeof profileId !== 'string') {
+            throw new Error(`Invalid profileId: ${profileId}`);
+        }
+        if (!leadId || typeof leadId !== 'string') {
+            throw new Error(`Invalid leadId: ${leadId}`);
+        }
+        const response = await ServerApi.post(`/profile/${profileId}/opportunities/${leadId}/notes`, { note }, { headers });
+        console.log("Note added response received:", response.status);
+        return response.data;
+    } catch (error) {
+        console.error('Error adding note:', error);
         throw error;
     }
 }

@@ -34,16 +34,16 @@ import {
 } from "@/components/ui/select"
 import { MultiCombobox, ComboboxOption } from "@/components/ui/combobox"
 import { getContactsAction } from "@/actions/contacts"
-import { editLead } from "@/actions/leads"
+import { editLead, addNoteAction } from "@/actions/leads"
 import { useAuth } from "@/context/authContext"
-import type { Lead } from "@/types/leads"
+import type { Lead, Note } from "@/types/leads"
 import { ProfileAvatar } from "../../profile-avatar"
 
 // Define the lead schema with Zod - only name is required, everything else is optional
 const leadSchema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
     description: z.string().optional(),
-    mainContact: z.string().optional(), // Remove nullable() and make it truly optional
+    mainContact: z.string().optional(),
     Contacts: z.array(z.string()).optional(),
     status: z.enum(["pending", "prospecting", "offer-sent", "negotiation", "administrative-validation", "done", "failed", "canceled"]).optional(),
     priority: z.enum(["none", "low", "medium", "high", "critical"]).optional(),
@@ -68,9 +68,10 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
     const [tags, setTags] = useState<string[]>(lead.Tags || [])
     const [tagInput, setTagInput] = useState("")
     const [contacts, setContacts] = useState<ComboboxOption[]>([])
-    const [notes, setNotes] = useState<string[]>(lead.notes || [])
+    const [notes, setNotes] = useState<Note[]>(lead.notes || [])
     const [noteInput, setNoteInput] = useState("")
     const [mainContactData, setMainContactData] = useState<any>(null)
+    const [selectedContactsData, setSelectedContactsData] = useState<any[]>([])
 
     // Helper function to extract contact ID from potentially nested object
     const getContactId = (contact: any): string => {
@@ -84,7 +85,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
         defaultValues: {
             name: lead.name || "",
             description: lead.description || "",
-            mainContact: getContactId(lead.mainContact) || undefined, // Use undefined instead of null
+            mainContact: getContactId(lead.mainContact) || undefined,
             Contacts: (lead.Contacts || []).map(contact => getContactId(contact)),
             status: lead.status || "pending",
             priority: lead.priority || "none",
@@ -115,6 +116,13 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                 setMainContactData(mainContact)
                             }
                         }
+
+                        // Find selected contacts data
+                        const selectedContactIds = (lead.Contacts || []).map(contact => getContactId(contact))
+                        const selectedContacts = response.data.filter((contact: any) =>
+                            selectedContactIds.includes(contact._id)
+                        )
+                        setSelectedContactsData(selectedContacts)
                     }
                 } catch (error) {
                     console.error("Error fetching contacts:", error)
@@ -160,10 +168,6 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                 formData.append("tags", JSON.stringify(tags))
             }
 
-            if (notes.length > 0) {
-                formData.append("notes", JSON.stringify(notes))
-            }
-
             // Format the dates as 'yyyy-MM-dd' if they exist
             if (data.lifeTimeBegins) {
                 formData.append("lifeTimeBegins", format(data.lifeTimeBegins, "yyyy-MM-dd"))
@@ -177,9 +181,6 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
 
             if (result?.success) {
                 toast.success(intl.formatMessage({ id: "Lead updated successfully" }))
-                // if (onSave && result.data) {
-                //     onSave(result.data)
-                // }
                 onClose()
             } else {
                 toast.error(intl.formatMessage({ id: "Failed to update lead" }))
@@ -210,16 +211,50 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
         setTags(tags.filter((tag) => tag !== tagToRemove))
     }
 
-    const handleAddNote = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" && noteInput.trim()) {
-            e.preventDefault()
-            setNotes([...notes, noteInput.trim()])
-            setNoteInput("")
+    const handleAddNote = async () => {
+        if (noteInput.trim() && profileId) {
+            try {
+                const newNote: Note = {
+                    note: noteInput.trim(),
+                    createdBy: {
+                        type: "employee",
+                        creator: user?._id || "",
+                        refModel: "Profile"
+                    },
+                    createdAt: new Date().toISOString()
+                }
+
+                // Pass noteInput.trim() directly as it's guaranteed to be a string
+                const result = await addNoteAction(profileId, lead._id, noteInput.trim())
+
+                if (result?.success) {
+                    setNotes([...notes, newNote])
+                    setNoteInput("")
+                    toast.success(intl.formatMessage({ id: "Note added successfully" }))
+                } else {
+                    toast.error(intl.formatMessage({ id: "Failed to add note" }))
+                }
+            } catch (error: any) {
+                console.error("Error adding note:", error)
+                toast.error(
+                    error.response?.data?.message ||
+                    error.message ||
+                    intl.formatMessage({ id: "An unexpected error occurred. Please try again." })
+                )
+            }
         }
     }
-
     const handleRemoveNote = (noteIndex: number) => {
         setNotes(notes.filter((_, index) => index !== noteIndex))
+    }
+
+    const formatNoteDate = (dateString?: string) => {
+        if (!dateString) return ""
+        try {
+            return format(new Date(dateString), "yyyy-MM-dd")
+        } catch {
+            return ""
+        }
     }
 
     return (
@@ -251,6 +286,30 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                         </div>
                     </div>
                 )}
+
+                {/* Current Contacts Display */}
+                {/* {selectedContactsData.length > 0 && (
+                    <div className="space-y-2">
+                        <Label>
+                            <FormattedMessage id="current-contacts" defaultMessage="Current Contacts" />
+                        </Label>
+                        <div className="space-y-2">
+                            {selectedContactsData.map((contact: any) => (
+                                <div key={contact._id} className="flex items-center gap-3 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <ProfileAvatar profilePicture={contact.Profile?.profilePicture} height={32} width={32} />
+                                    <div className="flex-1">
+                                        <p className="font-medium text-sm">
+                                            {contact.Profile?.fullName || "Unknown"}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {contact.Profile?.position || "No position"}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )} */}
 
                 <Form {...form}>
                     <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -290,7 +349,6 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                                 options={contacts}
                                                 value={field.value || ""}
                                                 onValueChange={(value) => {
-                                                    // If empty string is selected, set to undefined
                                                     field.onChange(value === "" ? undefined : value)
                                                 }}
                                                 placeholder={intl.formatMessage({ id: "main-contact-placeholder", defaultMessage: "Select a main contact (optional)" })}
@@ -304,6 +362,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                 )}
                             />
                         )}
+
                         <div className="flex gap-2">
                             {/* Status - OPTIONAL */}
                             <FormField
@@ -465,7 +524,6 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             />
                         </div>
 
-
                         {/* Additional Contacts - OPTIONAL */}
                         <FormField
                             control={form.control}
@@ -492,7 +550,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                         />
 
                         {/* Tags - OPTIONAL */}
-                        <div>
+                        {/* <div>
                             <Label htmlFor="tags">
                                 <FormattedMessage id="tags" />
                             </Label>
@@ -522,7 +580,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                     ))}
                                 </div>
                             )}
-                        </div>
+                        </div> */}
 
                         {/* Description - OPTIONAL */}
                         <FormField
@@ -546,38 +604,71 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             )}
                         />
 
-                        {/* Notes - OPTIONAL */}
+                        {/* Add Notes - OPTIONAL */}
                         <div>
                             <Label htmlFor="notes">
-                                <FormattedMessage id="notes" defaultMessage="Notes" />
+                                <FormattedMessage id="add-notes" defaultMessage="Add Notes" />
                             </Label>
-                            <div className="flex items-center mt-1 mb-2">
-                                <FileText className="me-2 h-4 w-4" />
-                                <Input
+                            <div className="flex flex-col gap-2 mt-1 mb-2">
+                                <Textarea
                                     id="notes"
                                     placeholder={intl.formatMessage({ id: "add-note-placeholder", defaultMessage: "Add a note (optional)" })}
                                     value={noteInput}
                                     onChange={(e) => setNoteInput(e.target.value)}
-                                    onKeyDown={handleAddNote}
+                                    className="min-h-[60px] flex-1"
                                 />
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    onClick={handleAddNote}
+                                    disabled={!noteInput.trim()}
+                                    className="self-end"
+                                >
+                                    <FormattedMessage id="add" defaultMessage="Add" />
+                                </Button>
                             </div>
-                            {notes.length > 0 && (
-                                <div className="space-y-2 mt-2">
+                        </div>
+
+                        {/* Current Notes Display */}
+                        {notes.length > 0 && (
+                            <div className="space-y-2">
+                                <Label>
+                                    <FormattedMessage id="current-notes" defaultMessage="Current Notes" />
+                                </Label>
+                                <div className="space-y-3 max-h-60 overflow-y-auto">
                                     {notes.map((note, index) => (
-                                        <div key={index} className="flex items-start gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
-                                            <span className="text-sm flex-1">{note}</span>
+                                        <div key={index} className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                                            <div className="flex-1">
+                                                <p className="text-sm mb-1">{note.note}</p>
+                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                    <span>
+                                                        <FormattedMessage
+                                                            id="created-by"
+                                                            defaultMessage="Created by {type}"
+                                                            values={{ type: note.createdBy?.type || "unknown" }}
+                                                        />
+                                                    </span>
+                                                    {note.createdAt && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span>{formatNoteDate(note.createdAt)}</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveNote(index)}
                                                 aria-label={intl.formatMessage({ id: "remove-note" })}
+                                                className="text-muted-foreground hover:text-destructive"
                                             >
-                                                <X className="h-3 w-3" />
+                                                <X className="h-4 w-4" />
                                             </button>
                                         </div>
                                     ))}
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
 
                         {/* Submit Button */}
                         <Button

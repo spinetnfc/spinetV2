@@ -1,8 +1,7 @@
 "use server";
-import { addLead, deleteLead, deleteLeads, updateLead } from "@/lib/api/leads";
+import { addLead, addNote, deleteLead, deleteLeads, updateLead } from "@/lib/api/leads";
 import { filterLeads as apiFilterLeads } from "@/lib/api/leads";
-import { LeadFilters, Lead, LeadInput } from "@/types/leads";
-import { format, parse } from "date-fns";
+import { LeadFilters, Lead, LeadInput, Note } from "@/types/leads";
 
 
 export const filterLeads = async (profileId: string | null, filters: LeadFilters): Promise<Lead[]> => {
@@ -29,7 +28,7 @@ export const editLead = async (profileId: string, leadId: string, formData: Form
     }
 
     try {
-        // Extract form data for LeadInput (same as createLead)
+        // Extract form data for LeadInput
         const name = formData.get("name") as string;
         const description = formData.get("description") as string | null;
         const contactsJson = formData.get("Contacts") as string | null;
@@ -52,12 +51,12 @@ export const editLead = async (profileId: string, leadId: string, formData: Form
         const notes = notesJson ? JSON.parse(notesJson) : undefined;
         const amount = amountStr ? parseFloat(amountStr) : undefined;
 
-        // Build lifeTime object from separate date fields
+        // Convert dates to ISO 8601 format
         let lifeTime = undefined;
         if (lifeTimeBegins || lifeTimeEnds) {
             lifeTime = {
-                begins: lifeTimeBegins || undefined,
-                ends: lifeTimeEnds || undefined,
+                begins: lifeTimeBegins ? new Date(lifeTimeBegins).toISOString() : undefined,
+                ends: lifeTimeEnds ? new Date(lifeTimeEnds).toISOString() : undefined,
             };
         }
 
@@ -74,10 +73,6 @@ export const editLead = async (profileId: string, leadId: string, formData: Form
             notes,
         };
 
-        // Log lead data for debugging
-        console.log("Lead data sent for update:", JSON.stringify(leadData, null, 2));
-
-        // Call the external API
         const response = await updateLead(profileId, leadId, leadData);
 
         return { success: true, message: response.message };
@@ -99,8 +94,7 @@ export const editLead = async (profileId: string, leadId: string, formData: Form
             message: error.response?.data?.message || error.message || "Failed to update lead. Please try again.",
         };
     }
-}
-
+};
 export const removeLead = async (profileId: string, leadId: string) => {
 
     if (!profileId) {
@@ -193,5 +187,19 @@ export const createLead = async (profileId: string, formData: FormData) => {
             success: false,
             message: error.response?.data?.message || error.message || "Failed to add lead. Please try again.",
         };
+    }
+}
+
+export const addNoteAction = async (profileId: string, leadId: string, note: string): Promise<{ success: boolean; message: Note | string }> => {
+    if (!profileId) {
+        return { success: false, message: "Profile ID is missing" };
+    }
+
+    try {
+        const response = await addNote(profileId, leadId, note);
+        return { success: true, message: response.message };
+    } catch (error) {
+        console.error("Error adding note:", error);
+        return { success: false, message: "Error adding note" };
     }
 }
