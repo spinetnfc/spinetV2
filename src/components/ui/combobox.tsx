@@ -151,7 +151,7 @@ export function MultiCombobox({
                     {getSelectedLabels().map((label, index) => {
                         const optionValue = selectedValues[index];
                         return (
-                            <Badge key={optionValue} variant="secondary" className="flex items-center gap-1">
+                            <Badge key={optionValue} variant="secondary" className="flex items-center gap-1 bg-gray-200 dark:bg-navy">
                                 {label}
                                 <button
                                     type="button"

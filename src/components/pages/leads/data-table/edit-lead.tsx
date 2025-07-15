@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { format, parse } from "date-fns"
-import { CalendarIcon, Tag, X, Edit, FileText, Plus } from "lucide-react"
+import { CalendarIcon, Tag, X, Trash2, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
@@ -92,6 +92,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
     const [noteInput, setNoteInput] = useState("")
     const [mainContactData, setMainContactData] = useState<any>(null)
     const [selectedContactsData, setSelectedContactsData] = useState<any[]>([])
+    const [moreEdits, setMoreEdits] = useState(false)
 
     // Helper function to extract contact ID from potentially nested object
     const getContactId = (contact: any): string => {
@@ -278,7 +279,16 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
     }
 
     return (
-        <Card className="w-96 lg:w-80 max-h-[calc(100vh-2rem)] overflow-y-auto xl:bg-transparent">
+        <Card className="w-sm h-full max-h-[calc(100vh-120px)] overflow-auto xl:bg-transparent
+        [&::-webkit-scrollbar]:w-1
+        [&::-webkit-scrollbar-track]:rounded-full
+        [&::-webkit-scrollbar-track]:my-1
+        [&::-webkit-scrollbar-track]:bg-gray-100
+        [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:bg-gray-300
+        dark:[&::-webkit-scrollbar-track]:bg-gray-800
+        dark:[&::-webkit-scrollbar-thumb]:bg-navy"
+        >
             <CardHeader className="w-full p-2 pb-0">
                 <Button
                     variant="ghost"
@@ -446,138 +456,6 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                             />
                         </div>
 
-                        <div className="flex gap-2">
-                            {/* Start Date - OPTIONAL */}
-                            <FormField
-                                control={form.control}
-                                name="lifeTimeBegins"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel>
-                                            <FormattedMessage id="start-date" />
-                                        </FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                        variant="outline"
-                                                        className={cn(
-                                                            "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
-                                                        )}
-                                                    >
-                                                        {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
-                                                        <CalendarIcon className="ms-auto h-4 w-4" />
-                                                    </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value || undefined}
-                                                    onSelect={field.onChange}
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            {/* End Date - OPTIONAL */}
-                            <FormField
-                                control={form.control}
-                                name="lifeTimeEnds"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel>
-                                            <FormattedMessage id="end-date" />
-                                        </FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                        variant="outline"
-                                                        className={cn(
-                                                            "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
-                                                        )}
-                                                    >
-                                                        {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
-                                                        <CalendarIcon className="ms-auto h-4 w-4" />
-                                                    </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value || undefined}
-                                                    onSelect={field.onChange}
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        {/* Additional Contacts - OPTIONAL */}
-                        <FormField
-                            control={form.control}
-                            name="Contacts"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>
-                                        <FormattedMessage id="contacts" />
-                                    </FormLabel>
-                                    <FormControl>
-                                        <MultiCombobox
-                                            options={contacts}
-                                            value={field.value || []}
-                                            onValueChange={field.onChange}
-                                            placeholder={intl.formatMessage({ id: "contacts-placeholder", defaultMessage: "Select contacts (optional)" })}
-                                            searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
-                                            emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
-                                            multiple={true}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Tags - OPTIONAL */}
-                        <div>
-                            <Label htmlFor="tags">
-                                <FormattedMessage id="tags" />
-                            </Label>
-                            <div className="flex items-center mt-1 mb-2">
-                                <Tag className="me-2 h-4 w-4" />
-                                <Input
-                                    id="tags"
-                                    placeholder={intl.formatMessage({ id: "add-tags-placeholder", defaultMessage: "Add tags (optional)" })}
-                                    value={tagInput}
-                                    onChange={(e) => setTagInput(e.target.value)}
-                                    onKeyDown={handleAddTag}
-                                />
-                            </div>
-                            {tags.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                    {tags.map((tag) => (
-                                        <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                                            {tag}
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveTag(tag)}
-                                                aria-label={intl.formatMessage({ id: "remove-tag" }, { tag })}
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </button>
-                                        </Badge>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
                         {/* Description - OPTIONAL */}
                         <FormField
                             control={form.control}
@@ -599,77 +477,208 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                 </FormItem>
                             )}
                         />
-
-                        {/* Add Notes - OPTIONAL */}
-                        <div>
-                            <Label htmlFor="notes">
-                                <FormattedMessage id="add-notes" defaultMessage="Add Notes" />
-                            </Label>
-                            <div className="flex flex-col gap-2 mt-1 mb-2">
-                                <Textarea
-                                    id="notes"
-                                    placeholder={intl.formatMessage({ id: "add-note-placeholder", defaultMessage: "Add a note (optional)" })}
-                                    value={noteInput}
-                                    onChange={(e) => setNoteInput(e.target.value)}
-                                    className="min-h-[60px] flex-1"
+                        <button type="button" onClick={() => setMoreEdits(!moreEdits)}
+                            className="flex w-full text-sm text-azure justify-center items-center cursor-pointer">
+                            {moreEdits ? <>Show Less <ChevronUp /></> : <>Show More <ChevronDown /></>}
+                        </button>
+                        <div className={`${moreEdits ? "block" : "hidden"} space-y-4 transition-transform duration-200`}>
+                            <div className="flex gap-2">
+                                {/* Start Date - OPTIONAL */}
+                                <FormField
+                                    control={form.control}
+                                    name="lifeTimeBegins"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>
+                                                <FormattedMessage id="start-date" />
+                                            </FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant="outline"
+                                                            className={cn(
+                                                                "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
+                                                            )}
+                                                        >
+                                                            {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
+                                                            <CalendarIcon className="ms-auto h-4 w-4" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value || undefined}
+                                                        onSelect={field.onChange}
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
                                 />
-                                <Button
-                                    type="button"
-                                    size="sm"
-                                    onClick={handleAddNote}
-                                    disabled={!noteInput.trim()}
-                                    className="self-end"
-                                >
-                                    <FormattedMessage id="add" defaultMessage="Add" />
-                                </Button>
-                            </div>
-                        </div>
 
-                        {/* Current Notes Display */}
-                        {notes.length > 0 && (
-                            <div className="space-y-2">
-                                <Label>
-                                    <FormattedMessage id="current-notes" defaultMessage="Current Notes" />
+                                {/* End Date - OPTIONAL */}
+                                <FormField
+                                    control={form.control}
+                                    name="lifeTimeEnds"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>
+                                                <FormattedMessage id="end-date" />
+                                            </FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant="outline"
+                                                            className={cn(
+                                                                "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
+                                                            )}
+                                                        >
+                                                            {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" defaultMessage="Pick a date (optional)" />}
+                                                            <CalendarIcon className="ms-auto h-4 w-4" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value || undefined}
+                                                        onSelect={field.onChange}
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            {/* Additional Contacts - OPTIONAL */}
+                            <FormField
+                                control={form.control}
+                                name="Contacts"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <FormattedMessage id="contacts" />
+                                        </FormLabel>
+                                        <FormControl>
+                                            <MultiCombobox
+                                                options={contacts}
+                                                value={field.value || []}
+                                                onValueChange={field.onChange}
+                                                placeholder={intl.formatMessage({ id: "contacts-placeholder", defaultMessage: "Select contacts (optional)" })}
+                                                searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
+                                                emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
+                                                multiple={true}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Tags - OPTIONAL */}
+                            <div>
+                                <Label htmlFor="tags">
+                                    <FormattedMessage id="tags" />
                                 </Label>
-                                <div className="space-y-3 max-h-60 overflow-y-auto">
-                                    {notes.map((note, index) => (
-                                        <div key={index} className="flex items-start gap-2 p-3 bg-gray-200 dark:bg-navy rounded">
-                                            <div className="flex-1">
-                                                <p className="text-sm mb-1">{note.note}</p>
-                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                    <span>
-                                                        <FormattedMessage
-                                                            id="created-by"
-                                                            defaultMessage="Created by {type}"
-                                                            values={{ type: note.createdBy?.type || "unknown" }}
-                                                        />
-                                                    </span>
-                                                    {note.createdAt && (
-                                                        <>
-                                                            <span>•</span>
-                                                            <span>{formatNoteDate(note.createdAt)}</span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveNote(index)}
-                                                aria-label={intl.formatMessage({ id: "remove-note" })}
-                                                className="text-muted-foreground hover:text-destructive"
-                                            >
-                                                <X className="h-4 w-4" />
-                                            </button>
-                                        </div>
-                                    ))}
+                                <div className="flex items-center mt-1 mb-2">
+                                    <Tag className="me-2 h-4 w-4" />
+                                    <Input
+                                        id="tags"
+                                        placeholder={intl.formatMessage({ id: "add-tags-placeholder", defaultMessage: "Add tags (optional)" })}
+                                        value={tagInput}
+                                        onChange={(e) => setTagInput(e.target.value)}
+                                        onKeyDown={handleAddTag}
+                                    />
+                                </div>
+                                {tags.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {tags.map((tag) => (
+                                            <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                                                {tag}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveTag(tag)}
+                                                    aria-label={intl.formatMessage({ id: "remove-tag" }, { tag })}
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Add Notes - OPTIONAL */}
+                            <div>
+                                <Label htmlFor="notes">
+                                    <FormattedMessage id="notes" defaultMessage="Add Notes" />
+                                </Label>
+                                <div className="flex flex-col gap-2 mt-1 mb-2">
+                                    <Textarea
+                                        id="notes"
+                                        placeholder={intl.formatMessage({ id: "add-note-placeholder", defaultMessage: "Add a note (optional)" })}
+                                        value={noteInput}
+                                        onChange={(e) => setNoteInput(e.target.value)}
+                                        className="min-h-[60px] flex-1"
+                                    />
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        onClick={handleAddNote}
+                                        disabled={!noteInput.trim()}
+                                        className="self-end"
+                                    >
+                                        <FormattedMessage id="add" defaultMessage="Add" />
+                                    </Button>
                                 </div>
                             </div>
-                        )}
 
-                        {/* Submit Button */}
+                            {/* Current Notes Display */}
+                            {notes.length > 0 && (
+                                <div className="space-y-2">
+                                    <div className="space-y-3 ">
+                                        {notes.map((note, index) => (
+                                            <div key={index} className="flex items-start gap-2 p-3 bg-gray-200 dark:bg-navy rounded">
+                                                <div className="flex-1">
+                                                    <p className="text-sm mb-1">{note.note}</p>
+                                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                        <span>
+                                                            <FormattedMessage
+                                                                id="created-by"
+                                                                defaultMessage="Created by {type}"
+                                                                values={{ type: note.createdBy?.type || "unknown" }}
+                                                            />
+                                                        </span>
+                                                        {note.createdAt && (
+                                                            <>
+                                                                <span>•</span>
+                                                                <span>{formatNoteDate(note.createdAt)}</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveNote(index)}
+                                                    className="text-muted-foreground hover:text-destructive"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <Button
                             type="submit"
-                            className="w-full mt-6 bg-azure"
+                            className="w-full bg-azure"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? <FormattedMessage id="saving" /> : <FormattedMessage id="save-changes" />}
