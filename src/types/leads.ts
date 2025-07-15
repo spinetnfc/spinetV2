@@ -29,7 +29,7 @@ export type Lead = {
         fileType?: | "document" | "pdf" | "doc" | "xls" | "csv" | "pptx" | "image" | "email" | "video" | "compressed";
         createdBy?: {
             type?: "admin" | "employee";
-            creator?: string;
+            creator?: any;
             refModel?: "CompanyAdmin" | "Profile";
         };
         createdAt?: string;
@@ -79,7 +79,7 @@ export type Lead = {
     Group?: string;
     createdBy?: {
         type?: "admin" | "employee";
-        creator?: string;
+        creator?: any;
         refModel?: "CompanyAdmin" | "Profile";
     };
     createdAt?: string;
@@ -122,7 +122,7 @@ export type Note = {
     note?: string;
     createdBy?: {
         type?: "admin" | "employee";
-        creator?: string;
+        creator?: any;
         refModel?: "CompanyAdmin" | "Profile";
     };
     createdAt?: string;

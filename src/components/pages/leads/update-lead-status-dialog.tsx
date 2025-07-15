@@ -9,15 +9,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { editLead } from "@/actions/leads";
 import { toast } from "sonner";
 
-type LeadStatus =
-    | "pending"
-    | "prospecting"
-    | "offer-sent"
-    | "negotiation"
-    | "administrative-validation"
-    | "done"
-    | "failed"
-    | "canceled";
+type LeadStatus = | "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled"
 
 interface UpdateLeadStatusDialogProps {
     open: boolean;
@@ -35,10 +27,13 @@ export const UpdateLeadStatusDialog: React.FC<UpdateLeadStatusDialogProps> = ({ 
         e.preventDefault();
         setIsSubmitting(true);
         try {
+            const formData = new FormData();
+            formData.append('status', status);
+
             const result = await editLead(
                 lead.createdBy?.creator?.selectedProfile || lead.createdBy?.creator?._id,
                 lead._id,
-                { status }
+                formData
             );
             if (result.success) {
                 toast.success(intl.formatMessage({ id: "Lead status updated successfully", defaultMessage: "Lead status updated successfully" }));
