@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import { CalendarIcon, Tag, X, Edit, FileText, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -38,6 +38,26 @@ import { editLead, addNoteAction } from "@/actions/leads"
 import { useAuth } from "@/context/authContext"
 import type { Lead, Note } from "@/types/leads"
 import { ProfileAvatar } from "../../profile-avatar"
+
+// Helper function to safely parse date strings
+const parseDate = (dateString?: string | null): Date | null => {
+    if (!dateString) return null;
+    try {
+        // Try parsing as ISO 8601
+        const isoDate = new Date(dateString);
+        if (!isNaN(isoDate.getTime())) return isoDate;
+
+        // Try parsing as yyyy-MM-dd
+        const parsed = parse(dateString, "yyyy-MM-dd", new Date());
+        if (!isNaN(parsed.getTime())) return parsed;
+
+        console.error(`Invalid date format: ${dateString}`);
+        return null;
+    } catch (error) {
+        console.error(`Error parsing date: ${dateString}`, error);
+        return null;
+    }
+};
 
 // Define the lead schema with Zod - only name is required, everything else is optional
 const leadSchema = z.object({
@@ -89,8 +109,8 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
             Contacts: (lead.Contacts || []).map(contact => getContactId(contact)),
             status: lead.status || "pending",
             priority: lead.priority || "none",
-            lifeTimeBegins: lead.lifeTime?.begins ? new Date(lead.lifeTime.begins) : null,
-            lifeTimeEnds: lead.lifeTime?.ends ? new Date(lead.lifeTime.ends) : null,
+            lifeTimeBegins: parseDate(lead.lifeTime?.begins),
+            lifeTimeEnds: parseDate(lead.lifeTime?.ends),
         },
     })
 
@@ -168,12 +188,12 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                 formData.append("tags", JSON.stringify(tags))
             }
 
-            // Format the dates as 'yyyy-MM-dd' if they exist
+            // Format the dates as ISO 8601 if they exist
             if (data.lifeTimeBegins) {
-                formData.append("lifeTimeBegins", format(data.lifeTimeBegins, "yyyy-MM-dd"))
+                formData.append("lifeTimeBegins", data.lifeTimeBegins.toISOString())
             }
             if (data.lifeTimeEnds) {
-                formData.append("lifeTimeEnds", format(data.lifeTimeEnds, "yyyy-MM-dd"))
+                formData.append("lifeTimeEnds", data.lifeTimeEnds.toISOString())
             }
 
             // Submit the form
@@ -224,7 +244,6 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                     createdAt: new Date().toISOString()
                 }
 
-                // Pass noteInput.trim() directly as it's guaranteed to be a string
                 const result = await addNoteAction(profileId, lead._id, noteInput.trim())
 
                 if (result?.success) {
@@ -244,6 +263,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
             }
         }
     }
+
     const handleRemoveNote = (noteIndex: number) => {
         setNotes(notes.filter((_, index) => index !== noteIndex))
     }
@@ -286,30 +306,6 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                         </div>
                     </div>
                 )}
-
-                {/* Current Contacts Display */}
-                {/* {selectedContactsData.length > 0 && (
-                    <div className="space-y-2">
-                        <Label>
-                            <FormattedMessage id="current-contacts" defaultMessage="Current Contacts" />
-                        </Label>
-                        <div className="space-y-2">
-                            {selectedContactsData.map((contact: any) => (
-                                <div key={contact._id} className="flex items-center gap-3 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                    <ProfileAvatar profilePicture={contact.Profile?.profilePicture} height={32} width={32} />
-                                    <div className="flex-1">
-                                        <p className="font-medium text-sm">
-                                            {contact.Profile?.fullName || "Unknown"}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {contact.Profile?.position || "No position"}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )} */}
 
                 <Form {...form}>
                     <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -550,7 +546,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                         />
 
                         {/* Tags - OPTIONAL */}
-                        {/* <div>
+                        <div>
                             <Label htmlFor="tags">
                                 <FormattedMessage id="tags" />
                             </Label>
@@ -580,7 +576,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                     ))}
                                 </div>
                             )}
-                        </div> */}
+                        </div>
 
                         {/* Description - OPTIONAL */}
                         <FormField
@@ -637,7 +633,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                                 </Label>
                                 <div className="space-y-3 max-h-60 overflow-y-auto">
                                     {notes.map((note, index) => (
-                                        <div key={index} className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                                        <div key={index} className="flex items-start gap-2 p-3 bg-gray-200 dark:bg-navy rounded">
                                             <div className="flex-1">
                                                 <p className="text-sm mb-1">{note.note}</p>
                                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
