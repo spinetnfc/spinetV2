@@ -19,7 +19,7 @@ export type Lead = {
     name: string;
     description?: string;
     amount?: number;
-    mainContact?: string;
+    mainContact?: any;
     Contacts?: string[];
     status?: | "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled";
     Attachments?: Array<{
