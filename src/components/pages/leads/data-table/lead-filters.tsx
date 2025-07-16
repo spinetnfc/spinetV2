@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useAuth } from "@/context/authContext"
 import { getContactsAction } from "@/actions/contacts"
-import { CalendarIcon } from "lucide-react"
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
+// import { CalendarIcon } from "lucide-react"
+// import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
+// import { Calendar } from "@/components/ui/calendar"
 import { SearchSelect, SearchOption } from "@/components/ui/search-select"
 
 
@@ -47,7 +47,7 @@ export function LeadFilters() {
     const [searchValue, setSearchValue] = React.useState(searchParams.get("search") || "")
     const currentStatuses = searchParams.getAll("status")
     const currentPriorities = searchParams.getAll("priority")
-    const currentContacts = searchParams.getAll("contact")
+    const currentContacts = searchParams.getAll("contacts")
     const intl = useIntl();
 
     useEffect(() => {
@@ -130,7 +130,7 @@ export function LeadFilters() {
     const handleContactChange = (selectedContacts: SearchOption[]) => {
         const params = new URLSearchParams(searchParams.toString())
         params.delete("contact")
-        selectedContacts.forEach(contact => params.append("contact", contact.value))
+        selectedContacts.forEach(contact => params.append("contacts", contact.value))
         params.set("page", "1")
         replace(`${pathname}?${params.toString()}`, { scroll: false })
     }

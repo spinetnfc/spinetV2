@@ -202,10 +202,8 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const {
         search = "",
         types,
-        priority,
         lifeTime,
         tags,
-        contacts,
         page = "1",
         rowsPerPage
     } = searchParams
@@ -214,6 +212,16 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         ? searchParams.status
         : searchParams.status
             ? [searchParams.status]
+            : []
+    const priority = Array.isArray(searchParams.priority)
+        ? searchParams.priority
+        : searchParams.priority
+            ? [searchParams.priority]
+            : []
+    const contacts = Array.isArray(searchParams.contacts)
+        ? searchParams.contacts
+        : searchParams.contacts
+            ? [searchParams.contacts]
             : []
     const currentRowsPerPage = Number(rowsPerPage) || dynamicRowsPerPage
 
@@ -314,7 +322,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     search,
                     types: memoizedTypes,
                     status: memoizedStatus,
-                    // priority: memoizedPriority,
+                    priority: memoizedPriority,
                     // lifeTime: formattedLifeTime,
                     tags: memoizedTags,
                     contacts: memoizedContacts,

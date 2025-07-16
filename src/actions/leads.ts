@@ -16,8 +16,17 @@ export const filterLeads = async (profileId: string | null, filters: LeadFilters
         const leads = Array.isArray(response) ? response : response?.data;
         // console.log("leads to return:::::", leads)
         return leads || [];
-    } catch (error) {
-        console.error("Error filtering leads:", error);
+    } catch (error: any) {
+        console.error("Error filtering leads:", {
+            message: error.message,
+            response: error.response
+                ? {
+                    status: error.response.status,
+                    statusText: error.response.statusText,
+                    data: JSON.stringify(error.response.data, null, 2),
+                }
+                : "No response data available",
+        });
         return [];
     }
 }
@@ -86,7 +95,6 @@ export const editLead = async (profileId: string, leadId: string, formData: Form
                     data: JSON.stringify(error.response.data, null, 2),
                 }
                 : "No response data available",
-            stack: error.stack,
             formData: Object.fromEntries(formData.entries()),
         });
         return {
@@ -180,7 +188,6 @@ export const createLead = async (profileId: string, formData: FormData) => {
                     data: JSON.stringify(error.response.data, null, 2),
                 }
                 : "No response data available",
-            stack: error.stack,
             formData: Object.fromEntries(formData.entries()),
         });
         return {
