@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Lead } from "@/types/leads";
 import { FormattedMessage, useIntl } from "react-intl";
-import { editLead } from "@/actions/leads";
+import { updateLeadStatus } from "@/actions/leads";
 import { toast } from "sonner";
 
 type LeadStatus = | "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled"
@@ -27,13 +27,10 @@ export const UpdateLeadStatusDialog: React.FC<UpdateLeadStatusDialogProps> = ({ 
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const formData = new FormData();
-            formData.append('status', status);
-
-            const result = await editLead(
+            const result = await updateLeadStatus(
                 lead.createdBy?.creator?.selectedProfile || lead.createdBy?.creator?._id,
                 lead._id,
-                formData
+                status
             );
             if (result.success) {
                 toast.success(intl.formatMessage({ id: "Lead status updated successfully", defaultMessage: "Lead status updated successfully" }));

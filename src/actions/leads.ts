@@ -103,6 +103,29 @@ export const editLead = async (profileId: string, leadId: string, formData: Form
         };
     }
 };
+
+export const updateLeadStatus = async (profileId: string, leadId: string, status: string) => {
+    if (!profileId) {
+        return { success: false, message: "Profile ID is missing" };
+    }
+    if (!status) {
+        return { success: false, message: "Status is required" };
+    }
+
+    try {
+        const leadData = { status };
+        const response = await updateLead(profileId, leadId, leadData);
+        return { success: true, message: response.message };
+    } catch (error: any) {
+        console.error("Error updating lead status:", {
+            message: error.message,
+        });
+        return {
+            success: false,
+            message: error.response?.data?.message || error.message || "Failed to update lead status. Please try again.",
+        };
+    }
+};
 export const removeLead = async (profileId: string, leadId: string) => {
 
     if (!profileId) {
