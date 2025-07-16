@@ -1,16 +1,23 @@
 "use client"
 
-import React from "react"
-
+import React, { useEffect } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { SlidersHorizontal } from "lucide-react"
 import { FormattedMessage, useIntl } from "react-intl"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from "@/components/ui/dropdown"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useAuth } from "@/context/authContext"
+import { getContactsAction } from "@/actions/contacts"
 import { CalendarIcon } from "lucide-react"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { SearchSelect, SearchOption } from "@/components/ui/search-select"
+
+export interface ComboboxOption {
+    value: string;
+    label: string;
+}
 
 const statusOptions = [
     { value: "all", labelId: "all" },
@@ -24,15 +31,50 @@ const statusOptions = [
     { value: "canceled", labelId: "canceled" },
 ]
 
+const priorityOptions = [
+    { value: "all", labelId: "all" },
+    { value: "none", labelId: "none" },
+    { value: "low", labelId: "low" },
+    { value: "medium", labelId: "medium" },
+    { value: "high", labelId: "high" },
+    { value: "critical", labelId: "critical" },
+]
+
 export function LeadFilters() {
     const searchParams = useSearchParams()
+    const profileId = useAuth().user.selectedProfile
+    const [contacts, setContacts] = React.useState<ComboboxOption[]>([])
     const pathname = usePathname()
     const { replace } = useRouter()
     const [datePopoverOpen, setDatePopoverOpen] = React.useState(false)
     const [dateRange, setDateRange] = React.useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
     const [searchValue, setSearchValue] = React.useState(searchParams.get("search") || "")
     const currentStatuses = searchParams.getAll("status")
+    const currentPriorities = searchParams.getAll("priority")
+    const currentContacts = searchParams.getAll("contact")
     const intl = useIntl();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (profileId) {
+                try {
+                    const response = await getContactsAction(profileId)
+                    if (response?.success && response.data) {
+                        const contactOptions = response.data.map((contact: any) => ({
+                            value: contact._id,
+                            label: contact.Profile?.fullName || "Unknown",
+                            profilePicture: contact.Profile?.profilePicture,
+                        }))
+                        setContacts(contactOptions)
+                    }
+                } catch (error) {
+                    console.error("Error fetching contacts:", error)
+                }
+            }
+        }
+        fetchData()
+    }, [profileId])
+
     // Search logic
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value)
@@ -65,6 +107,36 @@ export function LeadFilters() {
         params.delete("status")
         newStatuses.forEach(s => params.append("status", s))
         replace(`${pathname}?${params.toString()}`)
+    }
+
+    // Priority logic
+    const handlePriorityToggle = (priority: string) => {
+        const params = new URLSearchParams(searchParams)
+        let newPriorities = [...currentPriorities]
+        if (priority === "all") {
+            priorityOptions.forEach(opt => {
+                if (opt.value !== "all") params.delete("priority")
+            })
+            replace(`${pathname}?${params.toString()}`)
+            return
+        }
+        if (newPriorities.includes(priority)) {
+            newPriorities = newPriorities.filter(p => p !== priority)
+        } else {
+            newPriorities.push(priority)
+        }
+        params.delete("priority")
+        newPriorities.forEach(p => params.append("priority", p))
+        replace(`${pathname}?${params.toString()}`)
+    }
+
+    // Contact logic
+    const handleContactChange = (selectedContacts: ComboboxOption[]) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.delete("contact")
+        selectedContacts.forEach(contact => params.append("contact", contact.value))
+        params.set("page", "1")
+        replace(`${pathname}?${params.toString()}`, { scroll: false })
     }
 
     // Date range logic
@@ -100,28 +172,79 @@ export function LeadFilters() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                            key="all"
-                            onSelect={e => { e.preventDefault(); handleStatusToggle("all"); }}
-                            className="flex items-center gap-2 cursor-pointer"
-                        >
-                            <Checkbox checked={currentStatuses.length === 0} className="mr-2" />
-                            <span>
-                                <FormattedMessage id="all" defaultMessage="All" />
-                            </span>
-                        </DropdownMenuItem>
-                        {statusOptions.filter(opt => opt.value !== "all").map((option) => (
-                            <DropdownMenuItem
-                                key={option.value}
-                                onSelect={e => { e.preventDefault(); handleStatusToggle(option.value); }}
-                                className="flex items-center gap-2 cursor-pointer"
-                            >
-                                <Checkbox checked={currentStatuses.includes(option.value)} className="mr-2" />
-                                <span>
-                                    <FormattedMessage id={option.labelId} defaultMessage={option.value} />
-                                </span>
-                            </DropdownMenuItem>
-                        ))}
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <FormattedMessage id="status" defaultMessage="Status" />
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                                <DropdownMenuItem
+                                    key="all"
+                                    onSelect={e => { e.preventDefault(); handleStatusToggle("all"); }}
+                                    className="flex items-center gap-2 cursor-pointer"
+                                >
+                                    <Checkbox checked={currentStatuses.length === 0} className="mr-2" />
+                                    <span>
+                                        <FormattedMessage id="all" defaultMessage="All" />
+                                    </span>
+                                </DropdownMenuItem>
+                                {statusOptions.filter(opt => opt.value !== "all").map((option) => (
+                                    <DropdownMenuItem
+                                        key={option.value}
+                                        onSelect={e => { e.preventDefault(); handleStatusToggle(option.value); }}
+                                        className="flex items-center gap-2 cursor-pointer"
+                                    >
+                                        <Checkbox checked={currentStatuses.includes(option.value)} className="mr-2" />
+                                        <span>
+                                            <FormattedMessage id={option.labelId} defaultMessage={option.value} />
+                                        </span>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <FormattedMessage id="priority" defaultMessage="Priority" />
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                                <DropdownMenuItem
+                                    key="all"
+                                    onSelect={e => { e.preventDefault(); handlePriorityToggle("all"); }}
+                                    className="flex items-center gap-2 cursor-pointer"
+                                >
+                                    <Checkbox checked={currentPriorities.length === 0} className="mr-2" />
+                                    <span>
+                                        <FormattedMessage id="all" defaultMessage="All" />
+                                    </span>
+                                </DropdownMenuItem>
+                                {priorityOptions.filter(opt => opt.value !== "all").map((option) => (
+                                    <DropdownMenuItem
+                                        key={option.value}
+                                        onSelect={e => { e.preventDefault(); handlePriorityToggle(option.value); }}
+                                        className="flex items-center gap-2 cursor-pointer"
+                                    >
+                                        <Checkbox checked={currentPriorities.includes(option.value)} className="mr-2" />
+                                        <span>
+                                            <FormattedMessage id={option.labelId} defaultMessage={option.value} />
+                                        </span>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <FormattedMessage id="contacts" defaultMessage="Contacts" />
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent className="w-64">
+                                <SearchSelect
+                                    options={contacts}
+                                    value={contacts.filter(contact => currentContacts.includes(contact.value)).map(c => c.value)}
+                                    onValueChange={(values) => handleContactChange(contacts.filter(c => values.includes(c.value)))}
+                                    searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
+                                    emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
+                                    multiple={true}
+                                />
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
