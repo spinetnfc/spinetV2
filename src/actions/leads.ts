@@ -10,11 +10,11 @@ export const filterLeads = async (profileId: string | null, filters: LeadFilters
         return [];
     }
     try {
-        console.log("fetching leads with filters")
+        console.log("fetching leads with filters:::", filters)
         const response = await apiFilterLeads(profileId, filters);
         // If response is an array, return it. If it's an object with data, return data.
         const leads = Array.isArray(response) ? response : response?.data;
-        console.log("leads to return:::::", leads)
+        // console.log("leads to return:::::", leads)
         return leads || [];
     } catch (error) {
         console.error("Error filtering leads:", error);

@@ -14,10 +14,6 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { SearchSelect, SearchOption } from "@/components/ui/search-select"
 
-export interface ComboboxOption {
-    value: string;
-    label: string;
-}
 
 const statusOptions = [
     { value: "all", labelId: "all" },
@@ -43,11 +39,11 @@ const priorityOptions = [
 export function LeadFilters() {
     const searchParams = useSearchParams()
     const profileId = useAuth().user.selectedProfile
-    const [contacts, setContacts] = React.useState<ComboboxOption[]>([])
+    const [contacts, setContacts] = React.useState<SearchOption[]>([])
     const pathname = usePathname()
     const { replace } = useRouter()
-    const [datePopoverOpen, setDatePopoverOpen] = React.useState(false)
-    const [dateRange, setDateRange] = React.useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+    // const [datePopoverOpen, setDatePopoverOpen] = React.useState(false)
+    // const [dateRange, setDateRange] = React.useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
     const [searchValue, setSearchValue] = React.useState(searchParams.get("search") || "")
     const currentStatuses = searchParams.getAll("status")
     const currentPriorities = searchParams.getAll("priority")
@@ -131,7 +127,7 @@ export function LeadFilters() {
     }
 
     // Contact logic
-    const handleContactChange = (selectedContacts: ComboboxOption[]) => {
+    const handleContactChange = (selectedContacts: SearchOption[]) => {
         const params = new URLSearchParams(searchParams.toString())
         params.delete("contact")
         selectedContacts.forEach(contact => params.append("contact", contact.value))
@@ -140,20 +136,20 @@ export function LeadFilters() {
     }
 
     // Date range logic
-    const handleDateChange = (type: "start" | "end", date: Date | undefined) => {
-        const newRange = { ...dateRange, [type]: date || null }
-        setDateRange(newRange)
-        const params = new URLSearchParams(searchParams.toString())
-        if (newRange.start || newRange.end) {
-            const begins = { start: newRange.start ? newRange.start.toISOString().slice(0, 10) : "", end: "" }
-            const ends = { start: "", end: newRange.end ? newRange.end.toISOString().slice(0, 10) : "" }
-            params.set("lifeTime", JSON.stringify({ begins, ends }))
-        } else {
-            params.delete("lifeTime")
-        }
-        params.set("page", "1")
-        replace(`${pathname}?${params.toString()}`)
-    }
+    // const handleDateChange = (type: "start" | "end", date: Date | undefined) => {
+    //     const newRange = { ...dateRange, [type]: date || null }
+    //     setDateRange(newRange)
+    //     const params = new URLSearchParams(searchParams.toString())
+    //     if (newRange.start || newRange.end) {
+    //         const begins = { start: newRange.start ? newRange.start.toISOString().slice(0, 10) : "", end: "" }
+    //         const ends = { start: "", end: newRange.end ? newRange.end.toISOString().slice(0, 10) : "" }
+    //         params.set("lifeTime", JSON.stringify({ begins, ends }))
+    //     } else {
+    //         params.delete("lifeTime")
+    //     }
+    //     params.set("page", "1")
+    //     replace(`${pathname}?${params.toString()}`)
+    // }
 
     return (
         <div className="flex items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
@@ -247,7 +243,7 @@ export function LeadFilters() {
                         </DropdownMenuSub>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                {/* <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                     <PopoverTrigger asChild>
                         <Button variant="ghost" size="icon">
                             <CalendarIcon className="h-6 w-6 text-gray-400 dark:text-azure" />
@@ -273,7 +269,7 @@ export function LeadFilters() {
                             </div>
                         </div>
                     </PopoverContent>
-                </Popover>
+                </Popover> */}
             </div>
         </div>
     )
