@@ -4,8 +4,8 @@ import * as React from "react";
 import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 export interface SearchOption {
     value: string;
@@ -34,13 +34,16 @@ export function SearchSelect({
     disabled = false,
 }: SearchSelectProps) {
     const [searchTerm, setSearchTerm] = React.useState("");
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
     // Normalize value to always work with arrays internally
     const selectedValues = React.useMemo(() => {
         if (multiple) {
             return Array.isArray(value) ? value : [];
         }
-        return typeof value === "string" ? [value] : [];
+        return typeof value === "string" && value ? [value] : [];
     }, [value, multiple]);
 
     // Filter options based on search term using label
@@ -51,35 +54,49 @@ export function SearchSelect({
         );
     }, [options, searchTerm]);
 
+    const updateQueryParams = (newValues: string[]) => {
+        const params = new URLSearchParams(searchParams.toString());
+        // Clear existing contacts parameters
+        params.delete("contacts");
+        // Add new contacts parameters
+        newValues.forEach((value) => {
+            params.append("contacts", value);
+        });
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    };
+
     const handleSelect = (selectedLabel: string) => {
-        // Find the option by label to get the corresponding value
         const selectedOption = options.find((option) => option.label === selectedLabel);
         if (!selectedOption) return;
 
         const optionValue = selectedOption.value;
+        let newValues: string[];
         if (multiple) {
-            const newValues = selectedValues.includes(optionValue)
+            newValues = selectedValues.includes(optionValue)
                 ? selectedValues.filter((v) => v !== optionValue)
                 : [...selectedValues, optionValue];
-            onValueChange?.(newValues);
         } else {
-            const newValue = selectedValues.includes(optionValue) ? "" : optionValue;
-            onValueChange?.(newValue);
+            newValues = selectedValues.includes(optionValue) ? [] : [optionValue];
         }
+        onValueChange?.(newValues);
+        updateQueryParams(newValues);
     };
 
     const handleRemove = (optionValue: string) => {
         if (multiple) {
             const newValues = selectedValues.filter((v) => v !== optionValue);
             onValueChange?.(newValues);
+            updateQueryParams(newValues);
         }
     };
 
     const handleUnselectAll = () => {
         if (multiple) {
             onValueChange?.([]);
+            updateQueryParams([]);
         } else {
             onValueChange?.("");
+            updateQueryParams([]);
         }
     };
 
@@ -105,7 +122,7 @@ export function SearchSelect({
                         {multiple && selectedValues.length > 0 && (
                             <CommandItem
                                 value="unselect-all"
-                                onSelect={() => handleUnselectAll()}
+                                onSelect={handleUnselectAll}
                                 className="cursor-pointer bg-red-300 hover:bg-red-400"
                             >
                                 Unselect All
