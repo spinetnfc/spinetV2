@@ -22,13 +22,13 @@ const Layout = ({
   // const role = userRole();
 
   const navigation = [
-    { name: 'home', to: `/app`, icon: LayoutDashboard },
-    { name: 'profile', to: `/app/profile`, icon: CircleUserRound },
-    { name: 'contacts', to: `/app/contacts`, icon: Contact },
-    { name: 'leads', to: `/app/leads`, icon: Target },
-    { name: 'services', to: `/app/services`, icon: BriefcaseBusiness },
-    { name: 'insights', to: `/app/insights`, icon: SquareKanban },
-    { name: 'settings', to: `/app/settings`, icon: Settings },
+    { name: 'home', to: `/${locale}/app`, icon: LayoutDashboard },
+    { name: 'profile', to: `/${locale}/app/profile`, icon: CircleUserRound },
+    { name: 'contacts', to: `/${locale}/app/contacts`, icon: Contact },
+    { name: 'leads', to: `/${locale}/app/leads`, icon: Target },
+    { name: 'services', to: `/${locale}/app/services`, icon: BriefcaseBusiness },
+    { name: 'insights', to: `/${locale}/app/insights`, icon: SquareKanban },
+    { name: 'settings', to: `/${locale}/app/settings`, icon: Settings },
     // { name: 'opportunities', to: `/app/opportunities`, icon: BriefcaseBusiness },
     // { name: 'notifications', to: `/app/notifications`, icon: Bell },
     // { name: 'offers', to: `/app/offers`, icon: Package },

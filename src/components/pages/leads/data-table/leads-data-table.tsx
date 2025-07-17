@@ -327,7 +327,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     limit,
                     skip,
                 }
-                console.log("Payload being sent:", filters)
+                // console.log("Payload being sent:", filters)
                 const result = await filterLeads(profileId, filters)
                 setLeads(result)
             } catch (error) {
@@ -392,8 +392,6 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     }
 
     const selectedRowCount = Object.values(rowSelection).filter(Boolean).length
-
-    console.log("Leads to render:", leads);
 
     return (
         <div>

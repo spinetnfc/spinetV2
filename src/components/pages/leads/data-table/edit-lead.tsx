@@ -479,7 +479,7 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                         />
                         <button type="button" onClick={() => setMoreEdits(!moreEdits)}
                             className="flex w-full text-sm text-azure justify-center items-center cursor-pointer">
-                            {moreEdits ? <>Show Less <ChevronUp /></> : <>Show More <ChevronDown /></>}
+                            {moreEdits ? <><FormattedMessage id="show-less" /> <ChevronUp /></> : <><FormattedMessage id="show-more" />  <ChevronDown /></>}
                         </button>
                         <div className={`${moreEdits ? "block" : "hidden"} space-y-4 transition-transform duration-200`}>
                             <div className="flex gap-2">
