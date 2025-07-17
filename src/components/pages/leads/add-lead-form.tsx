@@ -52,7 +52,7 @@ const leadSchema = z.object({
 
 type LeadFormValues = z.infer<typeof leadSchema>;
 
-export default function AddLeadForm({ locale }: { locale: string }) {
+export default function AddLeadForm({ locale, onSave }: { locale: string; onSave: () => void }) {
     const intl = useIntl();
     const { user } = useAuth();
     const profileId = user?.selectedProfile;

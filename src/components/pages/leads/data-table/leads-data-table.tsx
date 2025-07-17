@@ -10,7 +10,6 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     useReactTable,
-    CellContext,
 } from "@tanstack/react-table"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table/table"
@@ -36,6 +35,7 @@ import { filterLeads } from "@/actions/leads"
 import { getUserFromCookie } from "@/utils/cookie"
 import { UpdateLeadStatusDialog } from "../update-lead-status-dialog"
 import { EditLeadPanel } from "./edit-lead"
+import AddLeadForm from "../add-lead-form"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 
 interface LeadsDataTableProps {
@@ -196,6 +196,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const [loading, setLoading] = useState(false)
     const [refreshKey, setRefreshKey] = useState(0)
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+    const [showAddLead, setShowAddLead] = useState(false)
 
     const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
 
@@ -279,7 +280,6 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         },
     })
 
-    // Memoize all filter values to prevent infinite fetch loops
     const memoizedStatus = React.useMemo(() => status, [JSON.stringify(status)])
     const memoizedTypes = React.useMemo(() => types, [JSON.stringify(types)])
     const memoizedPriority = React.useMemo(() => priority, [JSON.stringify(priority)])
@@ -297,7 +297,6 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 const profileId = user?.selectedProfile || null
                 const limit = currentRowsPerPage
 
-                // Format lifeTime dates if present
                 let formattedLifeTime = memoizedLifeTime
                 if (memoizedLifeTime && typeof memoizedLifeTime === "string") {
                     try {
@@ -323,7 +322,6 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     types: memoizedTypes,
                     status: memoizedStatus,
                     priority: memoizedPriority,
-                    // lifeTime: formattedLifeTime,
                     tags: memoizedTags,
                     contacts: memoizedContacts,
                     limit,
@@ -343,23 +341,27 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, skip, currentRowsPerPage, refreshKey])
 
     const handleRowClick = (lead: Lead, e: React.MouseEvent) => {
-        // Don't trigger if clicking on dropdown or checkbox
         const target = e.target as HTMLElement
         if (target.closest('button') || target.closest('[role="checkbox"]')) {
             return
         }
 
         if (selectedLead?._id === lead._id) {
-            setSelectedLead(null) // Unselect if already selected
+            setSelectedLead(null)
         } else {
             setSelectedLead(lead)
+            setShowAddLead(false)
         }
     }
 
     const handleLeadSave = (updatedLead: Lead) => {
-        // Handle lead save logic here
         console.log("Saving lead:", updatedLead)
         setSelectedLead(null)
+        setRefreshKey(k => k + 1)
+    }
+
+    const handleAddLeadSave = () => {
+        setShowAddLead(false)
         setRefreshKey(k => k + 1)
     }
 
@@ -412,16 +414,19 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 </div>
                 <div className="ms-auto flex items-center gap-2">
                     <LeadFilters />
-                    <Button asChild className="flex items-center h-10 gap-1 bg-azure">
-                        <Link href="./leads/add-lead">
-                            <Plus size={16} />
-                            <FormattedMessage id="add-lead" defaultMessage="Add lead" />
-                        </Link>
+                    <Button
+                        onClick={() => {
+                            setShowAddLead(true)
+                            setSelectedLead(null)
+                        }}
+                        className="flex items-center h-10 gap-1 bg-azure"
+                    >
+                        <Plus size={16} />
+                        <FormattedMessage id="add-lead" defaultMessage="Add lead" />
                     </Button>
                 </div>
             </div>
 
-            {/* Table and EditLeadPanel aligned at the top */}
             <div className="sm:flex sm:gap-4 sm:items-start mt-2">
                 <div className="flex-1">
                     <div className="rounded-md border bordr-gray-300 overflow-x-auto">
@@ -517,30 +522,44 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     )}
                 </div>
 
-                {/* EditLeadPanel on desktop */}
-                {selectedLead && isXLScreen && (
+                {isXLScreen && (
                     <div className="hidden xl:block h-fit">
-                        <EditLeadPanel
-                            lead={selectedLead}
-                            onClose={() => setSelectedLead(null)}
-                            onSave={handleLeadSave}
-                        />
+                        {showAddLead ? (
+                            <AddLeadForm locale={locale} onSave={handleAddLeadSave} />
+                        ) : selectedLead ? (
+                            <EditLeadPanel
+                                lead={selectedLead}
+                                onClose={() => setSelectedLead(null)}
+                                onSave={handleLeadSave}
+                            />
+                        ) : null}
                     </div>
                 )}
             </div>
 
-            {/* EditLeadPanel in modal on mobile */}
-            {selectedLead && !isXLScreen && (
-                <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
-                    <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-sm [&>button]:hidden">
-                        <DialogTitle className="sr-only">Edit Lead</DialogTitle>
-                        <EditLeadPanel
-                            lead={selectedLead}
-                            onClose={() => setSelectedLead(null)}
-                            onSave={handleLeadSave}
-                        />
-                    </DialogContent>
-                </Dialog>
+            {!isXLScreen && (
+                <>
+                    {showAddLead && (
+                        <Dialog open={showAddLead} onOpenChange={() => setShowAddLead(false)}>
+                            <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-sm [&>button]:hidden">
+                                <DialogTitle className="sr-only">Add Lead</DialogTitle>
+                                <AddLeadForm locale={locale} onSave={handleAddLeadSave} />
+                            </DialogContent>
+                        </Dialog>
+                    )}
+                    {selectedLead && (
+                        <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
+                            <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-sm [&>button]:hidden">
+                                <DialogTitle className="sr-only">Edit Lead</DialogTitle>
+                                <EditLeadPanel
+                                    lead={selectedLead}
+                                    onClose={() => setSelectedLead(null)}
+                                    onSave={handleLeadSave}
+                                />
+                            </DialogContent>
+                        </Dialog>
+                    )}
+                </>
             )}
         </div>
     )
