@@ -37,6 +37,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { MultiCombobox, ComboboxOption } from "@/components/ui/combobox";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 // Define the lead schema with Zod
 const leadSchema = z.object({
@@ -52,7 +53,7 @@ const leadSchema = z.object({
 
 type LeadFormValues = z.infer<typeof leadSchema>;
 
-export default function AddLeadForm({ locale, onSave }: { locale: string; onSave: () => void }) {
+export default function AddLeadForm({ locale, onSave, onClose }: { locale: string; onSave: () => void; onClose: () => void }) {
     const intl = useIntl();
     const { user } = useAuth();
     const profileId = user?.selectedProfile;
@@ -183,298 +184,321 @@ export default function AddLeadForm({ locale, onSave }: { locale: string; onSave
     };
 
     return (
-        <Form {...form}>
-            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Name */}
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    <FormattedMessage id="name" />
-                                </FormLabel>
-                                <FormControl>
-                                    <Input placeholder={intl.formatMessage({ id: "name-placeholder" })} {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Main Contact */}
-                    <FormField
-                        control={form.control}
-                        name="mainContact"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    <FormattedMessage id="main-contact" />
-                                </FormLabel>
-                                <FormControl>
-                                    <MultiCombobox
-                                        options={contacts}
-                                        value={field.value || ""}
-                                        onValueChange={field.onChange}
-                                        placeholder={intl.formatMessage({ id: "main-contact-placeholder" })}
-                                        searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
-                                        emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
-                                        multiple={false}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Status */}
-                    <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    <FormattedMessage id="status" />
-                                </FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={intl.formatMessage({ id: "status-placeholder" })} />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="pending">
-                                            <FormattedMessage id="pending" />
-                                        </SelectItem>
-                                        <SelectItem value="prospecting">
-                                            <FormattedMessage id="prospecting" />
-                                        </SelectItem>
-                                        <SelectItem value="offer-sent">
-                                            <FormattedMessage id="offer-sent" />
-                                        </SelectItem>
-                                        <SelectItem value="negotiation">
-                                            <FormattedMessage id="negotiation" />
-                                        </SelectItem>
-                                        <SelectItem value="administrative-validation">
-                                            <FormattedMessage id="administrative-validation" />
-                                        </SelectItem>
-                                        <SelectItem value="done">
-                                            <FormattedMessage id="done" />
-                                        </SelectItem>
-                                        <SelectItem value="failed">
-                                            <FormattedMessage id="failed" />
-                                        </SelectItem>
-                                        <SelectItem value="canceled">
-                                            <FormattedMessage id="canceled" />
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Priority */}
-                    <FormField
-                        control={form.control}
-                        name="priority"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    <FormattedMessage id="priority" />
-                                </FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={intl.formatMessage({ id: "priority-placeholder" })} />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="none">
-                                            <FormattedMessage id="none" />
-                                        </SelectItem>
-                                        <SelectItem value="low">
-                                            <FormattedMessage id="low" />
-                                        </SelectItem>
-                                        <SelectItem value="medium">
-                                            <FormattedMessage id="medium" />
-                                        </SelectItem>
-                                        <SelectItem value="high">
-                                            <FormattedMessage id="high" />
-                                        </SelectItem>
-                                        <SelectItem value="critical">
-                                            <FormattedMessage id="critical" />
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* LifeTime Begins */}
-                    <FormField
-                        control={form.control}
-                        name="lifeTimeBegins"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                                <FormLabel>
-                                    <FormattedMessage id="start-date" />
-                                </FormLabel>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <FormControl>
-                                            <Button
-                                                variant="outline"
-                                                className={cn(
-                                                    "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
-                                                )}
-                                            >
-                                                {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
-                                                <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azurelaceeeeee" />
-                                            </Button>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar
-                                            mode="single"
-                                            selected={field.value || undefined}
-                                            onSelect={field.onChange}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* LifeTime Ends */}
-                    <FormField
-                        control={form.control}
-                        name="lifeTimeEnds"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                                <FormLabel>
-                                    <FormattedMessage id="end-date" />
-                                </FormLabel>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <FormControl>
-                                            <Button
-                                                variant="outline"
-                                                className={cn(
-                                                    "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
-                                                )}
-                                            >
-                                                {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
-                                                <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azurelaceeeeee" />
-                                            </Button>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar
-                                            mode="single"
-                                            selected={field.value || undefined}
-                                            onSelect={field.onChange}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Contacts */}
-                    <FormField
-                        control={form.control}
-                        name="Contacts"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    <FormattedMessage id="contacts" />
-                                </FormLabel>
-                                <FormControl>
-                                    <MultiCombobox
-                                        options={contacts}
-                                        value={field.value || []}
-                                        onValueChange={field.onChange}
-                                        placeholder={intl.formatMessage({ id: "contacts-placeholder" })}
-                                        searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
-                                        emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
-                                        multiple={true}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                {/* Tags */}
-                <div>
-                    <Label htmlFor="tags">
-                        <FormattedMessage id="tags" />
-                    </Label>
-                    <div className="flex items-center mt-1 mb-2">
-                        <Tag className="me-2 h-4 w-4" />
-                        <Input
-                            id="tags"
-                            placeholder={intl.formatMessage({ id: "add-tags-placeholder" })}
-                            value={tagInput}
-                            onChange={(e) => setTagInput(e.target.value)}
-                            onKeyDown={handleAddTag}
-                        />
-                    </div>
-                    {tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                            {tags.map((tag) => (
-                                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                                    {tag}
-                                    <button
-                                        type="button"
-                                        onClick={() => handleRemoveTag(tag)}
-                                        aria-label={intl.formatMessage({ id: "remove-tag" }, { tag })}
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </button>
-                                </Badge>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* Description */}
-                <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                <FormattedMessage id="description" />
-                            </FormLabel>
-                            <FormControl>
-                                <Textarea
-                                    placeholder={intl.formatMessage({ id: "description-placeholder" })}
-                                    className="min-h-[100px]"
-                                    {...field}
-                                    value={field.value || ""}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                {/* Submit Button */}
+        <Card className="w-sm h-full  overflow-auto xl:bg-transparent
+                [&::-webkit-scrollbar]:w-1
+                [&::-webkit-scrollbar-track]:rounded-full
+                [&::-webkit-scrollbar-track]:my-1
+                [&::-webkit-scrollbar-track]:bg-gray-100
+                [&::-webkit-scrollbar-thumb]:rounded-full
+                [&::-webkit-scrollbar-thumb]:bg-gray-300
+                dark:[&::-webkit-scrollbar-track]:bg-gray-800
+                dark:[&::-webkit-scrollbar-thumb]:bg-navy"
+        >
+            <CardHeader className="w-full p-2 pb-0">
                 <Button
-                    type="submit"
-                    className="w-full mt-6 bg-azure"
-                    disabled={isSubmitting}
+                    variant="ghost"
+                    size="sm"
+                    onClick={onClose}
+                    className="ms-auto h-8 w-8 p-0"
                 >
-                    {isSubmitting ? <FormattedMessage id="saving" /> : <FormattedMessage id="save" />}
+                    <X className="h-6 w-6" />
                 </Button>
-            </form>
-        </Form>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <Form {...form}>
+                    <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Name */}
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <FormattedMessage id="name" />
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input placeholder={intl.formatMessage({ id: "name-placeholder" })} {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Main Contact */}
+                            <FormField
+                                control={form.control}
+                                name="mainContact"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <FormattedMessage id="main-contact" />
+                                        </FormLabel>
+                                        <FormControl>
+                                            <MultiCombobox
+                                                options={contacts}
+                                                value={field.value || ""}
+                                                onValueChange={field.onChange}
+                                                placeholder={intl.formatMessage({ id: "main-contact-placeholder" })}
+                                                searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
+                                                emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
+                                                multiple={false}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Status */}
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <FormattedMessage id="status" />
+                                        </FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={intl.formatMessage({ id: "status-placeholder" })} />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="pending">
+                                                    <FormattedMessage id="pending" />
+                                                </SelectItem>
+                                                <SelectItem value="prospecting">
+                                                    <FormattedMessage id="prospecting" />
+                                                </SelectItem>
+                                                <SelectItem value="offer-sent">
+                                                    <FormattedMessage id="offer-sent" />
+                                                </SelectItem>
+                                                <SelectItem value="negotiation">
+                                                    <FormattedMessage id="negotiation" />
+                                                </SelectItem>
+                                                <SelectItem value="administrative-validation">
+                                                    <FormattedMessage id="administrative-validation" />
+                                                </SelectItem>
+                                                <SelectItem value="done">
+                                                    <FormattedMessage id="done" />
+                                                </SelectItem>
+                                                <SelectItem value="failed">
+                                                    <FormattedMessage id="failed" />
+                                                </SelectItem>
+                                                <SelectItem value="canceled">
+                                                    <FormattedMessage id="canceled" />
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Priority */}
+                            <FormField
+                                control={form.control}
+                                name="priority"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <FormattedMessage id="priority" />
+                                        </FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={intl.formatMessage({ id: "priority-placeholder" })} />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="none">
+                                                    <FormattedMessage id="none" />
+                                                </SelectItem>
+                                                <SelectItem value="low">
+                                                    <FormattedMessage id="low" />
+                                                </SelectItem>
+                                                <SelectItem value="medium">
+                                                    <FormattedMessage id="medium" />
+                                                </SelectItem>
+                                                <SelectItem value="high">
+                                                    <FormattedMessage id="high" />
+                                                </SelectItem>
+                                                <SelectItem value="critical">
+                                                    <FormattedMessage id="critical" />
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* LifeTime Begins */}
+                            <FormField
+                                control={form.control}
+                                name="lifeTimeBegins"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>
+                                            <FormattedMessage id="start-date" />
+                                        </FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant="outline"
+                                                        className={cn(
+                                                            "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
+                                                        )}
+                                                    >
+                                                        {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
+                                                        <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azurelaceeeeee" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value || undefined}
+                                                    onSelect={field.onChange}
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* LifeTime Ends */}
+                            <FormField
+                                control={form.control}
+                                name="lifeTimeEnds"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>
+                                            <FormattedMessage id="end-date" />
+                                        </FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant="outline"
+                                                        className={cn(
+                                                            "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure"
+                                                        )}
+                                                    >
+                                                        {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
+                                                        <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azurelaceeeeee" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value || undefined}
+                                                    onSelect={field.onChange}
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Contacts */}
+                            <FormField
+                                control={form.control}
+                                name="Contacts"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            <FormattedMessage id="contacts" />
+                                        </FormLabel>
+                                        <FormControl>
+                                            <MultiCombobox
+                                                options={contacts}
+                                                value={field.value || []}
+                                                onValueChange={field.onChange}
+                                                placeholder={intl.formatMessage({ id: "contacts-placeholder" })}
+                                                searchPlaceholder={intl.formatMessage({ id: "search-contacts" })}
+                                                emptyMessage={intl.formatMessage({ id: "no-contacts-found" })}
+                                                multiple={true}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* Tags */}
+                        <div>
+                            <Label htmlFor="tags">
+                                <FormattedMessage id="tags" />
+                            </Label>
+                            <div className="flex items-center mt-1 mb-2">
+                                <Tag className="me-2 h-4 w-4" />
+                                <Input
+                                    id="tags"
+                                    placeholder={intl.formatMessage({ id: "add-tags-placeholder" })}
+                                    value={tagInput}
+                                    onChange={(e) => setTagInput(e.target.value)}
+                                    onKeyDown={handleAddTag}
+                                />
+                            </div>
+                            {tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {tags.map((tag) => (
+                                        <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                                            {tag}
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveTag(tag)}
+                                                aria-label={intl.formatMessage({ id: "remove-tag" }, { tag })}
+                                            >
+                                                <X className="h-3 w-3" />
+                                            </button>
+                                        </Badge>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Description */}
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        <FormattedMessage id="description" />
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder={intl.formatMessage({ id: "description-placeholder" })}
+                                            className="min-h-[100px]"
+                                            {...field}
+                                            value={field.value || ""}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Submit Button */}
+                        <Button
+                            type="submit"
+                            className="w-full mt-6 bg-azure"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? <FormattedMessage id="saving" /> : <FormattedMessage id="save" />}
+                        </Button>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
     );
 }

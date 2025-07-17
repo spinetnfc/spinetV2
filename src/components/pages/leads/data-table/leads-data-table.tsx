@@ -525,7 +525,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 {isXLScreen && (
                     <div className="hidden xl:block h-fit">
                         {showAddLead ? (
-                            <AddLeadForm locale={locale} onSave={handleAddLeadSave} />
+                            <AddLeadForm locale={locale} onSave={handleAddLeadSave} onClose={() => setShowAddLead(false)} />
                         ) : selectedLead ? (
                             <EditLeadPanel
                                 lead={selectedLead}
@@ -543,7 +543,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                         <Dialog open={showAddLead} onOpenChange={() => setShowAddLead(false)}>
                             <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-sm [&>button]:hidden">
                                 <DialogTitle className="sr-only">Add Lead</DialogTitle>
-                                <AddLeadForm locale={locale} onSave={handleAddLeadSave} />
+                                <AddLeadForm locale={locale} onSave={handleAddLeadSave} onClose={() => setShowAddLead(false)} />
                             </DialogContent>
                         </Dialog>
                     )}
