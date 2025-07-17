@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PanelLeft } from 'lucide-react';
 import Logo from '@/components/logo';
 import LogoSpinet from '@/components/logo-spinet';
@@ -27,10 +27,9 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const pathname = usePathname();
   const { theme } = useTheme();
   const [isDark, setIsDark] = useState(theme === 'dark');
-  const profileId = useAuth().user.selectedProfile;
+  const profileId = useAuth().user?.selectedProfile;
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
 
-  // Sync isDark with theme changes
   useEffect(() => {
     setIsDark(theme === 'dark');
   }, [theme]);
@@ -52,7 +51,6 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
 
   return (
     <>
-      {/* desktop sidebar */}
       <aside
         className={cn(
           'hidden lg:flex h-full flex-col bg-background fixed top-0 start-0 transition-all duration-800 ease-in-out overflow-x-hidden',
@@ -60,7 +58,6 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
         )}
       >
         <div className="flex flex-col h-full overflow-auto">
-          {/* logo */}
           <div className={cn(
             'flex flex-col gap-1 shrink-0 items-center justify-center border-b border-gray-300 h-20 overflow-hidden',
             isExpanded ? 'w-full' : 'w-16'
@@ -76,15 +73,13 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                 <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
               </> : <Logo locale={locale} />
             )}
-
           </div>
 
-          {/* navigation */}
           <nav className={`flex flex-col ${isExpanded ? "items-center" : "items-start"} gap-4 px-2 py-4 flex-1 overflow-x-hidden`}>
             {navigation.map((item) => {
               const isActive =
-                item.to === '/app'
-                  ? pathname === '/app'
+                item.to === `/${locale}/app`
+                  ? pathname === `/${locale}/app`
                   : pathname.includes(item.to);
               return (
                 <NextLink
@@ -120,18 +115,16 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
               <PanelLeft className="size-5" />
             </Button>
           </div>
-
         </div>
       </aside>
 
-      {/* mobile drawer */}
       <Drawer>
         <DrawerTrigger asChild>
           <Button
             size="icon"
-            className="lg:hidden absolute  start-4 top-3 z-50  border border-azure bg-gray-50 dark:bg-background"
+            className="lg:hidden absolute start-4 top-3 z-50 border border-azure bg-gray-50 dark:bg-background"
           >
-            <PanelLeft className="size-5  text-primary" />
+            <PanelLeft className="size-5 text-primary" />
             <span className="sr-only">Toggle Sidebar</span>
           </Button>
         </DrawerTrigger>
@@ -148,15 +141,14 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
 
           <aside className="flex h-full flex-col overflow-auto">
             <nav className="flex flex-col items-center gap-4 px-2 pb-4">
-              <div className="flex  flex-col gap-1 h-20 w-full shrink-0 items-center justify-center border-b border-gray-300">
+              <div className="flex flex-col gap-1 h-20 w-full shrink-0 items-center justify-center border-b border-gray-300">
                 {isDark ? <LogoSpinet locale={locale} parentDarkMode={true} /> : <LogoSpinet locale={locale} parentDarkMode={false} />}
                 <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
-
               </div>
               {navigation.map((item) => {
                 const isActive =
-                  item.to === '/app'
-                    ? pathname === '/app'
+                  item.to === `/${locale}/app`
+                    ? pathname === `/${locale}/app`
                     : pathname.includes(item.to);
                 return (
                   <NextLink
