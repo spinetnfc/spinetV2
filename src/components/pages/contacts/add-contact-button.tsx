@@ -90,8 +90,8 @@ const AddContactButton = () => {
 
     return (
         <>
-            <button className="border-2 border-azure hover:opacity-80 text-azure text-lg font-medium w-fit xs:w-full mx-auto
-             flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer"
+            <button className="bg-azure hover:bg-azure/70 text-white font-medium flex items-center justify-center gap-2 py-2 rounded-md
+             cursor-pointer w-fit xs:w-full mx-auto px-2 xs:px-0 text-base xs:text-sm"
                 onClick={() => {
                     if (!isAuthenticated) {
                         toast.error(intl.formatMessage({ id: "login-to-add-contact", defaultMessage: "Please login to add a contact" }));
@@ -99,8 +99,8 @@ const AddContactButton = () => {
                     }
                     setShowAddContact(true);
                 }}>
-                <UserPlus className="h-8 w-8 xs:h-5 xs:w-5" />
-                <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">
+                <UserPlus className="h-5 w-5" />
+                <span className="inline-block text-sm sm:text-base whitespace-nowrap">
                     <FormattedMessage id="add-contact" defaultMessage="Add Contact" />
                 </span>
             </button>

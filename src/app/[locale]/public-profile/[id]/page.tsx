@@ -129,16 +129,17 @@ export default async function ProfilePage({
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="w-full px-6 mt-6 grid grid-cols-2 gap-3">
-                                <button className="border-2 border-azure hover:opacity-80 text-azure text-lg font-medium w-fit xs:w-full mx-auto flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer">
-                                    <UserPlus className="h-8 w-8 xs:h-5 xs:w-5" />
-                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">
+                            <div className="w-full px-auto mt-6 grid grid-cols-2 gap-3">
+                                {/* <button className="bg-azure hover:bg-azure/70 text-white text-lg font-medium w-fit xs:w-full mx-auto flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-md cursor-pointer">
+                                    <UserPlus className="h-5 w-5" />
+                                    <span className="xs:inline-block text-sm sm:text-base whitespace-nowrap">
                                         {t("add-contact")}
                                     </span>
-                                </button>
-                                <button className="bg-azure hover:bg-azure/70 text-white text-lg font-medium w-fit xs:w-full mx-auto flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer">
-                                    <Send className="h-8 w-8 xs:h-5 xs:w-5" />
-                                    <span className="hidden xs:inline-block text-sm sm:text-base whitespace-nowrap">
+                                </button> */}
+                                <AddContactButton />
+                                <button className="border-2 border-azure hover:opacity-80 text-azure text-lg font-medium w-fit xs:w-full mx-auto flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-md cursor-pointer">
+                                    <Send className="h-5 w-5" />
+                                    <span className="xs:inline-block text-sm sm:text-base whitespace-nowrap">
                                         {t("send-message")}
                                     </span>
                                 </button>
@@ -226,7 +227,8 @@ export default async function ProfilePage({
                         {/* Action Buttons */}
                         <div className="grid grid-cols-2 gap-4 mt-6">
                             <AddContactButton />
-                            <button className="bg-azure hover:bg-azure/70 text-white font-medium flex items-center justify-center gap-2 py-2 rounded-md cursor-pointer">
+                            <button className="border-2 border-azure hover:opacity-80 text-azure font-medium w-fit xs:w-full mx-auto
+                                flex items-center justify-center gap-1 px-2 xs:px-0 py-2 rounded-xl xs:rounded-md cursor-pointer">
                                 <Send className="h-5 w-5" />
                                 <span>{t("send-message")}</span>
                             </button>
