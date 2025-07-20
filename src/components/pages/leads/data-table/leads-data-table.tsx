@@ -14,7 +14,6 @@ import {
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table/table"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { MoreVertical, Edit, Trash2, Plus, CalendarIcon } from "lucide-react"
 import { FormattedMessage, useIntl } from "react-intl"
 import Link from "next/link"
@@ -450,7 +449,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                                             key={row.original._id || row.id}
                                             data-state={row.getIsSelected() && "selected"}
                                             onClick={(e) => handleRowClick(row.original, e)}
-                                            className={`cursor-pointer ${row.original._id === selectedLead?._id ? "bg-azure/10" : ""}`}
+                                            className={`cursor-pointer ${row.original._id === selectedLead?._id ? "bg-azure/50" : ""}`}
                                         >
                                             {row.getVisibleCells().map((cell) => (
                                                 <TableCell
