@@ -13,6 +13,7 @@ import { getContactsAction } from "@/actions/contacts"
 // import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 // import { Calendar } from "@/components/ui/calendar"
 import { SearchSelect, SearchOption } from "@/components/ui/search-select"
+import { Input } from "@/components/ui/input"
 
 
 const statusOptions = [
@@ -153,7 +154,7 @@ export function LeadFilters() {
 
     return (
         <div className="flex items-center border-1 border-gray-300 dark:border-azure w-fit rounded-lg">
-            <input
+            <Input
                 type="text"
                 placeholder={intl.formatMessage({ id: "search-leads" })}
                 value={searchValue}
@@ -167,12 +168,12 @@ export function LeadFilters() {
                             <SlidersHorizontal className="h-8 w-8 text-gray-400 dark:text-azure" strokeWidth={3} />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="start">
                         <DropdownMenuSub>
                             <DropdownMenuSubTrigger>
                                 <FormattedMessage id="status" defaultMessage="Status" />
                             </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
+                            <DropdownMenuSubContent sideOffset={4}>
                                 <DropdownMenuItem
                                     key="all"
                                     onSelect={e => { e.preventDefault(); handleStatusToggle("all"); }}
@@ -201,7 +202,7 @@ export function LeadFilters() {
                             <DropdownMenuSubTrigger>
                                 <FormattedMessage id="priority" defaultMessage="Priority" />
                             </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
+                            <DropdownMenuSubContent sideOffset={4}>
                                 <DropdownMenuItem
                                     key="all"
                                     onSelect={e => { e.preventDefault(); handlePriorityToggle("all"); }}
@@ -230,7 +231,7 @@ export function LeadFilters() {
                             <DropdownMenuSubTrigger>
                                 <FormattedMessage id="contacts" defaultMessage="Contacts" />
                             </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent className="w-64">
+                            <DropdownMenuSubContent sideOffset={4} className="w-64">
                                 <SearchSelect
                                     options={contacts}
                                     value={contacts.filter(contact => currentContacts.includes(contact.value)).map(c => c.value)}
