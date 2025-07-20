@@ -77,10 +77,11 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
 
           <nav className={`flex flex-col ${isExpanded ? "items-center" : "items-start"} gap-4 px-2 py-4 flex-1 overflow-x-hidden`}>
             {navigation.map((item) => {
-              const isActive =
-                item.to === `/${locale}/app`
-                  ? pathname === `/${locale}/app`
-                  : pathname.includes(item.to);
+              const isActive = item.to.endsWith('/app')
+                ? pathname === (locale === 'en' ? item.to.replace('/en', '') : item.to)
+                : locale === 'en'
+                  ? pathname === item.to.replace('/en', '') || pathname.startsWith(item.to.replace('/en', '').replace(/\/$/, '') + '/')
+                  : pathname === item.to || pathname.startsWith(item.to.replace(/\/$/, '') + '/');
               return (
                 <NextLink
                   key={item.name}
@@ -146,10 +147,11 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                 <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
               </div>
               {navigation.map((item) => {
-                const isActive =
-                  item.to === `/${locale}/app`
-                    ? pathname === `/${locale}/app`
-                    : pathname.includes(item.to);
+                const isActive = item.to.endsWith('/app')
+                  ? pathname === (locale === 'en' ? item.to.replace('/en', '') : item.to)
+                  : locale === 'en'
+                    ? pathname === item.to.replace('/en', '') || pathname.startsWith(item.to.replace('/en', '').replace(/\/$/, '') + '/')
+                    : pathname === item.to || pathname.startsWith(item.to.replace(/\/$/, '') + '/');
                 return (
                   <NextLink
                     key={item.name}
