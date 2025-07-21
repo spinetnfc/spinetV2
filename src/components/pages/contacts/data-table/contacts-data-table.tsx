@@ -53,12 +53,12 @@ function ActionCell({
     contact,
     locale,
     profileId,
-}: { contact: Contact; locale: string; profileId: string | undefined }) {
+    onEdit,
+}: { contact: Contact; locale: string; profileId: string | undefined; onEdit: () => void }) {
     const router = useRouter()
     const intl = useIntl()
     const [isDeleting, setIsDeleting] = React.useState(false)
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
-    const [showEditModal, setShowEditModal] = React.useState(false)
 
     const handleDeleteConfirm = async () => {
         if (!profileId) return
@@ -85,7 +85,7 @@ function ActionCell({
     const handleEditClick = (e: React.MouseEvent) => {
         e.preventDefault()
         e.stopPropagation()
-        setShowEditModal(true)
+        onEdit()
     }
 
     return (
@@ -100,14 +100,6 @@ function ActionCell({
                     message="delete-contact-message"
                 />
             )}
-            {showEditModal && (
-                <EditContactForm
-                    contact={contact}
-                    onSuccess={() => setShowEditModal(false)}
-                    onCancel={() => setShowEditModal(false)}
-                />
-            )}
-
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
@@ -138,8 +130,7 @@ function ActionCell({
 }
 
 export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDataTableProps) {
-    const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20) // Min 5, Max 50
-
+    const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
     const {
         query = "",
         filter = "all",
@@ -157,11 +148,12 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
-    const { isExpanded } = useSidebar();
-    const isSmallScreen = useIsSmallScreen();
-    const isLGScreen = useIsLGScreen();
-    const isXLScreen = useIsXLScreen();
+    const { isExpanded } = useSidebar()
+    const isSmallScreen = useIsSmallScreen()
+    const isLGScreen = useIsLGScreen()
+    const isXLScreen = useIsXLScreen()
     const [selectedContact, setSelectedContact] = React.useState<Contact | null>(null)
+    const [editingContact, setEditingContact] = React.useState<Contact | null>(null)
 
     const initialFiltering: ColumnFiltersState = []
     if (query) {
@@ -232,7 +224,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
         const newParamsString = params.toString()
         const currentParamsString = urlSearchParams.toString()
         if (newParamsString !== currentParamsString) {
-            router.replace(`${pathname}?${newParamsString} `, { scroll: false })
+            router.replace(`${pathname}?${newParamsString}`, { scroll: false })
         }
     }, [columnFilters, table.getState().pagination.pageIndex, pathname, router, urlSearchParams])
 
@@ -300,16 +292,15 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                     </Button>
                 </div>
             </div>
-            {/* Table and PhoneMockup aligned at the top */}
             <div className="sm:flex sm:gap-4 sm:items-start mt-2">
                 <div className="flex-1">
-                    <div className="rounded-md border bordr-gray-300 overflow-x-auto">
+                    <div className="rounded-md border overflow-x-auto">
                         <Table className="table-auto relative">
                             <TableHeader className="bg-gray-100 dark:bg-navy">
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <TableRow key={headerGroup.id}>
                                         {headerGroup.headers.map((header) => (
-                                            <TableHead key={header.id} className={`px-2 py-1 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
+                                            <TableHead key={header.id} className={`px-2 py-1 font-normal ${header.column.id === "select" ? "w-fit" : ""}`}>
                                                 {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                             </TableHead>
                                         ))}
@@ -327,12 +318,15 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                             data-state={row.getIsSelected() && "selected"}
                                             onClick={() => {
                                                 if (selectedContact?._id === row.original._id) {
-                                                    setSelectedContact(null); // Unselect if already selected
+                                                    setSelectedContact(null)
+                                                    setEditingContact(null) // Clear edit form if deselecting
                                                 } else {
-                                                    setSelectedContact(row.original);
+                                                    setSelectedContact(row.original)
+                                                    setEditingContact(null) // Clear edit form when selecting a new contact
                                                 }
                                             }}
-                                            className={`cursor-pointer ${row.original._id === selectedContact?._id ? "bg-azure/50" : ""}`}                                        >
+                                            className={`cursor-pointer ${row.original._id === selectedContact?._id ? "bg-azure/50" : ""}`}
+                                        >
                                             {row.getVisibleCells().map((cell) => (
                                                 <TableCell
                                                     key={cell.id}
@@ -349,7 +343,15 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                                                 </TableCell>
                                             ))}
                                             <TableCell className="px-2 w-12">
-                                                <ActionCell contact={row.original} locale={locale} profileId={profileId} />
+                                                <ActionCell
+                                                    contact={row.original}
+                                                    locale={locale}
+                                                    profileId={profileId}
+                                                    onEdit={() => {
+                                                        setEditingContact(row.original)
+                                                        setSelectedContact(null) // Clear selected contact when editing
+                                                    }}
+                                                />
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -386,22 +388,43 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                         />
                     )}
                 </div>
-                {/* PhoneMockup on desktop */}
-                {selectedContact && ((isXLScreen) || (!isExpanded && isLGScreen)) && (
-                    <div className="hidden lg:block h-fit">
+                <div className="hidden lg:block h-fit space-y-4">
+                    {selectedContact && !editingContact && ((isXLScreen) || (!isExpanded && isLGScreen)) && (
                         <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
-                    </div>
-                )}
+                    )}
+                    {editingContact && !selectedContact && ((isXLScreen) || (!isExpanded && isLGScreen)) && (
+                        <EditContactForm
+                            contact={editingContact}
+                            onSuccess={() => {
+                                setEditingContact(null)
+                                router.refresh()
+                            }}
+                            onCancel={() => setEditingContact(null)}
+                        />
+                    )}
+                </div>
             </div>
-            {/* PhoneMockup in modal on mobile */}
-            {selectedContact && !((isXLScreen) || (!isExpanded && isLGScreen)) && (
-                <Dialog open={!!selectedContact} onOpenChange={() => setSelectedContact(null)} >
-                    <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none  max-w-xs [&>button]:hidden">
-                        <DialogTitle className="sr-only">Contact Details</DialogTitle>
-                        <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
-                    </DialogContent>
-                </Dialog>
-            )}
+            <Dialog open={!!selectedContact && !editingContact && !((isXLScreen) || (!isExpanded && isLGScreen))} onOpenChange={() => setSelectedContact(null)}>
+                <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-xs [&>button]:hidden">
+                    <DialogTitle className="sr-only">Contact Details</DialogTitle>
+                    {selectedContact && <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />}
+                </DialogContent>
+            </Dialog>
+            <Dialog open={!!editingContact && !selectedContact && !((isXLScreen) || (!isExpanded && isLGScreen))} onOpenChange={() => setEditingContact(null)}>
+                <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-md [&>button]:hidden">
+                    <DialogTitle className="sr-only">Edit Contact</DialogTitle>
+                    {editingContact && (
+                        <EditContactForm
+                            contact={editingContact}
+                            onSuccess={() => {
+                                setEditingContact(null)
+                                router.refresh()
+                            }}
+                            onCancel={() => setEditingContact(null)}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
