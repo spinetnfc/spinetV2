@@ -34,6 +34,7 @@ import { cn } from "@/utils/cn"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import PhoneMockup from "../phone-mockup"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
+import { useSidebar } from "@/context/sidebarContext"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
@@ -56,6 +57,16 @@ function useIsSmallScreen() {
         return () => window.removeEventListener("resize", check);
     }, []);
     return isSmall;
+}
+function useIsLGScreen() {
+    const [isLG, setIsLG] = React.useState(window.innerWidth >= 1024);
+    React.useEffect(() => {
+        const check = () => setIsLG(window.innerWidth >= 1024);
+        window.addEventListener("resize", check);
+        check();
+        return () => window.removeEventListener("resize", check);
+    }, []);
+    return isLG;
 }
 
 function useIsXLScreen() {
@@ -177,8 +188,10 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
+    const { isExpanded } = useSidebar();
     const isSmallScreen = useIsSmallScreen(); // for columns
-    const isXLScreen = useIsXLScreen();       // for PhoneMockup
+    const isLGScreen = useIsLGScreen();
+    const isXLScreen = useIsXLScreen();
     const [selectedContact, setSelectedContact] = React.useState<Contact | null>(null)
 
     const initialFiltering: ColumnFiltersState = []
@@ -405,14 +418,14 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                     )}
                 </div>
                 {/* PhoneMockup on desktop */}
-                {selectedContact && isXLScreen && (
-                    <div className="hidden xl:block h-fit">
+                {selectedContact && ((isXLScreen) || (!isExpanded && isLGScreen)) && (
+                    <div className="hidden lg:block h-fit">
                         <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
                     </div>
                 )}
             </div>
             {/* PhoneMockup in modal on mobile */}
-            {selectedContact && !isXLScreen && (
+            {selectedContact && !((isXLScreen) || (!isExpanded && isLGScreen)) && (
                 <Dialog open={!!selectedContact} onOpenChange={() => setSelectedContact(null)} >
                     <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none  max-w-xs [&>button]:hidden">
                         <DialogTitle className="sr-only">Contact Details</DialogTitle>
