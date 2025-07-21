@@ -394,7 +394,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 </div>
             </div>
 
-            <div className="sm:flex sm:gap-4 sm:items-start mt-2">
+            <div className={`sm:flex  ${selectedLead || showAddLead ? "gap-4" : ""} sm:items-start mt-2`}>
                 <div className="flex-1">
                     <div className="rounded-md border bordr-gray-300 overflow-x-auto">
                         <Table className="table-auto relative">

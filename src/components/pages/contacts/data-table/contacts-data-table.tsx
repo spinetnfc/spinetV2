@@ -292,7 +292,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                     </Button>
                 </div>
             </div>
-            <div className="sm:flex sm:gap-4 sm:items-start mt-2">
+            <div className={`sm:flex ${selectedContact || editingContact ? "gap-4" : ""} sm:items-start mt-2`}>
                 <div className="flex-1">
                     <div className="rounded-md border overflow-x-auto">
                         <Table className="table-auto relative">
