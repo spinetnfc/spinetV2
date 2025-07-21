@@ -38,7 +38,7 @@ export default function ContactAvatar({ name, profilePicture, initials }: Contac
                 alt={name}
                 width={32}
                 height={32}
-                className="object-cover rounded-md aspect-square w-10 sm:w-14 min-w-10 "
+                className="object-cover rounded-md aspect-square w-10 min-w-10 "
             />
         );
     }
