@@ -34,15 +34,15 @@ export default async function AddContactPage({ params }: {
     return (
         <div>
             <div className="px-2 xs:px-4 py-4 max-w-4xl mx-auto">
-                <Tabs defaultValue="manual" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
+                <Tabs defaultValue="scan" className="w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
                     <TabsList className="grid w-full grid-cols-3 mb-4">
-                        <TabsTrigger value="manual" className="text-xs sm:text-sm">
-                            <Edit size={16} className="me-0.5 sm:me-2" />
-                            {t("manual")}
-                        </TabsTrigger>
                         <TabsTrigger value="scan" className="text-xs sm:text-sm">
                             <QrCode size={16} className="me-0.5 sm:me-2" />
                             {t("scan")}
+                        </TabsTrigger>
+                        <TabsTrigger value="manual" className="text-xs sm:text-sm">
+                            <Edit size={16} className="me-0.5 sm:me-2" />
+                            {t("manual")}
                         </TabsTrigger>
                         <TabsTrigger value="import" className="text-xs sm:text-sm">
                             <Upload size={16} className="me-0.5 sm:me-2" />
@@ -50,16 +50,15 @@ export default async function AddContactPage({ params }: {
                         </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="manual">
-                        <AddContactForm locale={locale} />
-                    </TabsContent>
-
                     <TabsContent value="scan">
                         <ScanContact
                             locale={locale}
                         />
                     </TabsContent>
 
+                    <TabsContent value="manual">
+                        <AddContactForm locale={locale} />
+                    </TabsContent>
 
                     <TabsContent value="import">
                         <ImportContacts locale={locale} />
