@@ -365,7 +365,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
                             </TableBody>
                             <TableFooter>
                                 <TableRow>
-                                    <TableCell colSpan={100} className="h-12 p-2 bg-gray-100 dark:bg-navy">
+                                    <TableCell colSpan={100} className="h-10 px-2 py-1 bg-gray-100 dark:bg-navy">
                                         <PaginationControls
                                             currentPage={table.getState().pagination.pageIndex + 1}
                                             totalPages={table.getPageCount()}

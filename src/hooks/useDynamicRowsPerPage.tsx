@@ -6,7 +6,7 @@ export function useDynamicRowsPerPage(minRows: number = 5, maxRows: number = 100
 
     useEffect(() => {
         const calculateOptimalRows = () => {
-            const availableHeight = window.innerHeight - 30;
+            const availableHeight = window.innerHeight - 50;
 
             const headerHeight = 40 // search bar, filters, add contact button
             const tableHeaderHeight = 48 // table header 
