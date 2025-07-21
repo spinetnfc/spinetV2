@@ -30,10 +30,16 @@ export const uploadFile = async (data: FormData): Promise<string> => {
         });
         return response.data;
     } catch (error: any) {
-        console.error('Error uploading file:', {
+        console.error("Error uploading file:", {
             message: error.message,
-            status: error.response?.status,
-            data: error.response?.data,
-        }); throw error;
+            response: error.response
+                ? {
+                    status: error.response.status,
+                    statusText: error.response.statusText,
+                    data: JSON.stringify(error.response.data, null, 2),
+                }
+                : "No response data available",
+        });
+        throw error;
     }
 }
