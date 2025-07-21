@@ -36,6 +36,8 @@ import { UpdateLeadStatusDialog } from "../update-lead-status-dialog"
 import { EditLeadPanel } from "./edit-lead"
 import AddLeadForm from "../add-lead-form"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
+import { useIsLGScreen, useIsSmallScreen, useIsXLScreen } from "@/hooks/screens"
+import { useSidebar } from "@/context/sidebarContext"
 
 interface LeadsDataTableProps {
     locale: string
@@ -68,40 +70,6 @@ interface LeadsDataTableProps {
         page?: string
         rowsPerPage?: string
     }
-}
-
-function useisSmallScreen() {
-    const [isSmallScreen, setisSmallScreen] = React.useState(false)
-
-    React.useEffect(() => {
-        const checkisSmallScreen = () => {
-            setisSmallScreen(window.innerWidth < 1280)
-        }
-
-        checkisSmallScreen()
-        window.addEventListener("resize", checkisSmallScreen)
-
-        return () => window.removeEventListener("resize", checkisSmallScreen)
-    }, [])
-
-    return isSmallScreen
-}
-
-function useIsXLScreen() {
-    const [isXL, setIsXL] = React.useState(false)
-
-    React.useEffect(() => {
-        const checkIsXL = () => {
-            setIsXL(window.innerWidth >= 1280)
-        }
-
-        checkIsXL()
-        window.addEventListener("resize", checkIsXL)
-
-        return () => window.removeEventListener("resize", checkIsXL)
-    }, [])
-
-    return isXL
 }
 
 function ActionCell({
@@ -234,8 +202,10 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const [showDeleteModal, setShowDeleteModal] = React.useState(false)
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
-    const isSmallScreen = useisSmallScreen()
+    const isSmallScreen = useIsSmallScreen()
+    const isLGScreen = useIsLGScreen()
     const isXLScreen = useIsXLScreen()
+    const { isExpanded } = useSidebar()
 
     const filteredByTypeLeads = React.useMemo(() => Array.isArray(leads) ? leads : [], [leads])
 
@@ -519,8 +489,8 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     )}
                 </div>
 
-                {isXLScreen && (
-                    <div className="hidden xl:block h-fit">
+                {(isXLScreen || (!isExpanded && isLGScreen)) && (
+                    <div className="hidden lg:block h-fit">
                         {showAddLead ? (
                             <AddLeadForm locale={locale} onSave={handleAddLeadSave} onClose={() => setShowAddLead(false)} />
                         ) : selectedLead ? (
@@ -534,7 +504,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 )}
             </div>
 
-            {!isXLScreen && (
+            {!(isXLScreen || (!isExpanded && isLGScreen)) && (
                 <>
                     {showAddLead && (
                         <Dialog open={showAddLead} onOpenChange={() => setShowAddLead(false)}>

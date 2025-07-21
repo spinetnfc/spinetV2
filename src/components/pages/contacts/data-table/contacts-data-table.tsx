@@ -35,6 +35,7 @@ import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import PhoneMockup from "../phone-mockup"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 import { useSidebar } from "@/context/sidebarContext"
+import { useIsLGScreen, useIsSmallScreen, useIsXLScreen } from "@/hooks/screens"
 
 interface ContactsDataTableProps {
     contacts: Contact[]
@@ -46,38 +47,6 @@ interface ContactsDataTableProps {
         page?: string
         rowsPerPage?: string
     }
-}
-
-function useIsSmallScreen() {
-    const [isSmall, setIsSmall] = React.useState(false);
-    React.useEffect(() => {
-        const check = () => setIsSmall(window.innerWidth < 640);
-        window.addEventListener("resize", check);
-        check();
-        return () => window.removeEventListener("resize", check);
-    }, []);
-    return isSmall;
-}
-function useIsLGScreen() {
-    const [isLG, setIsLG] = React.useState(window.innerWidth >= 1024);
-    React.useEffect(() => {
-        const check = () => setIsLG(window.innerWidth >= 1024);
-        window.addEventListener("resize", check);
-        check();
-        return () => window.removeEventListener("resize", check);
-    }, []);
-    return isLG;
-}
-
-function useIsXLScreen() {
-    const [isXL, setIsXL] = React.useState(window.innerWidth >= 1280);
-    React.useEffect(() => {
-        const check = () => setIsXL(window.innerWidth >= 1280);
-        window.addEventListener("resize", check);
-        check();
-        return () => window.removeEventListener("resize", check);
-    }, []);
-    return isXL;
 }
 
 function ActionCell({
@@ -189,7 +158,7 @@ export function ContactsDataTable({ contacts, locale, searchParams }: ContactsDa
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
     const { isExpanded } = useSidebar();
-    const isSmallScreen = useIsSmallScreen(); // for columns
+    const isSmallScreen = useIsSmallScreen();
     const isLGScreen = useIsLGScreen();
     const isXLScreen = useIsXLScreen();
     const [selectedContact, setSelectedContact] = React.useState<Contact | null>(null)
