@@ -25,6 +25,7 @@ const Logo = ({
         return (
             <NextLink className="flex items-center text-white" href={isAuthenticated ? `/${locale}/app` : `/${locale}`}>
                 <Image
+                    priority
                     src={parentDarkMode == true ? "/img/logo-spinet-dark.svg" : "/img/logo-spinet.svg"}
                     alt="Logo"
                     width={160}
