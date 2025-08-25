@@ -49,11 +49,12 @@ const RootLayout = async ({
   params,
   children,
 }: {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
   children: ReactNode;
 }) => {
   // Await params (without calling it as a function)
-  const { locale } = await params;
+  // Ensure locale is always a string
+  const locale = params.locale ?? "en";
   const dir = getDirection(locale);
   const fontClass = locale === 'ar' ? arabic.variable : poppins.variable;
 

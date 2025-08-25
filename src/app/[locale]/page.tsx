@@ -10,20 +10,16 @@ import Products from '@/components/pages/landing-page/products/products';
 import { i18n } from '../../../i18n-config';
 import NavBarWrapper from '@/components/NavBarWrapper.client';
 
-type Props = {
-  // Again, params may be an object or a thenable resolving to that object.
-  params: Promise<{ locale: string }>;
-};
-
+ 
 async function getMessages(locale: string) {
   return (await import(`../../lang/${locale}.json`)).default;
 }
 const Page = async (
   { params }: {
-    params: Promise<{ locale: string }>;
+    params: { locale?: string };
   }) => {
-  // Await params before using its properties (do not call params as a function)
-  const { locale } = await params;
+  // Ensure locale is always a string
+  const locale = params.locale ?? "en";
   const messages = await getMessages(locale);
 
   return (
