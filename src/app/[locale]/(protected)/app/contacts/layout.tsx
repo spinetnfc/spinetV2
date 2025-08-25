@@ -3,7 +3,7 @@ import ContentLayout from "@/components/layouts/content-layout"
 
 export const metadata: Metadata = {
     title: "Contacts",
-    description: "Manage your contacts Spinet",
+    description: "Manage your contacts on Spinet",
 }
 
 export default async function ProfileLayout({

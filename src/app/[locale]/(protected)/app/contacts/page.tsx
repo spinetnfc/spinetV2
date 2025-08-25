@@ -18,8 +18,6 @@ type ContactsPageProps = {
 
 export default async function ContactsPage({ params, searchParams }: ContactsPageProps) {
     const { locale } = await params
-
-    // Get user and profile data
     const user = await getUserCookieOnServer()
     const profileId = user?.selectedProfile || null
 
