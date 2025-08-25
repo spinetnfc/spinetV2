@@ -16,7 +16,8 @@ type ContactsPageProps = {
     searchParams: Promise<SearchParams>
 }
 
-export default async function ContactsPage({ params, searchParams }: ContactsPageProps) {
+export default async function ContactsPage(props: ContactsPageProps) {
+    const searchParams = await props.searchParams;
     const { locale } = await params
     const user = await getUserCookieOnServer()
     const profileId = user?.selectedProfile || null

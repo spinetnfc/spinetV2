@@ -15,9 +15,11 @@ async function getMessages(locale: string) {
   return (await import(`../../lang/${locale}.json`)).default;
 }
 const Page = async (
-  { params }: {
-    params: { locale?: string };
-  }) => {
+  props: {
+    params: Promise<{ locale?: string }>;
+  }
+) => {
+  const params = await props.params;
   // Ensure locale is always a string
   const locale = params.locale ?? "en";
   const messages = await getMessages(locale);

@@ -36,7 +36,8 @@ type ContactsPageProps = {
     searchParams: Promise<SearchParams>
 }
 
-export default async function Leads({ params, searchParams }: ContactsPageProps) {
+export default async function Leads(props: ContactsPageProps) {
+    const searchParams = await props.searchParams;
     const { locale } = await params
     const sp = await searchParams
 

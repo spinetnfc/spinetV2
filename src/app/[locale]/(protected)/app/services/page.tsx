@@ -8,7 +8,8 @@ type ServicesPageProps = {
   searchParams: Promise<ServicesSearchParams>
 }
 
-export default async function ServicesPage({ params, searchParams }: ServicesPageProps) {
+export default async function ServicesPage(props: ServicesPageProps) {
+  const searchParams = await props.searchParams;
   const { locale } = await params
   const resolvedSearchParams = await searchParams
 

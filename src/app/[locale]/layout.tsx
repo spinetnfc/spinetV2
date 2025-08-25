@@ -45,13 +45,18 @@ const arabic = Cairo({
   variable: '--font-arabic',
 });
 
-const RootLayout = async ({
-  params,
-  children,
-}: {
-  params: { locale: string };
-  children: ReactNode;
-}) => {
+const RootLayout = async (
+  props: {
+    params: Promise<{ locale: string }>;
+    children: ReactNode;
+  }
+) => {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   // Await params (without calling it as a function)
   // Ensure locale is always a string
   const locale = params.locale ?? "en";
