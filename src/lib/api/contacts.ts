@@ -1,9 +1,10 @@
+"use server";
 import { ServerApi } from '@/lib/axios';
 import type { Contact, ContactInput, InviteContact } from '@/types/contact';
 import { withServerCookies } from '@/utils/withServerCookies';
 
 export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
-    const headers = await withServerCookies();
+     const headers = await withServerCookies();
     try {
         if (!profileId || typeof profileId !== 'string') {
             throw new Error(`Invalid profileId: ${profileId}`);

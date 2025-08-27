@@ -1,55 +1,36 @@
 "use client"
 
-import { ArrowDownUp } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
-import { FormattedMessage } from "react-intl"
+import { ChevronDown } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-
-type SortOption = "name-asc" | "name-desc" | "date-asc" | "date-desc"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
+import { Button } from "@/components/ui/button"
 
 export function ContactSortDropdown() {
-    const searchParams = useSearchParams()
-    const pathname = usePathname()
-    const { replace } = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const { replace } = useRouter()
 
-    // const currentSort = (searchParams.get("sort") as SortOption) || "name-asc"
+  const currentSort = searchParams.get("sort") || "name-asc"
 
-    const handleSortChange = (sort: SortOption) => {
-        const params = new URLSearchParams(searchParams)
+  const handleSortChange = (sort: string) => {
+    const params = new URLSearchParams(searchParams)
+    params.set("sort", sort)
+    replace(`${pathname}?${params.toString()}`)
+  }
 
-        if (sort === "name-asc") {
-            params.delete("sort")
-        } else {
-            params.set("sort", sort)
-        }
-
-        replace(`${pathname}?${params.toString()}`)
-    }
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                >
-                    <ArrowDownUp className="w-4 h-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleSortChange("name-asc")}>
-                    <FormattedMessage id="name-desc" />
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleSortChange("name-desc")}>
-                    <FormattedMessage id="name-asc" />
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleSortChange("date-asc")}>
-                    <FormattedMessage id="date-desc" />
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleSortChange("date-desc")}>
-                    <FormattedMessage id="date-asc" />
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm">
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleSortChange("name-asc")}>Name A-Z</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleSortChange("name-desc")}>Name Z-A</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleSortChange("date-asc")}>Date Added (Oldest)</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleSortChange("date-desc")}>Date Added (Newest)</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
 }
