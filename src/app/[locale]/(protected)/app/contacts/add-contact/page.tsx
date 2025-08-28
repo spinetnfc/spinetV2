@@ -33,9 +33,9 @@ export default function AddContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen  ">
       {/* Header */}
-      <div className="w-full bg-white border-b px-6 py-4">
+      <div className="w-full bg-transparent border-b px-6 py-[13.5px] border-secondary">
         <div className="w-full flex items-center justify-between    ">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" className="p-2">
@@ -138,6 +138,39 @@ export default function AddContactPage() {
                   <Input id="email" type="email" className="mt-1" />
                 </div>
               </div>
+               {/* Links Section */}
+             <h3 className="text-lg font-medium text-primary mt-4">Links</h3>
+ 
+              <div className="bg-gray-50 rounded-lg p-6 mb-4">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="displayText" className="text-sm font-medium text-primary">
+                      Display text
+                    </Label>
+                    <Input
+                      id="displayText"
+                      placeholder="eg. LinkedIn"
+                      value={displayText}
+                      onChange={(e) => setDisplayText(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="url" className="text-sm font-medium text-primary">
+                      Url
+                    </Label>
+                    <Input
+                      id="url"
+                      placeholder="https://"
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+                 
+           
+          </div>
             </div>
 
             {/* Interaction Information */}
@@ -189,61 +222,10 @@ export default function AddContactPage() {
             </div>
           </div>
 
-          {/* Links Section */}
-          <div className="mt-8 pt-8 border-t">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Links</h3>
-
-            {showLinkForm && (
-              <div className="bg-gray-50 rounded-lg p-6 mb-4">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="displayText" className="text-sm font-medium text-primary">
-                      Display text
-                    </Label>
-                    <Input
-                      id="displayText"
-                      placeholder="eg. LinkedIn"
-                      value={displayText}
-                      onChange={(e) => setDisplayText(e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="url" className="text-sm font-medium text-primary">
-                      Url
-                    </Label>
-                    <Input
-                      id="url"
-                      placeholder="https://"
-                      value={url}
-                      onChange={(e) => setUrl(e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mt-6">
-                  <Button variant="ghost" size="sm" onClick={() => setShowLinkForm(false)}>
-                    <X className="h-4 w-4 mr-1" />
-                    Cancel
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      // Handle save logic here
-                      setShowLinkForm(false)
-                      setDisplayText("")
-                      setUrl("")
-                    }}
-                  >
-                    Save
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
+         
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between mt-8 pt-8 border-t">
+          <div className="flex items-center justify-between   pt-8 border-t">
             <Button variant="ghost">Cancel</Button>
             <div className="flex items-center gap-3">
               <Button variant="outline">Save and add new contact</Button>
