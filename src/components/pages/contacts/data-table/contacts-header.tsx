@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ContactSourceFilter } from "./contact-source-filter"
+import { useRouter } from "next/navigation"
 
 interface ContactsHeaderProps {
   contactsCount: number
   onAdvancedFiltersClick: () => void
    setContactSources: (sources: string[]) => void
+   setIsColumnModalOpen: (open: boolean) => void
 }
 
 const undo = () => {
@@ -22,7 +24,8 @@ const undo = () => {
 }
 
 
-export function ContactsHeader({ contactsCount, onAdvancedFiltersClick ,setContactSources}: ContactsHeaderProps) {
+export function ContactsHeader({ contactsCount, onAdvancedFiltersClick ,setContactSources,setIsColumnModalOpen}: ContactsHeaderProps) {
+  const router = useRouter()
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-4">
@@ -41,7 +44,7 @@ export function ContactsHeader({ contactsCount, onAdvancedFiltersClick ,setConta
           <Button variant="outline" size="lg" className="text-blue-600 bg-transparent hover:bg-blue-100">
             Import
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-100">
+          <Button className="bg-blue-600 hover:bg-blue-300" onClick={() => {router.replace('/app/contacts/add-contact')}}>
             <Plus className="w-4 h-4 mr-2" />
             Add contact
           </Button>
@@ -65,7 +68,7 @@ export function ContactsHeader({ contactsCount, onAdvancedFiltersClick ,setConta
         <Button variant="outline" size="sm" className="border-[1px] border-primary  hover:bg-blue-100">
           Export
         </Button>
-        <Button variant="outline" size="sm" className="border-[1px] border-primary hover:bg-blue-100">
+        <Button variant="outline" size="sm" className="border-[1px] border-primary hover:bg-blue-100" onClick={() => setIsColumnModalOpen(true)}>
           Modify columns
         </Button>
         </div>

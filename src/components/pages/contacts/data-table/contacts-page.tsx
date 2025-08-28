@@ -46,6 +46,9 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
   const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false)
   const [contactSources, setContactSources] = useState<string[]>([])
+  const [columnOrder, setColumnOrder] = useState<string[]>([])
+  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false)
+
   const [advancedFilters, setAdvancedFilters] = useState({
     role: "",
     company: "",
@@ -130,11 +133,36 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   }, [rowSelection, sortedContacts])
 
   const columns = useMemo(() => contactColumns(locale), [locale])
+
+  const orderedColumns = useMemo(() => {
+    if (columnOrder.length === 0) {
+      return columns
+    }
+
+    // Reorder columns based on columnOrder state
+    const reorderedColumns = []
+    const columnMap = new Map(columns.map((col) => [col.id || "", col]))
+
+    // Add columns in the specified order
+    for (const colId of columnOrder) {
+      const column = columnMap.get(colId)
+      if (column) {
+        reorderedColumns.push(column)
+        columnMap.delete(colId)
+      }
+    }
+
+    // Add any remaining columns that weren't in the order
+    reorderedColumns.push(...Array.from(columnMap.values()))
+
+    return reorderedColumns
+  }, [columns, columnOrder])
+
   const showInModal = !(isXLScreen || (!isExpanded && isLGScreen))
 
   const table = useReactTable({
     data: sortedContacts,
-    columns,
+    columns: orderedColumns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -143,11 +171,7 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
     onRowSelectionChange: setRowSelection,
     state: {
       columnFilters,
-      columnVisibility: {
-        ...columnVisibility,
-        company: !isSmallScreen,
-        position: !isSmallScreen,
-      },
+      columnVisibility,
       rowSelection,
       pagination: {
         pageIndex: Number(page) - 1,
@@ -233,7 +257,7 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
       orderBy: string[]
       sortBy: string
     }) => {
-      setAdvancedFilters(prev => ({
+      setAdvancedFilters((prev) => ({
         role: filters.role ?? prev.role,
         company: filters.company ?? prev.company,
         orderBy: filters.orderBy,
@@ -243,7 +267,35 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
     [],
   )
 
-  if (loading) return null
+  const handleColumnOrderChange = useCallback(
+    (visibleColumns: string[], newColumnOrder: string[]) => {
+ 
+
+      setColumnVisibility((prev) => {
+        const newVisibility: VisibilityState = {}
+
+        // Get all column IDs from the table
+        const allColumnIds = columns.map((col) => col.id || "")
+
+        // Set visibility for all columns
+        allColumnIds.forEach((columnId) => {
+          // Always keep name and select visible
+          if (columnId === "name" || columnId === "select") {
+            newVisibility[columnId] = true
+          } else {
+            // For other columns, use the visibleColumns array
+            newVisibility[columnId] = visibleColumns.includes(columnId)
+          }
+        })
+  console.log("Updated column visibility:", newVisibility) // ✅ log here
+
+        return newVisibility
+      })
+       setColumnOrder(newColumnOrder)
+    },
+    [columns],
+  )
+   if (loading) return null
 
   return (
     <main>
@@ -258,6 +310,7 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
         contactsCount={contacts.length}
         onAdvancedFiltersClick={() => setIsAdvancedFilterOpen(true)}
         setContactSources={handleContactSourceChange}
+        setIsColumnModalOpen={setIsColumnModalOpen}
       />
 
       <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">
@@ -279,6 +332,9 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
             locale={locale}
             contactsCount={contacts.length}
             rowsPerPage={Number(rowsPerPage)}
+            onColumnOrderChange={handleColumnOrderChange}
+            isColumnModalOpen={isColumnModalOpen}
+            setIsColumnModalOpen={setIsColumnModalOpen}
           />
         </div>
 
