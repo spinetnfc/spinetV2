@@ -46,6 +46,12 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
   const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false)
   const [contactSources, setContactSources] = useState<string[]>([])
+  const [advancedFilters, setAdvancedFilters] = useState({
+    role: "",
+    company: "",
+    orderBy: ["activity-count"] as string[],
+    sortBy: "newest",
+  })
 
   const {
     query = "",
@@ -70,16 +76,41 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialFiltering)
 
   const filteredByTypeContacts = useMemo(() => {
-    if (filter === "all") return contacts
-    return contacts.filter((contact) => {
-      if ("id" in contact.Profile) return false
-      return contact.type === filter
-    })
-  }, [contacts, filter])
+    let filtered =
+      filter === "all"
+        ? contacts
+        : contacts.filter((contact) => {
+            if ("id" in contact.Profile) return false
+            return contact.type === filter
+          })
+
+    // Apply advanced filters
+    if (advancedFilters.role) {
+      filtered = filtered.filter((contact) => {
+        const position = typeof contact.Profile.position === "string" ? contact.Profile.position.toLowerCase() : ""
+        return position.includes(advancedFilters.role.toLowerCase())
+      })
+    }
+
+    if (advancedFilters.company) {
+      filtered = filtered.filter((contact) => {
+        const companyName =
+          typeof contact.Profile.companyName === "string" ? contact.Profile.companyName.toLowerCase() : ""
+        return companyName.includes(advancedFilters.company.toLowerCase())
+      })
+    }
+
+    return filtered
+  }, [contacts, filter, advancedFilters])
 
   const sortedContacts = useMemo(() => {
     const contactsToSort = [...filteredByTypeContacts]
-    switch (sort) {
+
+    // Use advanced sort if available, otherwise use URL sort
+    const sortMethod =
+      advancedFilters.sortBy === "newest" ? "date-desc" : advancedFilters.sortBy === "oldest" ? "date-asc" : sort
+
+    switch (sortMethod) {
       case "name-desc":
         return contactsToSort.sort((a, b) => (b.Profile.fullName || "").localeCompare(a.Profile.fullName || ""))
       case "date-asc":
@@ -90,7 +121,7 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
       default:
         return contactsToSort.sort((a, b) => (a.Profile.fullName || "").localeCompare(b.Profile.fullName || ""))
     }
-  }, [filteredByTypeContacts, sort])
+  }, [filteredByTypeContacts, sort, advancedFilters.sortBy])
 
   const selectedContacts = useMemo(() => {
     return Object.keys(rowSelection)
@@ -195,11 +226,33 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
     router.refresh()
   }
 
+  const handleAdvancedFiltersChange = useCallback(
+    (filters: {
+      role?: string
+      company?: string
+      orderBy: string[]
+      sortBy: string
+    }) => {
+      setAdvancedFilters(prev => ({
+        role: filters.role ?? prev.role,
+        company: filters.company ?? prev.company,
+        orderBy: filters.orderBy,
+        sortBy: filters.sortBy,
+      }))
+    },
+    [],
+  )
+
   if (loading) return null
 
   return (
     <main>
-      <FilterDialogue isOpen={isAdvancedFilterOpen} onClose={() => setIsAdvancedFilterOpen(false)} />
+      <FilterDialogue
+        isOpen={isAdvancedFilterOpen}
+        onClose={() => setIsAdvancedFilterOpen(false)}
+        onFiltersChange={handleAdvancedFiltersChange} // Connected filter handler
+        currentFilters={advancedFilters} // Pass current filters
+      />
 
       <ContactsHeader
         contactsCount={contacts.length}
