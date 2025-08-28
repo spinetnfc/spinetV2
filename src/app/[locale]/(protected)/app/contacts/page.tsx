@@ -7,7 +7,7 @@ import { getContacts } from "@/lib/api/contacts"
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 import { Badge } from "@/components/ui/badge"
 import { FilterDialogue } from "@/components/pages/contacts/data-table/filter-dialogue"
-import { ContactSourceFilter } from "@/components/pages/contacts/data-table/contact-source-dialogue"
+import { ContactSourceFilter } from "@/components/pages/contacts/data-table/contact-source-filter"
  
  
   // Define the props type for ContactsPage

@@ -79,6 +79,18 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
       },
     },
     {
+      accessorKey: "source", // assuming your Contact type has `source: string`
+      header: () => <FormattedMessage id="source" defaultMessage="Source" />,
+      cell: ({ row }) => {
+        const contact = row.original
+        return <div className="truncate text-xs sm:text-base">{contact.source || "-"}</div>
+      },
+      filterFn: (row, id, value: string[]) => {
+        if (!value || value.length === 0) return true
+        return value.includes(row.getValue(id))
+      },
+    },
+    {
       accessorKey: "company",
       header: () => <FormattedMessage id="company" defaultMessage="Company" />,
       cell: ({ row }) => {

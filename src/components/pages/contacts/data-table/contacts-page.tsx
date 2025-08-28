@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import {
   type ColumnFiltersState,
@@ -15,9 +15,8 @@ import { useIsLGScreen, useIsSmallScreen, useIsXLScreen } from "@/hooks/screens"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import { getContacts } from "@/lib/api/contacts"
 import { contactColumns } from "./contact-columns"
-  import { ContactsBulkActions } from "./contacts-bulk-actions"
- import { FilterDialogue } from "./filter-dialogue"
-import { ContactSourceFilter } from "./contact-source-dialogue"
+import { ContactsBulkActions } from "./contacts-bulk-actions"
+import { FilterDialogue } from "./filter-dialogue"
 import PhoneMockup from "../phone-mockup"
 import EditContactForm from "../edit-contact-form"
 import type { Contact } from "@/types/contact"
@@ -46,7 +45,7 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
   const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false)
-  const [isContactFilterOpen, setIsContactFilterOpen] = useState(false)
+  const [contactSources, setContactSources] = useState<string[]>([])
 
   const {
     query = "",
@@ -126,12 +125,49 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
     },
   })
 
-  React.useEffect(() => {
+  const handleContactSourceChange = useCallback((sources: string[]) => {
+    setContactSources(sources)
+    // Update column filters for source filtering
+    setColumnFilters((prev) => [
+      ...prev.filter((f) => f.id !== "source"), // remove old source filter
+      ...(sources.length > 0 ? [{ id: "source", value: sources }] : []),
+    ])
+  }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams(urlSearchParams.toString())
+    const searchValue = columnFilters.find((filter) => filter.id === "name")?.value as string
+
+    if (searchValue) {
+      params.set("query", searchValue)
+    } else {
+      params.delete("query")
+    }
+
+    const currentPage = table.getState().pagination.pageIndex + 1
+    params.set("page", currentPage.toString())
+
+    const newParamsString = params.toString()
+    const currentParamsString = urlSearchParams.toString()
+
+    // Only update URL if search query or pagination changed, not source filters
+    if (newParamsString !== currentParamsString) {
+      router.replace(`${pathname}?${newParamsString}`, { scroll: false })
+    }
+  }, [
+    columnFilters.filter((f) => f.id === "name"), // Only watch name filter changes
+    table.getState().pagination.pageIndex,
+    urlSearchParams,
+    pathname,
+    router,
+  ])
+
+  useEffect(() => {
     async function fetchContacts() {
       try {
         setLoading(true)
         if (profileId != null && profileId != undefined) {
-           const fetchedContacts = await getContacts(profileId)
+          const fetchedContacts = await getContacts(profileId)
           setContacts(fetchedContacts)
         }
       } catch (error) {
@@ -142,22 +178,7 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
     }
 
     fetchContacts()
-
-    const params = new URLSearchParams(urlSearchParams.toString())
-    const searchValue = columnFilters.find((filter) => filter.id === "name")?.value as string
-    if (searchValue) {
-      params.set("query", searchValue)
-    } else {
-      params.delete("query")
-    }
-    const currentPage = table.getState().pagination.pageIndex + 1
-    params.set("page", currentPage.toString())
-    const newParamsString = params.toString()
-    const currentParamsString = urlSearchParams.toString()
-    if (newParamsString !== currentParamsString) {
-      router.replace(`${pathname}?${newParamsString}`, { scroll: false })
-    }
-  }, [columnFilters, table.getState().pagination.pageIndex,urlSearchParams, profileId])
+  }, [profileId])
 
   const handleContactSelect = (contact: Contact | null) => {
     setSelectedContact(contact)
@@ -179,9 +200,12 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   return (
     <main>
       <FilterDialogue isOpen={isAdvancedFilterOpen} onClose={() => setIsAdvancedFilterOpen(false)} />
-      <ContactSourceFilter isOpen={isContactFilterOpen} onClose={() => setIsContactFilterOpen(false)} />
 
-      <ContactsHeader contactsCount={contacts.length} onAdvancedFiltersClick={() => setIsAdvancedFilterOpen(true)} onContactSourceClick={() => setIsContactFilterOpen(true)} />
+      <ContactsHeader
+        contactsCount={contacts.length}
+        onAdvancedFiltersClick={() => setIsAdvancedFilterOpen(true)}
+        setContactSources={handleContactSourceChange}
+      />
 
       <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">
         <ContactsBulkActions
