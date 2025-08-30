@@ -39,9 +39,7 @@ import { ContactSourceFilter } from "@/components/pages/contacts/data-table/cont
                 Verify
               </Button>
             </div>
-            <Button variant="ghost" size="sm">
-              <Settings className="w-4 h-4" />
-            </Button>
+  
           </div>
         </div>
       </header>

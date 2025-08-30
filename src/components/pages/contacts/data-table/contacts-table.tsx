@@ -23,7 +23,21 @@ interface ContactsTableProps {
   isColumnModalOpen: boolean
   setIsColumnModalOpen: (open: boolean) => void
 }
-
+const EmptyContactsState = () => {
+  return (
+    <div className="flex flex-col items-center justify-center h-full text-center">
+     <div> <svg width="57" height="56" viewBox="0 0 57 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="4.5" y="4" width="48" height="48" rx="24" fill="#DBEAFE"/>
+<rect x="4.5" y="4" width="48" height="48" rx="24" stroke="#EFF6FF" stroke-width="8"/>
+<path d="M27.5 35C31.9183 35 35.5 31.4183 35.5 27C35.5 22.5817 31.9183 19 27.5 19C23.0817 19 19.5 22.5817 19.5 27C19.5 31.4183 23.0817 35 27.5 35Z" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M37.5004 36.9999L33.1504 32.6499" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</div>
+ <FormattedMessage id="no-contacts-found" defaultMessage="No contacts found" />   
+ <p className="text-center text-gray-500 mt-2">There is nothing to display here yet.</p>
+</div>
+  )
+}
 export function ContactsTable({
   table,
   selectedContact,
@@ -61,7 +75,9 @@ export function ContactsTable({
       console.log("To enable reordering, pass onColumnOrderChange prop to ContactsTable")
     }
   }
-
+if (contactsCount === 0) {
+  return <EmptyContactsState />
+}
   return (
     <>
       <div className="rounded-md border overflow-x-auto">
@@ -126,7 +142,7 @@ export function ContactsTable({
             ) : (
               <TableRow>
                 <TableCell colSpan={100} className="h-24 text-center">
-                  <FormattedMessage id="no-contacts-found" defaultMessage="No contacts found" />
+                  <EmptyContactsState />
                 </TableCell>
               </TableRow>
             )}

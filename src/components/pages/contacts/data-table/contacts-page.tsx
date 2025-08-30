@@ -36,6 +36,8 @@ interface ContactsDataTableProps {
   }
 }
 
+
+
 export function ContactsDataTable({ profileId, locale, searchParams }: ContactsDataTableProps) {
   const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
   const [contacts, setContacts] = useState<Contact[]>([])

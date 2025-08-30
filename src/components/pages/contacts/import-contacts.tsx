@@ -69,10 +69,10 @@ interface Contact {
 }
 
 interface ImportContactsProps {
-  locale: string
+   source: "file" | "google" | "phone" | null
 }
 
-export default function ImportContacts({ locale }: ImportContactsProps) {
+export default function ImportContacts({   source }: ImportContactsProps) {
   const intl = useIntl()
   const profileId = useAuth().user.selectedProfile
   const [importSource, setImportSource] = useState<"phone" | "google" | "file" | null>(null)
@@ -690,22 +690,22 @@ export default function ImportContacts({ locale }: ImportContactsProps) {
               <Smartphone size={20} />
               <FormattedMessage id="import-from-phone" defaultMessage="Import from Phone" />
             </Button>
-            <Button
+           {source === "google" && <Button
               onClick={() => handleImport("google")}
               disabled={isImporting || !googleApiLoaded}
               className="flex items-center gap-2 bg-azure"
             >
               <User size={20} />
               <FormattedMessage id="import-from-google" defaultMessage="Import from Google" />
-            </Button>
-            <Button
+            </Button>}
+            {source === "file" && <Button
               onClick={() => handleImport("file")}
               disabled={isImporting}
               className="flex items-center gap-2 bg-azure"
             >
               <Upload size={20} />
               <FormattedMessage id="import-from-file" defaultMessage="Import from File" />
-            </Button>
+            </Button>}
           </div>
           <input
             type="file"

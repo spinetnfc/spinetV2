@@ -24,9 +24,33 @@ import { getLocale } from "@/utils/getClientLocale"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 import { createContact } from "@/actions/contacts"
- 
+ import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import ImportContacts from "@/components/pages/contacts/import-contacts"
+import ScanContact from "@/components/pages/contacts/scan-contact"
 
 
+const ImportIcon=()=>{
+  return(<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2.66699 14.6668H12.0003C12.3539 14.6668 12.6931 14.5264 12.9431 14.2763C13.1932 14.0263 13.3337 13.6871 13.3337 13.3335V5.00016L9.66699 1.3335H4.00033C3.6467 1.3335 3.30756 1.47397 3.05752 1.72402C2.80747 1.97407 2.66699 2.31321 2.66699 2.66683V5.3335" stroke="#334155" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M9.33301 1.3335V5.3335H13.333" stroke="#334155" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M1.33301 10H7.99967" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M3.33301 8L1.33301 10L3.33301 12" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>)
+}
+const GoogleIcon=()=>{
+  return(<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.06641 1.8335C9.44767 1.8335 10.5124 2.25412 11.2305 2.67236C11.5344 2.8494 11.7752 3.02636 11.9512 3.16943L11.3691 3.77588C11.218 3.65698 11.0266 3.51661 10.793 3.37939C10.1767 3.01755 9.27297 2.65387 8.13379 2.65381C5.18917 2.65381 2.83398 4.99282 2.83398 8.00049C2.83416 11.1215 5.30941 13.3472 8.12695 13.3472C9.21068 13.3471 10.348 13.0529 11.2559 12.3892C12.1765 11.716 12.8354 10.6791 12.958 9.26318L13.0049 8.72021H8.62012V7.8999H13.7988C13.8165 8.07953 13.834 8.31752 13.834 8.60693C13.834 10.289 13.2306 11.6713 12.2393 12.6333C11.2463 13.5966 9.83407 14.1665 8.16699 14.1665C4.40237 14.1665 1.85369 11.1104 1.85352 8.00049C1.85352 4.79908 4.56699 1.83375 8.06641 1.8335Z" fill="black" stroke="#334155"/>
+</svg>
+)
+}
 // Define the contact schema with Zod
 const contactSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
@@ -69,6 +93,9 @@ export default function AddContactPage() {
       title: "",
       link: "",
     })
+      const [importSource, setImportSource] = useState<"file" | "google" | "phone" | null>(null)
+      const [scan, setScan] = useState<Boolean | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
   const locale =  getLocale()
     const form = useForm<ContactFormValues>({
       resolver: zodResolver(contactSchema),
@@ -223,7 +250,7 @@ export default function AddContactPage() {
       <div className="w-full bg-transparent border-b px-6 py-[13.5px] border-secondary">
         <div className="w-full flex items-center justify-between    ">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="p-2">
+            <Button variant="ghost" size="sm" className="p-2" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
@@ -231,15 +258,43 @@ export default function AddContactPage() {
               <span className="text-sm text-blue-600">manual</span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="flex items-center gap-2 bg-transparent">
-              <Upload className="h-4 w-4" />
-              Import
-            </Button>
-            <Button variant="outline" size="sm" className="flex items-center gap-2 bg-transparent">
-              <QrCode className="h-4 w-4" />
-              Scan
-            </Button>
+          <div className="flex items-center gap-4">
+               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 bg-transparent border-primary  px-4 py-2">
+                <Upload className="h-4 w-4" />
+                Import
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                 <DropdownMenuSeparator />
+                <DropdownMenuItem className="min-w-56 pl-6"  onClick={() => {
+                      setImportSource("file")
+                      setDialogOpen(true)
+                    }}><ImportIcon/> Import from file</DropdownMenuItem>
+                <DropdownMenuItem className="min-w-56 pl-6"  onClick={() => {
+                      setImportSource("google")
+                      setDialogOpen(true)
+                    }}><GoogleIcon/> Import from Google</DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+           <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2 bg-transparent"
+                onClick={() => {
+                  setScan(true) // using "phone" as scan trigger
+                  setDialogOpen(true)
+                }}
+              >
+                <QrCode className="h-4 w-4" />
+                Scan
+              </Button>
+              <DialogTitle></DialogTitle>
+              <DialogContent className="max-w-3xl">
+                {importSource && <ImportContacts   source={importSource} />}
+                {scan && <ScanContact locale="en" />}
+              </DialogContent>
+              </Dialog>
           </div>
         </div>
       </div>
@@ -343,7 +398,7 @@ export default function AddContactPage() {
                {/* Links Section */}
              <h3 className="text-lg font-medium text-primary mt-4">Links</h3>
  
-              <div className="bg-gray-50 rounded-lg p-6 mb-4">
+              <div className="bg-transparent rounded-lg p-6 mb-2">
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="displayText" className="text-sm font-medium text-primary">
@@ -442,8 +497,8 @@ export default function AddContactPage() {
          
 
          {/* Action Buttons */}
-<div className="flex items-center justify-between pt-8 border-t">
-  <Button type="button" variant="ghost">Cancel</Button>
+<div className="flex items-center justify-between pt-6 border-t">
+  <Button type="button" variant="outline" className="border-secondary" onClick={() => router.back()}>Cancel</Button>
   <div className="flex items-center gap-3">
     <Button type="submit" variant="outline">
       Save and add new contact
