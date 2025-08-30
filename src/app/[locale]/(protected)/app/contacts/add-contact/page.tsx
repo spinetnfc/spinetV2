@@ -10,17 +10,176 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import z from "zod"
+import { toast } from "sonner"
+import { FormattedMessage, useIntl } from "react-intl"
+import { useAuth } from "@/context/authContext"
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { getLocale } from "@/utils/getClientLocale"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Textarea } from "@/components/ui/textarea"
+import { createContact } from "@/actions/contacts"
+ 
 
+
+// Define the contact schema with Zod
+const contactSchema = z.object({
+  fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
+  phoneNumber: z
+    .string()
+    .optional()
+    .refine((val) => !val || /^\+?\d{1,4}?[-.\s]?\d{1,3}?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(val), {
+      message: "Invalid phone number format",
+    }),
+  email: z.string().email({ message: "Invalid email address" }).optional().or(z.literal("")),
+  position: z.string().optional(),
+  companyName: z.string().optional(),
+  metIn: z.string().optional(),
+  nextAction: z.string().optional(),
+  dateOfNextAction: z.date().optional().nullable(),
+  notes: z.string().optional(),
+})
+
+type ContactFormValues = z.infer<typeof contactSchema>
+
+type LinkType = {
+  title: string
+  link: string
+}
 export default function AddContactPage() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [date, setDate] = useState<Date>()
-  const [showLinkForm, setShowLinkForm] = useState(false)
-  const [displayText, setDisplayText] = useState("")
+   const [displayText, setDisplayText] = useState("")
   const [url, setUrl] = useState("")
-
+    const intl = useIntl()
+    const profileId = useAuth().user.selectedProfile
+    const router = useRouter()
+    const formRef = useRef<HTMLFormElement>(null)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [showLinkForm, setShowLinkForm] = useState(false)
+    const [links, setLinks] = useState<LinkType[]>([])
+    const [tags, setTags] = useState<string[]>([])
+    const [tagInput, setTagInput] = useState("")
+    const [newLink, setNewLink] = useState<LinkType>({
+      title: "",
+      link: "",
+    })
+  const locale =  getLocale()
+    const form = useForm<ContactFormValues>({
+      resolver: zodResolver(contactSchema),
+      defaultValues: {
+        fullName: "",
+        phoneNumber: "",
+        email: "",
+        position: "",
+        companyName: "",
+        metIn: "",
+        nextAction: "",
+        dateOfNextAction: null,
+        notes: "",
+      },
+    })
+  
+    const onSubmit = async (data: ContactFormValues) => {
+      try {
+        setIsSubmitting(true)
+  
+        if (!formRef.current) return
+  
+        // Create a FormData object
+        const formData = new FormData(formRef.current)
+  
+        // Add phoneNumber and email to links
+        const formLinks = [...links]
+        if (data.phoneNumber) {
+          formLinks.push({ title: "phone", link: data.phoneNumber })
+        }
+        if (data.email) {
+          formLinks.push({ title: "Email", link: data.email })
+        }
+  
+        // Validate links
+        for (const link of formLinks) {
+          if (!link.title || !link.link) {
+            toast.error(intl.formatMessage({ id: "Incomplete link" }, { title: link.title || "Unknown" }))
+            setIsSubmitting(false)
+            return
+          }
+          if (
+            ["phone", "phone number", "mobile"].some((t) => link.title.toLowerCase().includes(t)) &&
+            !/^\+?\d{1,4}?[-.\s]?\d{1,3}?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(link.link)
+          ) {
+            toast.error(intl.formatMessage({ id: "Invalid phone number format" }))
+            setIsSubmitting(false)
+            return
+          }
+          if (
+            ["email", "e-mail"].some((t) => link.title.toLowerCase().includes(t)) &&
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(link.link)
+          ) {
+            toast.error(intl.formatMessage({ id: "Invalid email format" }))
+            setIsSubmitting(false)
+            return
+          }
+        }
+  
+        // Add tags and links as JSON strings
+        formData.append("tags", JSON.stringify(tags))
+        formData.append("links", JSON.stringify(formLinks))
+  
+        // Format the date as 'yyyy-MM-dd' if it exists
+        if (data.dateOfNextAction) {
+          formData.set("dateOfNextAction", format(data.dateOfNextAction, "yyyy-MM-dd"))
+        }
+  
+        // Log form data for debugging
+        console.log("Form data submitted:", {
+          ...Object.fromEntries(formData.entries()),
+          tags,
+          links: formLinks,
+        })
+  
+        // Submit the form
+        const result = await createContact(profileId, formData, "manual")
+      //  const result = {success: true}
+       console.log("Form submission result:", profileId, formData, "manual")
+        if (result?.success) {
+          toast.success(intl.formatMessage({ id: "Contact added successfully" }))
+          form.reset()
+          setTags([])
+          setLinks([])
+          setTagInput("")
+          setShowLinkForm(false)
+          router.push(`/${locale}/app/contacts`)
+        } else {
+          toast.error(intl.formatMessage({ id: "Failed to add contact" }))
+        }
+      } catch (error: any) {
+        console.error("Error submitting form:", {
+          message: error.message,
+          response: error.response
+            ? {
+                status: error.response.status,
+                statusText: error.response.statusText,
+                data: JSON.stringify(error.response.data, null, 2),
+              }
+            : "No response data available",
+          stack: error.stack,
+        })
+        toast.error(
+          error.response?.data?.message ||
+            error.message ||
+            intl.formatMessage({ id: "An unexpected error occurred. Please try again." }),
+        )
+      } finally {
+        setIsSubmitting(false)
+      }
+    }
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -31,6 +190,32 @@ export default function AddContactPage() {
       reader.readAsDataURL(file)
     }
   }
+
+  const handleAddTag = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && tagInput.trim()) {
+      e.preventDefault()
+      if (!tags.includes(tagInput.trim())) {
+        setTags([...tags, tagInput.trim()])
+      }
+      setTagInput("")
+    }
+  }
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove))
+  }
+
+  const handleAddLinkSubmit = () => {
+    if (!newLink.title || !newLink.link) {
+      toast.error(intl.formatMessage({ id: "Please fill in all required fields" }))
+      return
+    }
+    setLinks([...links, newLink])
+    setShowLinkForm(false)
+    setNewLink({ title: "", link: "" })
+    toast.success(intl.formatMessage({ id: "Link added successfully" }))
+  }
+ 
 
   return (
     <div className="min-h-screen  ">
@@ -60,8 +245,9 @@ export default function AddContactPage() {
       </div>
 
       {/* Main Content */}
-      
-        <div className=" py-8 px-16 ">
+         <div className=" py-8 px-16 ">
+          <Form {...form}>
+                <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Profile Picture Section */}
           <div className="mb-8">
             <h3 className="text-sm font-medium text-gray-900 mb-2">Profile picture</h3>
@@ -104,14 +290,20 @@ export default function AddContactPage() {
                   <Label htmlFor="fullName" className="text-sm font-medium text-primary">
                     Full name *
                   </Label>
-                  <Input id="fullName" className="mt-1" />
+<Input id="fullName" className="mt-1" {...form.register("fullName")} />
+{form.formState.errors.fullName && (
+  <p className="text-red-500 text-sm">{form.formState.errors.fullName.message}</p>
+)}
                 </div>
 
                 <div className="w-full">
                   <Label htmlFor="phoneNumber" className="text-sm font-medium text-primary">
                     Phone number
                   </Label>
-                  <Input id="phoneNumber" className="mt-1" />
+                  <Input id="phoneNumber" className="mt-1" {...form.register("phoneNumber")} />
+                  {form.formState.errors.phoneNumber && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.phoneNumber.message}</p>
+                  )}
                 </div>
 </div>
                 <div className="w-full flex flex-col  justify-between items-center lg:flex-row gap-4">
@@ -120,14 +312,20 @@ export default function AddContactPage() {
                   <Label htmlFor="companyName" className="text-sm font-medium text-primary">
                     Company name
                   </Label>
-                  <Input id="companyName" className="mt-1" />
+                  <Input id="companyName" className="mt-1" {...form.register("companyName")} />
+                  {form.formState.errors.companyName && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.companyName.message}</p>
+                  )}
                 </div>
 
                 <div className="w-full">
                   <Label htmlFor="position" className="text-sm font-medium text-primary">
                     Position
                   </Label>
-                  <Input id="position" className="mt-1" />
+                  <Input id="position" className="mt-1" {...form.register("position")} />
+                  {form.formState.errors.position && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.position.message}</p>
+                  )}
                 </div>
 </div>
 
@@ -135,8 +333,12 @@ export default function AddContactPage() {
                   <Label htmlFor="email" className="text-sm font-medium text-primary">
                     Email
                   </Label>
-                  <Input id="email" type="email" className="mt-1" />
+                  <Input id="email" type="email" className="mt-1" {...form.register("email")} />
+                  {form.formState.errors.email && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.email.message}</p>
+                  )}
                 </div>
+          
               </div>
                {/* Links Section */}
              <h3 className="text-lg font-medium text-primary mt-4">Links</h3>
@@ -181,42 +383,57 @@ export default function AddContactPage() {
                   <Label htmlFor="metIn" className="text-sm font-medium text-primary">
                     Met in
                   </Label>
-                  <Input id="metIn" placeholder="Mohammadia" className="mt-1" />
+<Input id="metIn" placeholder="Mohammadia" className="mt-1" {...form.register("metIn")} />
                 </div>
 
                 <div>
                   <Label htmlFor="nextAction" className="text-sm font-medium text-primary">
                     Next action
                   </Label>
-                  <Input id="nextAction" placeholder="eg. follow up call" className="mt-1" />
+<Input id="nextAction" placeholder="eg. follow up call" className="mt-1" {...form.register("nextAction")} />
                 </div>
 
                 <div>
-                  <Label className="text-sm font-medium text-primary">Date of next action</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
+                             <FormField
+            control={form.control}
+            name="dateOfNextAction"
+            render={({ field }:{field:any}) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>
+                  <FormattedMessage id="date-of-next-action" />
+                </FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full mt-1 justify-start text-left font-normal",
-                          !date && "text-muted-foreground",
+                          "w-full h-10 ps-3 text-left font-normal border-gray-200 dark:border-azure text-gray-400 dark:text-azure hover:bg-azure/30 hover:text-gray-400 dark:hover:text-azure",
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, "PPP") : "Select date"}
+                        {field.value ? format(field.value, "yyyy-MM-dd") : <FormattedMessage id="pick-a-date" />}
+                        <CalendarIcon className="ms-auto h-4 w-4 text-gray-400 dark:text-azure" />
                       </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={date} onSelect={setDate} />
-                    </PopoverContent>
-                  </Popover>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar mode="single" selected={field.value || undefined} onSelect={field.onChange} />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
                 </div>
 
                 <div>
                   <h4 className="text-lg font-medium text-gray-900 mb-4">Notes</h4>
-                  <Button variant="outline" size="sm" className="text-blue-600 border-blue-600 bg-transparent">
-                    Add note
-                  </Button>
+                  <Textarea
+  className="w-full border rounded-md p-2 mt-1"
+  placeholder="Write notes..."
+  {...form.register("notes")}
+/>
+
                 </div>
               </div>
             </div>
@@ -224,15 +441,24 @@ export default function AddContactPage() {
 
          
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-between   pt-8 border-t">
-            <Button variant="ghost">Cancel</Button>
-            <div className="flex items-center gap-3">
-              <Button variant="outline">Save and add new contact</Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">Save</Button>
-            </div>
-          </div>
+         {/* Action Buttons */}
+<div className="flex items-center justify-between pt-8 border-t">
+  <Button type="button" variant="ghost">Cancel</Button>
+  <div className="flex items-center gap-3">
+    <Button type="submit" variant="outline">
+      Save and add new contact
+    </Button>
+    <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+      Save
+    </Button>
+  </div>
+</div>
+
+            
+             </form>
+            </Form>
         </div>
+     
       </div>
    )
 }

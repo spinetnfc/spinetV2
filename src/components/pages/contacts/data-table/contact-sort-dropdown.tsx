@@ -18,7 +18,6 @@ export function ContactSortDropdown() {
   const handleSortChange = (value: string) => {
     setSelectedSort(value)
     // Note: This would typically update URL params or call a parent callback
-    console.log("[v0] Sort changed to:", value)
   }
 
   const currentSortLabel = sortOptions.find((option) => option.value === selectedSort)?.label || "Sort"
