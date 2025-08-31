@@ -46,7 +46,7 @@ export function ContactSourceFilter({ handleContactSource }: { handleContactSour
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 shadow-none">
       <DropdownMenu modal={false}>
         <div
           className={cn(
@@ -59,7 +59,7 @@ export function ContactSourceFilter({ handleContactSource }: { handleContactSour
               variant="outline"
               type="button"
               className={cn(
-                "h-9 border-none text-primary hover:bg-blue-100 bg-transparent rounded-2xl",
+                "h-9 border-none text-primary hover:bg-blue-100 bg-transparent rounded-2xl shadow-none",
                 selectedSources.length > 0 ? "pr-2" : "",
               )}
             >

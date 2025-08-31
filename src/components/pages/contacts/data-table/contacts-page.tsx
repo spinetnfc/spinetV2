@@ -17,12 +17,13 @@ import { getContacts } from "@/lib/api/contacts"
 import { contactColumns } from "./contact-columns"
 import { ContactsBulkActions } from "./contacts-bulk-actions"
 import { FilterDialogue } from "./filter-dialogue"
-import PhoneMockup from "../phone-mockup"
+import PhoneMockup from "../contact-details"
 import EditContactForm from "../edit-contact-form"
 import type { Contact } from "@/types/contact"
 import { ContactsModals } from "./contacts-modals"
 import { ContactsHeader } from "./contacts-header"
 import { ContactsTable } from "./contacts-table"
+import { ExportDialogue } from "./export-dialogue"
 
 interface ContactsDataTableProps {
   profileId: string | undefined
@@ -36,8 +37,6 @@ interface ContactsDataTableProps {
   }
 }
 
-
-
 export function ContactsDataTable({ profileId, locale, searchParams }: ContactsDataTableProps) {
   const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -47,24 +46,24 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
   const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false)
-  const [contactSources, setContactSources] = useState<string[]>([])
-  const [columnOrder, setColumnOrder] = useState<string[]>([])
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false)
+  const [columnOrder, setColumnOrder] = useState<string[]>([])
+const [isExportModalOpen, setIsExportModalOpen] = useState(false)
 
-  const [advancedFilters, setAdvancedFilters] = useState({
+  const [filters, setFilters] = useState({
+    query: searchParams.query || "",
+    filter: searchParams.filter || "all",
+    sort: searchParams.sort || "name-asc",
     role: "",
     company: "",
-    orderBy: ["activity-count"] as string[],
+    sources: [] as string[],
     sortBy: "newest",
   })
 
-  const {
-    query = "",
-    filter = "all",
-    sort = "name-asc",
-    page = "1",
-    rowsPerPage = contacts.length < dynamicRowsPerPage ? contacts.length : dynamicRowsPerPage.toString(),
-  } = searchParams
+  const [pagination, setPagination] = useState({
+    pageIndex: Math.max(0, Number(searchParams.page || 1) - 1),
+    pageSize: Number(searchParams.rowsPerPage) || dynamicRowsPerPage,
+  })
 
   const router = useRouter()
   const pathname = usePathname()
@@ -74,78 +73,80 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   const isLGScreen = useIsLGScreen()
   const isXLScreen = useIsXLScreen()
 
-  const initialFiltering: ColumnFiltersState = []
-  if (query) {
-    initialFiltering.push({ id: "name", value: query })
-  }
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialFiltering)
+  const processedContacts = useMemo(() => {
+    let filtered = contacts
 
-  const filteredByTypeContacts = useMemo(() => {
-    let filtered =
-      filter === "all"
-        ? contacts
-        : contacts.filter((contact) => {
-            if ("id" in contact.Profile) return false
-            return contact.type === filter
-          })
-
-    // Apply advanced filters
-    if (advancedFilters.role) {
+    // Apply type filter
+    if (filters.filter !== "all") {
       filtered = filtered.filter((contact) => {
-        const position = typeof contact.Profile.position === "string" ? contact.Profile.position.toLowerCase() : ""
-        return position.includes(advancedFilters.role.toLowerCase())
+        if ("id" in contact.Profile) return false
+        return contact.type === filters.filter
       })
     }
 
-    if (advancedFilters.company) {
+    // Apply search query
+    if (filters.query) {
+      const query = filters.query.toLowerCase()
+      filtered = filtered.filter(
+        (contact) =>
+          contact.Profile.fullName?.toLowerCase().includes(query) ||
+          contact.Profile.companyName?.toLowerCase().includes(query) ||
+          contact.Profile.position?.toLowerCase().includes(query),
+      )
+    }
+
+    // Apply advanced filters
+    if (filters.role) {
+      filtered = filtered.filter((contact) => {
+        const position = typeof contact.Profile.position === "string" ? contact.Profile.position.toLowerCase() : ""
+        return position.includes(filters.role.toLowerCase())
+      })
+    }
+
+    if (filters.company) {
       filtered = filtered.filter((contact) => {
         const companyName =
           typeof contact.Profile.companyName === "string" ? contact.Profile.companyName.toLowerCase() : ""
-        return companyName.includes(advancedFilters.company.toLowerCase())
+        return companyName.includes(filters.company.toLowerCase())
       })
     }
 
-    return filtered
-  }, [contacts, filter, advancedFilters])
+    // Apply source filters
+    // if (filters.sources.length > 0) {
+    //   filtered = filtered.filter((contact) => filters.sources.includes(contact.source || ""))
+    // }
 
-  const sortedContacts = useMemo(() => {
-    const contactsToSort = [...filteredByTypeContacts]
-
-    // Use advanced sort if available, otherwise use URL sort
+    // Apply sorting
     const sortMethod =
-      advancedFilters.sortBy === "newest" ? "date-desc" : advancedFilters.sortBy === "oldest" ? "date-asc" : sort
+      filters.sortBy === "newest" ? "date-desc" : filters.sortBy === "oldest" ? "date-asc" : filters.sort
 
     switch (sortMethod) {
       case "name-desc":
-        return contactsToSort.sort((a, b) => (b.Profile.fullName || "").localeCompare(a.Profile.fullName || ""))
+        return filtered.sort((a, b) => (b.Profile.fullName || "").localeCompare(a.Profile.fullName || ""))
       case "date-asc":
-        return contactsToSort
+        return filtered
       case "date-desc":
-        return contactsToSort.reverse()
+        return [...filtered].reverse()
       case "name-asc":
       default:
-        return contactsToSort.sort((a, b) => (a.Profile.fullName || "").localeCompare(b.Profile.fullName || ""))
+        return filtered.sort((a, b) => (a.Profile.fullName || "").localeCompare(b.Profile.fullName || ""))
     }
-  }, [filteredByTypeContacts, sort, advancedFilters.sortBy])
+  }, [contacts, filters])
 
   const selectedContacts = useMemo(() => {
     return Object.keys(rowSelection)
       .filter((index) => rowSelection[index])
-      .map((index) => sortedContacts[Number.parseInt(index)])
-  }, [rowSelection, sortedContacts])
+      .map((index) => processedContacts[Number.parseInt(index)])
+  }, [rowSelection, processedContacts])
 
   const columns = useMemo(() => contactColumns(locale), [locale])
 
   const orderedColumns = useMemo(() => {
-    if (columnOrder.length === 0) {
-      return columns
-    }
+    if (columnOrder.length === 0) return columns
 
-    // Reorder columns based on columnOrder state
     const reorderedColumns = []
     const columnMap = new Map(columns.map((col) => [col.id || "", col]))
 
-    // Add columns in the specified order
     for (const colId of columnOrder) {
       const column = columnMap.get(colId)
       if (column) {
@@ -154,79 +155,60 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
       }
     }
 
-    // Add any remaining columns that weren't in the order
     reorderedColumns.push(...Array.from(columnMap.values()))
-
     return reorderedColumns
   }, [columns, columnOrder])
+
+  const columnFilters: ColumnFiltersState = useMemo(() => {
+    const filterArray: ColumnFiltersState = []
+    if (filters.query) {
+      filterArray.push({ id: "name", value: filters.query })
+    }
+    return filterArray
+  }, [filters.query])
 
   const showInModal = !(isXLScreen || (!isExpanded && isLGScreen))
 
   const table = useReactTable({
-    data: sortedContacts,
+    data: processedContacts,
     columns: orderedColumns,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
     state: {
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination: {
-        pageIndex: Number(page) - 1,
-        pageSize: Number(rowsPerPage),
-      },
+      pagination,
     },
   })
 
-  const handleContactSourceChange = useCallback((sources: string[]) => {
-    setContactSources(sources)
-    // Update column filters for source filtering
-    setColumnFilters((prev) => [
-      ...prev.filter((f) => f.id !== "source"), // remove old source filter
-      ...(sources.length > 0 ? [{ id: "source", value: sources }] : []),
-    ])
-  }, [])
-
   useEffect(() => {
-    const params = new URLSearchParams(urlSearchParams.toString())
-    const searchValue = columnFilters.find((filter) => filter.id === "name")?.value as string
+    const params = new URLSearchParams()
 
-    if (searchValue) {
-      params.set("query", searchValue)
-    } else {
-      params.delete("query")
+    if (filters.query) params.set("query", filters.query)
+    if (filters.filter !== "all") params.set("filter", filters.filter)
+    if (filters.sort !== "name-asc") params.set("sort", filters.sort)
+    if (pagination.pageIndex > 0) params.set("page", (pagination.pageIndex + 1).toString())
+    if (pagination.pageSize !== dynamicRowsPerPage) params.set("rowsPerPage", pagination.pageSize.toString())
+
+    const newUrl = `${pathname}${params.toString() ? `?${params.toString()}` : ""}`
+    if (newUrl !== `${pathname}?${urlSearchParams.toString()}`) {
+      router.replace(newUrl, { scroll: false })
     }
-
-    const currentPage = table.getState().pagination.pageIndex + 1
-    params.set("page", currentPage.toString())
-
-    const newParamsString = params.toString()
-    const currentParamsString = urlSearchParams.toString()
-
-    // Only update URL if search query or pagination changed, not source filters
-    if (newParamsString !== currentParamsString) {
-      router.replace(`${pathname}?${newParamsString}`, { scroll: false })
-    }
-  }, [
-    columnFilters.filter((f) => f.id === "name"), // Only watch name filter changes
-    table.getState().pagination.pageIndex,
-    urlSearchParams,
-    pathname,
-    router,
-  ])
+  }, [filters.query, filters.filter, filters.sort, pagination, pathname, router, urlSearchParams, dynamicRowsPerPage])
 
   useEffect(() => {
     async function fetchContacts() {
+      if (!profileId) return
+
       try {
         setLoading(true)
-        if (profileId != null && profileId != undefined) {
-          const fetchedContacts = await getContacts(profileId)
-          setContacts(fetchedContacts)
-        }
+        const fetchedContacts = await getContacts(profileId)
+        setContacts(fetchedContacts)
       } catch (error) {
         console.error("Error fetching contacts:", error)
       } finally {
@@ -237,75 +219,84 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
     fetchContacts()
   }, [profileId])
 
-  const handleContactSelect = (contact: Contact | null) => {
-    setSelectedContact(contact)
-    setEditingContact(null)
-  }
+  const handleSearchChange = useCallback((query: string) => {
+    setFilters((prev) => ({ ...prev, query }))
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }))
+  }, [])
 
-  const handleContactEdit = (contact: Contact) => {
-    setEditingContact(contact)
-    setSelectedContact(null)
-  }
-
-  const handleEditSuccess = () => {
-    setEditingContact(null)
-    router.refresh()
-  }
+  const handleContactSourceChange = useCallback((sources: string[]) => {
+    setFilters((prev) => ({ ...prev, sources }))
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }))
+  }, [])
 
   const handleAdvancedFiltersChange = useCallback(
-    (filters: {
+    (newFilters: {
       role?: string
       company?: string
       orderBy: string[]
       sortBy: string
     }) => {
-      setAdvancedFilters((prev) => ({
-        role: filters.role ?? prev.role,
-        company: filters.company ?? prev.company,
-        orderBy: filters.orderBy,
-        sortBy: filters.sortBy,
+      setFilters((prev) => ({
+        ...prev,
+        role: newFilters.role ?? prev.role,
+        company: newFilters.company ?? prev.company,
+        sortBy: newFilters.sortBy,
       }))
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }))
     },
     [],
   )
 
   const handleColumnOrderChange = useCallback(
     (visibleColumns: string[], newColumnOrder: string[]) => {
- 
-
       setColumnVisibility((prev) => {
         const newVisibility: VisibilityState = {}
-
-        // Get all column IDs from the table
         const allColumnIds = columns.map((col) => col.id || "")
 
-        // Set visibility for all columns
         allColumnIds.forEach((columnId) => {
-          // Always keep name and select visible
           if (columnId === "name" || columnId === "select") {
             newVisibility[columnId] = true
           } else {
-            // For other columns, use the visibleColumns array
             newVisibility[columnId] = visibleColumns.includes(columnId)
           }
         })
-  console.log("Updated column visibility:", newVisibility) // ✅ log here
 
         return newVisibility
       })
-       setColumnOrder(newColumnOrder)
+      setColumnOrder(newColumnOrder)
     },
     [columns],
   )
-   if (loading) return null
+
+  const handleContactSelect = useCallback((contact: Contact | null) => {
+    setSelectedContact(contact)
+    setEditingContact(null)
+  }, [])
+
+  const handleContactEdit = useCallback((contact: Contact) => {
+    setEditingContact(contact)
+    setSelectedContact(null)
+  }, [])
+
+  const handleEditSuccess = useCallback(() => {
+    setEditingContact(null)
+    router.refresh()
+  }, [router])
+
+  if (loading) return null
 
   return (
     <main>
       <FilterDialogue
         isOpen={isAdvancedFilterOpen}
         onClose={() => setIsAdvancedFilterOpen(false)}
-        onFiltersChange={handleAdvancedFiltersChange} // Connected filter handler
-        currentFilters={advancedFilters} // Pass current filters
+        onFiltersChange={handleAdvancedFiltersChange}
+        currentFilters={{
+          role: filters.role,
+          company: filters.company,
+          orderBy: ["activity-count"],
+          sortBy: filters.sortBy,
+        }}
       />
 
       <ContactsHeader
@@ -313,6 +304,9 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
         onAdvancedFiltersClick={() => setIsAdvancedFilterOpen(true)}
         setContactSources={handleContactSourceChange}
         setIsColumnModalOpen={setIsColumnModalOpen}
+        searchQuery={filters.query}
+        onSearchChange={handleSearchChange}
+        setIsExportModalOpen={setIsExportModalOpen}
       />
 
       <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">
@@ -332,18 +326,17 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
             onContactEdit={handleContactEdit}
             profileId={profileId}
             locale={locale}
-            contactsCount={contacts.length}
-            rowsPerPage={Number(rowsPerPage)}
+            contactsCount={processedContacts.length}
+            rowsPerPage={pagination.pageSize}
             onColumnOrderChange={handleColumnOrderChange}
             isColumnModalOpen={isColumnModalOpen}
             setIsColumnModalOpen={setIsColumnModalOpen}
           />
         </div>
 
-        {/* Desktop sidebar for contact details/editing */}
         <div className="hidden lg:block h-fit space-y-4">
           {selectedContact && !editingContact && !showInModal && (
-            <PhoneMockup data={selectedContact.Profile} onClose={() => setSelectedContact(null)} />
+            <PhoneMockup contact={selectedContact} onClose={() => setSelectedContact(null)} />
           )}
           {editingContact && !selectedContact && !showInModal && (
             <EditContactForm
@@ -354,6 +347,11 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
           )}
         </div>
       </div>
+<ExportDialogue
+  isOpen={isExportModalOpen}
+  onClose={() => setIsExportModalOpen(false)}
+  contacts={processedContacts}
+/>
 
       <ContactsModals
         selectedContact={selectedContact}
