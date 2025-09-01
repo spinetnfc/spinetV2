@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,17 +12,31 @@ import {
 import { ChevronDown, X } from "lucide-react"
 import { cn } from "@/utils/cn"
 
-const contactSources = ["Phone contact", "Google contact", "Device scan", "Manual entry"]
+// 1. Define typed source keys
+export type ContactSource = "manual" | "scan" | "exchange" | "spinet" | "phone"
 
-export function ContactSourceFilter({ handleContactSource }: { handleContactSource: (sources: string[]) => void }) {
-  const [selectedSources, setSelectedSources] = useState<string[]>([])
+// 2. Map source keys to labels for UI
+const contactSourceLabels: Record<ContactSource, string> = {
+  manual: "Manual entry",
+  scan: "Device scan",
+  exchange: "Exchange sync",
+  spinet: "Spinet import",
+  phone: "Phone contact",
+}
 
-  const updateSources = (newSources: string[]) => {
+export function ContactSourceFilter({
+  handleContactSource,
+}: {
+  handleContactSource: (sources: ContactSource[]) => void
+}) {
+  const [selectedSources, setSelectedSources] = useState<ContactSource[]>([])
+
+  const updateSources = (newSources: ContactSource[]) => {
     setSelectedSources(newSources)
     handleContactSource(newSources)
   }
 
-  const handleSourceToggle = (source: string) => {
+  const handleSourceToggle = (source: ContactSource) => {
     const newSources = selectedSources.includes(source)
       ? selectedSources.filter((s) => s !== source)
       : [...selectedSources, source]
@@ -32,16 +45,14 @@ export function ContactSourceFilter({ handleContactSource }: { handleContactSour
   }
 
   const clearAll = (event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
+    event?.preventDefault()
+    event?.stopPropagation()
     updateSources([])
   }
 
   const getButtonText = () => {
     if (selectedSources.length === 0) return "Contact source"
-    if (selectedSources.length === 1) return selectedSources[0]
+    if (selectedSources.length === 1) return contactSourceLabels[selectedSources[0]]
     return `(${selectedSources.length}) Contact source`
   }
 
@@ -64,9 +75,7 @@ export function ContactSourceFilter({ handleContactSource }: { handleContactSour
               )}
             >
               <span className="flex-1 text-left">{getButtonText()}</span>
-              <div className="flex items-center gap-1 ml-2">
-                {selectedSources.length === 0 && <ChevronDown className="h-4 w-4" />}
-              </div>
+              {selectedSources.length === 0 && <ChevronDown className="h-4 w-4 ml-2" />}
             </Button>
           </DropdownMenuTrigger>
 
@@ -78,25 +87,20 @@ export function ContactSourceFilter({ handleContactSource }: { handleContactSour
         </div>
 
         <DropdownMenuContent align="start" className="w-48">
-          {contactSources.map((source) => (
-            <DropdownMenuCheckboxItem
-              key={source}
-              checked={selectedSources.includes(source)}
-              onCheckedChange={(checked) => {
-                if (checked && !selectedSources.includes(source)) {
-                  handleSourceToggle(source)
-                } else if (!checked && selectedSources.includes(source)) {
-                  handleSourceToggle(source)
-                }
-              }}
-              onSelect={(e) => {
-                e.preventDefault()
-              }}
-              className="text-gray-700"
-            >
-              {source}
-            </DropdownMenuCheckboxItem>
-          ))}
+          {Object.entries(contactSourceLabels).map(([key, label]) => {
+            const source = key as ContactSource
+            return (
+              <DropdownMenuCheckboxItem
+                key={source}
+                checked={selectedSources.includes(source)}
+                onCheckedChange={(checked) => handleSourceToggle(source)}
+                onSelect={(e) => e.preventDefault()}
+                className="text-gray-700"
+              >
+                {label}
+              </DropdownMenuCheckboxItem>
+            )
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

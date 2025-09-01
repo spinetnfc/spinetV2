@@ -114,9 +114,9 @@ const {user}= useAuth()
     }
 
     // Apply source filters
-    // if (filters.sources.length > 0) {
-    //   filtered = filtered.filter((contact) => filters.sources.includes(contact.source || ""))
-    // }
+    if (filters.sources.length > 0) {
+      filtered = filtered.filter((contact) => filters.sources.includes(contact.type || ""))
+    }
 
     // Apply sorting
     const sortMethod =
