@@ -24,10 +24,10 @@ import { ContactsModals } from "./contacts-modals"
 import { ContactsHeader } from "./contacts-header"
 import { ContactsTable } from "./contacts-table"
 import { ExportDialogue } from "./export-dialogue"
+import { useAuth } from "@/context/authContext"
 
 interface ContactsDataTableProps {
-  profileId: string | undefined
-  locale: string
+   locale: string
   searchParams: {
     query?: string
     filter?: string
@@ -37,7 +37,7 @@ interface ContactsDataTableProps {
   }
 }
 
-export function ContactsDataTable({ profileId, locale, searchParams }: ContactsDataTableProps) {
+export function ContactsDataTable({  locale, searchParams }: ContactsDataTableProps) {
   const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(false)
@@ -49,6 +49,9 @@ export function ContactsDataTable({ profileId, locale, searchParams }: ContactsD
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false)
   const [columnOrder, setColumnOrder] = useState<string[]>([])
 const [isExportModalOpen, setIsExportModalOpen] = useState(false)
+const {user}= useAuth()
+      const profileId = user?.selectedProfile || undefined
+
 
   const [filters, setFilters] = useState({
     query: searchParams.query || "",
@@ -65,10 +68,9 @@ const [isExportModalOpen, setIsExportModalOpen] = useState(false)
     pageSize: Number(searchParams.rowsPerPage) || dynamicRowsPerPage,
   })
 
-  const router = useRouter()
+   const router = useRouter()
   const pathname = usePathname()
-  const urlSearchParams = useSearchParams()
-  const { isExpanded } = useSidebar()
+   const { isExpanded } = useSidebar()
   const isSmallScreen = useIsSmallScreen()
   const isLGScreen = useIsLGScreen()
   const isXLScreen = useIsXLScreen()
@@ -79,7 +81,7 @@ const [isExportModalOpen, setIsExportModalOpen] = useState(false)
     // Apply type filter
     if (filters.filter !== "all") {
       filtered = filtered.filter((contact) => {
-        if ("id" in contact.Profile) return false
+        if ("id" in  contact.Profile) return false
         return contact.type === filters.filter
       })
     }
@@ -89,16 +91,16 @@ const [isExportModalOpen, setIsExportModalOpen] = useState(false)
       const query = filters.query.toLowerCase()
       filtered = filtered.filter(
         (contact) =>
-          contact.Profile.fullName?.toLowerCase().includes(query) ||
-          contact.Profile.companyName?.toLowerCase().includes(query) ||
-          contact.Profile.position?.toLowerCase().includes(query),
+           contact.Profile.fullName?.toLowerCase().includes(query) ||
+           contact.Profile.companyName?.toLowerCase().includes(query) ||
+           contact.Profile.position?.toLowerCase().includes(query),
       )
     }
 
     // Apply advanced filters
     if (filters.role) {
       filtered = filtered.filter((contact) => {
-        const position = typeof contact.Profile.position === "string" ? contact.Profile.position.toLowerCase() : ""
+        const position = typeof  contact.Profile.position === "string" ?  contact.Profile.position.toLowerCase() : ""
         return position.includes(filters.role.toLowerCase())
       })
     }
@@ -106,7 +108,7 @@ const [isExportModalOpen, setIsExportModalOpen] = useState(false)
     if (filters.company) {
       filtered = filtered.filter((contact) => {
         const companyName =
-          typeof contact.Profile.companyName === "string" ? contact.Profile.companyName.toLowerCase() : ""
+          typeof  contact.Profile.companyName === "string" ?  contact.Profile.companyName.toLowerCase() : ""
         return companyName.includes(filters.company.toLowerCase())
       })
     }
@@ -169,6 +171,32 @@ const [isExportModalOpen, setIsExportModalOpen] = useState(false)
 
   const showInModal = !(isXLScreen || (!isExpanded && isLGScreen))
 
+useEffect(() => {
+  const page = Math.max(0, Number(searchParams.page || 1) - 1)
+  const size = Number(searchParams.rowsPerPage) || dynamicRowsPerPage
+
+  setPagination((prev) => {
+    if (prev.pageIndex !== page || prev.pageSize !== size) {
+      return { pageIndex: page, pageSize: size }
+    }
+    return prev
+  })
+}, [searchParams, dynamicRowsPerPage])
+useEffect(() => {
+  const params = new URLSearchParams(searchParams) // ✅ correct
+
+  params.set("page", String(pagination.pageIndex + 1))
+  params.set("rowsPerPage", String(pagination.pageSize))
+
+  const newUrl = `${pathname}?${params.toString()}`
+  const oldUrl = `${pathname}?${searchParams.toString()}`
+
+  if (newUrl !== oldUrl) {
+    router.replace(newUrl, { scroll: false })
+  }
+}, [pagination, pathname, router, searchParams])
+
+
   const table = useReactTable({
     data: processedContacts,
     columns: orderedColumns,
@@ -185,22 +213,6 @@ const [isExportModalOpen, setIsExportModalOpen] = useState(false)
       pagination,
     },
   })
-
-  useEffect(() => {
-    const params = new URLSearchParams()
-
-    if (filters.query) params.set("query", filters.query)
-    if (filters.filter !== "all") params.set("filter", filters.filter)
-    if (filters.sort !== "name-asc") params.set("sort", filters.sort)
-    if (pagination.pageIndex > 0) params.set("page", (pagination.pageIndex + 1).toString())
-    if (pagination.pageSize !== dynamicRowsPerPage) params.set("rowsPerPage", pagination.pageSize.toString())
-
-    const newUrl = `${pathname}${params.toString() ? `?${params.toString()}` : ""}`
-    if (newUrl !== `${pathname}?${urlSearchParams.toString()}`) {
-      router.replace(newUrl, { scroll: false })
-    }
-  }, [filters.query, filters.filter, filters.sort, pagination, pathname, router, urlSearchParams, dynamicRowsPerPage])
-
   useEffect(() => {
     async function fetchContacts() {
       if (!profileId) return

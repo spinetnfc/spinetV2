@@ -587,5 +587,6 @@
   "failed-to-delete-profile": "فشل في حذف الملف الشخصي. يرجى المحاولة مرة أخرى.",
   "confirm-profile-switch": "تأكيد تغيير الملف الشخصي",
   "profile-switch-confirmation": "هل أنت متأكد أنك تريد تغيير هذا الملف الشخصي؟",
-  "confirm": "تأكيد"
+  "confirm": "تأكيد",
+  "Contact saved successfully": "تم حفظ جهة الاتصال بنجاح"
 }

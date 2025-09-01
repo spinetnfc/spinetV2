@@ -6,16 +6,16 @@ import DigitalIdentity from './digital-identity';
 import EmpowerNetwork from './empower-network';
 import Events from './events';
 import TransformBusiness from './transform-business';
+import { getLocale } from '@/utils/getClientLocale';
 
 export default function HeroSection({
-  locale,
-  messages,
+   messages,
 }: {
-  locale: string;
-  messages: Record<string, string>;
+   messages: Record<string, string>;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+    const locale = getLocale() || "en";
 
   const slides = [
     <DigitalIdentity key="0" locale={locale} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />,

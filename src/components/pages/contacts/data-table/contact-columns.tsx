@@ -33,9 +33,9 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
       header: () => <FormattedMessage id="contact" defaultMessage="Contact" />,
       cell: ({ row }) => {
         const contact = row.original
-        const name = contact.Profile.fullName || "Unnamed Contact"
-        const Profile = contact.Profile || {}
-        const email = contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link || ""
+        const name =  contact.Profile?.fullName || "Unnamed Contact"
+        const Profile =  contact.Profile || {}
+        const email =  contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link || ""
 
         const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
         const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
@@ -44,7 +44,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
 
         return (
           <div
-            // href={`/${locale}/public-profile/${contact.Profile._id}`}
+            // href={`/${locale}/public-profile/${ contact.Profile._id}`}
             className="flex items-center gap-2 w-full"
           >
             <ContactAvatar name={name} profilePicture={Profile.profilePicture ?? ""} />
@@ -63,10 +63,10 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
       filterFn: (row, id, value) => {
         const contact = row.original
         const searchValue = value.toLowerCase()
-        const name = contact.Profile.fullName?.toLowerCase() || ""
+        const name =  contact.Profile.fullName?.toLowerCase() || ""
         const email =
-          contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link?.toLowerCase() || ""
-        const Profile = contact.Profile || {}
+           contact.Profile?.links?.find((link) => link.title.toLowerCase() === "email")?.link?.toLowerCase() || ""
+        const Profile =  contact.Profile || {}
         const companyName = typeof Profile.companyName === "string" ? Profile.companyName.toLowerCase() : ""
         const position = typeof Profile.position === "string" ? Profile.position.toLowerCase() : ""
 
@@ -78,24 +78,24 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
         )
       },
     },
-    {
-      accessorKey: "source", // assuming your Contact type has `source: string`
-      header: () => <FormattedMessage id="source" defaultMessage="Source" />,
-      cell: ({ row }) => {
-        const contact = row.original
-        return <div className="truncate text-xs sm:text-base">{contact.source || "-"}</div>
-      },
-      filterFn: (row, id, value: string[]) => {
-        if (!value || value.length === 0) return true
-        return value.includes(row.getValue(id))
-      },
-    },
+    // {
+    //   accessorKey: "source", // assuming your Contact type has `source: string`
+    //   header: () => <FormattedMessage id="source" defaultMessage="Source" />,
+    //   cell: ({ row }) => {
+    //     const contact = row.original
+    //     return <div className="truncate text-xs sm:text-base">{contact.source || "-"}</div>
+    //   },
+    //   filterFn: (row, id, value: string[]) => {
+    //     if (!value || value.length === 0) return true
+    //     return value.includes(row.getValue(id))
+    //   },
+    // },
     {
       accessorKey: "company",
       header: () => <FormattedMessage id="company" defaultMessage="Company" />,
       cell: ({ row }) => {
         const contact = row.original
-        const Profile = contact.Profile || {}
+        const Profile =  contact.Profile || {}
         const companyName = typeof Profile.companyName === "string" ? Profile.companyName.trim() : ""
         return <div className="truncate text-xs sm:text-base">{companyName || "-"}</div>
       },
@@ -105,7 +105,7 @@ export const contactColumns = (locale: string): ColumnDef<Contact>[] => {
       header: () => <FormattedMessage id="position" defaultMessage="Position" />,
       cell: ({ row }) => {
         const contact = row.original
-        const Profile = contact.Profile || {}
+        const Profile =  contact.Profile || {}
         const position = typeof Profile.position === "string" ? Profile.position.trim() : ""
         return <div className="truncate text-sm sm:text-base">{position || "-"}</div>
       },

@@ -61,9 +61,9 @@ export function ContactActionCell({ contact, locale, profileId, onEdit }: Contac
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
           onConfirm={handleDeleteConfirm}
-          itemName={contact.Profile.fullName}
+          itemName={ contact.Profile.fullName}
           isDeleting={isDeleting}
-          message="delete-contact-message"
+          messageId="delete-contact-message"
         />
       )}
       <DropdownMenu>

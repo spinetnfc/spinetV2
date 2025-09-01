@@ -70,7 +70,7 @@ export function ContactsBulkActions({ selectedContacts, profileId, onSelectionCl
           onConfirm={handleBulkDelete}
           itemName="contacts"
           isDeleting={isDeleting}
-          message="delete-contacts-message"
+          messageId="delete-contacts-message"
         />
       )}
     </>

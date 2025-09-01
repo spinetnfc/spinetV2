@@ -14,10 +14,11 @@ import actionsManagementImg from '@/assets/images/features/5.actions-managemnet.
 import multipleProfilesImg from '@/assets/images/features/6.multiple-profiles.png';
 import offersImg from '@/assets/images/features/7.offers.svg';
 import teamsFormsRedirectionsImg from '@/assets/images/features/8.teams-forms-redirections.png';
+import { getLocale } from '@/utils/getClientLocale';
 
-type Props = { locale: string; messages: Record<string, string> };
+type Props = {  messages: Record<string, string> };
 
-function Features({ locale, messages }: Props) {
+function Features({  messages }: Props) {
   const featuresContainerRef = useRef<HTMLDivElement>(null);
   const [
     handleMouseDown,
@@ -26,6 +27,7 @@ function Features({ locale, messages }: Props) {
     handleMouseMove,
     handleWheel,
   ] = useDrag(featuresContainerRef);
+    const locale = getLocale() || "en";
 
   // Updated wheel handler: if deltaX is 0, fallback to deltaY.
   const handleWheelWrapper = useCallback((e: WheelEvent) => {

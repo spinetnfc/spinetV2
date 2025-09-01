@@ -586,5 +586,6 @@
   "failed-to-delete-profile": "Échec de la suppression du profil. Veuillez réessayer.",
   "confirm-profile-switch": "Confirmer le changement de profil",
   "profile-switch-confirmation": "Êtes-vous sûr de vouloir changer de profil ?",
-  "confirm": "Confirmer"
+  "confirm": "Confirmer",
+  "Contact saved successfully": "Contact enregistré avec succès"
 }

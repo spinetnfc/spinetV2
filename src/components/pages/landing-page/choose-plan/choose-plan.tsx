@@ -9,23 +9,18 @@ import Legend from '../legend';
 import ComparePlans from './compare-plans';
 import Options from './options';
 import Pricing from './pricing';
+import { getLocale } from '@/utils/getClientLocale';
 
-type Props = { locale: string; messages: Record<string, string> };
+type Props = { messages: Record<string, string> };
 
-function ChoosePlan({ locale, messages }: Props) {
-  return (
-    <IntlProvider locale={locale} messages={messages}>
-      <ChoosePlanContent locale={locale} />
-    </IntlProvider>
-  );
-}
+ 
 
-export default ChoosePlan;
-
-const ChoosePlanContent = ({ locale }: { locale: string }) => {
+ const ChoosePlan = () => {
   const intl = useIntl();
   const [isComparePlansOpen, setIsComparePlansOpen] = useState(false);
   const [isYearly, setIsYearly] = useState(false);
+      const locale = getLocale() || "en";
+
   return (
     <div className=" flex w-full flex-col items-center justify-center gap-2.5 overflow-x-hidden px-3 py-1.5  lg:gap-4">
       <Legend
@@ -58,3 +53,4 @@ const ChoosePlanContent = ({ locale }: { locale: string }) => {
     </div>
   );
 };
+export default ChoosePlan;

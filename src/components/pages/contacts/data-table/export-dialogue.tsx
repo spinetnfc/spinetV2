@@ -59,23 +59,23 @@ export function ExportDialogue({ isOpen, onClose, contacts }: ExportDialogueProp
         .map((field) => {
           switch (field) {
             case "name":
-              return contact.Profile?.fullName || ""
+              return  contact.Profile?.fullName || ""
             // case "role":
-            //   return contact.Profile?.role || ""
+            //   return  contact.Profile?.role || ""
             // case "score":
-            //   return contact.Profile?.score || ""
+            //   return  contact.Profile?.score || ""
             case "emailAddress":
-              return contact.Profile?.links?.filter((link) => link.title === "Email")[0]?.link || ""
+              return  contact.Profile?.links?.filter((link) => link.title === "Email")[0]?.link || ""
             case "company":
-              return contact.Profile?.companyName || ""
+              return  contact.Profile?.companyName || ""
             // case "source":
-            //   return contact.Profile?.source || ""
+            //   return  contact.Profile?.source || ""
             case "phone":
-              return contact.Profile?.links?.filter((link) => link.title === "phone")[0]?.link || ""
+              return  contact.Profile?.links?.filter((link) => link.title === "phone")[0]?.link || ""
             case "profilePictureLink":
-              return contact.Profile?.profilePicture || ""
+              return  contact.Profile?.profilePicture || ""
             // case "owner":
-            //   return contact.Profile?.owner || ""
+            //   return  contact.Profile?.owner || ""
             default:
               return ""
           }

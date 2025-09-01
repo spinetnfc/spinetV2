@@ -18,10 +18,10 @@ interface EditContactFormProps {
 
 export default function EditContactForm({ contact, onSuccess, onCancel }: EditContactFormProps) {
   const [formData, setFormData] = useState({
-    fullName: contact.Profile.fullName || "",
-    email: contact.Profile.links?.find((link) => link.title.toLowerCase() === "email")?.link || "",
-     companyName: contact.Profile.companyName || "",
-    position: contact.Profile.position || "",
+    fullName:  contact.Profile.fullName || "",
+    email:  contact.Profile.links?.find((link) => link.title.toLowerCase() === "email")?.link || "",
+     companyName:  contact.Profile.companyName || "",
+    position:  contact.Profile.position || "",
   })
 
   const handleSubmit = (e: React.FormEvent) => {

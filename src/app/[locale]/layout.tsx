@@ -64,7 +64,7 @@ const RootLayout = async (
   const fontClass = locale === 'ar' ? arabic.variable : poppins.variable;
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning className={`${fontClass} scroll-smooth ${locale === 'ar' ? 'ar' : ''}`}>
+    <html lang={locale} dir={dir} suppressHydrationWarning className={`${fontClass}   ${locale === 'ar' ? 'ar' : ''}`}>
       <title>Spinet NFC</title>
       <body suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>

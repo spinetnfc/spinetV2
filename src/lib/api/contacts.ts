@@ -61,6 +61,9 @@ export const updateContact = async (profileId: string, contactId: string, contac
         // Log validations separately to avoid truncation
         if (error.response?.data?.validations) {
             console.error("Validation errors:", error.response.data.validations);
+            console.log("Full error response:", JSON.stringify(error.response.data.validations, null, 2));
+  
+  
         }
         throw error;
     }
