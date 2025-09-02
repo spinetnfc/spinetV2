@@ -1,9 +1,9 @@
 "use client"
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
-import PhoneMockup from "../phone-mockup"
 import EditContactForm from "../edit-contact-form"
 import type { Contact } from "@/types/contact"
+import PhoneMockup from "../contact-details"
 
 interface ContactsModalsProps {
   selectedContact: Contact | null
@@ -26,9 +26,9 @@ export function ContactsModals({
     <>
       {/* Contact Details Modal */}
       <Dialog open={!!selectedContact && !editingContact && showInModal} onOpenChange={onContactClose}>
-        <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-xs [&>button]:hidden">
+        <DialogContent   className="p-0 bg-transparent shadow-none border-none outline-none w-fit max-h-[80vh] overflow-y-auto [&>button]:hidden">
           <DialogTitle className="sr-only">Contact Details</DialogTitle>
-          {selectedContact && <PhoneMockup data={selectedContact.Profile} onClose={onContactClose} />}
+          {selectedContact && <PhoneMockup contact={selectedContact} onClose={onContactClose} />}
         </DialogContent>
       </Dialog>
 

@@ -12,10 +12,10 @@ export function useDynamicRowsPerPage(minRows: number = 5, maxRows: number = 100
             const tableHeaderHeight = 48 // table header 
             const tableFooterHeight = 48 // pagination controls
             const rowHeight = 56 // table row height
-            const sapcing = 20 // spacing between content
-
+            const spacing = 20 // spacing between content
+            const paddingTop = 24 // padding at the top
             // remaining height for rows
-            const remainingHeight = availableHeight - headerHeight - tableHeaderHeight - tableFooterHeight - sapcing
+            const remainingHeight = availableHeight - headerHeight - tableHeaderHeight - tableFooterHeight - spacing - paddingTop
 
             // how many rows can fit
             const calculatedRows = Math.floor(remainingHeight / rowHeight)

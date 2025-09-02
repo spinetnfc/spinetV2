@@ -42,7 +42,7 @@ export default function EditContactForm({ contact, onSuccess, onCancel }: EditCo
           <div>
             <Label htmlFor="fullName">
               <FormattedMessage id="full-name" defaultMessage="Full Name" />
-            </Label>
+             </Label>
             <Input
               id="fullName"
               value={formData.fullName}

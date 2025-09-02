@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect, useCallback } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
   type ColumnFiltersState,
   type VisibilityState,
@@ -11,23 +11,22 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { useSidebar } from "@/context/sidebarContext"
-import { useIsLGScreen, useIsSmallScreen, useIsXLScreen } from "@/hooks/screens"
+import { useIsLGScreen, useIsXLScreen } from "@/hooks/screens"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import { getContacts } from "@/lib/api/contacts"
 import { contactColumns } from "./contact-columns"
 import { ContactsBulkActions } from "./contacts-bulk-actions"
 import { FilterDialogue } from "./filter-dialogue"
-import PhoneMockup from "../contact-details"
-import EditContactForm from "../edit-contact-form"
-import type { Contact } from "@/types/contact"
+ import type { Contact } from "@/types/contact"
 import { ContactsModals } from "./contacts-modals"
 import { ContactsHeader } from "./contacts-header"
 import { ContactsTable } from "./contacts-table"
 import { ExportDialogue } from "./export-dialogue"
 import { useAuth } from "@/context/authContext"
+import PhoneMockup from "../contact-details"
 
 interface ContactsDataTableProps {
-   locale: string
+  locale: string
   searchParams: {
     query?: string
     filter?: string
@@ -37,8 +36,8 @@ interface ContactsDataTableProps {
   }
 }
 
-export function ContactsDataTable({  locale, searchParams }: ContactsDataTableProps) {
-  const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
+export function ContactsDataTable({ locale, searchParams }: ContactsDataTableProps) {
+ const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -48,10 +47,15 @@ export function ContactsDataTable({  locale, searchParams }: ContactsDataTablePr
   const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false)
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false)
   const [columnOrder, setColumnOrder] = useState<string[]>([])
-const [isExportModalOpen, setIsExportModalOpen] = useState(false)
-const {user}= useAuth()
-      const profileId = user?.selectedProfile || undefined
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false)
 
+  const { user } = useAuth()
+  const profileId = user?.selectedProfile || undefined
+  const router = useRouter()
+  const urlSearchParams = useSearchParams()
+  const { isExpanded } = useSidebar()
+  const isLGScreen = useIsLGScreen()
+  const isXLScreen = useIsXLScreen()
 
   const [filters, setFilters] = useState({
     query: searchParams.query || "",
@@ -68,12 +72,31 @@ const {user}= useAuth()
     pageSize: Number(searchParams.rowsPerPage) || dynamicRowsPerPage,
   })
 
-   const router = useRouter()
-  const pathname = usePathname()
-   const { isExpanded } = useSidebar()
-  const isSmallScreen = useIsSmallScreen()
-  const isLGScreen = useIsLGScreen()
-  const isXLScreen = useIsXLScreen()
+  useEffect(() => {
+    const currentPage = urlSearchParams.get("page")
+    const currentRowsPerPage = urlSearchParams.get("rowsPerPage")
+
+    const newPageIndex = Math.max(0, Number(currentPage || 1) - 1)
+    const newPageSize = Number(currentRowsPerPage) || dynamicRowsPerPage
+
+    setPagination((prev) => {
+      if (prev.pageIndex !== newPageIndex || prev.pageSize !== newPageSize) {
+        return { pageIndex: newPageIndex, pageSize: newPageSize }
+      }
+      return prev
+    })
+  }, [urlSearchParams, dynamicRowsPerPage])
+
+  const updateURL = useCallback(
+    (newPagination: typeof pagination) => {
+      const params = new URLSearchParams(urlSearchParams.toString())
+      params.set("page", String(newPagination.pageIndex + 1))
+      params.set("rowsPerPage", String(newPagination.pageSize))
+      // Try this instead
+      router.push(`?${params.toString()}`, { scroll: false })
+    },
+    [router, urlSearchParams],
+  )
 
   const processedContacts = useMemo(() => {
     let filtered = contacts
@@ -81,7 +104,7 @@ const {user}= useAuth()
     // Apply type filter
     if (filters.filter !== "all") {
       filtered = filtered.filter((contact) => {
-        if ("id" in  contact.Profile) return false
+        if ("id" in contact.Profile) return false
         return contact.type === filters.filter
       })
     }
@@ -91,16 +114,16 @@ const {user}= useAuth()
       const query = filters.query.toLowerCase()
       filtered = filtered.filter(
         (contact) =>
-           contact.Profile.fullName?.toLowerCase().includes(query) ||
-           contact.Profile.companyName?.toLowerCase().includes(query) ||
-           contact.Profile.position?.toLowerCase().includes(query),
+          contact.Profile.fullName?.toLowerCase().includes(query) ||
+          contact.Profile.companyName?.toLowerCase().includes(query) ||
+          contact.Profile.position?.toLowerCase().includes(query),
       )
     }
 
     // Apply advanced filters
     if (filters.role) {
       filtered = filtered.filter((contact) => {
-        const position = typeof  contact.Profile.position === "string" ?  contact.Profile.position.toLowerCase() : ""
+        const position = typeof contact.Profile.position === "string" ? contact.Profile.position.toLowerCase() : ""
         return position.includes(filters.role.toLowerCase())
       })
     }
@@ -108,7 +131,7 @@ const {user}= useAuth()
     if (filters.company) {
       filtered = filtered.filter((contact) => {
         const companyName =
-          typeof  contact.Profile.companyName === "string" ?  contact.Profile.companyName.toLowerCase() : ""
+          typeof contact.Profile.companyName === "string" ? contact.Profile.companyName.toLowerCase() : ""
         return companyName.includes(filters.company.toLowerCase())
       })
     }
@@ -171,35 +194,6 @@ const {user}= useAuth()
 
   const showInModal = !(isXLScreen || (!isExpanded && isLGScreen))
 
-useEffect(() => {
-  const page = Math.max(0, Number(searchParams.page || 1) - 1)
-  const size = Number(searchParams.rowsPerPage) || dynamicRowsPerPage
-console.log("searchParams effect triggered", searchParams)
-  setPagination((prev) => {
-    if (prev.pageIndex !== page || prev.pageSize !== size) {
-      return { pageIndex: page, pageSize: size }
-    }
-    return prev
-  })
-}, [searchParams, dynamicRowsPerPage])
-
-// ✅ update URL only if something actually changed
-useEffect(() => {
-  const params = new URLSearchParams(searchParams)
-
-  const currentPage = Number(params.get("page") || 1)
-  const currentRows = Number(params.get("rowsPerPage") || dynamicRowsPerPage)
-
-  // only update if URL values differ from pagination state
-  if (currentPage !== pagination.pageIndex + 1 || currentRows !== pagination.pageSize) {
-    params.set("page", String(pagination.pageIndex + 1))
-    params.set("rowsPerPage", String(pagination.pageSize))
-
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-  }
-}, [pagination, pathname, router])
-
-
   const table = useReactTable({
     data: processedContacts,
     columns: orderedColumns,
@@ -216,12 +210,14 @@ useEffect(() => {
       pagination,
     },
   })
+
   useEffect(() => {
     async function fetchContacts() {
       if (!profileId) return
 
       try {
         setLoading(true)
+        if (!profileId) return
         const fetchedContacts = await getContacts(profileId)
         setContacts(fetchedContacts)
       } catch (error) {
@@ -233,6 +229,10 @@ useEffect(() => {
 
     fetchContacts()
   }, [profileId])
+
+  useEffect(() => {
+    updateURL(pagination)
+  }, [pagination, updateURL])
 
   const handleSearchChange = useCallback((query: string) => {
     setFilters((prev) => ({ ...prev, query }))
@@ -300,6 +300,7 @@ useEffect(() => {
 
   if (loading) return null
 
+
   return (
     <main>
       <FilterDialogue
@@ -350,23 +351,18 @@ useEffect(() => {
         </div>
 
         <div className="hidden lg:block h-fit space-y-4">
-          {selectedContact && !editingContact && !showInModal && (
+          {selectedContact && editingContact && !showInModal && (
             <PhoneMockup contact={selectedContact} onClose={() => setSelectedContact(null)} />
           )}
-          {editingContact && !selectedContact && !showInModal && (
-            <EditContactForm
-              contact={editingContact}
-              onSuccess={handleEditSuccess}
-              onCancel={() => setEditingContact(null)}
-            />
-          )}
+         
         </div>
       </div>
-<ExportDialogue
-  isOpen={isExportModalOpen}
-  onClose={() => setIsExportModalOpen(false)}
-  contacts={processedContacts}
-/>
+
+      <ExportDialogue
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        contacts={processedContacts}
+      />
 
       <ContactsModals
         selectedContact={selectedContact}

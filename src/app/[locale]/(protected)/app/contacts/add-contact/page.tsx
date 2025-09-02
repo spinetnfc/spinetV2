@@ -121,6 +121,8 @@ export default function AddContactPage() {
   const [scan, setScan] = useState<boolean | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const locale = getLocale()
+  const [actionType, setActionType] = useState<"save" | "saveAndAdd">("save")
+
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
@@ -206,7 +208,13 @@ export default function AddContactPage() {
         setLinks([])
         setTagInput("")
         setShowLinkForm(false)
+         if (actionType === "save") {
+        // go back to contacts page
         router.push(`/${locale}/app/contacts`)
+      } else {
+        // stay here for adding another contact
+        router.refresh()
+      }
       } else {
         toast.error(intl.formatMessage({ id: "Failed to add contact" }))
       }
@@ -276,7 +284,7 @@ export default function AddContactPage() {
       {/* Header */}
       <div className="w-full bg-transparent border-b px-6 py-[13.5px] border-secondary">
         <div className="w-full flex items-center justify-between    ">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 lg:pl-0 pl-12">
             <Button variant="ghost" size="sm" className="p-2" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -341,7 +349,7 @@ export default function AddContactPage() {
         <Form {...form}>
           <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Profile Picture Section */}
-            <div className="w-2/3 flex justify-between items-center">
+            <div className="w-full lg:w-2/3 flex justify-between items-center">
               <div>
               <h3 className="text-sm font-medium text-gray-900 mb-2">Profile picture</h3>
               <p className="text-sm text-gray-500 mb-4">This will be displayed on your contact's profile</p>
@@ -498,7 +506,7 @@ export default function AddContactPage() {
                
 
               {/* Interaction Information */}
-              <div className="w-1/3">
+              <div className="w-full lg:w-1/3">
                 <h3 className="text-lg font-medium text-gray-900 mb-6">Interaction information</h3>
                 <div className="space-y-6">
                   <div>
@@ -621,13 +629,22 @@ export default function AddContactPage() {
                 Cancel
               </Button>
               <div className="flex items-center gap-3">
-                <Button type="submit" variant="outline">
+                <Button
+                  type="submit"
+                  variant="outline"
+                  onClick={() => setActionType("saveAndAdd")}
+                >
                   Save and add new contact
                 </Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                <Button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700"
+                  onClick={() => setActionType("save")}
+                >
                   Save
                 </Button>
               </div>
+
             </div>
           </form>
         </Form>
