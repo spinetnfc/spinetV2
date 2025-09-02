@@ -174,7 +174,7 @@ const {user}= useAuth()
 useEffect(() => {
   const page = Math.max(0, Number(searchParams.page || 1) - 1)
   const size = Number(searchParams.rowsPerPage) || dynamicRowsPerPage
-
+console.log("searchParams effect triggered", searchParams)
   setPagination((prev) => {
     if (prev.pageIndex !== page || prev.pageSize !== size) {
       return { pageIndex: page, pageSize: size }
@@ -182,19 +182,22 @@ useEffect(() => {
     return prev
   })
 }, [searchParams, dynamicRowsPerPage])
+
+// ✅ update URL only if something actually changed
 useEffect(() => {
-  const params = new URLSearchParams(searchParams) // ✅ correct
+  const params = new URLSearchParams(searchParams)
 
-  params.set("page", String(pagination.pageIndex + 1))
-  params.set("rowsPerPage", String(pagination.pageSize))
+  const currentPage = Number(params.get("page") || 1)
+  const currentRows = Number(params.get("rowsPerPage") || dynamicRowsPerPage)
 
-  const newUrl = `${pathname}?${params.toString()}`
-  const oldUrl = `${pathname}?${searchParams.toString()}`
+  // only update if URL values differ from pagination state
+  if (currentPage !== pagination.pageIndex + 1 || currentRows !== pagination.pageSize) {
+    params.set("page", String(pagination.pageIndex + 1))
+    params.set("rowsPerPage", String(pagination.pageSize))
 
-  if (newUrl !== oldUrl) {
-    router.replace(newUrl, { scroll: false })
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }
-}, [pagination, pathname, router, searchParams])
+}, [pagination, pathname, router])
 
 
   const table = useReactTable({
