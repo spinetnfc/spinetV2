@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+ import { cookies } from 'next/headers';
 
 export async function getLocale(): Promise<string | undefined> {
     const cookieStore = await cookies();

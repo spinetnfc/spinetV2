@@ -1,21 +1,39 @@
+"use server";
 import { ServerApi } from '@/lib/axios';
 import type { Contact, ContactInput, InviteContact } from '@/types/contact';
 import { withServerCookies } from '@/utils/withServerCookies';
 
 export const getContacts = async (profileId: string | null): Promise<Contact[]> => {
-    const headers = await withServerCookies();
-    try {
-        if (!profileId || typeof profileId !== 'string') {
-            throw new Error(`Invalid profileId: ${profileId}`);
-        }
-        const response = await ServerApi.get(`/profile/${profileId}/contacts`, { headers });
-        // console.log("conatcts:::::::::::::::::::", response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Profile fetch error:', error);
-        throw error;
+  const headers = await withServerCookies();
+
+  try {
+    if (!profileId || typeof profileId !== 'string') {
+      throw new Error(`Invalid profileId provided: ${profileId}`);
     }
+
+    const response = await ServerApi.get(`/profile/${profileId}/contacts`, { headers });
+
+    if (!response.data) {
+      throw new Error(`No contacts found for profileId: ${profileId}`);
+    }
+
+    return response.data;
+  } catch (error: any) {
+    // If it's an Axios error, include status and message
+    if (error.response) {
+      console.error(
+        `[getContacts] Failed to fetch contacts for profileId: ${profileId}. ` +
+        `Status: ${error.response.status}, Data: ${JSON.stringify(error.response.data)}`
+      );
+    } else {
+      console.error(`[getContacts] Error fetching contacts for profileId: ${profileId}:`, error.message || error);
+    }
+
+    // Optional: wrap error with custom message before throwing
+    throw new Error(`Unable to fetch contacts for profileId: ${profileId}. ${error.message || ''}`);
+  }
 };
+
 
 
 export const addContact = async (profileId: string, contact: ContactInput): Promise<{ message: string }> => {
@@ -60,6 +78,9 @@ export const updateContact = async (profileId: string, contactId: string, contac
         // Log validations separately to avoid truncation
         if (error.response?.data?.validations) {
             console.error("Validation errors:", error.response.data.validations);
+            console.log("Full error response:", JSON.stringify(error.response.data.validations, null, 2));
+  
+  
         }
         throw error;
     }

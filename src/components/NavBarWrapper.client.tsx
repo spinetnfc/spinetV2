@@ -8,6 +8,7 @@ import SearchNavBar from '@/components/pages/search/nav-bar';
 import enMessages from '@/lang/en.json';
 import arMessages from '@/lang/ar.json';
 import frMessages from '@/lang/fr.json';
+import { getLocale } from '@/utils/getClientLocale';
 
 const messagesMap = {
     en: enMessages,
@@ -15,8 +16,9 @@ const messagesMap = {
     fr: frMessages,
 };
 
-export default function NavBarWrapper({ locale, parent }: { locale: string, parent: string }) {
+export default function NavBarWrapper({  parent }: {  parent: string }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const locale = getLocale() || "en";
     const messages = messagesMap[locale as keyof typeof messagesMap];
 
     return (

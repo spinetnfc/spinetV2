@@ -23,8 +23,7 @@ export const editContact = async (profileId: string, contactId: string, updatedC
         return { success: false, message: "Profile ID is missing" };
     }
     try {
-        console.log("Updating contact:", contactId)
-        const response = await updateContact(profileId, contactId, updatedContact)
+         const response = await updateContact(profileId, contactId, updatedContact)
         return { success: true, message: response.message }
     } catch (error) {
         console.error("Error updating contact:", error)

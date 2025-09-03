@@ -87,7 +87,7 @@ export default function AddLeadForm({ locale, onSave, onClose }: { locale: strin
                     if (response?.success && response.data) {
                         const contactOptions = response.data.map((contact: any) => ({
                             value: contact._id,
-                            label: contact.Profile?.fullName || "Unknown",
+                            label:  contact.Profile?.fullName || "Unknown",
                         }));
                         setContacts(contactOptions);
                     } else {

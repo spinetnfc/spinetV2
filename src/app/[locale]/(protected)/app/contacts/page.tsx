@@ -1,44 +1,38 @@
-import { getUserCookieOnServer } from "@/utils/server-cookie"
-import { getContacts } from "@/lib/api/contacts"
-import type { Contact } from "@/types/contact"
-import { ContactsDataTable } from "@/components/pages/contacts/data-table/contacts-data-table"
+ 
+import { ContactsDataTable } from "@/components/pages/contacts/data-table/contacts-page"
+  import { getUserCookieOnServer } from "@/utils/server-cookie"
+ 
+ 
+  // Define the props type for ContactsPage
+  type ContactsPageProps = {
+     searchParams: Record<string, string>
+  }
+  
+       // Fetch contacts data
+      export default async function ContactsPage(props: ContactsPageProps) {
+      const searchParams = await props.searchParams;
+       const user = await getUserCookieOnServer()
 
-type SearchParams = {
-    query?: string
-    filter?: string
-    sort?: string
-    order?: "asc" | "desc"
-    rowsPerPage?: string
-}
-
-type ContactsPageProps = {
-    params: Promise<{ locale: string }>
-    searchParams: Promise<SearchParams>
-}
-
-export default async function ContactsPage(props: ContactsPageProps) {
-    const searchParams = await props.searchParams;
-    const { locale } = await params
-    const user = await getUserCookieOnServer()
-    const profileId = user?.selectedProfile || null
-
-    // Fetch contacts data
-    let contacts: Contact[] = []
-    try {
-        contacts = await getContacts(profileId)
-    } catch (error) {
-        console.error("Error fetching contacts:", error)
-    }
 
     return (
-        <div>
-            <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-4">
-                <ContactsDataTable
-                    contacts={contacts}
-                    locale={locale}
-                    searchParams={await searchParams}
-                />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      
+ 
+      <div className="flex">
+      
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          
+             <div className="flex-1">
+              <ContactsDataTable  locale="en" searchParams={searchParams} />
             </div>
-        </div>
-    )
+
+               
+           
+        </main>
+      </div>
+    </div>
+  )
 }

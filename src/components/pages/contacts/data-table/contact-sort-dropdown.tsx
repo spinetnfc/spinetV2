@@ -1,55 +1,46 @@
 "use client"
 
-import { ArrowDownUp } from 'lucide-react'
+import { useState } from "react"
+import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
-import { FormattedMessage } from "react-intl"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-
-type SortOption = "name-asc" | "name-desc" | "date-asc" | "date-desc"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export function ContactSortDropdown() {
-    const searchParams = useSearchParams()
-    const pathname = usePathname()
-    const { replace } = useRouter()
+  const [selectedSort, setSelectedSort] = useState("name-asc")
 
-    // const currentSort = (searchParams.get("sort") as SortOption) || "name-asc"
+  const sortOptions = [
+    { value: "name-asc", label: "Name A-Z" },
+    { value: "name-desc", label: "Name Z-A" },
+    { value: "date-asc", label: "Oldest First" },
+    { value: "date-desc", label: "Newest First" },
+  ]
 
-    const handleSortChange = (sort: SortOption) => {
-        const params = new URLSearchParams(searchParams)
+  const handleSortChange = (value: string) => {
+    setSelectedSort(value)
+    // Note: This would typically update URL params or call a parent callback
+  }
 
-        if (sort === "name-asc") {
-            params.delete("sort")
-        } else {
-            params.set("sort", sort)
-        }
+  const currentSortLabel = sortOptions.find((option) => option.value === selectedSort)?.label || "Sort"
 
-        replace(`${pathname}?${params.toString()}`)
-    }
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                >
-                    <ArrowDownUp className="w-4 h-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleSortChange("name-asc")}>
-                    <FormattedMessage id="name-desc" />
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleSortChange("name-desc")}>
-                    <FormattedMessage id="name-asc" />
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleSortChange("date-asc")}>
-                    <FormattedMessage id="date-desc" />
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleSortChange("date-desc")}>
-                    <FormattedMessage id="date-asc" />
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-8 px-2">
+          <span className="sr-only">Sort contacts</span>
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-40">
+        {sortOptions.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onClick={() => handleSortChange(option.value)}
+            className={selectedSort === option.value ? "bg-accent" : ""}
+          >
+            {option.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/authContext'; // Corrected import path
+import { ContactsProvider } from '@/context/contactsContext';
 import { getLocale } from '@/utils/getClientLocale';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -32,5 +33,5 @@ export default function ProtectedLayout({
         return null; // Prevent rendering until client-side and auth is resolved
     }
 
-    return <>{children}</>;
+    return <ContactsProvider>{children}</ContactsProvider>;
 }

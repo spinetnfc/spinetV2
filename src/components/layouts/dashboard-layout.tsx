@@ -46,11 +46,9 @@ const Layout = ({
           isExpanded ? "lg:ps-60" : "lg:ps-16"
         )}
       >
-        <main className="grid flex-1 items-start gap-4 md:gap-8 relative pt-10">
+        <main className="grid flex-1 items-start gap-4 md:gap-8 relative ">
           {children}
-          <div className='absolute top-0 sm:top-2 end-2'>
-            <Header locale={locale} />
-          </div>
+          
         </main>
       </div>
     </div>

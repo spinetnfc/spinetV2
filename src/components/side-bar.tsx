@@ -65,12 +65,12 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
             {!isDark ? (
               isExpanded ? <>
                 <LogoSpinet locale={locale} parentDarkMode={false} />
-                <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
+                <div className='text-sm text-primary'>{profileData ? profileData.fullName : null}</div>
               </> : <Logo locale={locale} />
             ) : (
               isExpanded ? <>
                 <LogoSpinet locale={locale} parentDarkMode={true} />
-                <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
+                <div className='text-sm text-primary'>{profileData ? profileData.fullName : null}</div>
               </> : <Logo locale={locale} />
             )}
           </div>
@@ -87,15 +87,15 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                   key={item.name}
                   href={item.to}
                   className={cn(
-                    'text-gray-400 hover:bg-gray-700 hover:text-white',
+                    'text-primary hover:bg-[#F1F5F9] hover:text-blue-500',
                     'group flex items-center rounded-md p-2 ms-1 text-base font-medium ',
                     isExpanded && "w-full",
-                    isActive && 'bg-blue-200 dark:bg-white text-blue-500 dark:text-blue-500'
+                    isActive && 'bg-[#F1F5F9] dark:bg-white   dark:text-blue-500'
                   )}
                 >
                   <item.icon
                     className={cn(
-                      'text-gray-400 group-hover:text-gray-400',
+                      'text-primary group-hover:text-blue-500',
                       `${isExpanded ? "me-4" : "mx-auto"} size-6 shrink-0`,
                       isActive && 'text-blue-500 dark:text-blue-500'
                     )}
@@ -144,7 +144,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
             <nav className="flex flex-col items-center gap-4 px-2 pb-4">
               <div className="flex flex-col gap-1 h-20 w-full shrink-0 items-center justify-center border-b border-gray-300">
                 {isDark ? <LogoSpinet locale={locale} parentDarkMode={true} /> : <LogoSpinet locale={locale} parentDarkMode={false} />}
-                <div className='text-sm text-gray-400'>{profileData ? profileData.fullName : null}</div>
+                <div className='text-sm text-primary'>{profileData ? profileData.fullName : null}</div>
               </div>
               {navigation.map((item) => {
                 const isActive = item.to.endsWith('/app')
@@ -157,14 +157,14 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                     key={item.name}
                     href={item.to}
                     className={cn(
-                      'text-gray-400 hover:bg-gray-700 hover:text-white',
+                      'text-primary hover:bg-gray-700 hover:text-white',
                       'group flex flex-1 w-full items-center rounded-md p-2 text-base font-medium',
                       isActive && 'bg-blue-200 dark:bg-white text-blue-500 dark:text-blue-500'
                     )}
                   >
                     <item.icon
                       className={cn(
-                        'text-gray-400 group-hover:text-gray-400',
+                        'text-primary group-hover:text-primary',
                         `me-4 size-6 shrink-0`,
                         isActive && 'text-blue-500 dark:text-blue-500'
                       )}

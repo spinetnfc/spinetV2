@@ -5,10 +5,12 @@ import useTranslate from '@/hooks/use-translate';
 
 import CtaButton from './cta-button';
 import Legend from './legend';
+import { getLocale } from '@/utils/getServerLocale';
 
-type Props = { locale: string };
-
-async function DiscoverMore({ locale }: Props) {
+ 
+async function DiscoverMore() {
+      const locale =await getLocale() || "en";
+  
   const { t } = await useTranslate(locale);
   return (
     <div className=" flex w-full flex-col items-center justify-center  gap-2.5   px-3 py-1.5  lg:gap-4">

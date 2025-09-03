@@ -1,343 +1,348 @@
-'use client';
+"use client"
 
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { useIntl, FormattedMessage } from 'react-intl';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { toast } from 'sonner';
-import { QrCode, Upload } from 'lucide-react';
-import QrScanner from 'qr-scanner';
-import { getUserFromCookie } from '@/utils/cookie';
-import { useAuth } from '@/context/authContext';
-import { createContact } from '@/actions/contacts';
-import { getProfileAction } from '@/actions/profile';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, type ChangeEvent } from "react"
+import { useIntl, FormattedMessage } from "react-intl"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+import { toast } from "sonner"
+import { QrCode, Upload } from "lucide-react"
+import QrScanner from "qr-scanner"
+import { getUserFromCookie } from "@/utils/cookie"
+import { useAuth } from "@/context/authContext"
+import { createContact } from "@/actions/contacts"
+import { getProfileAction } from "@/actions/profile"
+import { useRouter } from "next/navigation"
 
 interface ScanContactProps {
-    locale: string;
+  locale: string
 }
 
 export default function ScanContact({ locale }: ScanContactProps) {
-    const intl = useIntl();
-    const profileId = useAuth().user.selectedProfile;;
-    const user = getUserFromCookie();
-    const [isScanning, setIsScanning] = useState(false);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [scannedUrl, setScannedUrl] = useState<string | null>(null);
-    const videoRef = React.useRef<HTMLVideoElement>(null);
-    const fileInputRef = React.useRef<HTMLInputElement>(null);
-    const [qrScanner, setQrScanner] = useState<QrScanner | null>(null);
-    const router = useRouter();
+  const intl = useIntl()
+  const profileId = useAuth().user.selectedProfile
+  const user = getUserFromCookie()
+  const [isScanning, setIsScanning] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [scannedUrl, setScannedUrl] = useState<string | null>(null)
+  const videoRef = React.useRef<HTMLVideoElement>(null)
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [qrScanner, setQrScanner] = useState<QrScanner | null>(null)
+  const router = useRouter()
 
-    // Initialize QR scanner
-    useEffect(() => {
-        console.log('useEffect running, videoRef:', videoRef.current);
-        if (videoRef.current) {
-            const scanner = new QrScanner(
-                videoRef.current,
-                (result) => handleQrScan(result.data),
-                {
-                    preferredCamera: 'environment',
-                    highlightScanRegion: true,
-                    highlightCodeOutline: true,
-                }
-            );
-            console.log('QR Scanner initialized:', scanner);
-            setQrScanner(scanner);
+  // Initialize QR scanner
+  useEffect(() => {
+    console.log("useEffect running, videoRef:", videoRef.current)
+    if (videoRef.current) {
+      const scanner = new QrScanner(videoRef.current, (result) => handleQrScan(result.data), {
+        preferredCamera: "environment",
+        highlightScanRegion: true,
+        highlightCodeOutline: true,
+      })
+      console.log("QR Scanner initialized:", scanner)
+      setQrScanner(scanner)
 
-            // Cleanup function
-            return () => {
-                if (scanner) {
-                    console.log('Destroying QR scanner');
-                    scanner.destroy();
-                }
-            };
-        } else {
-            console.error('Video element not found');
+      // Cleanup function
+      return () => {
+        if (scanner) {
+          console.log("Destroying QR scanner")
+          scanner.destroy()
         }
-    }, []);
+      }
+    } else {
+      console.error("Video element not found")
+    }
+  }, [])
 
-    useEffect(() => {
-        const scanContact = async () => {
-            if (scannedUrl && user?._id) {
-                try {
-                    // Parse the scanned URL
-                    const url = new URL(scannedUrl);
-                    const pathSegments = url.pathname.split('/').filter(segment => segment);
+  useEffect(() => {
+    const scanContact = async () => {
+      if (scannedUrl && user?._id) {
+        try {
+          // Parse the scanned URL
+          const url = new URL(scannedUrl)
+          const pathSegments = url.pathname.split("/").filter((segment) => segment)
 
-                    // Check if the URL follows the expected format (e.g., /public-profile/profileLink)
-                    if (pathSegments.length < 1 || pathSegments[0] !== 'public-profile') {
-                        throw new Error(`Invalid URL format. Expected /public-profile/<profileLink> ${url}`);
-                    }
+          // Check if the URL follows the expected format (e.g., /public-profile/profileLink)
+          if (pathSegments.length < 1 || pathSegments[0] !== "public-profile") {
+            throw new Error(`Invalid URL format. Expected /public-profile/<profileLink> ${url}`)
+          }
 
-                    router.push(`${url}`)
-                    // const profileLink = pathSegments[1];
-                    // if (!profileLink) {
-                    //     throw new Error('Profile link is missing');
-                    // }
+          router.push(`${url}`)
+          // const profileLink = pathSegments[1];
+          // if (!profileLink) {
+          //     throw new Error('Profile link is missing');
+          // }
 
-                    // // Get profile data
-                    // const profileData = await getProfileAction(profileLink);
-                    // console.log('profileData:::::::::::', profileData);
-                    // if (!profileData) {
-                    //     throw new Error('Failed to fetch profile data');
-                    // }
+          // // Get profile data
+          // const profileData = await getProfileAction(profileLink);
+          // console.log('profileData:::::::::::', profileData);
+          // if (!profileData) {
+          //     throw new Error('Failed to fetch profile data');
+          // }
 
-                    // const formData = new FormData();
-                    // formData.append("fullName", profileData.fullName);
+          // const formData = new FormData();
+          // formData.append("fullName", profileData.fullName);
 
-                    // // Add links
-                    // const formLinks = [];
-                    // const emailLink = profileData.links.find(link => link.title.toLowerCase() === 'email');
-                    // if (emailLink) {
-                    //     formLinks.push({ title: "Email", link: emailLink.link });
-                    // }
-                    // const phoneNumber = profileData.links.find(link => link.title.toLowerCase() === 'phone');
-                    // if (phoneNumber) {
-                    //     formLinks.push({ title: "Phone", link: phoneNumber.link });
-                    // }
-                    // // Add all other links from profile
-                    // profileData.links.forEach(link => {
-                    //     if (link.title.toLowerCase() !== 'email' && link.title.toLowerCase() !== 'phone') {
-                    //         formLinks.push({ title: link.title, link: link.link });
-                    //     }
-                    // });
+          // // Add links
+          // const formLinks = [];
+          // const emailLink = profileData.links.find(link => link.title.toLowerCase() === 'email');
+          // if (emailLink) {
+          //     formLinks.push({ title: "Email", link: emailLink.link });
+          // }
+          // const phoneNumber = profileData.links.find(link => link.title.toLowerCase() === 'phone');
+          // if (phoneNumber) {
+          //     formLinks.push({ title: "Phone", link: phoneNumber.link });
+          // }
+          // // Add all other links from profile
+          // profileData.links.forEach(link => {
+          //     if (link.title.toLowerCase() !== 'email' && link.title.toLowerCase() !== 'phone') {
+          //         formLinks.push({ title: link.title, link: link.link });
+          //     }
+          // });
 
-                    // // Add tags and links as JSON strings
-                    // formData.append("tags", JSON.stringify([]));
-                    // formData.append("links", JSON.stringify(formLinks));
+          // // Add tags and links as JSON strings
+          // formData.append("tags", JSON.stringify([]));
+          // formData.append("links", JSON.stringify(formLinks));
 
-                    // // Log form data for debugging
-                    // console.log("Form data submitted:", {
-                    //     ...Object.fromEntries(formData.entries()),
-                    //     tags: [],
-                    //     links: formLinks,
-                    // });
+          // // Log form data for debugging
+          // console.log("Form data submitted:", {
+          //     ...Object.fromEntries(formData.entries()),
+          //     tags: [],
+          //     links: formLinks,
+          // });
 
-                    // const result = await createContact(profileId, formData, "scan");
-                    // if (result.success) {
-                    //     toast.success(intl.formatMessage(
-                    //         { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
-                    //         { name: profileData.fullName }
-                    //     ));
-                    // } else {
-                    //     toast.error(intl.formatMessage(
-                    //         { id: 'contact-add-failed', defaultMessage: 'Failed to add contact: {message}' },
-                    //         { message: result.message }
-                    //     ));
-                    // }
-                } catch (error) {
-                    // console.error('Contact creation error:', error);
-                    toast.error(intl.formatMessage({
-                        id: 'invalid-url',
-                        defaultMessage: 'Invalid profile URL: {message}',
-                    }, { message: (error as Error).message || 'Unknown error' }));
-                } finally {
-                    // Clean up scanner resources
-                    if (qrScanner) {
-                        qrScanner.stop();
-                        // Remove any highlight elements that might remain
-                        const highlightElements = document.querySelectorAll('.qr-scanner-highlight');
-                        highlightElements.forEach(el => el.remove());
-                    }
-                    setIsScanning(false);
-                    setScannedUrl(null);
-                }
-            }
-        };
-
-        scanContact();
-    }, [scannedUrl, user?._id, getProfileAction, createContact, intl]);
-
-    // Handle QR code scan result
-    const handleQrScan = async (data: string) => {
-        if (qrScanner) {
-            qrScanner.stop();
+          // const result = await createContact(profileId, formData, "scan");
+          // if (result.success) {
+          //     toast.success(intl.formatMessage(
+          //         { id: 'contact-added', defaultMessage: 'Contact {name} added successfully' },
+          //         { name: profileData.fullName }
+          //     ));
+          // } else {
+          //     toast.error(intl.formatMessage(
+          //         { id: 'contact-add-failed', defaultMessage: 'Failed to add contact: {message}' },
+          //         { message: result.message }
+          //     ));
+          // }
+        } catch (error) {
+          // console.error('Contact creation error:', error);
+          toast.error(
+            intl.formatMessage(
+              {
+                id: "invalid-url",
+                defaultMessage: "Invalid profile URL: {message}",
+              },
+              { message: (error as Error).message || "Unknown error" },
+            ),
+          )
+        } finally {
+          // Clean up scanner resources
+          if (qrScanner) {
+            qrScanner.stop()
             // Remove any highlight elements that might remain
-            const highlightElements = document.querySelectorAll('.qr-scanner-highlight');
-            highlightElements.forEach(el => el.remove());
+            const highlightElements = document.querySelectorAll(".qr-scanner-highlight")
+            highlightElements.forEach((el) => el.remove())
+          }
+          setIsScanning(false)
+          setScannedUrl(null)
         }
-        setIsScanning(false);
+      }
+    }
 
-        setIsProcessing(true);
-        setProgress(50);
+    scanContact()
+  }, [scannedUrl, user?._id, getProfileAction, createContact, intl])
 
-        try {
-            // Validate as a URL
-            new URL(data);
-            setScannedUrl(data);
-            setProgress(100);
+  // Handle QR code scan result
+  const handleQrScan = async (data: string) => {
+    if (qrScanner) {
+      qrScanner.stop()
+      // Remove any highlight elements that might remain
+      const highlightElements = document.querySelectorAll(".qr-scanner-highlight")
+      highlightElements.forEach((el) => el.remove())
+    }
+    setIsScanning(false)
 
-        } catch (error) {
-            console.error('QR scan error:', error);
-            toast.error(intl.formatMessage({
-                id: 'scan-failed',
-                defaultMessage: 'Failed to process QR code: {message}',
-            }, { message: 'Invalid URL' }));
-        } finally {
-            setIsProcessing(false);
-        }
-    };
+    setIsProcessing(true)
+    setProgress(50)
 
-    const handleQrImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
+    try {
+      // Validate as a URL
+      new URL(data)
+      setScannedUrl(data)
+      setProgress(100)
+    } catch (error) {
+      console.error("QR scan error:", error)
+      toast.error(
+        intl.formatMessage(
+          {
+            id: "scan-failed",
+            defaultMessage: "Failed to process QR code: {message}",
+          },
+          { message: "Invalid URL" },
+        ),
+      )
+    } finally {
+      setIsProcessing(false)
+    }
+  }
 
-        if (!file.type.startsWith('image/')) {
-            toast.error(intl.formatMessage({
-                id: 'invalid-file',
-                defaultMessage: 'Please upload a valid image file.',
-            }));
-            return;
-        }
+  const handleQrImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
 
-        setIsProcessing(true);
-        setProgress(20);
+    if (!file.type.startsWith("image/")) {
+      toast.error(
+        intl.formatMessage({
+          id: "invalid-file",
+          defaultMessage: "Please upload a valid image file.",
+        }),
+      )
+      return
+    }
 
-        try {
-            const result = await QrScanner.scanImage(file);
-            await handleQrScan(result);
-        } catch (error) {
-            console.error('Image upload error:', error);
-            toast.error(intl.formatMessage({
-                id: 'scan-failed',
-                defaultMessage: 'Failed to process QR code: {message}',
-            }, { message: (error as Error).message || 'Unknown error' }));
-        } finally {
-            setIsProcessing(false);
-            if (fileInputRef.current) {
-                fileInputRef.current.value = '';
-            }
-        }
-    };
+    setIsProcessing(true)
+    setProgress(20)
 
-    // Start QR code scanning
-    const startScanning = async () => {
-        console.log('startScanning called', { qrScanner, videoRef: videoRef.current });
-        if (!qrScanner || !videoRef.current) {
-            toast.error(intl.formatMessage({
-                id: 'scanner-not-ready',
-                defaultMessage: 'Scanner not ready. Please try again.',
-            }));
-            return;
-        }
+    try {
+      const result = await QrScanner.scanImage(file)
+      await handleQrScan(result)
+    } catch (error) {
+      console.error("Image upload error:", error)
+      toast.error(
+        intl.formatMessage(
+          {
+            id: "scan-failed",
+            defaultMessage: "Failed to process QR code: {message}",
+          },
+          { message: (error as Error).message || "Unknown error" },
+        ),
+      )
+    } finally {
+      setIsProcessing(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+    }
+  }
 
-        setIsScanning(true);
-        try {
-            await qrScanner.start();
-            console.log('Camera started successfully');
-        } catch (error) {
-            console.error('Camera access error:', error);
-            setIsScanning(false);
-            toast.error(intl.formatMessage({
-                id: 'camera-access-failed',
-                defaultMessage: 'Failed to access camera: {message}',
-            }, { message: (error as Error).message || 'Unknown error' }));
-        }
-    };
+  // Start QR code scanning
+  const startScanning = async () => {
+    console.log("startScanning called", { qrScanner, videoRef: videoRef.current })
+    if (!qrScanner || !videoRef.current) {
+      toast.error(
+        intl.formatMessage({
+          id: "scanner-not-ready",
+          defaultMessage: "Scanner not ready. Please try again.",
+        }),
+      )
+      return
+    }
 
-    return (
-        <div className="py-6 px-4 max-w-4xl mx-auto">
+    setIsScanning(true)
+    try {
+      await qrScanner.start()
+      console.log("Camera started successfully")
+    } catch (error) {
+      console.error("Camera access error:", error)
+      setIsScanning(false)
+      toast.error(
+        intl.formatMessage(
+          {
+            id: "camera-access-failed",
+            defaultMessage: "Failed to access camera: {message}",
+          },
+          { message: (error as Error).message || "Unknown error" },
+        ),
+      )
+    }
+  }
 
-            {!scannedUrl && !isScanning && !isProcessing ? (
-                <div className="text-center">
-                    <QrCode size={80} className="mx-auto mb-4 text-gray-400" />
-                    <h3 className="text-lg font-medium mb-4">
-                        <FormattedMessage id="scan-qr-code" defaultMessage="Scan QR Code" />
-                    </h3>
-                    <p className="text-muted-foreground mb-6">
-                        <FormattedMessage
-                            id="scan-qr-code-description"
-                            defaultMessage="Use your camera to scan a QR code or upload an image containing a QR code."
-                        />
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button
-                            onClick={startScanning}
-                            disabled={isProcessing}
-                            className="flex items-center gap-2 bg-azure"
-                        >
-                            <QrCode size={20} />
-                            <FormattedMessage id="start-scanning" defaultMessage="Start Scanning" />
-                        </Button>
-                        <Button
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={isProcessing}
-                            className="flex items-center gap-2 bg-azure"
-                        >
-                            <Upload size={20} />
-                            <FormattedMessage id="upload-image" defaultMessage="Upload Image" />
-                        </Button>
-                    </div>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        className="hidden"
-                        onChange={handleQrImageUpload}
-                    />
-                </div>
-            ) : scannedUrl ? (
-                <div className="text-center">
-                    <h3 className="text-lg font-medium mb-4">
-                        <FormattedMessage id="scanned-profile-link" defaultMessage="Scanned Profile Link" />
-                    </h3>
-                    <div className="border rounded-md p-4 mb-4">
-                        <p className="text-sm text-muted-foreground break-all">{scannedUrl}</p>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        <FormattedMessage
-                            id="adding-contact"
-                            defaultMessage="Adding contact..."
-                        />
-                    </p>
-                </div>
-            ) : (
-                <div className="text-center">
-                    {isScanning && (
-                        <div className="mt-6">
-                            <p className="text-sm text-muted-foreground mt-2">
-                                <FormattedMessage id="scanning" defaultMessage="Scanning for QR code..." />
-                            </p>
-                            <Button
-                                variant="outline"
-                                onClick={() => {
-                                    setIsScanning(false);
-                                    if (qrScanner) {
-                                        qrScanner.stop();
-                                        // Remove any highlight elements that might remain
-                                        const highlightElements = document.querySelectorAll('.qr-scanner-highlight');
-                                        highlightElements.forEach(el => el.remove());
-                                    }
-                                }}
-                                className="my-4"
-                            >
-                                <FormattedMessage id="cancel" defaultMessage="Cancel" />
-                            </Button>
-                        </div>
-                    )}
-                    {isProcessing && (
-                        <div className="mt-6">
-                            <Progress value={progress} className="w-full" />
-                            <p className="text-sm text-muted-foreground mt-2">
-                                <FormattedMessage
-                                    id="processing-progress"
-                                    defaultMessage="Processing QR code... {progress}%"
-                                    values={{ progress: Math.round(progress) }}
-                                />
-                            </p>
-                        </div>
-                    )}
-                </div>
-            )}
-            <video
-                ref={videoRef}
-                className={`w-full max-w-md mx-auto rounded-md ${isScanning ? 'opacity-100' : 'opacity-0'}`}
-                autoPlay
-                muted
-                playsInline
+  return (
+    <div className="py-6 px-4 max-w-4xl mx-auto">
+      {!scannedUrl && !isScanning && !isProcessing ? (
+        <div className="text-center">
+          <QrCode size={80} className="mx-auto mb-4 text-gray-400" />
+          <h3 className="text-lg font-medium mb-4">
+            <FormattedMessage id="scan-qr-code" defaultMessage="Scan QR Code" />
+          </h3>
+          <p className="text-muted-foreground mb-6">
+            <FormattedMessage
+              id="scan-qr-code-description"
+              defaultMessage="Use your camera to scan a QR code or upload an image containing a QR code."
             />
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button onClick={startScanning} disabled={isProcessing} className="flex items-center gap-2 bg-azure">
+              <QrCode size={20} />
+              <FormattedMessage id="start-scanning" defaultMessage="Start Scanning" />
+            </Button>
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isProcessing}
+              className="flex items-center gap-2 bg-azure"
+            >
+              <Upload size={20} />
+              <FormattedMessage id="upload-image" defaultMessage="Upload Image" />
+            </Button>
+          </div>
+          <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handleQrImageUpload} />
         </div>
-    );
+      ) : scannedUrl ? (
+        <div className="text-center">
+          <h3 className="text-lg font-medium mb-4">
+            <FormattedMessage id="scanned-profile-link" defaultMessage="Scanned Profile Link" />
+          </h3>
+          <div className="border rounded-md p-4 mb-4">
+            <p className="text-sm text-muted-foreground break-all">{scannedUrl}</p>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            <FormattedMessage id="adding-contact" defaultMessage="Adding contact..." />
+          </p>
+        </div>
+      ) : (
+        <div className="text-center">
+          {isScanning && (
+            <div className="mt-6">
+              <p className="text-sm text-muted-foreground mt-2">
+                <FormattedMessage id="scanning" defaultMessage="Scanning for QR code..." />
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsScanning(false)
+                  if (qrScanner) {
+                    qrScanner.stop()
+                    // Remove any highlight elements that might remain
+                    const highlightElements = document.querySelectorAll(".qr-scanner-highlight")
+                    highlightElements.forEach((el) => el.remove())
+                  }
+                }}
+                className="my-4"
+              >
+                <FormattedMessage id="cancel" defaultMessage="Cancel" />
+              </Button>
+            </div>
+          )}
+          {isProcessing && (
+            <div className="mt-6">
+              <Progress value={progress} className="w-full" />
+              <p className="text-sm text-muted-foreground mt-2">
+                <FormattedMessage
+                  id="processing-progress"
+                  defaultMessage="Processing QR code... {progress}%"
+                  values={{ progress: Math.round(progress) }}
+                />
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+      <video
+        ref={videoRef}
+        className={`w-full max-w-md mx-auto rounded-md ${isScanning ? "opacity-100" : "opacity-0"}`}
+        autoPlay
+        muted
+        playsInline
+      />
+    </div>
+  )
 }
