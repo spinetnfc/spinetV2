@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useIntl } from "react-intl"
 
 export default function SearchInput() {
@@ -12,10 +12,13 @@ export default function SearchInput() {
     const { replace } = useRouter()
     const [inputValue, setInputValue] = useState(searchParams.get("query") || "")
 
+    // Memoize the URLSearchParams so it's only recalculated when searchParams changes
+    const params = useMemo(() => {
+        return new URLSearchParams(searchParams)
+    }, [searchParams])
+
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
-            const params = new URLSearchParams(searchParams)
-
             if (inputValue) {
                 params.set("query", inputValue)
             } else {
@@ -23,10 +26,10 @@ export default function SearchInput() {
             }
 
             replace(`${pathname}?${params.toString()}`)
-        }, 300) // debounce delay
+        }, 300)
 
         return () => clearTimeout(delayDebounce)
-    }, [inputValue, pathname, replace, searchParams])
+    }, [inputValue, pathname, replace, params])
 
     return (
         <div className="relative w-full max-w-[500px] rounded-full border border-azure">

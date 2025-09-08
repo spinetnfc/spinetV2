@@ -37,7 +37,7 @@ const priorityOptions = [
     { value: "critical", labelId: "critical" },
 ]
 
-export function LeadFilters() {
+export function LeadFilter() {
     const searchParams = useSearchParams()
     const profileId = useAuth().user.selectedProfile
     const [contacts, setContacts] = React.useState<SearchOption[]>([])
@@ -59,8 +59,8 @@ export function LeadFilters() {
                     if (response?.success && response.data) {
                         const contactOptions = response.data.map((contact: any) => ({
                             value: contact._id,
-                            label:  contact.Profile?.fullName || "Unknown",
-                            profilePicture:  contact.Profile?.profilePicture,
+                            label: contact.Profile?.fullName || "Unknown",
+                            profilePicture: contact.Profile?.profilePicture,
                         }))
                         setContacts(contactOptions)
                     }

@@ -351,7 +351,7 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
         </div>
 
         <div className="hidden lg:block h-fit space-y-4">
-          {selectedContact && editingContact && !showInModal && (
+          {(selectedContact && !showInModal) && (
             <PhoneMockup contact={selectedContact} onClose={() => setSelectedContact(null)} />
           )}
          

@@ -60,7 +60,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ data, className, onClose }) =
                 {data.bio}
             </p>
             {/* Links section placeholder */}
-            <p className="my-2 w-[95%] text-sm font-semibold">Personal Link</p>
+            <p className="my-2 w-[95%] text-sm font-semibold">Personal Links</p>
             <div className="grid w-[95%] grid-cols-2 gap-3">
                 {data?.links?.map((link: any, index: number) => (
                     <div

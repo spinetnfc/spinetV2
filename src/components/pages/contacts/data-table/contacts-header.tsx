@@ -79,7 +79,7 @@ export function ContactsHeader({
             <div className="flex items-center gap-4">
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-2 bg-transparent border-primary px-4 py-2">
+                  <DropdownMenuTrigger className="flex items-center gap-2 bg-white border-primary px-4 py-2">
                     <Upload className="h-4 w-4" />
                     <span  >Import</span>
                   </DropdownMenuTrigger>
@@ -129,7 +129,7 @@ export function ContactsHeader({
           <Button
             variant="outline"
             size="sm"
-            className="border-none hover:bg-blue-100 hidden   bg-transparent shadow-none"
+            className="border-none hover:bg-blue-100 hidden   bg-white shadow-none"
           >
             Contact owner <ChevronDown size={18} />
           </Button>
@@ -137,7 +137,7 @@ export function ContactsHeader({
           <Button
             variant="outline"
             size="sm"
-            className="text-blue-600 bg-transparent border-none hover:bg-blue-100 shadow-none"
+            className="text-blue-600 bg-white border-none hover:bg-blue-100 shadow-none"
             onClick={onAdvancedFiltersClick}
           >
             <Filter className="w-4 h-4 mr-2" />
@@ -147,13 +147,13 @@ export function ContactsHeader({
         </div>
 
         <div className="flex items-center gap-2 justify-end">
-          <Button variant="outline" size="sm" className="border-none hover:bg-blue-100 bg-transparent">
+          <Button variant="outline" size="sm" className="border-none hover:bg-blue-100 bg-white">
             <UndoIcon />
           </Button>
           <Button
             variant="outline"
             size="sm"
-            className="border-[1px] border-primary hover:bg-blue-100 bg-transparent"
+            className="border-[1px] border-primary hover:bg-blue-100 bg-white"
             onClick={() => setIsExportModalOpen(true)}
           >
             Export
@@ -161,7 +161,7 @@ export function ContactsHeader({
           <Button
             variant="outline"
             size="sm"
-            className="border-[1px] border-primary hover:bg-blue-100 bg-transparent hidden lg:block"
+            className="border-[1px] border-primary hover:bg-blue-100 bg-white hidden lg:block"
             onClick={() => setIsColumnModalOpen(true)}
           >
             <span className="hidden xl:inline">Modify columns</span>

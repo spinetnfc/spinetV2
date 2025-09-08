@@ -124,8 +124,8 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                     if (response?.success && response.data) {
                         const contactOptions = response.data.map((contact: any) => ({
                             value: contact._id,
-                            label:  contact.Profile?.fullName || "Unknown",
-                            profilePicture:  contact.Profile?.profilePicture,
+                            label: contact.Profile?.fullName || "Unknown",
+                            profilePicture: contact.Profile?.profilePicture,
                         }))
                         setContacts(contactOptions)
 

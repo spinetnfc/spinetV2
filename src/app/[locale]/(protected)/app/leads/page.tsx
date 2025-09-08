@@ -38,7 +38,7 @@ type ContactsPageProps = {
 
 export default async function Leads(props: ContactsPageProps) {
     const searchParams = await props.searchParams;
-    const { locale } = await props.params;
+    const { locale } = await props.params
     const sp = await searchParams
 
     return (

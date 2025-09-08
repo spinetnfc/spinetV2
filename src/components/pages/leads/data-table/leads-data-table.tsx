@@ -1,35 +1,34 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import {
-    type ColumnFiltersState,
-    type VisibilityState,
-    flexRender,
-    getCoreRowModel,
+     type VisibilityState,
+     flexRender,
+     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table/table"
-import { Button } from "@/components/ui/button"
-import { MoreVertical, Edit, Trash2, Plus, CalendarIcon } from "lucide-react"
+import {
+  Search,
+  Import,
+  Download,
+  Settings,
+  X,
+   
+} from "lucide-react"
+ import { Button } from "@/components/ui/button"
+import { MoreVertical, Edit, Trash2, Plus} from "lucide-react"
 import { FormattedMessage, useIntl } from "react-intl"
-import Link from "next/link"
-import { toast } from "sonner"
+ import { toast } from "sonner"
 import { useAuth } from "@/context/authContext"
 import { removeLead, removeLeads } from "@/actions/leads"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { LeadFilters } from "./lead-filters"
-import { ContactSortDropdown } from "./lead-sort-dropdown"
-import { leadColumns } from "./lead-columns"
-import type { Lead } from "@/types/leads"
+ import { leadColumns } from "./lead-columns"
+import type { FilterState, Lead } from "@/types/leads"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
-import { LeadsPaginationControls } from "@/components/pages/leads/data-table/leads-pagination-controls"
-import { TableFooter } from "@/components/ui/table"
-import { cn } from "@/utils/cn"
-import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
+ import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import { filterLeads } from "@/actions/leads"
 import { getUserFromCookie } from "@/utils/cookie"
 import { UpdateLeadStatusDialog } from "../update-lead-status-dialog"
@@ -38,6 +37,17 @@ import AddLeadForm from "../add-lead-form"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog"
 import { useIsLGScreen, useIsSmallScreen, useIsXLScreen } from "@/hooks/screens"
 import { useSidebar } from "@/context/sidebarContext"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { LeadsTable } from "./leads-table"
+import { cn } from "@/utils/cn"
+import { ContactSortDropdown } from "./lead-sort-dropdown"
+import { LeadsPaginationControls } from "./leads-pagination-controls"
+import { LeadFilter } from "./lead-filters"
+import { ExportDialogue } from "./export-dialogue"
+import { FilterDialogue } from "./filter-dialogue"
+import { PriorityFilter } from "./priority-filter"
+import { StatusFilter } from "./status-filter"
 
 interface LeadsDataTableProps {
     locale: string
@@ -72,98 +82,23 @@ interface LeadsDataTableProps {
     }
 }
 
-function ActionCell({
-    lead,
-    locale,
-    profileId,
-    setRefreshKey,
-}: { lead: Lead; locale: string; profileId: string | undefined; setRefreshKey: React.Dispatch<React.SetStateAction<number>> }) {
-    const router = useRouter()
-    const intl = useIntl()
-    const [isDeleting, setIsDeleting] = React.useState(false)
-    const [showDeleteModal, setShowDeleteModal] = React.useState(false)
-    const [showStatusDialog, setShowStatusDialog] = React.useState(false)
+const FilterIcon = () => (
+    <span className="inline-flex items-center justify-center    text-blue-800">
+       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 16.583H14C14.1105 16.583 14.2168 16.6269 14.2949 16.7051C14.3731 16.7832 14.417 16.8895 14.417 17C14.417 17.1105 14.3731 17.2168 14.2949 17.2949C14.2168 17.3731 14.1105 17.417 14 17.417H10C9.88949 17.417 9.78322 17.3731 9.70508 17.2949C9.62694 17.2168 9.58301 17.1105 9.58301 17C9.58301 16.8895 9.62694 16.7832 9.70508 16.7051C9.78322 16.6269 9.88949 16.583 10 16.583ZM7 11.583H17C17.1105 11.583 17.2168 11.6269 17.2949 11.7051C17.3731 11.7832 17.417 11.8895 17.417 12C17.417 12.1105 17.3731 12.2168 17.2949 12.2949C17.2168 12.3731 17.1105 12.417 17 12.417H7C6.88949 12.417 6.78322 12.3731 6.70508 12.2949C6.62694 12.2168 6.58301 12.1105 6.58301 12C6.58301 11.8895 6.62694 11.7832 6.70508 11.7051C6.78322 11.6269 6.88949 11.583 7 11.583ZM4.5 6.58301H19.5C19.6105 6.58301 19.7168 6.62694 19.7949 6.70508C19.8731 6.78322 19.917 6.88949 19.917 7C19.917 7.11051 19.8731 7.21678 19.7949 7.29492C19.7168 7.37306 19.6105 7.41699 19.5 7.41699H4.5C4.38949 7.41699 4.28322 7.37306 4.20508 7.29492C4.12694 7.21678 4.08301 7.11051 4.08301 7C4.08301 6.88949 4.12694 6.78322 4.20508 6.70508C4.28322 6.62694 4.38949 6.58301 4.5 6.58301Z" fill="#2563EB" stroke="#2563EB" strokeWidth="0.666667"/>
+</svg>
+    </span>
+)
 
-    const handleDeleteConfirm = async () => {
-        if (!profileId) return
-        try {
-            setIsDeleting(true)
-            const response = await removeLead(profileId, lead._id)
-            if (response.success) {
-                toast.success(intl.formatMessage({ id: "Lead deleted successfully" }))
-                setRefreshKey(k => k + 1);
-            } else {
-                throw new Error(response.message)
-            }
-        } catch (error) {
-            console.error("Error deleting lead:", error)
-            toast.error(intl.formatMessage({ id: "Failed to delete lead. Please try again." }))
-        } finally {
-            setIsDeleting(false)
-            setShowDeleteModal(false)
-        }
-    }
-
-    const handleStatusClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setShowStatusDialog(true);
-    }
-
-    return (
-        <>
-            {showDeleteModal && (
-                <ConfirmationModal
-                    isOpen={showDeleteModal}
-                    onClose={() => setShowDeleteModal(false)}
-                    onConfirm={handleDeleteConfirm}
-                    itemName={lead.name}
-                    isDeleting={isDeleting}
-                    message="delete-lead-message"
-                />
-            )}
-            <UpdateLeadStatusDialog
-                open={showStatusDialog}
-                onOpenChange={setShowStatusDialog}
-                lead={{ ...lead, status: lead.status ?? "pending" }}
-                onStatusUpdated={() => router.refresh()}
-            />
-
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-                        <span className="sr-only">Open menu</span>
-                        <MoreVertical className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleStatusClick}>
-                        <Edit className="me-2 h-4 w-4" />
-                        <FormattedMessage id="edit-status" defaultMessage="Edit Status" />
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={(e: any) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            setShowDeleteModal(true)
-                        }}
-                        className="text-red-600"
-                    >
-                        <Trash2 className="me-2 h-4 w-4" />
-                        <FormattedMessage id="delete" defaultMessage="Delete" />
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </>
-    )
-}
 
 export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     const [leads, setLeads] = useState<Lead[]>([])
     const [loading, setLoading] = useState(false)
     const [refreshKey, setRefreshKey] = useState(0)
-    const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+    const [selectedLeads, setSelectedLeads] = useState<Lead[]>([])
     const [showAddLead, setShowAddLead] = useState(false)
+    const [searchValue, setSearchValue] = useState(searchParams.search || "")
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
 
     const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
 
@@ -193,23 +128,30 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
             : []
     const currentRowsPerPage = Number(rowsPerPage) || dynamicRowsPerPage
 
-    const router = useRouter()
-    const pathname = usePathname()
+     const pathname = usePathname()
     const urlSearchParams = useSearchParams()
     const profileId = useAuth().user?.selectedProfile
     const intl = useIntl()
-    const [isDeleting, setIsDeleting] = React.useState(false)
-    const [showDeleteModal, setShowDeleteModal] = React.useState(false)
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    const [rowSelection, setRowSelection] =  useState<Record<string, boolean>>({})
+    const [showExportDialog, setShowExportDialog] = useState(false)
     const isSmallScreen = useIsSmallScreen()
     const isLGScreen = useIsLGScreen()
     const isXLScreen = useIsXLScreen()
     const { isExpanded } = useSidebar()
+    const { replace } = useRouter()
+   const [filters, setFilters] = useState<FilterState>({
+    statuses: [],
+    priorities: [],
+    dateRange: { startDate: "", endDate: "" },
+    tags: [],
+    searchQuery: "",
+  })
+    const filteredByTypeLeads = useMemo(() => Array.isArray(leads) ? leads : [], [leads])
 
-    const filteredByTypeLeads = React.useMemo(() => Array.isArray(leads) ? leads : [], [leads])
-
-    const sortedLeads = React.useMemo(() => {
+    const sortedLeads = useMemo(() => {
         const leadsToSort = [...filteredByTypeLeads]
         switch (searchParams.sort) {
             case "name-desc":
@@ -224,7 +166,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         }
     }, [filteredByTypeLeads, searchParams.sort])
 
-    const allColumns = React.useMemo(() => leadColumns(locale), [locale])
+    const allColumns = useMemo(() => leadColumns(locale), [locale])
     const columns = allColumns;
 
     const table = useReactTable({
@@ -249,12 +191,12 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         },
     })
 
-    const memoizedStatus = React.useMemo(() => status, [JSON.stringify(status)])
-    const memoizedTypes = React.useMemo(() => types, [JSON.stringify(types)])
-    const memoizedPriority = React.useMemo(() => priority, [JSON.stringify(priority)])
-    const memoizedTags = React.useMemo(() => tags, [JSON.stringify(tags)])
-    const memoizedContacts = React.useMemo(() => contacts, [JSON.stringify(contacts)])
-    const memoizedLifeTime = React.useMemo(() => lifeTime, [JSON.stringify(lifeTime)])
+    const memoizedStatus = useMemo(() => status, [JSON.stringify(status)])
+    const memoizedTypes = useMemo(() => types, [JSON.stringify(types)])
+    const memoizedPriority = useMemo(() => priority, [JSON.stringify(priority)])
+    const memoizedTags = useMemo(() => tags, [JSON.stringify(tags)])
+    const memoizedContacts = useMemo(() => contacts, [JSON.stringify(contacts)])
+    const memoizedLifeTime = useMemo(() => lifeTime, [JSON.stringify(lifeTime)])
 
     const skip = Number(urlSearchParams.get('skip')) || 0;
 
@@ -309,23 +251,11 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         fetchLeads()
     }, [search, memoizedTypes, memoizedStatus, memoizedPriority, memoizedLifeTime, memoizedTags, memoizedContacts, skip, currentRowsPerPage, refreshKey])
 
-    const handleRowClick = (lead: Lead, e: React.MouseEvent) => {
-        const target = e.target as HTMLElement
-        if (target.closest('button') || target.closest('[role="checkbox"]')) {
-            return
-        }
 
-        if (selectedLead?._id === lead._id) {
-            setSelectedLead(null)
-        } else {
-            setSelectedLead(lead)
-            setShowAddLead(false)
-        }
-    }
 
     const handleLeadSave = (updatedLead: Lead) => {
         console.log("Saving lead:", updatedLead)
-        setSelectedLead(null)
+        setSelectedLeads([])
         setRefreshKey(k => k + 1)
     }
 
@@ -359,13 +289,93 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
             setRowSelection({})
         }
     }
-
+ const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+            setSearchValue(event.target.value)
+            const params = new URLSearchParams(searchParams.toString())
+            if (event.target.value) {
+                params.set("search", event.target.value)
+            } else {
+                params.delete("search")
+            }
+            params.set("page", "1")
+            replace(`${pathname}?${params.toString()}`, { scroll: false })
+        }
     const selectedRowCount = Object.values(rowSelection).filter(Boolean).length
+    
+  const removeStatusFilter = (status: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      statuses: prev.statuses.filter((s) => s !== status),
+    }))
+  }
+
+  const handlePriorityChange = (priorities: string[]) => {
+    setFilters((prev) => ({
+      ...prev,
+      priorities: priorities.filter(
+        (p): p is "none" | "low" | "medium" | "high" | "critical" =>
+          ["none", "low", "medium", "high", "critical"].includes(p)
+      ),
+    }))
+  }
+ const handleStatusChange = (statuses: string[]) => {
+    setFilters((prev) => ({
+      ...prev,
+      status: statuses.filter(
+        (s): s is "none" | "low" | "medium" | "high" | "critical" =>
+          ["none", "low", "medium", "high", "critical"].includes(s)
+      ),
+    }))
+  }
+  const removeTagFilter = (tag: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((t) => t !== tag),
+    }))
+  }
+  const activeFilterCount =
+    filters.statuses.length +
+    filters.priorities.length +
+    filters.tags.length +
+    (filters.dateRange.startDate || filters.dateRange.endDate ? 1 : 0)
 
     return (
         <div>
             <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">
-                <div className="me-auto">
+                      <div className="bg-white border-b border-gray-200 px-6 py-4 w-full">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              {leads.length} lead
+            </Badge>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder="Search lead, title..."
+                value={searchValue}
+                onChange={handleSearchChange}
+                className="pl-10 w-64 rounded-2xl"
+              />
+            </div>
+            <Button variant="outline" className="gap-2 bg-white text-blue-600">
+              <Import className="w-4 h-4" />
+              Import
+            </Button>
+            <Button className="gap-2 bg-blue-600 hover:bg-blue-700"  onClick={() => {
+                            setShowAddLead(true)
+                            setSelectedLeads([])
+                        }}>
+              <Plus className="w-4 h-4" />
+              Add lead
+            </Button>
+          </div>
+        </div>
+      </div>
+      
+                 <div className="me-auto">
                     {selectedRowCount > 0 && (
                         <Button
                             onClick={() => setShowDeleteModal(true)}
@@ -379,103 +389,92 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                         </Button>
                     )}
                 </div>
-                <div className="ms-auto flex items-center gap-2">
-                    <LeadFilters />
-                    <Button
-                        onClick={() => {
-                            setShowAddLead(true)
-                            setSelectedLead(null)
-                        }}
-                        className="flex items-center h-10 gap-1 bg-azure"
-                    >
-                        <Plus size={16} />
-                        <FormattedMessage id="add-lead" defaultMessage="Add lead" />
-                    </Button>
-                </div>
-            </div>
 
-            <div className={`sm:flex  ${selectedLead || showAddLead ? "gap-4" : ""} sm:items-start mt-2`}>
+            </div>
+ {/* Filters */}
+      <div className="bg-white border-b border-gray-200 px-6 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-wrap">
+            {filters.statuses.map((status) => (
+              <Badge key={status} variant="outline" className="gap-1 bg-blue-50 text-blue-700 border-blue-200">
+                {status}
+                <button
+                  className="ml-1 hover:bg-blue-200 rounded-full p-0.5"
+                  onClick={() => status && removeStatusFilter(status)}
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            ))}
+
+            <StatusFilter handleStatusChange={handleStatusChange}  />
+            <PriorityFilter handlePriorityChange={handlePriorityChange}  />
+
+            {filters.tags.map((tag) => (
+              <Badge key={tag} variant="outline" className="gap-1">
+                {tag}
+                <button className="ml-1 hover:bg-gray-200 rounded-full p-0.5" onClick={() => removeTagFilter(tag)}>
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            ))}
+
+            {(filters.dateRange.startDate || filters.dateRange.endDate) && (
+              <Badge variant="outline" className="gap-1">
+                Date Range
+                <button
+                  className="ml-1 hover:bg-gray-200 rounded-full p-0.5"
+                  onClick={() => setFilters((prev) => ({ ...prev, dateRange: { startDate: "", endDate: "" } }))}
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 text-blue-600 bg-white border-0 hover:bg-blue-100 hover:text-blue-600"
+              onClick={() => setShowAdvancedFilters(true)}
+            >
+              Advanced filters
+                            <FilterIcon />
+
+              {activeFilterCount > 0 && (
+                <Badge variant="secondary" className="ml-1 bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5 ">
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </Button>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" className="gap-2 bg-white border-[1px]">
+              <Download className="w-4 h-4 " />
+              Export
+            </Button>
+            <Button variant="ghost" size="sm" className="gap-2 bg-white border-[1px]">
+              <Settings className="w-4 h-4" />
+              Modify columns
+            </Button>
+          </div>
+        </div>
+      </div>
+            <div className={`sm:flex  ${selectedLeads.length > 0 || showAddLead ? "gap-4" : ""} sm:items-start mt-2`}>
                 <div className="flex-1">
                     <div className="rounded-md border bordr-gray-300 overflow-x-auto">
-                        <Table className="table-auto relative">
-                            <TableHeader className="bg-gray-100 dark:bg-navy">
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <TableRow key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <TableHead key={header.id} className={`px-2 py-1 font-normal ${header.column.id === "select" ? "w-fit" : ""} `}>
-                                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                            </TableHead>
-                                        ))}
-                                        <TableHead className="w-12 absolute top-1.5 end-4">
-                                            <ContactSortDropdown />
-                                        </TableHead>
-                                    </TableRow>
-                                ))}
-                            </TableHeader>
-                            <TableBody>
-                                {table.getRowModel().rows?.length ? (
-                                    table.getRowModel().rows.map((row) => (
-                                        <TableRow
-                                            key={row.original._id || row.id}
-                                            data-state={row.getIsSelected() && "selected"}
-                                            onClick={(e) => handleRowClick(row.original, e)}
-                                            className={`cursor-pointer ${row.original._id === selectedLead?._id ? "bg-azure/50" : ""}`}
-                                        >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <TableCell
-                                                    key={cell.id}
-                                                    className={cn(
-                                                        "min-w-0 h-14 max-h-14",
-                                                        cell.column.id === "select"
-                                                            ? "w-12 px-2"
-                                                            : cell.column.id === "name"
-                                                                ? "w-auto truncate px-2"
-                                                                : "truncate px-2"
-                                                    )}
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
-                                            ))}
-                                            <TableCell className="px-2 w-12">
-                                                <ActionCell lead={row.original} locale={locale} profileId={profileId} setRefreshKey={setRefreshKey} />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={columns.length + 1} className="h-24 text-center">
-                                            <FormattedMessage id="no-leads-found" defaultMessage="No leads found" />
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                            <TableFooter>
-                                <TableRow>
-                                    <TableCell colSpan={100} className="h-12 p-2 bg-gray-100 dark:bg-navy">
-                                        <LeadsPaginationControls
-                                            skip={Number(urlSearchParams.get('skip')) || 0}
-                                            limit={currentRowsPerPage}
-                                            rowCount={leads.length}
-                                            totalCount={Number(urlSearchParams.get('totalCount')) || (Number(urlSearchParams.get('skip')) || 0) + leads.length}
-                                            onSkipChange={(newSkip) => {
-                                                const params = new URLSearchParams(urlSearchParams.toString())
-                                                params.set('skip', String(newSkip))
-                                                params.set('rowsPerPage', String(currentRowsPerPage))
-                                                params.delete('page')
-                                                router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-                                            }}
-                                            onLimitChange={(newLimit) => {
-                                                const params = new URLSearchParams(urlSearchParams.toString())
-                                                params.set('rowsPerPage', String(newLimit))
-                                                params.set('skip', '0')
-                                                params.delete('page')
-                                                router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-                                            }}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
+                        
+                       {leads.length > 0 && !loading && (
+                           <LeadsTable
+                               leads={leads}
+                               searchParams={searchParams}
+                                 setSelectedLeads={setSelectedLeads}
+                                    setShowAddLead={setShowAddLead}
+                                    selectedLeads={selectedLeads}
+                                    showAddLead={showAddLead}
+                                 profileId={profileId}
+                                 setRefreshKey={setRefreshKey}
+                           />
+                       )}
                     </div>
                     {showDeleteModal && (
                         <ConfirmationModal
@@ -484,7 +483,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                             onConfirm={handleBulkDelete}
                             itemName={"leads"}
                             isDeleting={isDeleting}
-                            message="delete-leads-message"
+                            messageId="delete-leads-message"
                         />
                     )}
                 </div>
@@ -493,10 +492,10 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     <div className="hidden lg:block h-fit">
                         {showAddLead ? (
                             <AddLeadForm locale={locale} onSave={handleAddLeadSave} onClose={() => setShowAddLead(false)} />
-                        ) : selectedLead ? (
+                        ) : selectedLeads.length === 1 ? (
                             <EditLeadPanel
-                                lead={selectedLead}
-                                onClose={() => setSelectedLead(null)}
+                                lead={selectedLeads[0]}
+                                onClose={() => setSelectedLeads([])}
                                 onSave={handleLeadSave}
                             />
                         ) : null}
@@ -508,19 +507,19 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                 <>
                     {showAddLead && (
                         <Dialog open={showAddLead} onOpenChange={() => setShowAddLead(false)}>
-                            <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-sm [&>button]:hidden">
+                            <DialogContent className="p-0 bg-white shadow-none border-none outline-none max-w-sm [&>button]:hidden">
                                 <DialogTitle className="sr-only">Add Lead</DialogTitle>
                                 <AddLeadForm locale={locale} onSave={handleAddLeadSave} onClose={() => setShowAddLead(false)} />
                             </DialogContent>
                         </Dialog>
                     )}
-                    {selectedLead && (
-                        <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
-                            <DialogContent className="p-0 bg-transparent shadow-none border-none outline-none max-w-sm [&>button]:hidden">
+                    {selectedLeads.length === 1 && (
+                        <Dialog open={!!selectedLeads[0]} onOpenChange={() => setSelectedLeads([])}>
+                            <DialogContent className="p-0 bg-white shadow-none border-none outline-none max-w-sm [&>button]:hidden">
                                 <DialogTitle className="sr-only">Edit Lead</DialogTitle>
                                 <EditLeadPanel
-                                    lead={selectedLead}
-                                    onClose={() => setSelectedLead(null)}
+                                    lead={selectedLeads[0]}
+                                    onClose={() => setSelectedLeads([])}
                                     onSave={handleLeadSave}
                                 />
                             </DialogContent>
@@ -528,6 +527,8 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
                     )}
                 </>
             )}
+            <ExportDialogue isOpen={showExportDialog} onClose={() => setShowExportDialog(false)} leads={selectedLeads} />
+            <FilterDialogue isOpen={showAdvancedFilters} onClose={() => setShowAdvancedFilters(false)} onFiltersChange={setFilters} currentFilters={filters} />
         </div>
     )
 }

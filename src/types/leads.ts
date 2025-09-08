@@ -14,6 +14,25 @@ export type LeadInput = {
     notes?: string[];
 };
 
+export interface AdvancedFiltersModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onApplyFilters: (filters: FilterState) => void
+  currentFilters: FilterState
+}
+export type Priority = Lead["priority"]
+export type Status = Lead["status"]
+
+export interface FilterState {
+  statuses: Status[]
+  priorities: Priority[]
+  dateRange: {
+    startDate: string
+    endDate: string
+  }
+  tags: string[]
+  searchQuery: string
+}
 export type Lead = {
     _id: string;
     name: string;
