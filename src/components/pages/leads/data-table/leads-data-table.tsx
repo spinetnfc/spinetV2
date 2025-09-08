@@ -346,10 +346,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         leadsCount={leads.length}
         searchValue={searchValue}
         onSearchChange={handleSearchChange}
-        onAddLead={() => {
-          setShowAddLead(true)
-          setSelectedLeads([])
-        }}
+ 
       />
 
       <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">

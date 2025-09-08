@@ -5,15 +5,17 @@ import { Search, Import, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation"
 
 interface LeadsHeaderProps {
   leadsCount: number
   searchValue: string
   onSearchChange: (event: ChangeEvent<HTMLInputElement>) => void
-  onAddLead: () => void
+ 
 }
 
-export function LeadsHeader({ leadsCount, searchValue, onSearchChange, onAddLead }: LeadsHeaderProps) {
+export function LeadsHeader({ leadsCount, searchValue, onSearchChange }: LeadsHeaderProps) {
+    const router=useRouter()
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4 w-full">
       <div className="flex items-center justify-between">
@@ -36,7 +38,7 @@ export function LeadsHeader({ leadsCount, searchValue, onSearchChange, onAddLead
           <Button variant="outline" className="gap-2 bg-white text-blue-600">
              Import
           </Button>
-          <Button className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={onAddLead}>
+          <Button className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={() => router.push("/app/leads/add-lead")}>
             <Plus className="w-4 h-4" />
             Add lead
           </Button>
