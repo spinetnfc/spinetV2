@@ -9,6 +9,7 @@ import { useState, useEffect } from "react"
 import { FilterState } from "@/types/leads"
 import { MembersFilter } from "./members-filter"
 import { TagsFilter } from "./tags-filter"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 interface FilterDialogueProps {
   isOpen: boolean
@@ -64,7 +65,7 @@ export function FilterDialogue({
   onClose,
   onFiltersChange,
   currentFilters = {
-    statuses: [],
+     statuses: [],
     priorities: [],
     dateRange: { startDate: "", endDate: "" },
     tags: [],
@@ -124,7 +125,7 @@ export function FilterDialogue({
     >
       <div
         className={cn(
-          "absolute left-0 top-0 h-full w-64 bg-white border-r border-border shadow-lg transform transition-transform duration-300 ease-in-out",
+          "absolute left-0 top-0 h-full w-64 bg-white border-r border-border   transform transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
         onClick={(e) => e.stopPropagation()}
@@ -138,7 +139,28 @@ export function FilterDialogue({
             </Button>
           </div>
  
+          {/* Sort By */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium mb-3 text-primary">Sort By</h3>
 
+                <RadioGroup
+                  value={currentFilters?.searchQuery ?? "newest"}
+                  onValueChange={(v) =>
+                    onFiltersChange({ ...currentFilters, searchQuery: v })
+                  }
+                  className="flex flex-col gap-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem id="sort-newest" value="newest" />
+                    <Label htmlFor="sort-newest">Newest</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem id="sort-oldest" value="oldest" />
+                    <Label htmlFor="sort-oldest">Oldest</Label>
+                  </div>
+                </RadioGroup>
+              </div>
           {/* Date Range */}
           <div className="mb-6">
             <h3 className="text-sm font-medium mb-3 text-primary">Date Range</h3>

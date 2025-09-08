@@ -13,10 +13,9 @@ import ConfirmationModal from "@/components/delete-confirmation-modal"
 
 export default function ActionCell({
     lead,
-    locale,
-    profileId,
+     profileId,
     setRefreshKey,
-}: { lead: Lead; locale: string; profileId: string | undefined; setRefreshKey: React.Dispatch<React.SetStateAction<number>> }) {
+}: { lead: Lead;  profileId: string | undefined; setRefreshKey: React.Dispatch<React.SetStateAction<number>> }) {
     const router = useRouter()
     const intl = useIntl()
     const [isDeleting, setIsDeleting] = React.useState(false)
@@ -30,7 +29,7 @@ export default function ActionCell({
             const response = await removeLead(profileId, lead._id)
             if (response.success) {
                 toast.success(intl.formatMessage({ id: "Lead deleted successfully" }))
-                setRefreshKey(k => k + 1);
+                setRefreshKey((k) => k + 1)
             } else {
                 throw new Error(response.message)
             }

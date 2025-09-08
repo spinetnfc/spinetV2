@@ -22,5 +22,7 @@ export function PriorityText({ priority, className }: PriorityTextProps) {
     }
   }
 
-  return <span className={cn(getPriorityColor(priority), "capitalize", className)}>{priority}</span>
+  // return <span className={cn(getPriorityColor(priority), "capitalize", className)}>{priority}</span>
+    return <span className="text-[#535862] text-sm">{priority}</span>
+
 }
