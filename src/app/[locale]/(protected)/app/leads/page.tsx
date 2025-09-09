@@ -1,4 +1,5 @@
 import { LeadsDataTable } from "@/components/pages/leads/data-table/leads-data-table"
+import { getLocale } from "@/utils/getServerLocale";
 
 type SearchParams = {
     types?: string[];
@@ -32,23 +33,20 @@ type SearchParams = {
 }
 
 type ContactsPageProps = {
-    params: Promise<{ locale: string }>
-    searchParams: Promise<SearchParams>
+     searchParams: Promise<SearchParams>
 }
 
 export default async function Leads(props: ContactsPageProps) {
     const searchParams = await props.searchParams;
-    const { locale } = await props.params
+    const  locale  = await getLocale()||"en";
     const sp = await searchParams
 
     return (
         <div>
-            <div className="mx-auto px-1 xs:px-2 md:px-4 pt-6 sm:pt-4">
-                <LeadsDataTable
+                 <LeadsDataTable
                     locale={locale}
                     searchParams={sp}
                 />
-            </div>
-        </div>
+         </div>
     )
 }

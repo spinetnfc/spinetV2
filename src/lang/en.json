@@ -589,5 +589,6 @@
   "confirm-profile-switch": "Confirm Profile Switch",
   "profile-switch-confirmation": "Are you sure you want to switch to this profile?",
   "confirm": "Confirm",
-  "Contact saved successfully": "Contact saved successfully"
+  "Contact saved successfully": "Contact saved successfully",
+  "loading": "Loading..."
 }

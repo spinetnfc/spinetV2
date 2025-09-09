@@ -13,8 +13,8 @@ import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } 
 import { useTheme } from 'next-themes';
 import { FormattedMessage } from 'react-intl';
 import { useAuth } from '@/context/authContext';
-import { getProfileAction } from '@/actions/profile';
-import { ProfileData } from '@/types/profile';
+ import { ProfileData } from '@/types/profile';
+import { useProfileActions } from '@/context/profileContext';
 
 type Props = {
   navigation: SideNavigationItem[];
@@ -29,6 +29,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const [isDark, setIsDark] = useState(theme === 'dark');
   const profileId = useAuth().user?.selectedProfile;
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const {getProfileData} = useProfileActions()
 
   useEffect(() => {
     setIsDark(theme === 'dark');
@@ -39,7 +40,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
 
     const fetchProfile = async () => {
       try {
-        const data = await getProfileAction(profileId);
+        const data = await getProfileData(profileId);
         setProfileData(data);
       } catch (error) {
         console.error('Error fetching profile data:', error);
@@ -53,13 +54,13 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
     <>
       <aside
         className={cn(
-          'hidden lg:flex h-full flex-col bg-background fixed top-0 start-0 transition-all duration-800 ease-in-out overflow-x-hidden',
+          'hidden lg:flex h-full flex-col bg-background fixed top-0 start-0 transition-all duration-800 ease-in-out overflow-x-hidden ',
           isExpanded ? 'w-60' : 'w-16'
         )}
       >
-        <div className="flex flex-col h-full overflow-auto">
+        <div className="flex flex-col h-full overflow-auto ">
           <div className={cn(
-            'flex flex-col gap-1 shrink-0 items-center justify-center border-b border-gray-300 h-20 overflow-hidden',
+            'flex flex-col gap-1 shrink-0 items-center justify-center border-b border-l border-gray-300 h-20 overflow-hidden',
             isExpanded ? 'w-full' : 'w-16'
           )}>
             {!isDark ? (
@@ -75,7 +76,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
             )}
           </div>
 
-          <nav className={`flex flex-col ${isExpanded ? "items-center" : "items-start"} gap-4 px-2 py-4 flex-1 overflow-x-hidden`}>
+          <nav className={`flex flex-col ${isExpanded ? "items-center" : "items-start"} gap-4 px-2 py-4 flex-1 overflow-x-hidden border-l border-gray-300`}>
             {navigation.map((item) => {
               const isActive = item.to.endsWith('/app')
                 ? pathname === (locale === 'en' ? item.to.replace('/en', '') : item.to)

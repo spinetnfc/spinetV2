@@ -10,6 +10,7 @@ import type { SideNavigationItem } from '@/types/layout-types';
 // import { userRole } from '@/utils/role';
 import Header from '../header';
 import { SidebarProvider, useSidebar } from '@/context/sidebarContext';
+import { ProfileProvider } from '@/context/profileContext';
 
 const Layout = ({
   locale,
@@ -37,16 +38,16 @@ const Layout = ({
   ].filter(Boolean) as SideNavigationItem[];
 
   return (
-    <div className="z-50 flex min-h-screen w-full flex-col lg:dark:bg-muted/20 lg:bg-gray-50">
+    <div className="z-50 flex min-h-screen w-full flex-col lg:dark:bg-muted/20 lg:bg-gray-50 ">
       <SideBar navigation={navigation} locale={locale} isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
       <div
         className={cn(
-          "flex w-full flex-col transition-all duration-800 ease-in-out",
+          "flex w-full flex-col transition-all duration-800 ease-in-out ",
           "lg:gap-4",
           isExpanded ? "lg:ps-60" : "lg:ps-16"
         )}
       >
-        <main className="grid flex-1 items-start gap-4 md:gap-8 relative ">
+        <main className="grid flex-1 items-start gap-4 md:gap-8 relative border-l border-gray-300">
           {children}
           
         </main>
@@ -64,6 +65,7 @@ export const DashboardLayout = ({
 }) => {
   const pathname = usePathname();
   return (
+    <ProfileProvider>
     <SidebarProvider>
       <Layout locale={locale}>
         <Suspense
@@ -82,5 +84,6 @@ export const DashboardLayout = ({
         </Suspense>
       </Layout>
     </SidebarProvider>
+    </ProfileProvider>
   );
 };

@@ -27,7 +27,7 @@ const selectedMemberss:Members[]=[
   {
     id: "2",
     name: "Lana Steiner",
-    avatar: "/brunette-professional-headshot.png",
+    avatar: "/brunette-professional- .png",
     initials: "LS",
   },
   {

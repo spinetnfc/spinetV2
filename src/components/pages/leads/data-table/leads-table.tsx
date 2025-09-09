@@ -1,14 +1,11 @@
 "use client"
 import { MoreHorizontal, ChevronDown } from "lucide-react"
+import type React from "react"
+
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { PriorityText } from "../priority-text"
 import type { Lead } from "@/types/leads"
-import { StatusBadge, StatusBadgeProps } from "../status-badge"
-import { FormattedMessage } from "react-intl"
 import { useSearchParams } from "next/navigation"
-import { SetStateAction, useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { leadColumns } from "./lead-columns"
 import {
   type VisibilityState,
@@ -16,11 +13,10 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
+  flexRender,
 } from "@tanstack/react-table"
-import { useIsSmallScreen } from "@/hooks/screens"
-import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
-import { getLeadMainContact } from "@/utils/lead-utils"
-import ActionCell from "./action-cell"
+import { LeadsPaginationControls } from "./leads-pagination-controls"
+
 interface LeadsTableProps {
   leads: Lead[]
   searchParams: {
@@ -59,24 +55,52 @@ interface LeadsTableProps {
   setShowAddLead?: (show: boolean) => void
   profileId?: string | undefined
   setRefreshKey: React.Dispatch<React.SetStateAction<number>>
+  onSkipChange: (newSkip: number) => void
+  onLimitChange: (newLimit: number) => void
+  skip: number
+  limit: number
+  totalCount: number
+  hasNextPage?: boolean
 }
 
-export function LeadsTable({ leads, searchParams, setSelectedLeads, selectedLeads, setRefreshKey, profileId }: LeadsTableProps) {
+export function LeadsTable({
+  leads,
+  searchParams,
+  setSelectedLeads,
+  selectedLeads,
+  setRefreshKey,
+  profileId,
+  onSkipChange,
+  onLimitChange,
+  skip,
+  limit,
+  totalCount,
+  hasNextPage = false,
+}: LeadsTableProps) {
   const urlSearchParams = useSearchParams()
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
-  const isSmallScreen = useIsSmallScreen()
-  const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
+
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    checkScreenSize()
+    window.addEventListener("resize", checkScreenSize)
+    return () => window.removeEventListener("resize", checkScreenSize)
+  }, [])
 
   const { search = "", types, lifeTime, tags, page = "1", rowsPerPage } = searchParams
-  const currentRowsPerPage = Number(rowsPerPage) || dynamicRowsPerPage
-
+ 
   const locale = urlSearchParams.get("locale") || "en"
-  const allColumns = useMemo(() => leadColumns(locale), [locale])
-  const columns = allColumns
+  const allColumns = useMemo(() => leadColumns(locale, isMobile), [locale, isMobile])
+
   const table = useReactTable({
     data: leads,
-    columns,
+    columns: allColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -85,16 +109,18 @@ export function LeadsTable({ leads, searchParams, setSelectedLeads, selectedLead
     state: {
       columnVisibility: {
         ...columnVisibility,
-        company: !isSmallScreen,
-        position: !isSmallScreen,
+        mainContact: !isMobile,
+        tags: !isMobile,
+        createdAt: !isMobile,
       },
       rowSelection,
       pagination: {
-        pageIndex: Number(page) - 1,
-        pageSize: currentRowsPerPage,
+        pageIndex: Math.floor(skip / limit),
+        pageSize: limit,
       },
     },
   })
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedLeads([...(selectedLeads ?? []), ...leads])
@@ -104,154 +130,116 @@ export function LeadsTable({ leads, searchParams, setSelectedLeads, selectedLead
   }
 
   const handleSelectLead = (leadId: string, checked: boolean) => {
-    if (!selectedLeads || selectedLeads.length === 0) return
+    const currentSelected = selectedLeads || []
     if (checked) {
-      setSelectedLeads([...selectedLeads, leads.find((lead) => lead._id === leadId)!])
+      const leadToAdd = leads.find((lead) => lead._id === leadId)
+      if (leadToAdd) {
+        setSelectedLeads([...currentSelected, leadToAdd])
+      }
     } else {
-      setSelectedLeads(selectedLeads.filter((lead) => lead._id !== leadId))
+      setSelectedLeads(currentSelected.filter((lead) => lead._id !== leadId))
     }
   }
+
   if (leads.length === 0) {
-    return <FormattedMessage id="no-leads-found" defaultMessage="No leads found" />
+    return (
+      <div className="text-center py-12">
+        <EmptyLeadsState />
+      </div>
+    )
   }
+
   const isAllSelected = leads.length > 0 && selectedLeads?.length === leads.length
   const isIndeterminate = (selectedLeads?.length ?? 0) > 0 && (selectedLeads?.length ?? 0) < leads.length
-
+ 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-gray-50 border-b border-gray-200">
-          <tr>
-            <th className="w-12 px-4 py-3">
-              <Checkbox
-                checked={isAllSelected}
-                onCheckedChange={handleSelectAll}
-                aria-label="Select all leads"
-                className="data-[state=indeterminate]:bg-blue-600 data-[state=indeterminate]:border-blue-600"
-                {...(isIndeterminate && { "data-state": "indeterminate" })}
-              />
-            </th>
-            <th className="text-left px-4 py-3 text-sm font-medium text-gray-900">
-              <div className="flex items-center gap-1">
-                Name
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-            </th>
-            <th className="text-left px-4 py-3 text-sm font-medium text-gray-900">
-              <div className="flex items-center gap-1">
-                Status
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-            </th>
-            <th className="text-left px-4 py-3 text-sm font-medium text-gray-900">
-              <div className="flex items-center gap-1">
-                Priority
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-            </th>
-            <th className="text-left px-4 py-3 text-sm font-medium text-gray-900">
-              <div className="flex items-center gap-1">
-                Main contact
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-            </th>
-            <th className="text-left px-4 py-3 text-sm font-medium text-gray-900">
-              <div className="flex items-center gap-1">
-                Members
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-            </th>
-            <th className="text-left px-4 py-3 text-sm font-medium text-gray-900">
-              <div className="flex items-center gap-1">
-                Tags
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-            </th>
-            <th className="w-12 px-4 py-3"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-          {leads
-            .slice(
-              Number(urlSearchParams.get("skip")) || 0,
-              (Number(urlSearchParams.get("skip")) || 0) + currentRowsPerPage,
-            )
-            .map((lead) => {
-              const mainContact = getLeadMainContact(lead)
-              // const members = getLeadMembers(lead)
-              // const tags = getLeadTags(lead)
-              const isSelected = selectedLeads?.some((leadObj) => leadObj._id === lead._id)
-
-              return (
-                <tr key={lead._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-4">
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={(checked) => handleSelectLead(lead._id, checked as boolean)}
-                      aria-label={`Select ${lead.name}`}
-                    />
-                  </td>
-                  <td className="px-4 py-4">
-                    <div>
-                      <div className="font-medium text-gray-900">{lead.name}</div>
-                      {lead.description && <div className="text-sm text-gray-500">{lead.description}</div>}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <StatusBadge status={lead.status} />
-                  </td>
-                  <td className="px-4 py-4">
-                    <PriorityText priority={lead.priority} />
-                  </td>
-                  <td className="px-4 py-4">
-                    {mainContact && (
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-8 h-8">
-                          <AvatarFallback className="bg-blue-100 text-blue-700 text-sm font-medium">
-                            {mainContact.initials}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium text-gray-900">{mainContact.name}</div>
-                          <div className="text-sm text-gray-500">{mainContact.organization}</div>
+    <div className="bg-white">
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="text-left px-4 py-3 text-sm font-medium text-gray-900"
+                      style={{ width: header.getSize() }}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <div className="flex items-center gap-1">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {header.column.getCanSort() && <ChevronDown className="w-4 h-4 text-gray-400" />}
                         </div>
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-4 py-4">
-                    {/*<div className="flex items-center gap-1">
-                    {members.slice(0, 3).map((member, index) => (
-                      <Avatar key={member.id} className="w-6 h-6 -ml-1 first:ml-0 border-2 border-white">
-                        <AvatarFallback className="bg-gray-100 text-gray-700 text-xs font-medium">
-                          {member.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                    ))}
-                    {members.length > 3 && <span className="text-sm text-gray-500 ml-1">+{members.length - 3}</span>}
-                    {members.length === 0 && <span className="text-gray-400">-</span>}
-                  </div>*/}
-                    members
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-1 flex-wrap">
-                      {/*{tags.slice(0, 2).map((tag) => (
-                      <Badge key={tag.id} variant="secondary" className="text-xs">
-                        {tag.name}
-                      </Badge>
-                    ))}
-                    {tags.length > 2 && <span className="text-sm text-gray-500">+{tags.length - 2}</span>}
-                    {tags.length === 0 && <span className="text-gray-400">-</span>}*/}
-                      tags
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                    <ActionCell lead={lead}   profileId={profileId} setRefreshKey={setRefreshKey} />
-                  </td>
+                      )}
+                    </th>
+                  ))}
+                  <th className="w-12 px-4 py-3"></th>
                 </tr>
-              )
-            })}
-        </tbody>
-      </table>
+              ))}
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {table.getRowModel().rows.map((row) => {
+                const isSelected = selectedLeads?.some((leadObj) => leadObj._id === row.original._id)
+
+                return (
+                  <tr key={row.id} className="hover:bg-gray-50">
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-4 py-4">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                    <td className="px-4 py-4">
+                      <Button variant="ghost" size="sm">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <LeadsPaginationControls
+        skip={skip}
+        limit={limit}
+        rowCount={leads.length}
+        totalCount={totalCount}
+        hasNextPage={hasNextPage}
+        onSkipChange={onSkipChange}
+        onLimitChange={onLimitChange}
+      />
+    </div>
+  )
+}
+
+const EmptyLeadsState = () => {
+  return (
+    <div className="flex flex-col items-center justify-center h-full text-center">
+      <div>
+        <svg width="57" height="56" viewBox="0 0 57 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4.5" y="4" width="48" height="48" rx="24" fill="#DBEAFE" />
+          <rect x="4.5" y="4" width="48" height="48" rx="24" stroke="#EFF6FF" strokeWidth="8" />
+          <path
+            d="M27.5 35C31.9183 35 35.5 31.4183 35.5 27C35.5 22.5817 31.9183 19 27.5 19C23.0817 19 19.5 22.5817 19.5 27C19.5 31.4183 23.0817 35 27.5 35Z"
+            stroke="#2563EB"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M37.5004 36.9999L33.1504 32.6499"
+            stroke="#2563EB"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">No leads found</h3>
+      <p className="text-center text-gray-500 mt-2">There is nothing to display here yet.</p>
     </div>
   )
 }

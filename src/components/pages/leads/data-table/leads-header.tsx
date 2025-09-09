@@ -1,7 +1,7 @@
 "use client"
 
 import type { ChangeEvent } from "react"
-import { Search, Import, Plus } from "lucide-react"
+import { Search, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -11,13 +11,12 @@ interface LeadsHeaderProps {
   leadsCount: number
   searchValue: string
   onSearchChange: (event: ChangeEvent<HTMLInputElement>) => void
- 
 }
 
 export function LeadsHeader({ leadsCount, searchValue, onSearchChange }: LeadsHeaderProps) {
-    const router=useRouter()
+  const router = useRouter()
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-4 w-full">
+    <div className="bg-white border-b border-gray-300 px-6 py-4.75 w-full h-20">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
@@ -36,7 +35,7 @@ export function LeadsHeader({ leadsCount, searchValue, onSearchChange }: LeadsHe
             />
           </div>
           <Button variant="outline" className="gap-2 bg-white text-blue-600">
-             Import
+            Import
           </Button>
           <Button className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={() => router.push("/app/leads/add-lead")}>
             <Plus className="w-4 h-4" />

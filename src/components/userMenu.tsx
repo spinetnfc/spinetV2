@@ -13,8 +13,7 @@ import { useAuth } from "@/context/authContext";
 import SwitchProfile from "@/components/switch-profile-drawer";
 import { useEffect, useState } from "react";
 import { getProfileAction } from "@/actions/profile";
-import { getFile } from "@/actions/files";
-import Image from "next/image";
+ 
 import { ProfileAvatar } from "./pages/profile-avatar";
 const UserMenu = ({ locale }: { locale: string }) => {
     const { logout, user } = useAuth();

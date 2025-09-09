@@ -588,5 +588,6 @@
   "confirm-profile-switch": "تأكيد تغيير الملف الشخصي",
   "profile-switch-confirmation": "هل أنت متأكد أنك تريد تغيير هذا الملف الشخصي؟",
   "confirm": "تأكيد",
-  "Contact saved successfully": "تم حفظ جهة الاتصال بنجاح"
+  "Contact saved successfully": "تم حفظ جهة الاتصال بنجاح",
+  "loading": "جارٍ التحميل..."
 }

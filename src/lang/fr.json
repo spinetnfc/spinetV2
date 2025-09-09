@@ -587,5 +587,6 @@
   "confirm-profile-switch": "Confirmer le changement de profil",
   "profile-switch-confirmation": "Êtes-vous sûr de vouloir changer de profil ?",
   "confirm": "Confirmer",
-  "Contact saved successfully": "Contact enregistré avec succès"
+  "Contact saved successfully": "Contact enregistré avec succès",
+  "loading": "Chargement..."
 }

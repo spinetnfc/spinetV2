@@ -10,8 +10,7 @@ import QrScanner from "qr-scanner"
 import { getUserFromCookie } from "@/utils/cookie"
 import { useAuth } from "@/context/authContext"
 import { createContact } from "@/actions/contacts"
-import { getProfileAction } from "@/actions/profile"
-import { useRouter } from "next/navigation"
+ import { useRouter } from "next/navigation"
 
 interface ScanContactProps {
   locale: string
@@ -149,7 +148,7 @@ export default function ScanContact({ locale }: ScanContactProps) {
     }
 
     scanContact()
-  }, [scannedUrl, user?._id, getProfileAction, createContact, intl])
+  }, [scannedUrl, user?._id, createContact, intl])
 
   // Handle QR code scan result
   const handleQrScan = async (data: string) => {
