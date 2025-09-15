@@ -382,7 +382,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <LeadsHeader leadsCount={totalCount} searchValue={searchValue} onSearchChange={handleSearchChange} />
+      <LeadsHeader leadsCount={totalCount} searchValue={searchValue} onSearchChange={handleSearchChange} loading={loading} />
 
       <div className="px-6">
         <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2 mb-4">
@@ -441,9 +441,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200">
-          {loading ? (
-            <div className="text-center py-12">Loading...</div>
-          ) : (
+           
             <LeadsTable
               leads={leads}
               searchParams={searchParams}
@@ -459,8 +457,9 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
               limit={limit}
               totalCount={totalCount}
               hasNextPage={hasNextPage}
+              loading={loading}
             />
-          )}
+           
         </div>
       </div>
 

@@ -24,6 +24,7 @@ interface ContactsHeaderProps {
   setContactSources: (sources: string[]) => void
   setIsColumnModalOpen: (open: boolean) => void
   searchQuery: string
+  isLoading: boolean
   onSearchChange: (value: string) => void
   setIsExportModalOpen: (open: boolean) => void
 }
@@ -69,6 +70,7 @@ export function ContactsHeader({
   searchQuery,
   onSearchChange,
   setIsExportModalOpen,
+  isLoading
 }: ContactsHeaderProps) {
   const router = useRouter()
   const [importSource, setImportSource] = useState<"file" | "google" | "phone" | null>(null)
@@ -79,9 +81,13 @@ export function ContactsHeader({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <div className="flex lg:pl-0  pl-12 items-center gap-2">
           <h1 className="text-2xl font-semibold text-gray-900">Contacts</h1>
-          <Badge className="text-sm text-blue-400 bg-blue-100 rounded-2xl hover:bg-blue-100 font-medium">
-            {contactsCount}
-          </Badge>
+          {isLoading ? (
+            <div className="h-6 w-16 bg-gray-200 rounded-full animate-pulse" />
+          ) : (
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              {contactsCount} Contact{contactsCount !== 1 ? "s" : ""}
+            </Badge>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

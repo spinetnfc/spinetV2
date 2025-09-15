@@ -298,8 +298,7 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
     router.refresh()
   }, [router])
 
-  if (loading) return null
-
+ 
 
   return (
     <main>
@@ -323,6 +322,7 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
         searchQuery={filters.query}
         onSearchChange={handleSearchChange}
         setIsExportModalOpen={setIsExportModalOpen}
+        isLoading={loading}
       />
 
       <div className="flex flex-col-reverse xs:flex-row items-center justify-between gap-2">
@@ -347,6 +347,7 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
             onColumnOrderChange={handleColumnOrderChange}
             isColumnModalOpen={isColumnModalOpen}
             setIsColumnModalOpen={setIsColumnModalOpen}
+            loading={loading}
           />
         </div>
 

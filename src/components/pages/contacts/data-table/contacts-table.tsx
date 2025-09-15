@@ -10,6 +10,7 @@ import { PaginationControls } from "@/components/ui/table-pagination"
 import type { Contact } from "@/types/contact"
 import { ColumnCustomizationModal } from "./column-customization-modal"
 import { useEffect } from "react"
+import { ContactTableSkeleton } from "./contacts-table-skeleton"
 
 interface ContactsTableProps {
   table: ReactTable<Contact>
@@ -23,6 +24,7 @@ interface ContactsTableProps {
   onColumnOrderChange?: (visibleColumns: string[], columnOrder: string[]) => void
   isColumnModalOpen: boolean
   setIsColumnModalOpen: (open: boolean) => void
+  loading: boolean
 }
 
 const EmptyContactsState = () => {
@@ -66,6 +68,7 @@ export function ContactsTable({
   onColumnOrderChange,
   isColumnModalOpen,
   setIsColumnModalOpen,
+  loading
 }: ContactsTableProps) {
   const availableColumns = [
     { id: "select", label: "Select", category: "primary" as const, required: true },
@@ -102,6 +105,7 @@ useEffect(() => {
   window.addEventListener("resize", handleResize)
   return () => window.removeEventListener("resize", handleResize)
 }, [table])
+if (loading) { return (<ContactTableSkeleton/>) }
   return (
     <>
       <div className="rounded-md border overflow-x-auto">

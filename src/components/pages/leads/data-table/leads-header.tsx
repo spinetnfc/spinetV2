@@ -11,18 +11,23 @@ interface LeadsHeaderProps {
   leadsCount: number
   searchValue: string
   onSearchChange: (event: ChangeEvent<HTMLInputElement>) => void
+  loading: boolean
 }
 
-export function LeadsHeader({ leadsCount, searchValue, onSearchChange }: LeadsHeaderProps) {
+export function LeadsHeader({ leadsCount, searchValue, onSearchChange, loading }: LeadsHeaderProps) {
   const router = useRouter()
   return (
     <div className="bg-white border-b border-gray-300 px-6 py-4.75 w-full h-20">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
-          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-            {leadsCount} lead{leadsCount !== 1 ? "s" : ""}
-          </Badge>
+          {loading ? (
+            <div className="h-6 w-16 bg-gray-200 rounded-full animate-pulse" />
+          ) : (
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              {leadsCount} lead{leadsCount !== 1 ? "s" : ""}
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <div className="relative">

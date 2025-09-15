@@ -16,6 +16,7 @@ import {
   flexRender,
 } from "@tanstack/react-table"
 import { LeadsPaginationControls } from "./leads-pagination-controls"
+import { TableSkeleton } from "./lead-table-skeleton"
 
 interface LeadsTableProps {
   leads: Lead[]
@@ -61,6 +62,7 @@ interface LeadsTableProps {
   limit: number
   totalCount: number
   hasNextPage?: boolean
+  loading: boolean
 }
 
 export function LeadsTable({
@@ -76,6 +78,7 @@ export function LeadsTable({
   limit,
   totalCount,
   hasNextPage = false,
+  loading
 }: LeadsTableProps) {
   const urlSearchParams = useSearchParams()
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -141,17 +144,20 @@ export function LeadsTable({
     }
   }
 
-  if (leads.length === 0) {
+
+
+  const isAllSelected = leads.length > 0 && selectedLeads?.length === leads.length
+  const isIndeterminate = (selectedLeads?.length ?? 0) > 0 && (selectedLeads?.length ?? 0) < leads.length
+  if(loading)
+    return( <TableSkeleton columns={allColumns} showActions={true} />)
+
+    if (leads.length === 0) {
     return (
       <div className="text-center py-12">
         <EmptyLeadsState />
       </div>
     )
   }
-
-  const isAllSelected = leads.length > 0 && selectedLeads?.length === leads.length
-  const isIndeterminate = (selectedLeads?.length ?? 0) > 0 && (selectedLeads?.length ?? 0) < leads.length
- 
   return (
     <div className="bg-white">
       <div className="border border-gray-200 rounded-lg overflow-hidden">
