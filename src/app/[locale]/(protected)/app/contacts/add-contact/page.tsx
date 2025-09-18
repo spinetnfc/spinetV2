@@ -330,7 +330,6 @@ export default function AddContactPage() {
               </Button>
               <DialogTitle></DialogTitle>
               <DialogContent className="max-w-3xl">
-                {importSource && <ImportContacts source={importSource} />}
                 {scan && <ScanContact locale="en" />}
               </DialogContent>
             </Dialog>

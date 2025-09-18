@@ -60,7 +60,7 @@ const FilterIcon = () => (
   </span>
 );
 
- 
+
 export function ContactsHeader({
   contactsCount,
   onAdvancedFiltersClick,
@@ -133,7 +133,6 @@ export function ContactsHeader({
 
                 <DialogTitle></DialogTitle>
                 <DialogContent className="max-w-3xl">
-                  {importSource && <ImportContacts source={importSource} />}
                 </DialogContent>
               </Dialog>
             </div>
@@ -143,8 +142,8 @@ export function ContactsHeader({
               onClick={() => router.replace("/app/contacts/add-contact")}
             >
               <Plus className="w-4 h-4 mr-2" />
-              <span  >Add contact</span>
-             </Button>
+              <span>Add contact</span>
+            </Button>
           </div>
         </div>
       </div>
@@ -167,7 +166,7 @@ export function ContactsHeader({
           >
             <span className="hidden sm:inline">Advanced filters</span>
             <span className="sm:hidden">Filters</span>
-            <FilterIcon  />
+            <FilterIcon />
           </Button>
         </div>
 
