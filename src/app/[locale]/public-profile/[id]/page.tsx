@@ -5,7 +5,6 @@ import AppStoreIcon from "@/components/icons/app-store"
 import { EmailLink } from "@/components/pages/profile/email-link-wrapper"
 import useTranslate from "@/hooks/use-translate"
 import type { ProfileData } from "@/types/profile"
-import { getProfile } from "@/lib/api/profile"
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 import AddContactButton from "@/components/pages/contacts/add-contact-button"
 import { RenderIcon } from "@/components/ui/renderIcon"
@@ -22,7 +21,41 @@ export default async function ProfilePage({
     let profileData: ProfileData | null
     try {
         // console.log(" fetching profile of id ::::", id, "for user::::", user?._id)
-        profileData = await getProfile(id)
+        // Mock profile data - replace with hardcoded data
+        profileData = {
+            _id: id,
+            fullName: "John Doe",
+            status: "professional",
+            profession: "Software Engineer",
+            type: "personal",
+            groupId: "mock-group-1",
+            birthDate: "1990-01-01",
+            gender: "male",
+            profilePicture: "",
+            profileCover: "",
+            theme: { color: "#3b82f6" },
+            links: [
+                { name: "website", title: "My Website", link: "https://example.com" },
+                { name: "linkedin", title: "LinkedIn", link: "https://linkedin.com/in/johndoe" },
+                { name: "email", title: "john@example.com", link: "" },
+                { name: "phone", title: "+1-234-567-8900", link: "" }
+            ],
+            lockedFeatures: {
+                profileCover: false,
+                logo: false,
+                qrCodeLogo: false,
+                displayLogo: false,
+                companyName: false,
+                activitySector: false,
+                position: false,
+                school: false,
+                profession: false,
+                theme: false,
+                canAddLinks: false,
+                canAddServices: false,
+                excludedLinks: []
+            }
+        };
         console.log("profileData", profileData)
     } catch (err: any) {
         console.error("Error fetching profile:", err)

@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { forgotPassword } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { set } from 'date-fns';
@@ -44,11 +43,10 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
   const onSubmit = async (data: z.infer<typeof emailSchema>) => {
     try {
       setIsSubmitting(true);
-      const response = await forgotPassword(data.email);
-      console.log(response);
-      if (response.success)
-        setEmail(data.email);
-      setSessionId(response.confirmationSessionId);
+
+      // Mock implementation - just proceed to OTP step
+      setEmail(data.email);
+      setSessionId('mock-session-id');
       toast.success(intl.formatMessage({ id: "OTP sent to your email" }));
       setStep('otp');
 

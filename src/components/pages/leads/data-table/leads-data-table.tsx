@@ -21,10 +21,10 @@ import { LeadsHeader } from "./leads-header"
 import { LeadsModals } from "./leads-modals"
 import { StatusFilter } from "./status-filter"
 import { PriorityFilter } from "./priority-filter"
-import { getUserFromCookie } from "@/utils/cookie"
-import { filterLeads, removeLeads } from "@/actions/leads"
+import { useAuth } from "@/context/authContext"
+import { useLeads } from "@/hooks/useMockData"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
-import  FilterIcon  from "@/components/filter-icon"
+import FilterIcon from "@/components/filter-icon"
 
 interface LeadsDataTableProps {
   locale: string
@@ -61,6 +61,9 @@ interface LeadsDataTableProps {
 }
 
 export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
+  const { user } = useAuth()
+  const { data: leadsData, isLoading } = useLeads()
+
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
@@ -196,31 +199,23 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     async function fetchLeads() {
       setLoading(true)
       try {
-        const user = await getUserFromCookie()
         const profileId = user?.selectedProfile || null
 
-        const filterParams: LeadFilters = {
-          search: searchValue,
-          types: memoizedTypes,
-          status: memoizedStatus.filter((s): s is NonNullable<typeof s> => s !== undefined),
-          priority: memoizedPriority.filter((p): p is NonNullable<typeof p> => p !== undefined),
-          tags: memoizedTags,
-          contacts: memoizedContacts,
-          limit: limit ,
-          skip,
+        // Use mock data instead of API call
+        let filteredLeads = leadsData || []
+
+        // Apply basic filtering on mock data
+        if (searchValue) {
+          filteredLeads = filteredLeads.filter(lead =>
+            lead.company?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            lead.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            lead.email?.toLowerCase().includes(searchValue.toLowerCase())
+          )
         }
 
-        const result = await filterLeads(profileId, filterParams)
-
-        if (result.length > limit) {
-          setHasNextPage(true)
-          setLeads(result.slice(0, limit))
-        } else {
-          setHasNextPage(false)
-          setLeads(result)
-        }
-
-        setTotalCount(skip + result.length + (hasNextPage ? 1 : 0))
+        setLeads(filteredLeads)
+        setTotalCount(filteredLeads.length)
+        setHasNextPage(false) // No pagination for mock data
       } catch (error) {
         setLeads([])
         setHasNextPage(false)
@@ -230,18 +225,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
       }
     }
     fetchLeads()
-  }, [
-    searchValue,
-    memoizedTypes,
-    memoizedStatus,
-    memoizedPriority,
-    memoizedLifeTime,
-    memoizedTags,
-    memoizedContacts,
-    skip,
-    limit,
-    refreshKey,
-  ])
+  }, [searchValue, leadsData, user?.selectedProfile])
 
   const handleLeadSave = (updatedLead: Lead) => {
     console.log("Saving lead:", updatedLead)
@@ -263,13 +247,12 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         .filter((index) => rowSelection[index as any])
         .map((index) => leads[Number.parseInt(index)]._id)
 
-      const response = await removeLeads(profileId, selectedRows)
-      if (response.success) {
-        toast.success("Leads deleted successfully")
-        setRefreshKey((k) => k + 1)
-      } else {
-        throw new Error(response.message)
-      }
+      // Mock removal - just update local state
+      const updatedLeads = leads.filter(lead => !selectedRows.includes(lead._id))
+      setLeads(updatedLeads)
+      setTotalCount(updatedLeads.length)
+      toast.success("Leads deleted successfully")
+      setRefreshKey((k) => k + 1)
     } catch (error) {
       console.error("Error deleting leads:", error)
       toast.error("Failed to delete leads. Please try again.")
@@ -329,7 +312,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
   }
 
   const handleStatusChange = (statuses: string[]) => {
-    const statusesnormalized=statuses.map(s=>s.toLowerCase().replace(/\s+/g, '-'))
+    const statusesnormalized = statuses.map(s => s.toLowerCase().replace(/\s+/g, '-'))
     console.log("Selected statuses:", statusesnormalized)
     setFilters((prev) => ({
       ...prev,
@@ -405,9 +388,9 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         <div className="bg-white mb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-wrap">
- 
 
-               
+
+
 
               <StatusFilter handleStatusChange={handleStatusChange} />
               <PriorityFilter handlePriorityChange={handlePriorityChange} />
@@ -441,25 +424,25 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200">
-           
-            <LeadsTable
-              leads={leads}
-              searchParams={searchParams}
-              setSelectedLeads={setSelectedLeads}
-              setShowAddLead={setShowAddLead}
-              selectedLeads={selectedLeads}
-              showAddLead={showAddLead}
-              profileId={profileId}
-              setRefreshKey={setRefreshKey}
-              onSkipChange={handleSkipChange}
-              onLimitChange={handleLimitChange}
-              skip={skip}
-              limit={limit}
-              totalCount={totalCount}
-              hasNextPage={hasNextPage}
-              loading={loading}
-            />
-           
+
+          <LeadsTable
+            leads={leads}
+            searchParams={searchParams}
+            setSelectedLeads={setSelectedLeads}
+            setShowAddLead={setShowAddLead}
+            selectedLeads={selectedLeads}
+            showAddLead={showAddLead}
+            profileId={profileId}
+            setRefreshKey={setRefreshKey}
+            onSkipChange={handleSkipChange}
+            onLimitChange={handleLimitChange}
+            skip={skip}
+            limit={limit}
+            totalCount={totalCount}
+            hasNextPage={hasNextPage}
+            loading={loading}
+          />
+
         </div>
       </div>
 

@@ -8,24 +8,23 @@ import {
     useMemo,
     useCallback,
 } from "react";
- import type { ProfileData } from "@/types/profile";  
-import { useAuth } from "./authContext";  
-import { toast } from "sonner";
-import { getProfileAction } from "@/actions/profile";
+import type { ProfileData } from "@/types/profile";
+import { useAuth } from "./authContext";
+import { mockProfiles } from "@/mockdata/profiles";
 
 interface ProfileContextType {
-    profilesCache: Map<string, ProfileData>; // Cache all profile data
-    currentProfileData: ProfileData | null; // Current selected profile data
+    profilesCache: Map<string, ProfileData>;
+    currentProfileData: ProfileData | null;
     profileLoading: boolean;
     profileError: string | null;
-    
+
     // Methods
-    getProfileData: (profileId: string | null) => Promise<ProfileData>; // Cached version - REPLACES your getProfileAction
+    getProfileData: (profileId: string | null) => Promise<ProfileData>;
     selectProfile: (profileId: string) => Promise<void>;
     refreshCurrentProfile: () => Promise<void>;
     refreshProfileData: (profileId: string) => Promise<ProfileData>;
     clearProfileCache: () => void;
-    preloadProfile: (profileId: string) => Promise<void>; // For preloading profiles
+    preloadProfile: (profileId: string) => Promise<void>;
 }
 
 const defaultContextValue: ProfileContextType = {
@@ -34,11 +33,11 @@ const defaultContextValue: ProfileContextType = {
     profileLoading: false,
     profileError: null,
     getProfileData: async () => ({} as ProfileData),
-    selectProfile: async () => {},
-    refreshCurrentProfile: async () => {},
+    selectProfile: async () => { },
+    refreshCurrentProfile: async () => { },
     refreshProfileData: async () => ({} as ProfileData),
-    clearProfileCache: () => {},
-    preloadProfile: async () => {},
+    clearProfileCache: () => { },
+    preloadProfile: async () => { },
 };
 
 const ProfileContext = createContext<ProfileContextType>(defaultContextValue);
@@ -48,10 +47,10 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
     const [currentProfileData, setCurrentProfileData] = useState<ProfileData | null>(null);
     const [profileLoading, setProfileLoading] = useState(false);
     const [profileError, setProfileError] = useState<string | null>(null);
-    
+
     const { user, isAuthenticated, login } = useAuth();
 
-    // THIS REPLACES YOUR getProfileAction - Cached profile fetcher with performance optimization
+    // Mock profile fetcher using local data
     const getProfileData = useCallback(async (profileId: string | null): Promise<ProfileData> => {
         if (!profileId) {
             throw new Error('Profile ID is required');
@@ -66,13 +65,21 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
         console.log('⚠️ Profile cache MISS, fetching:', profileId);
         setProfileLoading(true);
         setProfileError(null);
-        
+
         try {
-            const profile = await getProfileAction(profileId);
-            
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Find profile in mock data
+            const profile = mockProfiles.find(p => p._id === profileId);
+
+            if (!profile) {
+                throw new Error(`Profile not found: ${profileId}`);
+            }
+
             // Cache the result
             setProfilesCache(prev => new Map(prev).set(profileId, profile));
-            
+
             return profile;
         } catch (error: any) {
             const errorMessage = error?.message || 'Failed to fetch profile';
@@ -87,14 +94,14 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
     // Force refresh a specific profile (removes from cache and refetches)
     const refreshProfileData = useCallback(async (profileId: string): Promise<ProfileData> => {
         console.log('🔄 Force refreshing profile:', profileId);
-        
+
         // Remove from cache to force refresh
         setProfilesCache(prev => {
             const newMap = new Map(prev);
             newMap.delete(profileId);
             return newMap;
         });
-        
+
         return await getProfileData(profileId);
     }, [getProfileData]);
 
@@ -103,20 +110,19 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
         try {
             setProfileError(null);
             const profileData = await getProfileData(profileId);
-            
+
             // Update current profile
             setCurrentProfileData(profileData);
-            
+
             // Update user's selectedProfile in auth context
             const updatedUser = { ...user, selectedProfile: profileId };
-            login(updatedUser); // This will update the auth context and cookie
-            
+            login(updatedUser);
+
             console.log('✅ Profile selected:', profileId);
         } catch (error: any) {
             const errorMessage = error?.message || 'Failed to load profile';
             console.error('❌ Failed to select profile:', error);
             setProfileError(errorMessage);
-            toast.error(errorMessage);
             throw error;
         }
     }, [user, getProfileData, login]);
@@ -127,7 +133,7 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
             console.log('⚠️ No selected profile to refresh');
             return;
         }
-        
+
         try {
             console.log('🔄 Refreshing current profile:', user.selectedProfile);
             const profileData = await refreshProfileData(user.selectedProfile);
@@ -144,7 +150,7 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
             console.log('✅ Profile already cached:', profileId);
             return;
         }
-        
+
         try {
             console.log('⚡ Preloading profile:', profileId);
             await getProfileData(profileId);
@@ -184,16 +190,6 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
             clearProfileCache();
         }
     }, [isAuthenticated, clearProfileCache]);
-
-    // Debug logging for cache state
-    useEffect(() => {
-        console.log('📊 Profile cache state:', {
-            cacheSize: profilesCache.size,
-            cachedProfiles: Array.from(profilesCache.keys()),
-            currentProfile: user.selectedProfile,
-            hasCurrentData: !!currentProfileData
-        });
-    }, [profilesCache, user.selectedProfile, currentProfileData]);
 
     const contextValue = useMemo(
         () => ({
@@ -237,7 +233,7 @@ export const useProfiles = () => {
     return ctx;
 };
 
-// Custom hook for easy profile access (alternative to useProfiles)
+// Custom hook for easy profile access
 export const useCurrentProfile = () => {
     const { currentProfileData, profileLoading, profileError } = useProfiles();
     return { currentProfileData, profileLoading, profileError };
@@ -245,21 +241,21 @@ export const useCurrentProfile = () => {
 
 // Custom hook for profile management
 export const useProfileActions = () => {
-    const { 
-        getProfileData, 
-        selectProfile, 
-        refreshCurrentProfile, 
+    const {
+        getProfileData,
+        selectProfile,
+        refreshCurrentProfile,
         refreshProfileData,
         preloadProfile,
-        clearProfileCache 
+        clearProfileCache
     } = useProfiles();
-    
-    return { 
-        getProfileData, 
-        selectProfile, 
-        refreshCurrentProfile, 
+
+    return {
+        getProfileData,
+        selectProfile,
+        refreshCurrentProfile,
         refreshProfileData,
         preloadProfile,
-        clearProfileCache 
+        clearProfileCache
     };
 };

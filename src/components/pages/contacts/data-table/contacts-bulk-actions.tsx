@@ -7,7 +7,7 @@ import { FormattedMessage, useIntl } from "react-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { removeContacts } from "@/actions/contacts"
+import { useContactsContext } from "@/context/contactsContext"
 import type { Contact } from "@/types/contact"
 
 interface ContactsBulkActionsProps {
@@ -19,6 +19,7 @@ interface ContactsBulkActionsProps {
 export function ContactsBulkActions({ selectedContacts, profileId, onSelectionClear }: ContactsBulkActionsProps) {
   const router = useRouter()
   const intl = useIntl()
+  const { deleteContact } = useContactsContext()
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
@@ -28,14 +29,12 @@ export function ContactsBulkActions({ selectedContacts, profileId, onSelectionCl
     try {
       setIsDeleting(true)
       const selectedIds = selectedContacts.map((contact) => contact._id)
-      const response = await removeContacts(profileId, selectedIds)
 
-      if (response.success) {
-        toast.success(intl.formatMessage({ id: "Contacts deleted successfully" }))
-        router.refresh()
-      } else {
-        throw new Error(response.message)
-      }
+      // Use context to delete multiple contacts
+      selectedIds.forEach(id => deleteContact(id))
+
+      toast.success(intl.formatMessage({ id: "Contacts deleted successfully" }))
+      // router.refresh() - not needed with context
     } catch (error) {
       console.error("Error deleting contacts:", error)
       toast.error(intl.formatMessage({ id: "Failed to delete contacts. Please try again." }))

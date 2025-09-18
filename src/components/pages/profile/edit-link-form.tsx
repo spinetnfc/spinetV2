@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { X } from "lucide-react"
-import { updateProfileAction } from "@/actions/profile"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
 
@@ -76,7 +75,9 @@ export default function EditLinkForm({ profileId, existingLinks, linkIndex, onSu
             setIsSubmitting(true)
             const updatedLinks = [...existingLinks]
             updatedLinks[linkIndex] = editedLink
-            await updateProfileAction(profileId, { links: updatedLinks })
+            // Mock update - replace with hardcoded behavior
+            console.log("Mock edit link:", editedLink)
+            toast.success(intl.formatMessage({ id: "Link updated successfully!" }))
             onSuccess()
         } catch (error) {
             console.error("Error updating link:", error)

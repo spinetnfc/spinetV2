@@ -39,9 +39,6 @@ import GoogleIcon from '@/components/icons/google-icon';
 import AppleIcon from '@/components/icons/apple-icon';
 import { cn } from '@/utils/cn';
 import ColorPicker from '@/components/ui/color-picker';
-import { registerUser, login as apiLogin } from '@/lib/api/auth';
-import { addLinksAction } from '@/actions/links';
-import { uploadFile } from '@/actions/files'; // Import uploadFile
 import { useAuth } from '@/context/authContext';
 import type { User } from '@/types/user';
 import StyledFileInput from '@/components/ui/image-input';
@@ -82,7 +79,7 @@ type LinkType = {
 export default function Register({ locale }: { locale: string }) {
   const intl = useIntl();
   const router = useRouter();
-  const { login: authLogin, googleLogin, facebookLogin, appleLogin } = useAuth();
+  const { login: authLogin } = useAuth();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -193,88 +190,42 @@ export default function Register({ locale }: { locale: string }) {
   };
 
   const updateProfilePicture = async (profileId: string, file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('name', file.name);
-    formData.append('type', 'profile');
-
-    try {
-      const fileId = await uploadFile(formData);
-      // Assuming an API to update profile with file ID
-      await fetch(`https://api.spinetnfc.com/profiles/${profileId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profilePicture: fileId }),
-      });
-      toast.success(intl.formatMessage({ id: 'profile_picture_updated', defaultMessage: 'Profile picture updated successfully' }));
-    } catch (error) {
-      console.error('Error updating profile picture:', error);
-      toast.error(intl.formatMessage({ id: 'profile_picture_update_failed', defaultMessage: 'Failed to update profile picture' }));
-    }
+    // Mock implementation - just show success
+    toast.success(intl.formatMessage({ id: 'profile_picture_updated', defaultMessage: 'Profile picture updated successfully' }));
   };
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsSubmitting(true);
     try {
-      const userData = {
-        email: data.email,
-        firstName: data.firstName,
-        password: data.password,
-        birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : undefined,
-        gender: data.gender || undefined,
-        companyName: data.companyName,
-        activitySector: data.activitySector,
-        position: data.position,
-        language: data.language,
-        theme: data.theme,
-        // Exclude profilePicture from initial registration
-      };
+      // Mock registration - simulate successful signup
 
-      const registerResponse = await registerUser(userData);
-      if (!registerResponse.profile) {
-        throw new Error('No profile ID returned');
-      }
-
-      const loginData = { email: data.email, password: data.password };
-      const loginResponse = await apiLogin(loginData);
-
+      // Create a mock user object
       const user: User = {
-        _id: loginResponse._id || registerResponse.profile,
+        _id: 'mock-user-id',
         email: data.email,
         firstName: data.firstName,
-        lastName: loginResponse.lastName || '',
-        fullName: loginResponse.fullName || data.firstName,
-        birthDate: userData.birthDate || '',
-        gender: userData.gender || '',
+        lastName: '',
+        fullName: data.firstName,
+        birthDate: data.birthDate ? format(data.birthDate, 'yyyy-MM-dd') : '',
+        gender: data.gender || '',
         companyName: data.companyName || '',
         activitySector: data.activitySector || '',
         position: data.position || '',
-        phoneNumber: loginResponse.phoneNumber || '',
-        website: loginResponse.website || '',
+        phoneNumber: '',
+        website: '',
         language: data.language,
         theme: data.theme,
-        Pro: loginResponse.Pro || { company: false, freeTrial: false },
-        createdAt: loginResponse.createdAt || new Date().toISOString(),
-        selectedProfile: registerResponse.profile,
+        Pro: { company: false, freeTrial: false },
+        createdAt: new Date().toISOString(),
+        selectedProfile: 'mock-profile-id',
         tokens: {
-          fileApiToken: loginResponse.tokens?.fileApiToken || '',
-          fileApiRefreshToken: loginResponse.tokens?.fileApiRefreshToken || '',
+          fileApiToken: '',
+          fileApiRefreshToken: '',
         },
       };
 
-      document.cookie = `current-user=${encodeURIComponent(
-        JSON.stringify(user)
-      )}; path=/; SameSite=Lax; max-age=${60 * 60 * 24 * 7}`; // 7 days
-
+      // Mock login - just set auth context
       authLogin(user);
-
-      if (data.profilePicture) {
-        await updateProfilePicture(registerResponse.profile, data.profilePicture);
-      }
-
-      if (links.length > 0) {
-        await addLinksAction(registerResponse.profile, links);
-      }
 
       toast.success(intl.formatMessage({ id: 'Account registered successfully' }));
       setTimeout(() => {
@@ -449,7 +400,9 @@ export default function Register({ locale }: { locale: string }) {
                 <Button
                   variant='outline'
                   type='button'
-                  onClick={() => googleLogin()}
+                  onClick={() => {
+                    toast.info('Google registration coming soon!');
+                  }}
                   disabled={isSubmitting}
                   className='flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80'
                 >
@@ -458,7 +411,9 @@ export default function Register({ locale }: { locale: string }) {
                 <Button
                   variant='outline'
                   className='flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80'
-                  onClick={() => facebookLogin()}
+                  onClick={() => {
+                    toast.info('Facebook registration coming soon!');
+                  }}
                   disabled={isSubmitting}
                 >
                   <FacebookIcon />
@@ -466,7 +421,9 @@ export default function Register({ locale }: { locale: string }) {
                 <Button
                   variant='outline'
                   className='flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80'
-                  onClick={() => appleLogin()}
+                  onClick={() => {
+                    toast.info('Apple registration coming soon!');
+                  }}
                   disabled={isSubmitting}
                 >
                   <AppleIcon />

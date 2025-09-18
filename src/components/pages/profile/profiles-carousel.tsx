@@ -1,9 +1,8 @@
 "use client";
 import * as React from "react";
 import Image from "next/image";
-import { getFile } from "@/actions/files";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn } from '@/utils/cn';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { CirclePlus, Eye, Share2, UserRoundPen } from "lucide-react";
 import Link from "next/link";
@@ -125,7 +124,8 @@ function ProfileCard({
         async function fetchImages() {
             if (profile.profilePicture) {
                 try {
-                    const url = await getFile(profile.profilePicture);
+                    // Mock file URL - replace with hardcoded behavior
+                    const url = "/img/user.png";
                     setPictureUrl(url);
                 } catch {
                     setPictureUrl("/img/user.png");
@@ -134,7 +134,8 @@ function ProfileCard({
 
             if (profile.profileCover) {
                 try {
-                    const url = await getFile(profile.profileCover);
+                    // Mock cover URL - replace with hardcoded behavior  
+                    const url = "/img/abstract.jpeg";
                     setCoverUrl(url);
                 } catch {
                     setCoverUrl(null);

@@ -3,7 +3,7 @@
 import { flexRender, type Table as ReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table"
 import { FormattedMessage } from "react-intl"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import { ContactSortDropdown } from "./contact-sort-dropdown"
 import { ContactActionCell } from "./contact-action-cell"
 import { PaginationControls } from "@/components/ui/table-pagination"
@@ -90,22 +90,22 @@ export function ContactsTable({
       onColumnOrderChange(visibleColumns, columnOrder)
     }
   }
-useEffect(() => {
-  const handleResize = () => {
-    if (window.innerWidth < 640) {
-      table.getColumn("company")?.toggleVisibility(false)
-      table.getColumn("position")?.toggleVisibility(false)
-    } else  {
-      table.getColumn("company")?.toggleVisibility(true)
-      table.getColumn("position")?.toggleVisibility(true)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        table.getColumn("company")?.toggleVisibility(false)
+        table.getColumn("position")?.toggleVisibility(false)
+      } else {
+        table.getColumn("company")?.toggleVisibility(true)
+        table.getColumn("position")?.toggleVisibility(true)
+      }
     }
-  }
 
-  handleResize()
-  window.addEventListener("resize", handleResize)
-  return () => window.removeEventListener("resize", handleResize)
-}, [table])
-if (loading) { return (<ContactTableSkeleton/>) }
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [table])
+  if (loading) { return (<ContactTableSkeleton />) }
   return (
     <>
       <div className="rounded-md border overflow-x-auto">

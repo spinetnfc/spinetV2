@@ -1,17 +1,58 @@
 import Image from "next/image"
 import { Edit, Briefcase, ChevronRight } from 'lucide-react'
-import { getProfile } from "@/lib/api/profile"
 import type { ProfileData } from '@/types/profile';
-import { getUserCookieOnServer } from "@/utils/server-cookie"
 import Link from "next/link"
 import AddLinkButton from "@/components/pages/profile/add-link-button"
 import LinkItem from "@/components/pages/profile/link-item"
 import useTranslate from "@/hooks/use-translate"
 import { Service } from "@/types/services";
-import { getServices } from "@/lib/api/services";
 import { Card, CardContent } from "@/components/ui/card";
 import { RenderIcon } from "@/components/ui/renderIcon";
 
+// Mock profile data
+const mockProfileData: ProfileData = {
+    _id: "mock-profile-id",
+    firstName: "John",
+    lastName: "Doe",
+    fullName: "John Doe",
+    status: "employee",
+    type: "personal",
+    groupId: "mock-group-id",
+    birthDate: "1990-01-01",
+    gender: "male",
+    position: "Software Engineer",
+    companyName: "Tech Corp",
+    school: "",
+    profilePicture: "",
+    profileCover: "",
+    theme: { color: "#3b82f6" },
+    links: [
+        { name: "linkedin", link: "https://linkedin.com/in/johndoe", title: "LinkedIn" },
+        { name: "email", link: "john@example.com", title: "Email" },
+        { name: "website", link: "https://johndoe.dev", title: "Website" }
+    ],
+    lockedFeatures: {
+        profileCover: false,
+        logo: false,
+        qrCodeLogo: false,
+        displayLogo: false,
+        companyName: false,
+        activitySector: false,
+        position: false,
+        school: false,
+        profession: false,
+        theme: false,
+        canAddLinks: true,
+        canAddServices: true,
+        excludedLinks: []
+    }
+};
+
+// Mock services data  
+const mockServices: Service[] = [
+    { _id: "1", name: "Web Development", description: "Full-stack development services" },
+    { _id: "2", name: "Consulting", description: "Technical consulting and architecture" }
+];
 
 export default async function ProfilePage({ params }: {
     params: Promise<{ locale: string }>;
@@ -19,31 +60,15 @@ export default async function ProfilePage({ params }: {
     const { locale } = await params;
     const { t } = await useTranslate(locale);
 
-    // Get user and profile ID from cookies
-    const user = await getUserCookieOnServer()
-    const profileId = user?.selectedProfile || null
+    // Use hardcoded data instead of backend calls
+    const profileData = mockProfileData;
+    const services = mockServices;
+    const profileId = "mock-profile-id";
 
-    // Fetch user profile data
-    let profileData: ProfileData | null
-    let services: Service[] = []
-
-    try {
-        profileData = await getProfile(profileId)
-        services = await getServices(profileId);
-    } catch (err: any) {
-        console.error("Error fetching profile:", err)
-        throw new Error(`Failed to load profile data: ${err.message}`)
-    }
-
-    // No fallback data - if profile can't be loaded, show error
-    if (!profileData) {
-        throw new Error("Profile data not found")
-    }
-
-    const fullName = profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`
-    const profilePictureUrl = profileData.profilePicture ? `/api/files/${profileData.profilePicture}` : "/img/user.png"
-    const coverImageUrl = profileData.profileCover ? `/api/files/${profileData.profileCover}` : ""
-    const themeColor = profileData.theme?.color || "#3b82f6" // Default to blue if undefined
+    const fullName = profileData.fullName || `${profileData.firstName} ${profileData.lastName}`;
+    const profilePictureUrl = "/img/user.png"; // Use default image
+    const coverImageUrl = ""; // No cover image
+    const themeColor = profileData.theme?.color || "#3b82f6";
 
     return (
         <div className="min-h-screen w-full pb-4 -mt-12">

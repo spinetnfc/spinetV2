@@ -6,15 +6,15 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronDown, Search, X } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 
-interface Tag{
+interface Tag {
   id: string
   tag: string
- 
+
 }
 
- 
+
 
 export function TagsFilter({
   currentTags,
@@ -52,32 +52,32 @@ export function TagsFilter({
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col items-start gap-2">
             <span className="text-sm text-primary">Filter by Tags</span>
-             </div>
+          </div>
           <ChevronDown className={cn("h-4 w-4 text-gray-500 transition-transform", isOpen && "rotate-180")} />
         </div>
       </Button>
-            {selectedTagsData.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {selectedTagsData.map((tag) => (
-                  <div key={tag.id} className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1 text-xs">
-                    <Avatar className="h-4 w-4">
-                       <AvatarFallback className="text-xs bg-gray-300">{tag.tag[0]}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-primary">{tag.tag}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        removeTags(tag.id)
-                      }}
-                      className="ml-1 hover:bg-gray-200 rounded-full p-0.5"
-                    >
-                      <X className="h-3 w-3 text-gray-500" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-         
+      {selectedTagsData.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {selectedTagsData.map((tag) => (
+            <div key={tag.id} className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1 text-xs">
+              <Avatar className="h-4 w-4">
+                <AvatarFallback className="text-xs bg-gray-300">{tag.tag[0]}</AvatarFallback>
+              </Avatar>
+              <span className="text-primary">{tag.tag}</span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  removeTags(tag.id)
+                }}
+                className="ml-1 hover:bg-gray-200 rounded-full p-0.5"
+              >
+                <X className="h-3 w-3 text-gray-500" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
 
       {/* Dropdown */}
       {isOpen && (

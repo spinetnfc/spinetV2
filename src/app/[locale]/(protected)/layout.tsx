@@ -23,11 +23,24 @@ export default function ProtectedLayout({
 
     const locale = getLocale() || 'en';
 
+    // DEVELOPMENT MODE: Skip auth check
+    const SKIP_AUTH = process.env.NEXT_PUBLIC_SKIP_AUTH === 'true';
+
     useEffect(() => {
+        if (SKIP_AUTH) {
+            console.log('Protected route bypassed - Development Mode');
+            return;
+        }
+
         if (isClient && !isLoading && !isAuthenticated) {
             router.push(`/${locale}/auth/login`);
         }
-    }, [isClient, isLoading, isAuthenticated, router, pathname, locale]);
+    }, [isClient, isLoading, isAuthenticated, router, pathname, locale, SKIP_AUTH]);
+
+    // In development mode, always render children
+    if (SKIP_AUTH) {
+        return <ContactsProvider>{children}</ContactsProvider>;
+    }
 
     if (!isClient || isLoading || !isAuthenticated) {
         return null; // Prevent rendering until client-side and auth is resolved

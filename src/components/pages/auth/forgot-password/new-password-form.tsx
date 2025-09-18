@@ -15,7 +15,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { resetPassword } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
@@ -51,7 +50,8 @@ const NewPasswordForm = ({ email, sessionId }: Props) => {
   const onSubmit = async (data: z.infer<typeof newPasswordSchema>) => {
     try {
       setIsSubmitting(true);
-      const response = await resetPassword(sessionId, data.password);
+
+      // Mock password reset - just show success and redirect
       toast.success(intl.formatMessage({ id: "Password reset successfully, Proceed to login" }));
       router.push('/auth/login');
 

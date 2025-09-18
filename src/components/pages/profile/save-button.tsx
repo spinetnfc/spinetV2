@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from "@/components/ui/button"
-import { updateProfile } from "@/lib/api/profile"
 import { useTransition } from "react"
 import { FormattedMessage } from "react-intl"
 
@@ -23,7 +22,8 @@ export default function SaveButton({ profileId, sectionName }:
 
         startTransition(async () => {
             try {
-                await updateProfile(profileId, data)
+                // Mock update - replace with hardcoded behavior
+                console.log(`Mock ${sectionName} update:`, data);
                 // router.refresh()
                 // Show success notification
             } catch (error) {

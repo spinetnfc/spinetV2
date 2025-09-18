@@ -29,16 +29,16 @@ const Page = async (
       <NavBarWrapper  parent="home" />
       <div className="flex flex-col gap-3 overflow-x-hidden lg:gap-12">
         <section id="hero">
-          <HeroSection   messages={messages} />
+          <HeroSection messages={messages} />
         </section>
         <section id="discover-more">
           <DiscoverMore />
         </section>
         <section id="features">
-          <Features  messages={messages} />
+          <Features messages={messages} />
         </section>
         <section id="pricing">
-          <ChoosePlan    />
+          <ChoosePlan />
         </section>
         <section id="how-it-works">
           <HowItWorks locale={locale} />

@@ -19,54 +19,54 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { getAllProfilesAction, switchProfile } from "@/actions/profile"
+import { useProfiles } from "@/context/profileContext"
 import { FormattedMessage } from "react-intl"
-import { getUserFromCookie } from "@/utils/cookie"
 import { startTransition, useEffect, useState } from "react"
 import { CirclePlus, Loader } from "lucide-react"
 import Image from "next/image"
 import { getLocale } from "@/utils/getClientLocale"
 import { useAuth } from "@/context/authContext"
 import { Spinner } from "./ui/spinner"
-import { ProfileAvatar } from "./pages/profile-avatar"
+import { ProfileAvatar } from "./pages/profile/profile-avatar"
+import { mockProfiles } from "@/mockdata/profiles"
+import type { ProfileData } from "@/types/profile"
 
 
 export default function SwitchProfileDrawer() {
-    const user = getUserFromCookie()
+    const { user, isAuthenticated } = useAuth();
+    const { selectProfile } = useProfiles();
     const locale = getLocale() || "en";
-    const [profiles, setProfiles] = useState<any[]>([])
-    const [selectedProfile, setSelectedProfile] = useState<any>(null)
+    const [profiles, setProfiles] = useState<ProfileData[]>([])
+    const [selectedProfile, setSelectedProfile] = useState<ProfileData | null>(null)
     const [showAlert, setShowAlert] = useState(false)
-    const { isAuthenticated } = useAuth();
-    useEffect(() => {
-        if (isAuthenticated && user && user._id) {
-            startTransition(async () => {
-                const result = await getAllProfilesAction(user._id);
-                const selectedIdx = result.findIndex(p => p._id === user.selectedProfile);
-                if (selectedIdx > -1) {
-                    const [selected] = result.splice(selectedIdx, 1);
-                    setProfiles([selected, ...result]);
-                } else {
-                    setProfiles(result);
-                }
-            })
-        }
-    }, [user._id])
 
-    const handleProfileClick = (profile: any) => {
-        if (user.selectedProfile === profile._id) {
+    useEffect(() => {
+        if (isAuthenticated && user?._id) {
+            // Use mock profiles
+            const selectedIdx = mockProfiles.findIndex((p: ProfileData) => p._id === user.selectedProfile);
+            if (selectedIdx > -1) {
+                const selected = mockProfiles[selectedIdx];
+                const remaining = mockProfiles.filter((_: ProfileData, idx: number) => idx !== selectedIdx);
+                setProfiles([selected, ...remaining]);
+            } else {
+                setProfiles(mockProfiles);
+            }
+        }
+    }, [user?._id, user?.selectedProfile, isAuthenticated])
+
+    const handleProfileClick = (profile: ProfileData) => {
+        if (user?.selectedProfile === profile._id) {
             return // Don't show alert if clicking on current profile
         }
         setSelectedProfile(profile)
         setShowAlert(true)
     }
 
-    const handleConfirmSwitch = () => {
-        if (selectedProfile) {
+    const handleConfirmSwitch = async () => {
+        if (selectedProfile && user) {
             try {
-                switchProfile(user._id, selectedProfile._id)
-                document.cookie = `current-user=${encodeURIComponent(JSON.stringify({ ...user, selectedProfile: selectedProfile._id }))}; path=/`
-                window.location.reload() // Reload to apply the new profile
+                await selectProfile(selectedProfile._id!);
+                setShowAlert(false);
             } catch (error) {
                 console.error("Error switching profile:", error)
             }

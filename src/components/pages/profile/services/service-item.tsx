@@ -7,7 +7,6 @@ import { toast } from "sonner"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
 import EditServiceForm from "./edit-service-form"
 import { Service } from "@/types/services"
-import { deleteServiceAction } from "@/actions/services"
 import { FormattedMessage, useIntl } from "react-intl"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -29,7 +28,8 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
     const handleDeleteConfirm = async () => {
         try {
             setIsDeleting(true)
-            const response = await deleteServiceAction(profileId, service._id)
+            // Mock delete service - replace with hardcoded behavior
+            console.log("Mock delete service:", service._id);
             toast.success(intl.formatMessage({ id: "Service deleted successfully" }))
             window.location.reload()
         } catch (error) {
@@ -72,7 +72,7 @@ export default function ServiceItem({ profileId, service, themeColor }: ServiceI
                     onConfirm={handleDeleteConfirm}
                     itemName="service"
                     isDeleting={isDeleting}
-                    message="delete-service-message"
+                    messageId="delete-service-message"
                 />
             )}
 

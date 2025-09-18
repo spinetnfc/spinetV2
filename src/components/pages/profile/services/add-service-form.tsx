@@ -10,7 +10,6 @@ import { X } from "lucide-react"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
 import { ServiceInput } from "@/types/services"
-import { addServiceAction } from "@/actions/services"
 
 type AddServiceFormProps = {
     profileId: string
@@ -35,15 +34,10 @@ export default function AddServiceForm({ profileId, onSuccess, onCancel }: AddSe
         }
 
         startTransition(async () => {
-            const result = await addServiceAction(profileId, newService)
-
-            if (result.success) {
-                toast.success(formatMessage({ id: "Service added successfully" }))
-                onSuccess()
-            } else {
-                toast.error(formatMessage({ id: "Failed to add service. Please try again." }))
-                console.error("addServiceAction failed:", result.error)
-            }
+            // Mock add service - replace with hardcoded behavior
+            console.log("Mock add service:", newService);
+            toast.success(formatMessage({ id: "Service added successfully" }))
+            onSuccess()
         })
     }
 

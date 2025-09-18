@@ -3,7 +3,7 @@
 import { ChevronDown } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import { FormattedMessage } from "react-intl"
 
 const CATEGORIES = ["New arrivals", "Promotion", "Top selling", "Pack"]

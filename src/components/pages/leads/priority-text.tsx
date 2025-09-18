@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import { Priority } from "@/types/leads"
- 
+
 interface PriorityTextProps {
   priority: Priority
   className?: string
@@ -23,6 +23,6 @@ export function PriorityText({ priority, className }: PriorityTextProps) {
   }
 
   // return <span className={cn(getPriorityColor(priority), "capitalize", className)}>{priority}</span>
-    return <span className="text-[#535862] text-sm">{priority}</span>
+  return <span className="text-[#535862] text-sm">{priority}</span>
 
 }

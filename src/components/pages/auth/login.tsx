@@ -19,10 +19,9 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/authContext';
-import { useFacebookSDK } from '@/hooks/use-facebookDSK';
+import { useFacebookSDK } from '@/hooks/use-facebookSDK';
 import Script from 'next/script';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -74,9 +73,8 @@ export default function Login({ locale, messages }: Props) {
 const LoginForm = ({ locale }: { locale: string }) => {
     const intl = useIntl();
     const [showPassword, setShowPassword] = useState(false);
-    const { login: authLogin, googleLogin, facebookLogin, appleLogin } = useAuth();
+    const { login: authLogin } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    useFacebookSDK(process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '');
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -89,19 +87,15 @@ const LoginForm = ({ locale }: { locale: string }) => {
     const onSubmit = async (data: z.infer<typeof loginSchema>) => {
         try {
             setIsSubmitting(true);
-            const response = await login(data);
-            const user: User = {
-                ...response,
-                tokens: response.tokens || { fileApiToken: '', fileApiRefreshToken: '' }, // Ensure tokens is defined
-            };
-            if (!user || typeof user !== 'object') {
-                throw new Error('Invalid user response');
-            }
-            if (user.token) {
-                document.cookie = `mainApiToken = ${encodeURIComponent(user.token)}; path =/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-            }
-            authLogin(user);
+
+            // Mock login - just show success message and redirect
+            // In development mode, user is always authenticated
             toast.success(intl.formatMessage({ id: 'login successful' }));
+
+            // Simulate a brief delay for UX
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
         } catch (error) {
             console.error('Login error:', error);
             toast.error(intl.formatMessage({ id: 'login failed' }));
@@ -200,7 +194,9 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         <Button
                             variant="outline"
                             type="button"
-                            onClick={() => googleLogin()}
+                            onClick={() => {
+                                toast.info('Google login coming soon!');
+                            }}
                             disabled={isSubmitting}
                             className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
                         >
@@ -209,7 +205,9 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         <Button
                             variant="outline"
                             className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
-                            onClick={() => facebookLogin()}
+                            onClick={() => {
+                                toast.info('Facebook login coming soon!');
+                            }}
                             disabled={isSubmitting}
                         >
                             <FacebookIcon />
@@ -217,7 +215,9 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         <Button
                             variant="outline"
                             className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
-                            onClick={() => appleLogin()}
+                            onClick={() => {
+                                toast.info('Apple login coming soon!');
+                            }}
                             disabled={isSubmitting}
                         >
                             <AppleIcon />

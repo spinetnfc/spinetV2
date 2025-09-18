@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import { useState, useEffect } from "react"
 import { FilterState } from "@/types/leads"
 import { MembersFilter } from "./members-filter"
@@ -17,7 +17,7 @@ interface FilterDialogueProps {
   onFiltersChange: (filters: FilterState) => void
   currentFilters?: FilterState
 }
-const selectedMemberss:Members[]=[
+const selectedMemberss: Members[] = [
   {
     id: "1",
     name: "Olivia Rhye",
@@ -49,12 +49,12 @@ interface Members {
   avatar?: string
   initials: string
 }
-interface Tag{
+interface Tag {
   id: string
   tag: string
- 
+
 }
-const mocktags:Tag[]=[
+const mocktags: Tag[] = [
   { id: "1", tag: "Important" },
   { id: "2", tag: "New" },
   { id: "3", tag: "Urgent" },
@@ -65,7 +65,7 @@ export function FilterDialogue({
   onClose,
   onFiltersChange,
   currentFilters = {
-     statuses: [],
+    statuses: [],
     priorities: [],
     dateRange: { startDate: "", endDate: "" },
     tags: [],
@@ -138,29 +138,29 @@ export function FilterDialogue({
               Reset
             </Button>
           </div>
- 
+
           {/* Sort By */}
-              <div className="mb-6">
-                <h3 className="text-sm font-medium mb-3 text-primary">Sort By</h3>
+          <div className="mb-6">
+            <h3 className="text-sm font-medium mb-3 text-primary">Sort By</h3>
 
-                <RadioGroup
-                  value={currentFilters?.searchQuery ?? "newest"}
-                  onValueChange={(v) =>
-                    onFiltersChange({ ...currentFilters, searchQuery: v })
-                  }
-                  className="flex flex-col gap-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem id="sort-newest" value="newest" />
-                    <Label htmlFor="sort-newest">Newest</Label>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem id="sort-oldest" value="oldest" />
-                    <Label htmlFor="sort-oldest">Oldest</Label>
-                  </div>
-                </RadioGroup>
+            <RadioGroup
+              value={currentFilters?.searchQuery ?? "newest"}
+              onValueChange={(v) =>
+                onFiltersChange({ ...currentFilters, searchQuery: v })
+              }
+              className="flex flex-col gap-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem id="sort-newest" value="newest" />
+                <Label htmlFor="sort-newest">Newest</Label>
               </div>
+
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem id="sort-oldest" value="oldest" />
+                <Label htmlFor="sort-oldest">Oldest</Label>
+              </div>
+            </RadioGroup>
+          </div>
           {/* Date Range */}
           <div className="mb-6">
             <h3 className="text-sm font-medium mb-3 text-primary">Date Range</h3>
@@ -184,7 +184,7 @@ export function FilterDialogue({
           <TagsFilter
             currentTags={mocktags} onTagsChange={function (tags: Tag[]): void {
               throw new Error("Function not implemented.")
-            } }           />
+            }} />
 
           <div className="mt-8">
             <Button onClick={applyFilters} className="w-full">

@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import { toast } from "sonner"
 import { useIntl, FormattedMessage } from "react-intl"
 import {
@@ -33,11 +33,9 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { MultiCombobox, ComboboxOption } from "@/components/ui/combobox"
-import { getContactsAction } from "@/actions/contacts"
-import { editLead, addNoteAction } from "@/actions/leads"
 import { useAuth } from "@/context/authContext"
 import type { Lead, Note } from "@/types/leads"
-import { ProfileAvatar } from "../../profile-avatar"
+import { ProfileAvatar } from "../../profile/profile-avatar"
 
 // Helper function to safely parse date strings
 const parseDate = (dateString?: string | null): Date | null => {
@@ -120,31 +118,33 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
         const fetchData = async () => {
             if (profileId) {
                 try {
-                    const response = await getContactsAction(profileId)
-                    if (response?.success && response.data) {
-                        const contactOptions = response.data.map((contact: any) => ({
-                            value: contact._id,
-                            label: contact.Profile?.fullName || "Unknown",
-                            profilePicture: contact.Profile?.profilePicture,
-                        }))
-                        setContacts(contactOptions)
+                    // Mock contacts - replace with hardcoded data
+                    const mockContacts = [
+                        { _id: "contact-1", Profile: { fullName: "John Smith", profilePicture: "" } },
+                        { _id: "contact-2", Profile: { fullName: "Jane Doe", profilePicture: "" } }
+                    ];
+                    const contactOptions = mockContacts.map((contact: any) => ({
+                        value: contact._id,
+                        label: contact.Profile?.fullName || "Unknown",
+                        profilePicture: contact.Profile?.profilePicture,
+                    }))
+                    setContacts(contactOptions)
 
-                        // Find main contact data if exists
-                        const mainContactId = getContactId(lead.mainContact)
-                        if (mainContactId) {
-                            const mainContact = response.data.find((contact: any) => contact._id === mainContactId)
-                            if (mainContact) {
-                                setMainContactData(mainContact)
-                            }
+                    // Find main contact data if exists
+                    const mainContactId = getContactId(lead.mainContact)
+                    if (mainContactId) {
+                        const mainContact = mockContacts.find((contact: any) => contact._id === mainContactId)
+                        if (mainContact) {
+                            setMainContactData(mainContact)
                         }
-
-                        // Find selected contacts data
-                        const selectedContactIds = (lead.Contacts || []).map(contact => getContactId(contact))
-                        const selectedContacts = response.data.filter((contact: any) =>
-                            selectedContactIds.includes(contact._id)
-                        )
-                        setSelectedContactsData(selectedContacts)
                     }
+
+                    // Find selected contacts data
+                    const selectedContactIds = (lead.Contacts || []).map(contact => getContactId(contact))
+                    const selectedContacts = mockContacts.filter((contact: any) =>
+                        selectedContactIds.includes(contact._id)
+                    )
+                    setSelectedContactsData(selectedContacts)
                 } catch (error) {
                     console.error("Error fetching contacts:", error)
                 }
@@ -198,14 +198,10 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
             }
 
             // Submit the form
-            const result = await editLead(profileId, lead._id, formData)
-
-            if (result?.success) {
-                toast.success(intl.formatMessage({ id: "Lead updated successfully" }))
-                onClose()
-            } else {
-                toast.error(intl.formatMessage({ id: "Failed to update lead" }))
-            }
+            // Mock edit lead - replace with hardcoded behavior
+            console.log("Mock edit lead:", profileId, lead._id, formData);
+            toast.success(intl.formatMessage({ id: "Lead updated successfully" }))
+            onClose()
         } catch (error: any) {
             console.error("Error updating lead:", error)
             toast.error(
@@ -245,15 +241,11 @@ export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onS
                     createdAt: new Date().toISOString()
                 }
 
-                const result = await addNoteAction(profileId, lead._id, noteInput.trim())
-
-                if (result?.success) {
-                    setNotes([...notes, newNote])
-                    setNoteInput("")
-                    toast.success(intl.formatMessage({ id: "Note added successfully" }))
-                } else {
-                    toast.error(intl.formatMessage({ id: "Failed to add note" }))
-                }
+                // Mock add note - replace with hardcoded behavior
+                console.log("Mock add note:", profileId, lead._id, noteInput.trim());
+                setNotes([...notes, newNote])
+                setNoteInput("")
+                toast.success(intl.formatMessage({ id: "Note added successfully" }))
             } catch (error: any) {
                 console.error("Error adding note:", error)
                 toast.error(

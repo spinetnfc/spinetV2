@@ -12,23 +12,31 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 import SwitchProfile from "@/components/switch-profile-drawer";
 import { useEffect, useState } from "react";
-import { getProfileAction } from "@/actions/profile";
- 
-import { ProfileAvatar } from "./pages/profile-avatar";
+import { useProfiles } from "@/context/profileContext";
+
+import { ProfileAvatar } from "./pages/profile/profile-avatar";
 const UserMenu = ({ locale }: { locale: string }) => {
     const { logout, user } = useAuth();
+    const { getProfileData } = useProfiles();
     const profileId = user?.selectedProfile || null;
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     useEffect(() => {
         let isMounted = true;
         async function fetchImage() {
-            const profile = await getProfileAction(profileId);
-            if (profile.profilePicture) {
-                setImageUrl(profile.profilePicture);
+            if (profileId) {
+                try {
+                    const profile = await getProfileData(profileId);
+                    if (profile?.profilePicture && isMounted) {
+                        setImageUrl(profile.profilePicture);
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch profile image:', error);
+                }
             }
         }
         fetchImage();
-    }, [profileId]);
+        return () => { isMounted = false; };
+    }, [profileId, getProfileData]);
     return (<DropdownMenu>
         <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className="rounded-full bg-white dark:bg-background p-0">

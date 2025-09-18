@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn } from '@/utils/cn';
 import { toast } from "sonner";
 import { useIntl, FormattedMessage } from "react-intl";
 import {
@@ -26,8 +26,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { createLead } from "@/actions/leads";
-import { getContactsAction } from "@/actions/contacts";
 import { useAuth } from "@/context/authContext";
 import {
     Select,
@@ -83,16 +81,16 @@ export default function AddLeadForm({ locale, onSave, onClose }: { locale: strin
         const fetchContacts = async () => {
             if (profileId) {
                 try {
-                    const response = await getContactsAction(profileId);
-                    if (response?.success && response.data) {
-                        const contactOptions = response.data.map((contact: any) => ({
-                            value: contact._id,
-                            label: contact.Profile?.fullName || "Unknown",
-                        }));
-                        setContacts(contactOptions);
-                    } else {
-                        toast.error(intl.formatMessage({ id: "Failed to fetch contacts" }));
-                    }
+                    // Mock contacts - replace with hardcoded data
+                    const mockContacts = [
+                        { _id: "contact-1", Profile: { fullName: "John Smith" } },
+                        { _id: "contact-2", Profile: { fullName: "Jane Doe" } }
+                    ];
+                    const contactOptions = mockContacts.map((contact: any) => ({
+                        value: contact._id,
+                        label: contact.Profile?.fullName || "Unknown",
+                    }));
+                    setContacts(contactOptions);
                 } catch (error) {
                     console.error("Error fetching contacts:", error);
                     toast.error(intl.formatMessage({ id: "An unexpected error occurred. Please try again." }));
@@ -136,17 +134,13 @@ export default function AddLeadForm({ locale, onSave, onClose }: { locale: strin
             });
 
             // Submit the form
-            const result = await createLead(profileId, formData);
-
-            if (result?.success) {
-                toast.success(intl.formatMessage({ id: "Lead added successfully" }));
-                form.reset();
-                setTags([]);
-                setTagInput("");
-                router.push(`/${locale}/app/leads`);
-            } else {
-                toast.error(intl.formatMessage({ id: "Failed to add lead" }));
-            }
+            // Mock create lead - replace with hardcoded behavior
+            console.log("Mock create lead:", profileId, formData);
+            toast.success(intl.formatMessage({ id: "Lead added successfully" }));
+            form.reset();
+            setTags([]);
+            setTagInput("");
+            router.push(`/${locale}/app/leads`);
         } catch (error: any) {
             console.error("Error submitting form:", {
                 message: error.message,

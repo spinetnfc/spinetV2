@@ -1,6 +1,5 @@
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 import type { ServicesData, ServicesSearchParams } from "@/types/services"
-import { searchServices } from "@/lib/api/services"
 import { ServicesCardList } from "@/components/pages/services/services-list"
 
 type ServicesPageProps = {
@@ -10,7 +9,7 @@ type ServicesPageProps = {
 
 export default async function ServicesPage(props: ServicesPageProps) {
   const searchParams = await props.searchParams;
-  const { locale } = await params
+  const { locale } = await props.params
   const resolvedSearchParams = await searchParams
 
   // Get user and profile data
@@ -28,7 +27,20 @@ export default async function ServicesPage(props: ServicesPageProps) {
   // Fetch initial service data
   let services: ServicesData[] = []
   try {
-    services = await searchServices(userId, initialSearchParams)
+    // Mock services - replace with hardcoded data
+    services = [
+      {
+        name: "Web Development",
+        description: "Professional web development services",
+        Profile: {
+          _id: "mock-profile-1",
+          firstName: "John",
+          lastName: "Doe",
+          profilePicture: "",
+          numServices: 1
+        }
+      }
+    ];
   } catch (error) {
     console.error("Error fetching services:", error)
   }

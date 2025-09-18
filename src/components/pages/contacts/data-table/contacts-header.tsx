@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { ContactSourceFilter } from "./contact-source-filter"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import ImportContacts from "../import-contacts"
 import {
   DropdownMenu,
   DropdownMenuContent,

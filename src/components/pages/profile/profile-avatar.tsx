@@ -1,4 +1,3 @@
-import { getFile } from "@/actions/files";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import avatar from "@/assets/images/user.png";
@@ -58,4 +57,13 @@ export function ProfileAvatar({
             fill={profileCover ? true : false}
         />
     );
+}
+async function getFile(filePath: string): Promise<string> {
+    // If the filePath is already a full URL, return it directly
+    if (/^https?:\/\//.test(filePath)) {
+        return filePath;
+    }
+    // Otherwise, assume it's a relative path to your public assets or an API endpoint
+    // Adjust the base URL as needed for your backend or storage solution
+    return `${process.env.NEXT_PUBLIC_API_URL || ""}/files/${encodeURIComponent(filePath)}`;
 }

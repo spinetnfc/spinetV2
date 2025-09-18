@@ -1,5 +1,7 @@
+"use client"
 import InsightsPage from "@/components/pages/insights/insights-page";
-import { getInsights } from "@/lib/api/profile";
+
+// Mock insights page - all backend calls removed
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import { format } from "date-fns";
 import type { Insights } from "@/types/profile";
@@ -24,7 +26,16 @@ export default async function Page() {
     };
 
     try {
-        insights = await getInsights(profileId, { startDate: "2021-01-01", endDate: today });
+        // Mock insights - replace with hardcoded data
+        insights = {
+            views: 150,
+            taps: 45,
+            links: [],
+            connections: 10,
+            score: 75,
+            trees: 5,
+            economized: 100
+        };
     } catch (error) {
         console.error("Error fetching insights:", error);
         // Optionally return fallback UI or use default insights

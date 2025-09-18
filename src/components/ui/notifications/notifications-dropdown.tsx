@@ -16,8 +16,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/context/authContext"
 import avatar from "@/assets/images/user.png"
 import { Invitation, NotificationItem } from "@/types/notifications"
-import { api } from "@/lib/axios"
-import { acceptInvitation, markNotificationsAsRead } from "@/lib/api/notifications"
 import { set } from "date-fns"
 
 interface NotificationDropdownProps {
@@ -35,13 +33,55 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     const { user } = useAuth()
     const profileId = user.selectedProfile
 
-    // Fetch only notifications
+    // Fetch only notifications - hardcoded mock data
     const fetchNotifications = async () => {
         if (!profileId) return
         setIsLoading(true)
         try {
-            const notificationsResponse = await api.post(`/profile/${profileId}/notifications/filter`, { limit: 10, skip: 0 })
-            const receivedNotifications = notificationsResponse.data.received || []
+            // Mock notifications response
+            console.log("Mock fetch notifications for profileId:", profileId);
+            const receivedNotifications: NotificationItem[] = [
+                {
+                    _id: "notif-1",
+                    type: "message",
+                    title: "New message received",
+                    body: "You have a new message from John Doe",
+                    from: "user-1",
+                    to: [profileId],
+                    fromType: "profile",
+                    toType: "profile",
+                    readBy: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    read: false,
+                    Sender: {
+                        _id: "user-1",
+                        firstName: "John",
+                        lastName: "Doe",
+                        fullName: "John Doe"
+                    }
+                },
+                {
+                    _id: "notif-2",
+                    type: "invitation",
+                    title: "Connection request",
+                    body: "Jane Smith wants to connect with you",
+                    from: "user-2",
+                    to: [profileId],
+                    fromType: "profile",
+                    toType: "profile",
+                    readBy: [profileId],
+                    createdAt: new Date(Date.now() - 3600000).toISOString(),
+                    updatedAt: new Date(Date.now() - 3600000).toISOString(),
+                    read: true,
+                    Sender: {
+                        _id: "user-2",
+                        firstName: "Jane",
+                        lastName: "Smith",
+                        fullName: "Jane Smith"
+                    }
+                }
+            ];
             setNotifications(receivedNotifications)
             const unreadNotifications = receivedNotifications.filter(
                 (notification: NotificationItem) => !notification.read && !notification.readBy?.includes(profileId)
@@ -54,13 +94,56 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
         }
     }
 
-    // Fetch invitations
+    // Fetch invitations - hardcoded mock data
     const fetchInvitations = async () => {
         if (!profileId) return
         setIsLoading(true)
         try {
-            const invitationsResponse = await api.post(`/profile/${profileId}/invitations`, { limit: 10, skip: 0 })
-            setInvitations(invitationsResponse.data || [])
+            // Mock invitations response
+            console.log("Mock fetch invitations for profileId:", profileId);
+            const mockInvitations: Invitation[] = [
+                {
+                    _id: "inv-1",
+                    type: "contact",
+                    inviteeProfile: profileId,
+                    status: "pending",
+                    leadCaptions: {
+                        tags: []
+                    },
+                    date: new Date().toISOString(),
+                    Profile: {
+                        _id: "user-3",
+                        type: "personal",
+                        status: "none",
+                        fullName: "Alice Johnson",
+                        firstName: "Alice",
+                        lastName: "Johnson",
+                        profilePicture: "",
+                        birthDate: "1990-01-01",
+                        scope: "link",
+                        gender: "female",
+                        companyName: "",
+                        activitySector: "",
+                        position: "",
+                        theme: {
+                            color: "#000000"
+                        },
+                        phoneNumber: "",
+                        website: "",
+                        displayLogo: false,
+                        active: true,
+                        deactivetedByCompany: false,
+                        pending: false,
+                        Account: "account-1",
+                        Contacts: [],
+                        links: [],
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+                        __v: 0
+                    }
+                }
+            ];
+            setInvitations(mockInvitations)
         } catch (error) {
             console.error("Error fetching invitations:", error)
         } finally {
@@ -88,13 +171,12 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     // Mark notification as read
     const markAsRead = async (notificationId: string) => {
         try {
-            const response = await markNotificationsAsRead(profileId, [notificationId])
-            if (response.status === 200) {
-                setNotifications((prev) =>
-                    prev.map((n) => (n._id === notificationId ? { ...n, read: true, readBy: [...(n.readBy || []), profileId] } : n))
-                )
-                setUnreadCount((prev) => Math.max(0, prev - 1))
-            }
+            // Mock mark as read - replace with hardcoded behavior
+            console.log("Mock mark notification as read:", notificationId);
+            setNotifications((prev) =>
+                prev.map((n) => (n._id === notificationId ? { ...n, read: true, readBy: [...(n.readBy || []), profileId] } : n))
+            )
+            setUnreadCount((prev) => Math.max(0, prev - 1))
         }
         catch (error) {
             console.error("Error marking notification as read:", error)
@@ -106,18 +188,16 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     // Mark all notifications as read
     const markAllAsRead = async () => {
         try {
-            const response = await markNotificationsAsRead(profileId, notifications.map(n => n._id))
-            if (response.status === 200) {
-                setNotifications((prev) =>
-                    prev.map((n) => ({
-                        ...n,
-                        read: true,
-                        readBy: [...(n.readBy || []), profileId],
-                    }))
-                )
-                setUnreadCount(0)
-            }
-
+            // Mock mark all as read - replace with hardcoded behavior
+            console.log("Mock mark all notifications as read");
+            setNotifications((prev) =>
+                prev.map((n) => ({
+                    ...n,
+                    read: true,
+                    readBy: [...(n.readBy || []), profileId],
+                }))
+            )
+            setUnreadCount(0)
         } catch (error) {
             console.error("Error marking all notifications as read:", error)
         }
@@ -181,20 +261,20 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
 
     const handleAcceptInvitation = async (profileId: string, invitationId: string) => {
         try {
-            const response = await acceptInvitation(profileId, invitationId);
-            if (response.status === 200) {
-                setInvitations((prev) => prev.filter((inv) => inv._id !== invitationId))
-            }
+            // Mock accept invitation - replace with hardcoded behavior
+            console.log("Mock accept invitation:", { profileId, invitationId });
+            // Remove invitation from list (mock behavior)
+            // setInvitations((prev) => prev.filter((inv) => inv._id !== invitationId))
         } catch (error) {
             console.error("Error accepting invitation:", error);
         }
     }
     const handleRefuseInvitation = async (profileId: string, invitationId: string) => {
         try {
-            const response = await api.post(`/profile/${profileId}/invitation/${invitationId}/refuse`);
-            if (response.status === 200) {
-                setInvitations((prev) => prev.filter((inv) => inv._id !== invitationId))
-            }
+            // Mock refuse invitation - replace with hardcoded behavior
+            console.log("Mock refuse invitation:", { profileId, invitationId });
+            // Remove invitation from list (mock behavior)
+            // setInvitations((prev) => prev.filter((inv) => inv._id !== invitationId))
         } catch (error) {
             console.error("Error refusing invitation:", error);
         }

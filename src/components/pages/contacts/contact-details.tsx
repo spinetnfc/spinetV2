@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import { X, Mail, UserPlus, Download, MoreHorizontal, Phone, MapPin, Edit, Trash2, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { format } from "date-fns";
- import { editContact, removeContact } from "@/actions/contacts"
 import { FormattedMessage, useIntl } from "react-intl"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -35,66 +34,63 @@ interface ContactSidebarProps {
 const PhoneMockup: React.FC<ContactSidebarProps> = ({ contact, onClose }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-const [editedContact, setEditedContact] = useState<Contact>({
-  ...contact,
-  Profile: {
-    ...contact.Profile,
-    position: contact.Profile?.position || "",
-    companyName: contact.Profile?.companyName || "",
-    links: contact.Profile?.links || [],
-  },
-  leadCaptions: {
-    ...contact.leadCaptions,
-    tags: contact.leadCaptions?.tags || [],
-  },
-})
+  const [editedContact, setEditedContact] = useState<Contact>({
+    ...contact,
+    Profile: {
+      ...contact.Profile,
+      position: contact.Profile?.position || "",
+      companyName: contact.Profile?.companyName || "",
+      links: contact.Profile?.links || [],
+    },
+    leadCaptions: {
+      ...contact.leadCaptions,
+      tags: contact.leadCaptions?.tags || [],
+    },
+  })
   const intl = useIntl()
   const router = useRouter()
   const { user } = useAuth();
-    const profileId = user.selectedProfile;
+  const profileId = user.selectedProfile;
   if (!contact) return null
 
   const handleEdit = () => {
     setIsEditing(true)
   }
 
-const handleSaveEdit = async () => {
-  setIsEditing(false);
-try {
-  // normalize links
-  const formLinks = (editedContact.Profile.links || []).map(({ title, link }) => ({
-    title,
-    link,
-  }));
+  const handleSaveEdit = async () => {
+    setIsEditing(false);
+    try {
+      // normalize links
+      const formLinks = (editedContact.Profile.links || []).map(({ title, link }) => ({
+        title,
+        link,
+      }));
 
-  const ContactInfo: ContactInput = {
-    name: editedContact.Profile.fullName,
-    type: contact.type,
-    profile: {
-      fullName: editedContact.Profile.fullName,
-      position: editedContact.Profile.position || undefined,
-      companyName: editedContact.Profile.companyName || undefined,
-      profilePicture: contact.Profile?.profilePicture,
-      links: formLinks.length > 0 ? formLinks : undefined, // <-- clean links
-    },
-    leadCaptions: {
-      metIn: editedContact.leadCaptions?.metIn || undefined,
-      date: editedContact.leadCaptions?.date || new Date().toISOString(),
-      tags: editedContact.leadCaptions?.tags?.length ? editedContact.leadCaptions.tags : undefined,
-      nextAction: editedContact.leadCaptions?.nextAction || undefined,
-      dateOfNextAction: editedContact.leadCaptions?.dateOfNextAction
-        ? format(editedContact.leadCaptions.dateOfNextAction, "yyyy-MM-dd")
-        : undefined,
-      notes: editedContact.leadCaptions?.notes || undefined,
-    },
-  };
+      const ContactInfo: ContactInput = {
+        name: editedContact.Profile.fullName,
+        type: contact.type,
+        profile: {
+          fullName: editedContact.Profile.fullName,
+          position: editedContact.Profile.position || undefined,
+          companyName: editedContact.Profile.companyName || undefined,
+          profilePicture: contact.Profile?.profilePicture,
+          links: formLinks.length > 0 ? formLinks : undefined, // <-- clean links
+        },
+        leadCaptions: {
+          metIn: editedContact.leadCaptions?.metIn || undefined,
+          date: editedContact.leadCaptions?.date || new Date().toISOString(),
+          tags: editedContact.leadCaptions?.tags?.length ? editedContact.leadCaptions.tags : undefined,
+          nextAction: editedContact.leadCaptions?.nextAction || undefined,
+          dateOfNextAction: editedContact.leadCaptions?.dateOfNextAction
+            ? format(editedContact.leadCaptions.dateOfNextAction, "yyyy-MM-dd")
+            : undefined,
+          notes: editedContact.leadCaptions?.notes || undefined,
+        },
+      };
 
-  const response = await editContact(profileId, editedContact._id, ContactInfo);
-   if (response.success) {
-        toast.success(intl.formatMessage({ id: "Contact saved successfully" }))
-      } else {
-        throw new Error(response.message || "Unknown error")
-      }
+      // Mock edit contact - replace with hardcoded behavior
+      console.log("Mock edit contact:", profileId, editedContact._id, ContactInfo);
+      toast.success(intl.formatMessage({ id: "Contact saved successfully" }))
     } catch (error) {
       console.error("Error saving contact:", error)
       toast.error(
@@ -102,13 +98,13 @@ try {
           id: "Failed to save contact. Please try again.",
         })
       )
-    } finally{
+    } finally {
       setIsEditing(false)
       setEditedContact(contact) // Reset to original
-              router.refresh()
+      router.refresh()
 
     }
-};
+  };
 
 
   const handleCancelEdit = () => {
@@ -117,20 +113,16 @@ try {
 
   }
 
-   const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = async () => {
     if (!profileId) return
 
     try {
       console.log("Deleting contact with ID:", contact._id)
       console.log("Deleting contact from contact.Profile._id:", profileId)
-      const response = await removeContact(profileId, contact._id)
-       console.log("Response from deleteContact:", response)
-      if (response.success) {
-        toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
-        router.refresh()
-      } else {
-        throw new Error(response.message)
-      }
+      // Mock remove contact - replace with hardcoded behavior
+      console.log("Mock remove contact:", profileId, contact._id);
+      toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
+      router.refresh()
     } catch (error) {
       console.error("Error deleting contact:", error)
       toast.error(intl.formatMessage({ id: "Failed to delete contact. Please try again." }))
@@ -198,9 +190,9 @@ try {
       {/* Profile Section */}
       <div className="px-4   text-center">
         <Avatar className="w-16 h-16 mx-auto mb-4">
-          <AvatarImage src={ contact.Profile.profilePicture  || "/placeholder.svg"} alt={ contact.Profile.firstName} />
+          <AvatarImage src={contact.Profile.profilePicture || "/placeholder.svg"} alt={contact.Profile.firstName} />
           <AvatarFallback>
-            { contact.Profile.fullName
+            {contact.Profile.fullName
               .split(" ")
               .map((n) => n[0])
               .join("")}
@@ -230,9 +222,9 @@ try {
           </div>
         ) : (
           <>
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">{ contact.Profile.fullName}</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">{contact.Profile.fullName}</h2>
             <p className="text-sm text-gray-600 mb-4">
-              { contact.Profile.position} at { contact.Profile.companyName}
+              {contact.Profile.position} at {contact.Profile.companyName}
             </p>
           </>
         )}
@@ -306,7 +298,7 @@ try {
                 />
               ) : (
                 <p className="text-sm text-primary">
-                  { contact.Profile.links?.filter((link) => link.title === "Email").map((link) => link.link)}
+                  {contact.Profile.links?.filter((link) => link.title === "Email").map((link) => link.link)}
                 </p>
               )}
             </div>
@@ -331,7 +323,7 @@ try {
                 />
               ) : (
                 <p className="text-sm text-primary">
-                  { contact.Profile.links?.filter((link) => link.title === "phone").map((link) => link.link)}
+                  {contact.Profile.links?.filter((link) => link.title === "phone").map((link) => link.link)}
                 </p>
               )}
             </div>
@@ -351,7 +343,7 @@ try {
                   className="text-sm"
                 />
               ) : (
-                <p className="text-sm text-primary">{ contact.leadCaptions?.metIn}</p>
+                <p className="text-sm text-primary">{contact.leadCaptions?.metIn}</p>
               )}
             </div>
           </div>
@@ -428,7 +420,7 @@ try {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>            <FormattedMessage id="cancel" />
-</AlertDialogCancel>
+            </AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700">
               <FormattedMessage id="delete" />
             </AlertDialogAction>

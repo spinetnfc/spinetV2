@@ -18,7 +18,6 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { verifyOTP } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -48,11 +47,15 @@ const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
   const onSubmit = async (data: z.infer<typeof otpSchema>) => {
     try {
       setIsSubmitting(true);
-      console.log('Current sessionId before verify:', sessionId);
-      const response = await verifyOTP(sessionId, data.otp);
-      setSessionId(response.resetSessionId);
-      toast.success(intl.formatMessage({ id: "OTP verified successfully" }),);
-      setStep('newPassword');
+
+      // Mock OTP verification - accept any 6-digit code
+      if (data.otp.length === 6) {
+        setSessionId('mock-reset-session-id');
+        toast.success(intl.formatMessage({ id: "OTP verified successfully" }),);
+        setStep('newPassword');
+      } else {
+        throw new Error('Invalid OTP');
+      }
 
     } catch (error) {
       toast.error(intl.formatMessage({ id: "Failed to verify OTP, try again" }));

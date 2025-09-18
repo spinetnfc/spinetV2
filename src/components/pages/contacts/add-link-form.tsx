@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { X } from "lucide-react"
-import { updateProfile } from "@/lib/api/profile"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
 
@@ -67,11 +66,8 @@ export default function AddLinkForm({ profileId, existingLinks, onSuccess, onCan
             // Add the new link to existing links
             const updatedLinks = [...existingLinks, newLink]
 
-            // Call the updateProfile function with the updated links
-            await updateProfile(profileId, {
-                links: updatedLinks,
-            })
-
+            // Mock update profile - replace with hardcoded behavior
+            console.log("Mock add link:", updatedLinks);
             toast.success(intl.formatMessage({ id: "Link added successfully" }))
             onSuccess()
         } catch (error) {

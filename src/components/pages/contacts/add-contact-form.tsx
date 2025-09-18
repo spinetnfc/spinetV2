@@ -14,12 +14,12 @@ import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import { toast } from "sonner"
 import { useIntl, FormattedMessage } from "react-intl"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useRouter } from "next/navigation"
-import { createContact } from "@/actions/contacts"
+import { useContactsContext } from "@/context/contactsContext"
 import { useAuth } from "@/context/authContext"
 
 // Define the contact schema with Zod
@@ -50,6 +50,7 @@ type LinkType = {
 export default function AddContactForm({ locale }: { locale: string }) {
   const intl = useIntl()
   const profileId = useAuth().user.selectedProfile
+  const { addContact } = useContactsContext()
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -136,37 +137,40 @@ export default function AddContactForm({ locale }: { locale: string }) {
         links: formLinks,
       })
 
-      // Submit the form
-      const result = await createContact(profileId, formData, "manual")
-
-      if (result?.success) {
-        toast.success(intl.formatMessage({ id: "Contact added successfully" }))
-        form.reset()
-        setTags([])
-        setLinks([])
-        setTagInput("")
-        setShowLinkForm(false)
-        router.push(`/${locale}/app/contacts`)
-      } else {
-        toast.error(intl.formatMessage({ id: "Failed to add contact" }))
+      // Submit the form - use context instead of API
+      const contactData = {
+        name: data.fullName,
+        type: "manual" as const,
+        Profile: {
+          _id: `profile-${Date.now()}`,
+          fullName: data.fullName,
+          firstName: data.fullName.split(' ')[0],
+          lastName: data.fullName.split(' ').slice(1).join(' '),
+          position: data.position,
+          companyName: data.companyName,
+          links: formLinks
+        },
+        leadCaptions: {
+          metIn: data.metIn,
+          nextAction: data.nextAction,
+          dateOfNextAction: data.dateOfNextAction ? format(data.dateOfNextAction, "yyyy-MM-dd") : undefined,
+          notes: data.notes,
+          tags
+        }
       }
+
+      addContact(contactData)
+
+      toast.success(intl.formatMessage({ id: "Contact added successfully" }))
+      form.reset()
+      setTags([])
+      setLinks([])
+      setTagInput("")
+      setShowLinkForm(false)
+      router.push(`/${locale}/app/contacts`)
     } catch (error: any) {
-      console.error("Error submitting form:", {
-        message: error.message,
-        response: error.response
-          ? {
-              status: error.response.status,
-              statusText: error.response.statusText,
-              data: JSON.stringify(error.response.data, null, 2),
-            }
-          : "No response data available",
-        stack: error.stack,
-      })
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          intl.formatMessage({ id: "An unexpected error occurred. Please try again." }),
-      )
+      console.error("Error submitting form:", error)
+      toast.error(intl.formatMessage({ id: "An unexpected error occurred. Please try again." }))
     } finally {
       setIsSubmitting(false)
     }

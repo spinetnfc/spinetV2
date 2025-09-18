@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@/utils/cn";
 import type { Contact } from "@/types/contact";
 import { X } from "lucide-react";
-import { ProfileAvatar } from "../profile-avatar";
+import { ProfileAvatar } from "../profile/profile-avatar";
 import { RenderIcon } from "@/components/ui/renderIcon";
 
 interface PhoneMockupProps {

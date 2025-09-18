@@ -15,7 +15,6 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { updateUserAction } from "@/actions/user";
 import { toast } from 'sonner';
 import { User } from '@/types/user';
 import Cookies from 'js-cookie';
@@ -42,8 +41,8 @@ export default function ChangePhoneForm({ user, onCancel }: { user: User, onCanc
     const onPhoneSubmit = async (data: z.infer<typeof phoneSchema>) => {
         try {
             setIsSubmitting(true);
-            const response = await updateUserAction(user._id, { phoneNumber: data.phone as User["phoneNumber"] });
-            if (!response.success) throw new Error(response.message || 'Failed to update phone number');
+            // Mock update - replace with hardcoded behavior
+            console.log("Mock phone update:", data.phone);
 
             // Update current-user cookie with new phone
             const currentUser = Cookies.get('current-user');
