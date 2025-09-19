@@ -42,7 +42,7 @@ export default function SubmitQuestionForm() {
   }
 
   return (
-    <div className="w-full rounded-[20px] bg-white p-6 shadow-[0_80.6px_105.701px_rgba(51,51,51,0.1)] lg:w-1/2">
+    <div className="w-full rounded-[20px] bg-card p-6 shadow-[0_80.6px_105.701px_rgba(51,51,51,0.1)] lg:w-1/2">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -50,13 +50,13 @@ export default function SubmitQuestionForm() {
             name="fullName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base font-black text-[#152656] opacity-60 ">
+                <FormLabel className="text-base font-black text-card-foreground opacity-70">
                   <FormattedMessage id="full-name" /> *
                 </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    className="rounded-[5px] border-[1.5px] border-[#152656] text-black opacity-80 focus:opacity-100"
+                    className="rounded-[5px] border-[1.5px] border-input bg-background text-foreground placeholder:text-spinet-text-muted focus:border-spinet-primary"
                     placeholder={intl.formatMessage({
                       id: 'enter-your-full-name',
                     })}
@@ -72,13 +72,13 @@ export default function SubmitQuestionForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base font-black text-[#152656] opacity-60">
+                <FormLabel className="text-base font-black text-card-foreground opacity-70">
                   <FormattedMessage id="email-address" />
                 </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    className="rounded-[5px] border-[1.5px] border-[#152656] text-black opacity-80 focus:opacity-100"
+                    className="rounded-[5px] border-[1.5px] border-input bg-background text-foreground placeholder:text-spinet-text-muted focus:border-spinet-primary"
                     placeholder={intl.formatMessage({ id: 'enter-your-email' })}
                   />
                 </FormControl>
@@ -92,13 +92,13 @@ export default function SubmitQuestionForm() {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base font-black text-[#152656] opacity-60">
+                <FormLabel className="text-base font-black text-card-foreground opacity-70">
                   <FormattedMessage id="phone-number" />
                 </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    className="rounded-[5px] border-[1.5px] border-[#152656] text-black opacity-80 focus:opacity-100"
+                    className="rounded-[5px] border-[1.5px] border-input bg-background text-foreground placeholder:text-spinet-text-muted focus:border-spinet-primary"
                     placeholder={intl.formatMessage({
                       id: 'enter-your-phone-number',
                     })}
@@ -113,13 +113,13 @@ export default function SubmitQuestionForm() {
             name="message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base font-black text-[#152656] opacity-60">
+                <FormLabel className="text-base font-black text-card-foreground opacity-70">
                   <FormattedMessage id="how-can-we-help" />
                 </FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
-                    className="h-[165px] rounded-[5px] border-[1.5px] border-[#152656] text-[#152656] opacity-80 focus:opacity-100  "
+                    className="h-[165px] rounded-[5px] border-[1.5px] border-input bg-background text-foreground placeholder:text-spinet-text-muted focus:border-spinet-primary"
                     placeholder={intl.formatMessage({
                       id: 'describe-your-query',
                     })}
@@ -131,7 +131,7 @@ export default function SubmitQuestionForm() {
 
           <Button
             type="submit"
-            className="h-[47px] w-[143px] rounded-[8px] bg-[#145FF2] text-white hover:bg-[#145FF2]/90"
+            className="h-[47px] w-[143px] rounded-[8px] bg-spinet-primary text-white hover:bg-spinet-primary/90"
           >
             <FormattedMessage id="send" />
           </Button>

@@ -31,7 +31,7 @@ async function Footer({ locale }: Props) {
   ];
 
   return (
-    <div className="flex flex-col px-4 bg-main lg:px-16 pt-8 lg:pt-16">
+    <div className="flex flex-col px-4 bg-main text-white lg:px-16 pt-8 lg:pt-16">
       <div className="flex items-center justify-between border-b-2 pb-8 border-blue-950">
         <SpinetLogo className="hover:cursor-pointer" width={151} height={31} />
         <div className="flex items-center justify-center gap-3 sm:gap-5">
@@ -45,7 +45,7 @@ async function Footer({ locale }: Props) {
           <div className="md:w-3/10 flex flex-col items-center gap-3" key={i}>
             {c.icon}
             <span className="text-lg font-semibold">{t(c.title)}</span>
-            <span className='text-spinet-text-muted'>{c.text}</span>
+            <span className='text-[#EEF6FF]/80'>{c.text}</span>
           </div>
         ))}
       </div>
@@ -58,7 +58,7 @@ async function Footer({ locale }: Props) {
       </div>
 
       <div className="py-3">
-        <span className="text-center text-sm hover:cursor-pointer text-spinet-text-muted block">
+        <span className="text-center text-sm hover:cursor-pointer text-[#EEF6FF]/80 block">
           {t('terms-of-service-and-privacy-policy')}
         </span>
       </div>
