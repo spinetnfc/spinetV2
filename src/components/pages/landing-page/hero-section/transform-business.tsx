@@ -33,7 +33,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
             </span>
 
             {/* Title */}
-            <h1 className="text-4xl sm:text-5xl md:text-7xl text-spinet-deep text-center lg:text-start">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl text-spinet-deep dark:text-spinet-light text-center lg:text-start">
               <FormattedMessage id="transform-your" />{' '}
               <span className="font-extrabold">
                 <FormattedMessage id="business" />
@@ -42,7 +42,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
             </h1>
 
             {/* Paragraph */}
-            <p className="w-full text-center lg:text-start text-lg sm:text-xl font-normal text-spinet-deep">
+            <p className="w-full text-center lg:text-start text-lg sm:text-xl font-normal text-spinet-text-muted">
               <FormattedMessage id="transform-your-with-spinet-text" />
             </p>
           </div>

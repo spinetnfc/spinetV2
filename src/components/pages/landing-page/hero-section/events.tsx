@@ -16,13 +16,13 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
     <div className="relative flex h-full flex-col  items-center justify-center   overflow-hidden">
       <div className="flex size-full items-center justify-center">
         {' '}
-        <div className="absolute inset-0 bg-[#01173A]/30 object-cover shadow-[0_-1px_4px_rgba(20,95,242,0.2)]">
+        <div className="absolute inset-0 bg-[#01173A]/50 object-cover shadow-[0_-1px_4px_rgba(20,95,242,0.2)]">
           <Image
             src={eventsBg}
             quality={100}
             priority
             alt="Digital Event Organization"
-            className="mix-blend-overlay"
+            className="mix-blend-overlay blur-sm opacity-70"
             fill
             sizes='100vw'
             style={{ objectFit: 'cover' }}
@@ -30,7 +30,7 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         </div>
         <div
           id="thisOne"
-          className="z-10 flex  flex-col items-center justify-center gap-4  "
+          className="z-10 flex  flex-col items-center justify-center gap-4"
         >
           {/* Section Text */}
           <div className="flex flex-col items-center  justify-center gap-4 p-4">
@@ -46,7 +46,7 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             </h1>
 
             {/* Paragraph */}
-            <p className="  w-full text-center text-xl  font-medium text-[#EEF6FF]">
+            <p className="  w-full text-center text-xl  font-medium text-[#EEF6FF]/80">
               <FormattedMessage id="spinet-events-and-more-text" />
             </p>
           </div>

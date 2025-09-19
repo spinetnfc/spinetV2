@@ -33,7 +33,7 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             </h1>
 
             {/* Paragraph */}
-            <p className="w-full text-base sm:text-xl text-center lg:text-start font-medium text-spinet-light ">
+            <p className="w-full text-base sm:text-xl text-center lg:text-start font-medium text-[#EEF6FF]/80 ">
               <FormattedMessage id="digital-identity-text" />
             </p>
           </div>
