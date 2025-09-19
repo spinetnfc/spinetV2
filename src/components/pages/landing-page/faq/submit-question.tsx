@@ -131,7 +131,7 @@ export default function SubmitQuestionForm() {
 
           <Button
             type="submit"
-            className="h-[47px] w-[143px] rounded-[8px] bg-spinet-primary text-white hover:bg-spinet-primary/90"
+            className="h-[47px] w-full text-center rounded-[8px] bg-spinet-primary text-white hover:bg-spinet-primary/90"
           >
             <FormattedMessage id="send" />
           </Button>

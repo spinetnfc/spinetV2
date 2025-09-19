@@ -29,52 +29,47 @@ function ChangeLanguage({ locale }: Props) {
         <Button
           variant="outline"
           size="icon"
-          className="cursor-pointer overflow-hidden rounded-full"
+          className="cursor-pointer overflow-hidden rounded-full hover:bg-transparent"
         >
           <span className="sr-only">Open Language Switcher</span>
           {locale === 'en' ? (
-            // <EnglishIcon />
-            <div className='bg-red-500 text-white text-sm font-semibold w-10 h-10 rounded-full flex items-center justify-center'>EN</div>
+            <div className='border border-input text-spinet-text-muted text-sm font-semibold w-10 h-10 rounded-full flex items-center justify-center'>EN</div>
           ) : locale === 'fr' ? (
-            // <FrenchIcon />
-            <div className='bg-blue-500 text-white text-sm font-semibold w-10 h-10 rounded-full flex items-center justify-center'>FR</div>
-
+            <div className='border border-input text-spinet-text-muted text-sm font-semibold w-10 h-10 rounded-full flex items-center justify-center'>FR</div>
           ) : (
-            // <ArabicIcon />
-            <div className='bg-green-600 text-white text-xs font-semibold w-10 h-10 rounded-full flex items-center justify-center'>AR</div>
-
+            <div className='border border-input text-spinet-text-muted text-xs font-semibold w-10 h-10 rounded-full flex items-center justify-center'>AR</div>
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className='bg-white dark:bg-main p-0'>
+      <DropdownMenuContent align="end" className=' border border-border p-0'>
         <Link
           href={newPathName(pathname, 'en')}
-          className="flex w-full h-8 px-1 cursor-pointer  flex-row items-center justify-between transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-navy"
-        >
-          <div className="flex items-center  gap-3">
-            <span className="text-sm font-medium text-primary">English</span>
-          </div>
-          {locale === 'en' && <Check className='text-primary' />}
-        </Link>
-        <DropdownMenuSeparator className='-mx-0 my-0' />
-        <Link
-          href={newPathName(pathname, 'fr')}
-          className="flex w-full h-8 px-1 cursor-pointer  flex-row items-center justify-between transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-navy"
+          className="flex w-full h-8 px-3 py-2 cursor-pointer flex-row items-center justify-between transition-colors duration-200 hover:bg-muted"
         >
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-primary">Français</span>
+            <span className="text-sm font-medium text-spinet-text-muted hover:text-foreground">English</span>
           </div>
-          {locale === 'fr' && <Check className='text-primary' />}
+          {locale === 'en' && <Check className='text-spinet-primary size-4' />}
         </Link>
-        <DropdownMenuSeparator className='-mx-0 my-0' />
+        <DropdownMenuSeparator className='mx-0 my-0' />
+        <Link
+          href={newPathName(pathname, 'fr')}
+          className="flex w-full h-8 px-3 py-2 cursor-pointer flex-row items-center justify-between transition-colors duration-200 hover:bg-muted"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-spinet-text-muted hover:text-foreground">Français</span>
+          </div>
+          {locale === 'fr' && <Check className='text-spinet-primary size-4' />}
+        </Link>
+        <DropdownMenuSeparator className='mx-0 my-0' />
         <Link
           href={newPathName(pathname, 'ar')}
-          className="flex w-full h-8 px-1 text-sm cursor-pointer flex-row items-center justify-between transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-navy"
+          className="flex w-full h-8 px-3 py-2 cursor-pointer flex-row items-center justify-between transition-colors duration-200 hover:bg-muted"
         >
-          <div className="flex items-center  gap-3">
-            <span className="text-sm font-medium text-primary">العربية</span>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-spinet-text-muted hover:text-foreground">العربية</span>
           </div>
-          {locale === 'ar' && <Check className='text-primary' />}
+          {locale === 'ar' && <Check className='text-spinet-primary size-4' />}
         </Link>
       </DropdownMenuContent >
     </DropdownMenu >

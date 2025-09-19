@@ -38,7 +38,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
               <FormattedMessage id={title} />
             </h2>
             {subtitle && (
-              <p className="text-base text-muted-foreground">{subtitle}</p>
+              <p className="text-base text-muted-foreground">
+                <FormattedMessage id={subtitle} />
+              </p>
             )}
           </div>
           <div className="text-2xl font-bold text-spinet-primary">{price}</div>
