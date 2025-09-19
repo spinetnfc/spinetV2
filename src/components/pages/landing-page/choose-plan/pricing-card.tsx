@@ -105,7 +105,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
               icon={<ShoppingCart className="me-2.5 size-5" />}
               text={intl.formatMessage({ id: 'buy-now' })}
             />
-            <button className="flex flex-row items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-spinet-primary hover:bg-spinet-primary/10 transition-colors">
+            <button className="flex flex-row dark:text-white items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-spinet-primary/10 transition-colors">
               <FormattedMessage id="free-trial" />
               <ArrowRight className="size-4" />
             </button>
