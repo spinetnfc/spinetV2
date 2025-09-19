@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { IntlProvider } from 'react-intl';
 import HomeNavBar from '@/components/pages/landing-page/hero-section/nav-bar';
 import ShopNavBar from '@/components/pages/shop/nav-bar';
@@ -16,9 +17,17 @@ const messagesMap = {
     fr: frMessages,
 };
 
-export default function NavBarWrapper({  parent }: {  parent: string }) {
+export default function NavBarWrapper({ parent }: { parent: string }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const locale = getLocale() || "en";
+    const [locale, setLocale] = useState<string>("en");
+    const pathname = usePathname();
+
+    // Update locale whenever the pathname changes
+    useEffect(() => {
+        const currentLocale = getLocale() || "en";
+        setLocale(currentLocale);
+    }, [pathname]);
+
     const messages = messagesMap[locale as keyof typeof messagesMap];
 
     return (
