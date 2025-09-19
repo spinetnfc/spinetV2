@@ -42,7 +42,7 @@ async function HowItWorks({ locale }: Props) {
   return (
     <div className=" flex w-full flex-col items-center justify-center  gap-2.5   px-3 py-1.5  lg:gap-4">
       <Legend text="Experience Our Seamless Process" locale={locale} />
-      <div className="text-center text-4xl sm:text-5xl leading-[60px] text-spinet-deep">
+      <div className="text-center text-4xl sm:text-5xl leading-[60px] text-spinet-deep dark:text-spinet-light">
         {t('how-it-works')}
       </div>
 

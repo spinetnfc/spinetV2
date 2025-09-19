@@ -108,7 +108,7 @@ const OtpForm = ({ email, setStep, sessionId, setSessionId }: Props) => {
           <button
             type="button"
             onClick={handleResendOTP}
-            className="ms-1 text-[#0F62FE] underline"
+            className="ms-1 text-spinet-primary underline"
           >
             <FormattedMessage id="resend-code" />
           </button>

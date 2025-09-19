@@ -128,7 +128,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
     };
 
     return (
-        <div className="z-50 w-full space-y-6 rounded-lg p-8 text-[#0D2C60] lg:shadow-md dark:text-[#EEF6FF] lg:bg-white lg:dark:bg-[#010E37]">
+        <div className="z-50 w-full space-y-6 rounded-lg p-8 text-spinet-text-primary lg:shadow-md lg:bg-white lg:dark:bg-spinet-navy">
             <h1 className="text-start text-4xl font-semibold">
                 <FormattedMessage id="login" />
             </h1>
@@ -147,7 +147,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
                                     <Input
                                         placeholder="username@gmail.com"
                                         {...field}
-                                        className="border-gray-200 dark:border-blue-950 focus:border-blue-500"
+                                        className="border-gray-200 dark:border-spinet-navy focus:border-spinet-primary"
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -188,7 +188,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
                     <div className="flex justify-end">
                         <Link
                             href={`/${locale}/auth/forgot-password`}
-                            className="text-sm text-azure hover:underline"
+                            className="text-sm text-spinet-primary hover:underline"
                         >
                             <FormattedMessage id="forgot-password" />
                         </Link>
@@ -221,13 +221,13 @@ const LoginForm = ({ locale }: { locale: string }) => {
                                 toast.info('Google login coming soon!');
                             }}
                             disabled={isSubmitting}
-                            className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                            className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-spinet-navy bg-neutral-100 dark:bg-spinet-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-spinet-navy/80"
                         >
                             <GoogleIcon />
                         </Button>
                         <Button
                             variant="outline"
-                            className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                            className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-spinet-navy bg-neutral-100 dark:bg-spinet-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-spinet-navy/80"
                             onClick={() => {
                                 toast.info('Facebook login coming soon!');
                             }}
@@ -237,7 +237,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         </Button>
                         <Button
                             variant="outline"
-                            className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-blue-900 bg-neutral-100 dark:bg-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-navy/80"
+                            className="flex items-center gap-2 rounded-3xl border-gray-200 dark:border-spinet-navy bg-neutral-100 dark:bg-spinet-navy px-4 py-2 transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-spinet-navy/80"
                             onClick={() => {
                                 toast.info('Apple login coming soon!');
                             }}
@@ -253,7 +253,7 @@ const LoginForm = ({ locale }: { locale: string }) => {
                         </span>
                         <Link
                             href={`/${locale}/auth/register`}
-                            className="text-[#0F62FE] hover:underline"
+                            className="text-spinet-primary hover:underline"
                         >
                             <FormattedMessage id="register-for-free" />
                         </Link>

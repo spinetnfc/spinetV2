@@ -30,11 +30,11 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
           <FormattedMessage id="Features" />
         </div>
 
-        <h3 className=" text-[23.4375px] leading-8 text-[#1A3B8E]/80 dark:text-white">
+        <h3 className=" text-[23.4375px] leading-8 text-spinet-text-muted">
           <FormattedMessage id={title} />
         </h3>
 
-        <p className="text-sm leading-5 text-[#1A3B8E]/80 dark:text-white">
+        <p className="text-sm leading-5 text-spinet-text-muted">
           <FormattedMessage id={subtitle} />
         </p>
       </div>

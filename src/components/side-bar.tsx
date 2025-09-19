@@ -90,17 +90,17 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                   key={item.name}
                   href={item.to}
                   className={cn(
-                    'text-primary hover:bg-[#F1F5F9] hover:text-blue-500',
+                    'text-primary hover:bg-spinet-muted hover:text-spinet-primary',
                     'group flex items-center rounded-md p-2 ms-1 text-base font-medium ',
                     isExpanded && "w-full",
-                    isActive && 'bg-[#F1F5F9] dark:bg-white   dark:text-blue-500'
+                    isActive && 'bg-spinet-muted dark:bg-white dark:text-spinet-primary'
                   )}
                 >
                   <item.icon
                     className={cn(
-                      'text-primary group-hover:text-blue-500',
+                      'text-primary group-hover:text-spinet-primary',
                       `${isExpanded ? "me-4" : "mx-auto"} size-6 shrink-0`,
-                      isActive && 'text-blue-500 dark:text-blue-500'
+                      isActive && 'text-spinet-primary dark:text-spinet-primary'
                     )}
                     aria-hidden="true"
                   />
@@ -126,7 +126,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
         <DrawerTrigger asChild>
           <Button
             size="icon"
-            className="lg:hidden absolute start-4 top-3 z-50 border border-azure bg-gray-50 dark:bg-background"
+            className="lg:hidden absolute start-4 top-3 z-50 border border-spinet-primary bg-gray-50 dark:bg-background"
           >
             <PanelLeft className="size-5 text-primary" />
             <span className="sr-only">Toggle Sidebar</span>
@@ -160,16 +160,16 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
                     key={item.name}
                     href={item.to}
                     className={cn(
-                      'text-primary hover:bg-gray-700 hover:text-white',
+                      'text-primary hover:bg-spinet-muted hover:text-white',
                       'group flex flex-1 w-full items-center rounded-md p-2 text-base font-medium',
-                      isActive && 'bg-blue-200 dark:bg-white text-blue-500 dark:text-blue-500'
+                      isActive && 'bg-spinet-accent dark:bg-white text-spinet-primary dark:text-spinet-primary'
                     )}
                   >
                     <item.icon
                       className={cn(
                         'text-primary group-hover:text-primary',
                         `me-4 size-6 shrink-0`,
-                        isActive && 'text-blue-500 dark:text-blue-500'
+                        isActive && 'text-spinet-primary dark:text-spinet-primary'
                       )}
                       aria-hidden="true"
                     />

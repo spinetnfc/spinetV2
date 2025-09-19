@@ -18,7 +18,7 @@ function Header({ locale }: { locale: string }) {
         <ThemeSwitch locale={locale} />
         <ChangeLanguage locale={locale} />
         {path?.includes("/shop") && <Link href={`/${locale}/shop/cart`}>
-          <ShoppingCart className="size-6 text-white" />
+          <ShoppingCart className="size-6 text-spinet-light" />
         </Link>}
         <UserMenu locale={locale} />
 

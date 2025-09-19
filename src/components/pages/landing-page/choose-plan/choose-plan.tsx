@@ -27,10 +27,10 @@ type Props = { messages: Record<string, string> };
         text={intl.formatMessage({ id: 'affordable-solutions' })}
         locale={locale}
       />
-      <div className=" text-center text-4xl sm:text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
+      <div className=" text-center text-4xl sm:text-5xl leading-[60px] text-spinet-deep dark:text-spinet-light">
         <FormattedMessage id="choose-your-plans" />
       </div>
-      <div className="flex items-center justify-center text-center text-lg sm:text-xl text-[#1A3B8E]/80 dark:text-white">
+      <div className="flex items-center justify-center text-center text-lg sm:text-xl text-spinet-text-muted">
         <FormattedMessage id="choose-your-plans-text" />
       </div>
       <Options isYearly={isYearly} setIsYearly={setIsYearly} />

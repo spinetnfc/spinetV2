@@ -16,9 +16,9 @@ import offersImg from '@/assets/images/features/7.offers.svg';
 import teamsFormsRedirectionsImg from '@/assets/images/features/8.teams-forms-redirections.png';
 import { getLocale } from '@/utils/getClientLocale';
 
-type Props = {  messages: Record<string, string> };
+type Props = { messages: Record<string, string> };
 
-function Features({  messages }: Props) {
+function Features({ messages }: Props) {
   const featuresContainerRef = useRef<HTMLDivElement>(null);
   const [
     handleMouseDown,
@@ -27,7 +27,7 @@ function Features({  messages }: Props) {
     handleMouseMove,
     handleWheel,
   ] = useDrag(featuresContainerRef);
-    const locale = getLocale() || "en";
+  const locale = getLocale() || "en";
 
   // Updated wheel handler: if deltaX is 0, fallback to deltaY.
   const handleWheelWrapper = useCallback((e: WheelEvent) => {
@@ -66,10 +66,10 @@ function Features({  messages }: Props) {
     <IntlProvider locale={locale} messages={messages}>
       <div className="flex w-full flex-col items-center justify-center gap-2.5 overflow-x-hidden px-3 py-1.5 lg:gap-4">
         <Legend text="Maximize Your Enterprise Potential with Our Services" locale={locale} />
-        <div className="text-center text-4xl sm:text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
+        <div className="text-center text-4xl sm:text-5xl leading-[60px] text-spinet-deep dark:text-spinet-light">
           <FormattedMessage id="Features" />
         </div>
-        <span className="text-center text-lg sm:text-xl text-[#1A3B8E]/80 dark:text-white">
+        <span className="text-center text-lg sm:text-xl text-spinet-text-muted">
           <FormattedMessage id="Features-text" />
         </span>
         <div

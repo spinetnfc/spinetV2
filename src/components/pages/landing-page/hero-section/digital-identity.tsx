@@ -27,13 +27,13 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
           <div className="flex flex-col gap-4 ">
             {/* Top */}
 
-            <h1 className="text-4xl xs:text-5xl lg:text-6xl xl:text-7xl text-center lg:text-start font-semibold text-[#EEF6FF]">
+            <h1 className="text-4xl xs:text-5xl lg:text-6xl xl:text-7xl text-center lg:text-start font-semibold text-spinet-light">
               {' '}
               <FormattedMessage id="digital-identity" />
             </h1>
 
             {/* Paragraph */}
-            <p className="w-full text-base sm:text-xl text-center lg:text-start font-medium text-[#EEF6FF] ">
+            <p className="w-full text-base sm:text-xl text-center lg:text-start font-medium text-spinet-light ">
               <FormattedMessage id="digital-identity-text" />
             </p>
           </div>

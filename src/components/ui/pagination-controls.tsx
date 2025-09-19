@@ -28,7 +28,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
             <button
                 key={1}
                 onClick={() => router.push(createPageURL(1))}
-                className={`w-10 h-10 rounded-md mx-1 ${currentPage === 1 ? "bg-[#001838] text-white" : "border hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+                className={`w-10 h-10 rounded-md mx-1 ${currentPage === 1 ? "bg-spinet-button text-white" : "border hover:bg-gray-100 dark:hover:bg-gray-800"}`}
             >
                 1
             </button>
@@ -45,7 +45,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
                 <button
                     key={currentPage}
                     onClick={() => router.push(createPageURL(currentPage))}
-                    className="w-10 h-10 rounded-md mx-1 bg-[#001838] text-white"
+                    className="w-10 h-10 rounded-md mx-1 bg-spinet-button text-white"
                 >
                     {currentPage}
                 </button>
@@ -63,7 +63,7 @@ export function PaginationControls({ currentPage, totalPages }: PaginationContro
                 <button
                     key={totalPages}
                     onClick={() => router.push(createPageURL(totalPages))}
-                    className={`w-10 h-10 rounded-md mx-1 ${currentPage === totalPages ? "bg-[#001838] text-white" : "border hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+                    className={`w-10 h-10 rounded-md mx-1 ${currentPage === totalPages ? "bg-spinet-button text-white" : "border hover:bg-gray-100 dark:hover:bg-gray-800"}`}
                 >
                     {totalPages}
                 </button>

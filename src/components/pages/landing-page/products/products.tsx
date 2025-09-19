@@ -32,11 +32,11 @@ async function Products({ locale }: Props) {
   return (
     <div className=" flex w-full flex-col items-center justify-center  gap-2.5   px-3 py-1.5  lg:gap-4">
       <Legend text={t('elevate-your-business')} locale={locale} />
-      <div className=" text-center text-4xl sm:text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
+      <div className=" text-center text-4xl sm:text-5xl leading-[60px] text-spinet-deep dark:text-spinet-light">
         {t('most-popular-products')}
       </div>
 
-      <div className="flex  items-center justify-center text-center text-lg sm:text-xl  text-[#1A3B8E]/80  dark:text-white">
+      <div className="flex  items-center justify-center text-center text-lg sm:text-xl text-spinet-text-muted">
         {t('most-popular-products-text')}
       </div>
 

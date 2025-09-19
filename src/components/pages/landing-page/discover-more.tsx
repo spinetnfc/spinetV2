@@ -15,11 +15,11 @@ async function DiscoverMore() {
   return (
     <div className=" flex w-full flex-col items-center justify-center  gap-2.5   px-3 py-1.5  lg:gap-4">
       <Legend text={t('one-solution-for-all')} locale={locale} />
-      <div className=" h-14 text-center text-4xl sm:text-5xl leading-[60px] text-[#1A3B8E] dark:text-white">
+      <div className=" h-14 text-center text-4xl sm:text-5xl leading-[60px] text-spinet-deep dark:text-spinet-light">
         {t('discover-more')}
       </div>
 
-      <div className="flex  items-center justify-center text-center text-lg sm:text-xl  text-[#1A3B8E]/80  dark:text-white">
+      <div className="flex  items-center justify-center text-center text-lg sm:text-xl text-spinet-text-muted">
         {t('discover-more-text')}
       </div>
 

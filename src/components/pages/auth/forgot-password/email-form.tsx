@@ -94,7 +94,7 @@ const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
           </span>
           <Link
             href={isAuthenticated ? `/${locale}/app` : `/${locale}/auth/login`}
-            className="text-[#0F62FE] underline"
+            className="text-spinet-primary underline"
           >
             {isAuthenticated ? <FormattedMessage id="app" /> : <FormattedMessage id="log-in" />}
           </Link>

@@ -115,10 +115,10 @@ html.ar {
     --ring: 213 100% 77%; /* #8FC8FF - Spinet Accent */
     
     /* Spinet Custom Colors - Dark Theme */
-    --spinet-primary: 220 90% 56%; /* #145FF2 - Keep primary blue */
+    --spinet-primary: 220 90% 56%; /* #145FF2 primary blue */
     --spinet-navy: 226 79% 22%; /* #082356 */
     --spinet-dark: 226 96% 10%; /* #010C32 */
-    --spinet-deep: 220 100% 96%; /* #EEF6FF - Light text for dark mode */
+    --spinet-deep: 220 100% 96%; /* #EEF6FF in dark */
     --spinet-hover: 220 90% 65%; /* Lighter hover for dark mode */
     --spinet-button: 220 90% 56%; /* #145FF2 for buttons in dark */
     --spinet-light: 220 100% 96%; /* #EEF6FF */
