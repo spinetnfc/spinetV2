@@ -3,7 +3,7 @@ import NextLink from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/utils/cn';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/context/authContext';
+import { useIsAuthenticated } from '@/store/auth-store';
 
 const Logo = ({
     locale,
@@ -14,7 +14,7 @@ const Logo = ({
 }) => {
     // Add state to prevent hydration mismatch
     const [mounted, setMounted] = useState(false);
-    const { isAuthenticated } = useAuth();
+    const isAuthenticated = useIsAuthenticated();
     // Ensure component is only rendered client-side after mount
     useEffect(() => {
         setMounted(true);

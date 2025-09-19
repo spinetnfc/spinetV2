@@ -19,13 +19,13 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useProfiles } from "@/context/profileContext"
+import { useProfileActions } from "@/store/profile-store"
 import { FormattedMessage } from "react-intl"
 import { startTransition, useEffect, useState } from "react"
 import { CirclePlus, Loader } from "lucide-react"
 import Image from "next/image"
 import { getLocale } from "@/utils/getClientLocale"
-import { useAuth } from "@/context/authContext"
+import { useUser, useIsAuthenticated, useSelectProfile } from "@/store/auth-store"
 import { Spinner } from "./ui/spinner"
 import { ProfileAvatar } from "./pages/profile/profile-avatar"
 import { mockProfiles } from "@/mockdata/profiles"
@@ -33,8 +33,9 @@ import type { ProfileData } from "@/types/profile"
 
 
 export default function SwitchProfileDrawer() {
-    const { user, isAuthenticated } = useAuth();
-    const { selectProfile } = useProfiles();
+    const user = useUser();
+    const isAuthenticated = useIsAuthenticated();
+    const selectProfile = useSelectProfile();
     const locale = getLocale() || "en";
     const [profiles, setProfiles] = useState<ProfileData[]>([])
     const [selectedProfile, setSelectedProfile] = useState<ProfileData | null>(null)

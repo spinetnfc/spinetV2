@@ -1,7 +1,7 @@
 'use client';
 
-import { useAuth } from '@/context/authContext'; // Corrected import path
-import { ContactsProvider } from '@/context/contactsContext';
+import { useIsAuthenticated, useAuthLoading } from '@/store/auth-store';
+
 import { getLocale } from '@/utils/getClientLocale';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,8 @@ export default function ProtectedLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { isAuthenticated, isLoading } = useAuth();
+    const isAuthenticated = useIsAuthenticated();
+    const isLoading = useAuthLoading();
     const router = useRouter();
     const pathname = usePathname();
     const [isClient, setIsClient] = useState(false);
@@ -39,12 +40,12 @@ export default function ProtectedLayout({
 
     // In development mode, always render children
     if (SKIP_AUTH) {
-        return <ContactsProvider>{children}</ContactsProvider>;
+        return { children };
     }
 
     if (!isClient || isLoading || !isAuthenticated) {
         return null; // Prevent rendering until client-side and auth is resolved
     }
 
-    return <ContactsProvider>{children}</ContactsProvider>;
+    return { children };
 }

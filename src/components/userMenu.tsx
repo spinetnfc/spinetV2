@@ -9,15 +9,16 @@ import {
 } from "@/components/ui/dropdown";
 import { FormattedMessage } from "react-intl";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/authContext";
+import { useUser, useLogout } from "@/store/auth-store";
 import SwitchProfile from "@/components/switch-profile-drawer";
 import { useEffect, useState } from "react";
-import { useProfiles } from "@/context/profileContext";
+import { useProfileStore } from "@/store/profile-store";
 
 import { ProfileAvatar } from "./pages/profile/profile-avatar";
 const UserMenu = ({ locale }: { locale: string }) => {
-    const { logout, user } = useAuth();
-    const { getProfileData } = useProfiles();
+    const logout = useLogout();
+    const user = useUser();
+    const getProfileData = useProfileStore((state) => state.fetchProfile);
     const profileId = user?.selectedProfile || null;
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     useEffect(() => {

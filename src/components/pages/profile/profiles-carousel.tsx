@@ -9,7 +9,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import { FormattedMessage } from "react-intl";
-import { useSidebar } from "@/context/sidebarContext";
+import { useIsSidebarExpanded } from "@/store/sidebar-store";
 import { ProfileData } from "@/types/profile";
 
 interface ProfileCarouselProps {
@@ -21,7 +21,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
     const [current, setCurrent] = React.useState(0);
     const pathname = usePathname();
     const router = useRouter();
-    const { isExpanded } = useSidebar();
+    const isExpanded = useIsSidebarExpanded();
 
     React.useEffect(() => {
         if (!api) return;

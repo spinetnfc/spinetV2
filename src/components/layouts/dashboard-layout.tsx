@@ -9,8 +9,8 @@ import { cn } from '@/utils/cn';
 import type { SideNavigationItem } from '@/types/layout-types';
 // import { userRole } from '@/utils/role';
 import Header from '../header';
-import { SidebarProvider, useSidebar } from '@/context/sidebarContext';
-import { ProfileProvider } from '@/context/profileContext';
+import { useIsSidebarExpanded, useSidebarActions } from '@/store/sidebar-store';
+
 
 const Layout = ({
   locale,
@@ -19,7 +19,8 @@ const Layout = ({
   locale: string;
   children: React.ReactNode;
 }) => {
-  const { isExpanded, setIsExpanded } = useSidebar();
+  const isExpanded = useIsSidebarExpanded();
+  const { setIsExpanded } = useSidebarActions();
   // const role = userRole();
 
   const navigation = [
@@ -49,7 +50,7 @@ const Layout = ({
       >
         <main className="grid flex-1 items-start gap-4 md:gap-8 relative border-l border-gray-300">
           {children}
-          
+
         </main>
       </div>
     </div>
@@ -65,25 +66,21 @@ export const DashboardLayout = ({
 }) => {
   const pathname = usePathname();
   return (
-    <ProfileProvider>
-    <SidebarProvider>
-      <Layout locale={locale}>
-        <Suspense
-          fallback={
-            <div className="flex size-full items-center justify-center">
-              <Spinner size="xl" />
-            </div>
-          }
+    <Layout locale={locale}>
+      <Suspense
+        fallback={
+          <div className="flex size-full items-center justify-center">
+            <Spinner size="xl" />
+          </div>
+        }
+      >
+        <ErrorBoundary
+          key={pathname}
+          fallback={<div>Something went wrong!</div>}
         >
-          <ErrorBoundary
-            key={pathname}
-            fallback={<div>Something went wrong!</div>}
-          >
-            {children}
-          </ErrorBoundary>
-        </Suspense>
-      </Layout>
-    </SidebarProvider>
-    </ProfileProvider>
+          {children}
+        </ErrorBoundary>
+      </Suspense>
+    </Layout>
   );
 };

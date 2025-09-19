@@ -11,7 +11,7 @@ import ChangeEmailForm from "../profile/change-email-form"
 import ChangePhoneForm from "../profile/change-phone"
 import Link from "next/link"
 import { getLocale } from "@/utils/getClientLocale"
-import { useAuth } from "@/context/authContext"
+import { useUser, useLogout } from "@/store/auth-store"
 import { toast } from "sonner"
 import { useIntl, FormattedMessage } from "react-intl"
 
@@ -22,7 +22,7 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
     const [profileLink, setProfileLink] = useState<string | undefined>(undefined)
     const [language, setLanguage] = useState<string | undefined>(undefined)
     const [searchable, setSearchable] = useState<boolean>(false)
-    const { logout } = useAuth()
+    const logout = useLogout()
     const intl = useIntl()
 
     useEffect(() => {

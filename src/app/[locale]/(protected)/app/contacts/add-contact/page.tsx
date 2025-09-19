@@ -16,7 +16,7 @@ import { cn } from '@/utils/cn'
 import z from "zod"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/store/auth-store"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -103,7 +103,8 @@ export default function AddContactPage() {
   const [displayText, setDisplayText] = useState("")
   const [url, setUrl] = useState("")
   const intl = useIntl()
-  const profileId = useAuth().user.selectedProfile
+  const user = useUser()
+  const profileId = user?.selectedProfile
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)

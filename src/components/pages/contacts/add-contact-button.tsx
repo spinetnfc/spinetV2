@@ -2,7 +2,7 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/context/authContext";
+import { useUser, useIsAuthenticated } from "@/store/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profile } from "console";
 import { format, set } from "date-fns";
@@ -18,7 +18,7 @@ import { cn } from "@/utils/cn";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { InviteContact } from "@/types/contact";
-import { useContactsContext } from "@/context/contactsContext";
+import { useContactsActions } from "@/store/contacts-store";
 
 const contactSchema = z.object({
     profile: z.string().length(24, { message: "Profile ID must be 24 characters" }),
@@ -33,8 +33,9 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 
 
 const AddContactButton = () => {
-    const { isAuthenticated, user } = useAuth();
-    const { addContact } = useContactsContext();
+    const isAuthenticated = useIsAuthenticated();
+    const user = useUser();
+    const { addContact } = useContactsActions();
     const profileId = user.selectedProfile;
     const pathname = usePathname();
     const newContactId = pathname.split("/").pop();

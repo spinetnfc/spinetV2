@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { useAuth } from '@/context/authContext';
+import { useLogin } from '@/store/auth-store';
 import { useFacebookSDK } from '@/hooks/use-facebookSDK';
 import Script from 'next/script';
 import { Spinner } from '@/components/ui/spinner';
@@ -73,7 +73,7 @@ export default function Login({ locale, messages }: Props) {
 const LoginForm = ({ locale }: { locale: string }) => {
     const intl = useIntl();
     const [showPassword, setShowPassword] = useState(false);
-    const { login: authLogin } = useAuth();
+    const authLogin = useLogin();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof loginSchema>>({

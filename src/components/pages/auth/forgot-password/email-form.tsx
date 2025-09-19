@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { set } from 'date-fns';
 import { Spinner } from '@/components/ui/spinner';
-import { useAuth } from '@/context/authContext';
+import { useAuthActions } from '@/store/auth-store';
 
 type Props = {
   setEmail: React.Dispatch<React.SetStateAction<string>>;

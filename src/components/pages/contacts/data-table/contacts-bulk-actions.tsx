@@ -7,7 +7,7 @@ import { FormattedMessage, useIntl } from "react-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { useContactsContext } from "@/context/contactsContext"
+import { useContactsActions } from "@/store/contacts-store"
 import type { Contact } from "@/types/contact"
 
 interface ContactsBulkActionsProps {
@@ -19,7 +19,7 @@ interface ContactsBulkActionsProps {
 export function ContactsBulkActions({ selectedContacts, profileId, onSelectionClear }: ContactsBulkActionsProps) {
   const router = useRouter()
   const intl = useIntl()
-  const { deleteContact } = useContactsContext()
+  const { deleteContact } = useContactsActions()
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 

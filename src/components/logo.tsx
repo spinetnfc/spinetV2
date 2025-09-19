@@ -1,7 +1,7 @@
 import NextLink from 'next/link';
 import { cn } from '@/utils/cn';
 import LogoIcon from './icons/logo';
-import { useAuth } from '@/context/authContext';
+import { useIsAuthenticated } from '@/store/auth-store';
 
 const Logo = ({
   locale,
@@ -10,7 +10,7 @@ const Logo = ({
   locale: string;
   parentDarkMode?: boolean;
 }) => {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useIsAuthenticated();
   return (
     <NextLink className="flex items-center text-white" href={isAuthenticated ? `/${locale}/app` : `/${locale}`}>
       <LogoIcon

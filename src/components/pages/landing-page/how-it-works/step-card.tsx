@@ -10,13 +10,12 @@ import { useParams } from 'next/navigation';
 
 type Props = {
   imageUrl: StaticImageData;
+  imageUrlLight?: StaticImageData;
   text: string;
   ordinal: string;
-
-
 };
 
-function StepCard({ imageUrl, text, ordinal }: Props) {
+function StepCard({ imageUrl, imageUrlLight, text, ordinal }: Props) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { locale } = useParams();
@@ -39,13 +38,9 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
         >
           <Image
             src={
-              ordinal !== 'Third' && ordinal !== 'Fourth'
-                ? imageUrl
-                : resolvedTheme === 'dark'
-                  ? imageUrl
-                  : imageUrl.src.slice(0, imageUrl.src.lastIndexOf('.')) +
-                  '-light' +
-                  imageUrl.src.slice(imageUrl.src.lastIndexOf('.'))
+              (ordinal === 'Third' || ordinal === 'Fourth') && imageUrlLight && resolvedTheme === 'light'
+                ? imageUrlLight
+                : imageUrl
             }
             alt={text}
             fill

@@ -39,7 +39,7 @@ import GoogleIcon from '@/components/icons/google-icon';
 import AppleIcon from '@/components/icons/apple-icon';
 import { cn } from '@/utils/cn';
 import ColorPicker from '@/components/ui/color-picker';
-import { useAuth } from '@/context/authContext';
+import { useAuthActions } from '@/store/auth-store';
 import type { User } from '@/types/user';
 import StyledFileInput from '@/components/ui/image-input';
 import { Spinner } from '@/components/ui/spinner';

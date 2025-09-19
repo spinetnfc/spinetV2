@@ -10,7 +10,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { useSidebar } from "@/context/sidebarContext"
+import { useIsSidebarExpanded } from "@/store/sidebar-store"
 import { useIsLGScreen, useIsXLScreen } from "@/hooks/screens"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import { contactColumns } from "./contact-columns"
@@ -21,7 +21,7 @@ import { ContactsModals } from "./contacts-modals"
 import { ContactsHeader } from "./contacts-header"
 import { ContactsTable } from "./contacts-table"
 import { ExportDialogue } from "./export-dialogue"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/store/auth-store"
 import PhoneMockup from "../contact-details"
 
 interface ContactsDataTableProps {
@@ -48,11 +48,11 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
   const [columnOrder, setColumnOrder] = useState<string[]>([])
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
 
-  const { user } = useAuth()
+  const user = useUser()
   const profileId = user?.selectedProfile || undefined
   const router = useRouter()
   const urlSearchParams = useSearchParams()
-  const { isExpanded } = useSidebar()
+  const isExpanded = useIsSidebarExpanded()
   const isLGScreen = useIsLGScreen()
   const isXLScreen = useIsXLScreen()
 

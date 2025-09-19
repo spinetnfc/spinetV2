@@ -12,9 +12,10 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer/drawer';
 import { useTheme } from 'next-themes';
 import { FormattedMessage } from 'react-intl';
-import { useAuth } from '@/context/authContext';
- import { ProfileData } from '@/types/profile';
-import { useProfileActions } from '@/context/profileContext';
+import { useUser, useAuthActions } from '@/store/auth-store';
+import { useProfileStore } from '@/store/profile-store';
+import { ProfileData } from '@/types/profile';
+
 
 type Props = {
   navigation: SideNavigationItem[];
@@ -27,9 +28,10 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
   const pathname = usePathname();
   const { theme } = useTheme();
   const [isDark, setIsDark] = useState(theme === 'dark');
-  const profileId = useAuth().user?.selectedProfile;
+  const user = useUser();
+  const profileId = user?.selectedProfile;
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const {getProfileData} = useProfileActions()
+  const fetchProfile = useProfileStore((state) => state.fetchProfile)
 
   useEffect(() => {
     setIsDark(theme === 'dark');
@@ -40,7 +42,7 @@ function SideBar({ navigation, locale, isExpanded, setIsExpanded }: Props) {
 
     const fetchProfile = async () => {
       try {
-        const data = await getProfileData(profileId);
+        const data = await fetchProfile(profileId);
         setProfileData(data);
       } catch (error) {
         console.error('Error fetching profile data:', error);

@@ -4,7 +4,7 @@ import { ThemeProvider } from 'next-themes';
 import * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MainErrorFallback } from '@/components/errors/main';
-import { AuthProvider } from '@/context/authContext';
+
 import { Toaster } from '@/components/ui/sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { IntlProvider } from 'react-intl';
@@ -32,10 +32,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <IntlProvider locale={locale} messages={messages} defaultLocale="en">
           <GoogleOAuthProvider clientId="191856451903-98inavnv0kljgjt7hcda44do034ou8ua.apps.googleusercontent.com">
-            <AuthProvider>
-              <Toaster position="bottom-right" />
-              {children}
-            </AuthProvider>
+            <Toaster position="bottom-right" />
+            {children}
           </GoogleOAuthProvider>
         </IntlProvider>
       </ThemeProvider>

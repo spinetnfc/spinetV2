@@ -26,7 +26,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/authContext";
+import { useUser } from "@/store/auth-store";
 import {
     Select,
     SelectContent,

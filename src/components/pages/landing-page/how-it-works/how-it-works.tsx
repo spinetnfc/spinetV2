@@ -7,7 +7,9 @@ import StepCard from './step-card';
 import howItWorks1 from '@/assets/images/how-it-works/1.png';
 import howItWorks2 from '@/assets/images/how-it-works/2.png';
 import howItWorks3 from '@/assets/images/how-it-works/3.png';
+import howItWorks3Light from '@/assets/images/how-it-works/3-light.png';
 import howItWorks4 from '@/assets/images/how-it-works/4.png';
+import howItWorks4Light from '@/assets/images/how-it-works/4-light.png';
 
 type Props = { locale: string };
 
@@ -16,7 +18,6 @@ async function HowItWorks({ locale }: Props) {
   const steps = [
     {
       imageUrl: howItWorks1,
-
       text: 'create-an-account',
       ordinal: 'first',
     },
@@ -27,11 +28,13 @@ async function HowItWorks({ locale }: Props) {
     },
     {
       imageUrl: howItWorks3,
+      imageUrlLight: howItWorks3Light,
       text: 'active-spinet-product',
       ordinal: 'third',
     },
     {
       imageUrl: howItWorks4,
+      imageUrlLight: howItWorks4Light,
       text: 'exchange-contact-and-collect-leads',
       ordinal: 'fourth',
     },
@@ -58,6 +61,7 @@ async function HowItWorks({ locale }: Props) {
           <StepCard
             key={index}
             imageUrl={step.imageUrl}
+            imageUrlLight={step.imageUrlLight}
             text={t(step.text)}
             ordinal={t(step.ordinal)}
           />

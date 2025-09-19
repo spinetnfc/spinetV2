@@ -10,7 +10,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { useContactsContext } from "@/context/contactsContext"
+import { useContactsActions } from "@/store/contacts-store"
 import type { Contact } from "@/types/contact"
 
 interface ContactActionCellProps {
@@ -23,7 +23,7 @@ interface ContactActionCellProps {
 export function ContactActionCell({ contact, locale, profileId, onEdit }: ContactActionCellProps) {
   const router = useRouter()
   const intl = useIntl()
-  const { deleteContact } = useContactsContext()
+  const { deleteContact } = useContactsActions()
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 

@@ -21,7 +21,7 @@ import { LeadsHeader } from "./leads-header"
 import { LeadsModals } from "./leads-modals"
 import { StatusFilter } from "./status-filter"
 import { PriorityFilter } from "./priority-filter"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/store/auth-store"
 import { useLeads } from "@/hooks/useMockData"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import FilterIcon from "@/components/filter-icon"
@@ -61,7 +61,7 @@ interface LeadsDataTableProps {
 }
 
 export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
-  const { user } = useAuth()
+  const user = useUser()
   const { data: leadsData, isLoading } = useLeads()
 
   const [leads, setLeads] = useState<Lead[]>([])

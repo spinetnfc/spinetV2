@@ -7,7 +7,7 @@ import { FormattedMessage, useIntl } from "react-intl"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from "@/components/ui/dropdown"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/store/auth-store"
 // import { CalendarIcon } from "lucide-react"
 // import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 // import { Calendar } from "@/components/ui/calendar"
@@ -38,7 +38,8 @@ const priorityOptions = [
 
 export function LeadFilter() {
     const searchParams = useSearchParams()
-    const profileId = useAuth().user.selectedProfile
+    const user = useUser()
+    const profileId = user?.selectedProfile
     const [contacts, setContacts] = React.useState<SearchOption[]>([])
     const pathname = usePathname()
     const { replace } = useRouter()

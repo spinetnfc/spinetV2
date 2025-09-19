@@ -33,7 +33,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { MultiCombobox, ComboboxOption } from "@/components/ui/combobox"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/store/auth-store"
 import type { Lead, Note } from "@/types/leads"
 import { ProfileAvatar } from "../../profile/profile-avatar"
 

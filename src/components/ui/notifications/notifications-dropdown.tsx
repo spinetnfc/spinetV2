@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/store/auth-store"
 import avatar from "@/assets/images/user.png"
 import { Invitation, NotificationItem } from "@/types/notifications"
 import { set } from "date-fns"
@@ -30,7 +30,7 @@ export default function NotificationDropdown({ pollingInterval = 30000, locale }
     const [unreadCount, setUnreadCount] = useState(0)
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const { user } = useAuth()
+    const user = useUser()
     const profileId = user.selectedProfile
 
     // Fetch only notifications - hardcoded mock data

@@ -10,7 +10,7 @@ import { cn } from '@/utils/cn';
 import ThemeSwitch from '../theme-switch';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { useAuth } from '@/context/authContext';
+import { useIsAuthenticated } from '@/store/auth-store';
 import logoSpinet from '@/assets/images/logo-spinet.svg';
 import logoSpinetDark from '@/assets/images/logo-spinet-dark.svg';
 import authImage from '@/assets/images/authentication.png';
@@ -29,7 +29,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useIsAuthenticated();
 
   // Ensure component is mounted before using window properties
   useEffect(() => {
