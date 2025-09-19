@@ -25,11 +25,11 @@ const FaqQuestions = () => {
   ];
 
   return (
-    <div className="w-[590px] max-w-full text-spinet-deep dark:text-spinet-light lg:self-end">
-      <h1 className="mb-6 text-4xl sm:text-5xl text-center font-bold leading-[60px] ">
+    <div className="w-[590px] max-w-full text-spinet-deep dark:text-spinet-light">
+      <h1 className="mb-6 text-4xl sm:text-5xl font-bold leading-[60px] ">
         <FormattedMessage id="got-a-question" />
       </h1>
-      <p className="mb-6 text-lg sm:text-xl text-center leading-[38px] text-spinet-text-muted">
+      <p className="mb-6 text-lg sm:text-xl leading-[38px] text-spinet-text-muted">
         <FormattedMessage id="got-a-question-text" />
       </p>
       <Accordion type="single" collapsible className="space-y-4">

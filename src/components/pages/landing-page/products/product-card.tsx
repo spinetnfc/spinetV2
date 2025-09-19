@@ -20,7 +20,7 @@ async function ProductCard({ index, product, locale }: Props) {
   const { t } = await useTranslate(locale);
   return (
     <div
-      className="group relative m-auto flex h-[433px] w-full flex-col items-center gap-4 
+      className="group relative m-auto flex h-[453px] w-full flex-col items-center gap-4 
       overflow-hidden rounded-2xl border border-border bg-card px-6 py-6 
       transition-all duration-300 hover:shadow-xl hover:scale-[1.02]
       lg:w-[382px]"
@@ -55,11 +55,11 @@ async function ProductCard({ index, product, locale }: Props) {
 
       {/* See in Store / Order Now Button */}
       {index === 0 ? (
-        <button className="relative z-10 flex h-[47px] w-[254px] items-center justify-center rounded-lg bg-spinet-primary text-lg font-medium text-white transition-colors duration-300 hover:bg-spinet-primary/90">
+        <button className="relative z-10 py-2 flex w-[254px] items-center justify-center rounded-lg bg-spinet-primary text-lg font-medium text-white transition-colors duration-300 hover:bg-spinet-primary/90">
           {t('see-in-store')}
         </button>
       ) : (
-        <button className="relative z-10 flex h-[47px] w-[254px] items-center justify-center gap-3 rounded-lg bg-spinet-primary text-lg font-medium text-white transition-colors duration-300 hover:bg-spinet-primary/90">
+        <button className="relative z-10 flex py-2 w-[254px] items-center justify-center gap-3 rounded-lg bg-spinet-primary text-lg font-medium text-white transition-colors duration-300 hover:bg-spinet-primary/90">
           <ShoppingCart className="size-5" />
           {t('order-now')}
         </button>
