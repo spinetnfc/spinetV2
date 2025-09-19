@@ -52,11 +52,11 @@ function StepCard({ imageUrl, imageUrlLight, text, ordinal }: Props) {
         </div>
 
         <div className="flex flex-col space-y-2 p-6">
-          <div className="bg-linear-to-r from-[#145FF2] to-[#BDDDFF] bg-clip-text font-inter text-sm font-medium text-transparent dark:from-[#EEF6FF] dark:to-[#2375F3]">
+          <div className="bg-gradient-to-r from-spinet-primary to-spinet-accent bg-clip-text font-inter text-sm font-medium text-transparent">
             {ordinal}
           </div>
 
-          <h3 className=" text-center text-xl sm:text-2xl leading-8 text-[#1A3B8E]/80 dark:text-white">
+          <h3 className="text-center text-xl sm:text-2xl leading-8 text-spinet-text-muted">
             {text}
           </h3>
         </div>

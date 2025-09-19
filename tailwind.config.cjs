@@ -57,6 +57,25 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Spinet Brand Colors
+        spinet: {
+          primary: 'hsl(var(--spinet-primary))', // #145FF2
+          navy: 'hsl(var(--spinet-navy))', // #082356
+          dark: 'hsl(var(--spinet-dark))', // #010C32
+          deep: 'hsl(var(--spinet-deep))', // #1A3B8E / #EEF6FF in dark
+          hover: 'hsl(var(--spinet-hover))', // #0A2C6C / lighter in dark
+          button: 'hsl(var(--spinet-button))', // #001838 / #145FF2 in dark
+          light: 'hsl(var(--spinet-light))', // #EEF6FF
+          accent: 'hsl(var(--spinet-accent))', // #8FC8FF
+          soft: 'hsl(var(--spinet-soft))', // #DEE3F8
+          muted: 'hsl(var(--spinet-muted))', // #F1F5F9 / #082356 in dark
+          'text-primary': 'hsl(var(--spinet-text-primary))', // #1A3B8E / #EEF6FF in dark
+          'text-muted': 'hsl(var(--spinet-text-muted))', // #1A3B8E/80% / #EEF6FF/80% in dark
+        },
+        // Legacy colors for backward compatibility
+        azure: '#145FF2',
+        navy: '#082356',
+        main: '#010C32',
       },
       borderRadius: {
         lg: 'var(--radius)',
