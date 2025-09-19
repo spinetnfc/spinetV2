@@ -52,7 +52,7 @@ export const useAuthStore = create<AuthState>()(
         // Initial state
         user: mockUser,
         isLoading: false,
-        isAuthenticated: true, // Always authenticated in dev mode
+        isAuthenticated: false,
 
         // Computed properties (getters)
         get isCompany() {
@@ -78,12 +78,11 @@ export const useAuthStore = create<AuthState>()(
         },
 
         logout: () => {
-          // For development, just keep the mock user
-          console.log('Logout called - staying with mock user for development');
+          // Actually log out in development
           set(
             (state) => ({
               user: mockUser,
-              isAuthenticated: true, // Keep authenticated in dev
+              isAuthenticated: false, // Set to false to require login
             }),
             false,
             'auth/logout',

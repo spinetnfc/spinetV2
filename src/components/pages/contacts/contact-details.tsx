@@ -49,7 +49,7 @@ const PhoneMockup: React.FC<ContactSidebarProps> = ({ contact, onClose }) => {
   })
   const intl = useIntl()
   const router = useRouter()
-  const { user } = useAuth();
+  const user = useUser();
   const profileId = user.selectedProfile;
   if (!contact) return null
 

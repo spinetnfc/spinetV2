@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer/drawer';
 import { useTheme } from 'next-themes';
 import { FormattedMessage } from 'react-intl';
-import { useUser, useAuthActions } from '@/store/auth-store';
+import { useUser } from '@/store/auth-store';
 import { useProfileStore } from '@/store/profile-store';
 import { ProfileData } from '@/types/profile';
 

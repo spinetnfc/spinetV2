@@ -53,7 +53,7 @@ type LeadFormValues = z.infer<typeof leadSchema>;
 
 export default function AddLeadForm({ locale, onSave, onClose }: { locale: string; onSave: () => void; onClose: () => void }) {
     const intl = useIntl();
-    const { user } = useAuth();
+    const user = useUser();
     const profileId = user?.selectedProfile;
     const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);

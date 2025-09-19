@@ -88,14 +88,37 @@ const LoginForm = ({ locale }: { locale: string }) => {
         try {
             setIsSubmitting(true);
 
-            // Mock login - just show success message and redirect
-            // In development mode, user is always authenticated
+            // Mock login - authenticate with mock user data
+            const mockUserData: User = {
+                _id: 'mock-user-123',
+                email: data.email,
+                fullName: 'Demo User',
+                firstName: 'Demo',
+                lastName: 'User',
+                birthDate: '1990-01-01',
+                gender: 'other',
+                companyName: 'Spinet Demo',
+                activitySector: 'Technology',
+                position: 'Frontend Developer',
+                phoneNumber: '+1234567890',
+                website: 'https://demo.spinet.com',
+                language: locale,
+                theme: { color: 'blue' },
+                Pro: { company: true, freeTrial: true },
+                createdAt: new Date().toISOString(),
+                selectedProfile: 'profile-dev-1',
+                tokens: {
+                    fileApiToken: 'mock-token',
+                    fileApiRefreshToken: 'mock-refresh-token',
+                },
+            };
+
+            // Call the login action to authenticate
+            authLogin(mockUserData);
+
             toast.success(intl.formatMessage({ id: 'login successful' }));
 
-            // Simulate a brief delay for UX
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 1000);
+            // Redirect will happen automatically via auth layout
         } catch (error) {
             console.error('Login error:', error);
             toast.error(intl.formatMessage({ id: 'login failed' }));

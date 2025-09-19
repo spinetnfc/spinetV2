@@ -19,8 +19,7 @@ import { toast } from "sonner"
 import { useIntl, FormattedMessage } from "react-intl"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useRouter } from "next/navigation"
-import { useContactsContext } from "@/context/contactsContext"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/store/auth-store"
 
 // Define the contact schema with Zod
 const contactSchema = z.object({
@@ -49,8 +48,7 @@ type LinkType = {
 
 export default function AddContactForm({ locale }: { locale: string }) {
   const intl = useIntl()
-  const profileId = useAuth().user.selectedProfile
-  const { addContact } = useContactsContext()
+  const user = useUser()
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -158,8 +156,6 @@ export default function AddContactForm({ locale }: { locale: string }) {
           tags
         }
       }
-
-      addContact(contactData)
 
       toast.success(intl.formatMessage({ id: "Contact added successfully" }))
       form.reset()

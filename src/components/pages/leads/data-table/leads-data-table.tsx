@@ -13,10 +13,9 @@ import { Download, Settings, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react"
 import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
 import { LeadsTable } from "./leads-table"
 import { leadColumns } from "./lead-columns"
-import type { FilterState, Lead, LeadFilters } from "@/types/leads"
+import type { FilterState, Lead } from "@/types/leads"
 import { LeadsHeader } from "./leads-header"
 import { LeadsModals } from "./leads-modals"
 import { StatusFilter } from "./status-filter"
@@ -188,13 +187,6 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
     },
   })
 
-  const memoizedStatus = useMemo(() => filters.statuses, [JSON.stringify(filters.statuses)])
-  const memoizedTypes = useMemo(() => types, [JSON.stringify(types)])
-  const memoizedPriority = useMemo(() => filters.priorities, [JSON.stringify(filters.priorities)])
-  const memoizedTags = useMemo(() => tags, [JSON.stringify(tags)])
-  const memoizedContacts = useMemo(() => contacts, [JSON.stringify(contacts)])
-  const memoizedLifeTime = useMemo(() => lifeTime, [JSON.stringify(lifeTime)])
-
   useEffect(() => {
     async function fetchLeads() {
       setLoading(true)
@@ -207,7 +199,7 @@ export function LeadsDataTable({ locale, searchParams }: LeadsDataTableProps) {
         // Apply basic filtering on mock data
         if (searchValue) {
           filteredLeads = filteredLeads.filter(lead =>
-            lead.company?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            lead.Company?.toLowerCase().includes(searchValue.toLowerCase()) ||
             lead.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
             lead.email?.toLowerCase().includes(searchValue.toLowerCase())
           )

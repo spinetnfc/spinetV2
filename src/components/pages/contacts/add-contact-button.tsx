@@ -4,7 +4,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { useUser, useIsAuthenticated } from "@/store/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { profile } from "console";
 import { format, set } from "date-fns";
 import { CalendarIcon, UserPlus, X } from "lucide-react";
 import { usePathname } from "next/navigation";

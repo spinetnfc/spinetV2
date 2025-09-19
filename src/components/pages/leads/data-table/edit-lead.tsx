@@ -79,7 +79,7 @@ interface EditLeadPanelProps {
 
 export const EditLeadPanel: React.FC<EditLeadPanelProps> = ({ lead, onClose, onSave }) => {
     const intl = useIntl()
-    const { user } = useAuth()
+    const user = useUser()
     const profileId = user?.selectedProfile
     const formRef = useRef<HTMLFormElement>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)

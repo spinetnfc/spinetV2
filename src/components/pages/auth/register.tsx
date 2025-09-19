@@ -39,7 +39,7 @@ import GoogleIcon from '@/components/icons/google-icon';
 import AppleIcon from '@/components/icons/apple-icon';
 import { cn } from '@/utils/cn';
 import ColorPicker from '@/components/ui/color-picker';
-import { useAuthActions } from '@/store/auth-store';
+import { useLogin } from '@/store/auth-store';
 import type { User } from '@/types/user';
 import StyledFileInput from '@/components/ui/image-input';
 import { Spinner } from '@/components/ui/spinner';
@@ -79,7 +79,7 @@ type LinkType = {
 export default function Register({ locale }: { locale: string }) {
   const intl = useIntl();
   const router = useRouter();
-  const { login: authLogin } = useAuth();
+  const authLogin = useLogin();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

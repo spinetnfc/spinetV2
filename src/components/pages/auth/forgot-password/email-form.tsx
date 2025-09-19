@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { set } from 'date-fns';
 import { Spinner } from '@/components/ui/spinner';
-import { useAuthActions } from '@/store/auth-store';
+import { useIsAuthenticated } from '@/store/auth-store';
 
 type Props = {
   setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -30,7 +30,7 @@ type Props = {
 const EmailForm = ({ setEmail, locale, setStep, setSessionId }: Props) => {
   const intl = useIntl();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useIsAuthenticated();
   // Email Validation Schema
   const emailSchema = z.object({
     email: z.string().email({ message: 'invalid-email-address' }),

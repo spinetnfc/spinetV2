@@ -40,12 +40,12 @@ export default function ProtectedLayout({
 
     // In development mode, always render children
     if (SKIP_AUTH) {
-        return { children };
+        return <>{children}</>;
     }
 
     if (!isClient || isLoading || !isAuthenticated) {
         return null; // Prevent rendering until client-side and auth is resolved
     }
 
-    return { children };
+    return <>{children}</>;
 }
