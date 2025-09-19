@@ -64,17 +64,22 @@ function Features({ messages }: Props) {
 
   return (
     <IntlProvider locale={locale} messages={messages}>
-      <div className="flex w-full flex-col items-center justify-center gap-2.5 overflow-x-hidden px-3 py-1.5 lg:gap-4">
-        <Legend text="Maximize Your Enterprise Potential with Our Services" locale={locale} />
-        <div className="text-center text-4xl sm:text-5xl leading-[60px] text-spinet-deep dark:text-spinet-light">
-          <FormattedMessage id="Features" />
+      <div className="flex w-full flex-col items-center justify-center gap-6 px-4 py-12 lg:gap-8 lg:px-8">
+        {/* Section Header */}
+        <div className="flex flex-col items-center gap-4 text-center max-w-4xl mx-auto">
+          <Legend text="Maximize Your Enterprise Potential with Our Services" locale={locale} />
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-spinet-deep dark:text-spinet-light">
+            <FormattedMessage id="Features" />
+          </h2>
+          <p className="text-lg sm:text-xl text-spinet-text-muted max-w-2xl">
+            <FormattedMessage id="Features-text" />
+          </p>
         </div>
-        <span className="text-center text-lg sm:text-xl text-spinet-text-muted">
-          <FormattedMessage id="Features-text" />
-        </span>
+
+        {/* Features Carousel */}
         <div
           ref={featuresContainerRef}
-          className="no-scrollbar mt-4 flex h-fit w-full cursor-grab items-center space-x-4 overflow-x-auto active:cursor-grabbing"
+          className="no-scrollbar mt-4 flex h-fit w-full cursor-grab items-center space-x-6 overflow-x-auto active:cursor-grabbing"
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}

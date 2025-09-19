@@ -25,9 +25,9 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
   return (
     <div className="relative flex size-full flex-col pt-16">
       <div className="flex size-full flex-col lg:flex-row">
-        <div className="z-10 px-4 flex h-3/5 lg:h-full w-full flex-col items-center justify-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2">
+        <div className="z-10 px-4 flex h-3/5 lg:h-full w-full flex-col items-center lg:items-start justify-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2">
           {/* Section Text */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-6 items-start justify-start">
             <span className="text-lg sm:text-xl text-spinet-primary text-center lg:text-start">
               <FormattedMessage id="one-solution-for-all" />
             </span>
@@ -47,7 +47,7 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
             </p>
           </div>
 
-          <div className="mt-4 sm:mt-10 flex flex-col items-center justify-center gap-4 lg:flex-row">
+          <div className="pt-3 flex flex-col items-center justify-center gap-4 lg:flex-row">
             <CtaButton
               text={intl.formatMessage({ id: 'free-trial' })}
               icon={<ChevronRight className="ms-2.5 size-6" />}

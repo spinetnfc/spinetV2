@@ -36,11 +36,11 @@ function Events({ locale, isMenuOpen, setIsMenuOpen }: Props) {
           <div className="flex flex-col items-center  justify-center gap-4 p-4">
             {/* Top */}
 
-            <h1 className="text-center text-5xl font-semibold text-[#EEF6FF] lg:text-7xl">
+            <h1 className="text-center text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-8xl font-semibold text-[#EEF6FF]">
               {' '}
               <FormattedMessage id="spinet-events-and" />
             </h1>
-            <h1 className="text-center text-5xl font-semibold text-[#EEF6FF] lg:text-7xl">
+            <h1 className="text-center text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-8xl font-semibold text-[#EEF6FF]">
               {' '}
               <FormattedMessage id="more" />
             </h1>

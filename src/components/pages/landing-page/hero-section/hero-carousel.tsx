@@ -1,7 +1,7 @@
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useState, useCallback, ReactNode, useEffect } from "react";
+import React, { useCallback, ReactNode, useEffect } from "react";
 
 interface HeroCarouselProps {
   slides: ReactNode[];

@@ -39,24 +39,30 @@ async function HowItWorks({ locale }: Props) {
       ordinal: 'fourth',
     },
   ];
+
   return (
-    <div className=" flex w-full flex-col items-center justify-center  gap-2.5   px-3 py-1.5  lg:gap-4">
-      <Legend text="Experience Our Seamless Process" locale={locale} />
-      <div className="text-center text-4xl sm:text-5xl leading-[60px] text-spinet-deep dark:text-spinet-light">
-        {t('how-it-works')}
+    <div className="flex w-full flex-col items-center justify-center gap-6 px-4 py-12 lg:gap-8 lg:px-8">
+      {/* Section Header */}
+      <div className="flex flex-col items-center gap-4 text-center max-w-4xl mx-auto">
+        <Legend text="Experience Our Seamless Process" locale={locale} />
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-spinet-deep dark:text-spinet-light">
+          {t('how-it-works')}
+        </h2>
+        <p className="text-lg sm:text-xl text-spinet-text-muted max-w-2xl">
+          {t('how-it-works-text')}
+        </p>
       </div>
 
-      <div className="flex items-center justify-center text-center text-lg sm:text-xl text-spinet-text-muted">
-        {t('how-it-works-text')}
-      </div>
-
+      {/* CTA Button */}
       <CtaButton
         icon={<ChevronRight className="ms-2.5 size-6" />}
         text={t('book-a-demo')}
-        className=" w-fit mt-4 text-base xs:text-xl"
+        className="w-fit text-base xs:text-xl px-6 py-3"
         iconposition="right"
       />
-      <div className="mt-8 flex h-fit w-full flex-col items-center justify-center lg:flex-row">
+
+      {/* Steps Grid */}
+      <div className="mt-8 flex h-fit w-full max-w-7xl flex-col items-center justify-center gap-6 lg:flex-row lg:gap-8">
         {steps.map((step, index) => (
           <StepCard
             key={index}
