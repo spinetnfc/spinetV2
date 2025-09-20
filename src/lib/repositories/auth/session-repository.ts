@@ -1,4 +1,3 @@
-import { authClient } from '@/lib/api/auth-client';
 import type { Session } from '@/types/auth';
 
 export class SessionRepository {

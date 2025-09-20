@@ -24,7 +24,7 @@ import { format } from "date-fns";
 import { FormattedMessage, useIntl } from "react-intl"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { useUser } from "@/store/auth-store"
+import { useUser } from "@/lib/store/auth-store"
 
 interface ContactSidebarProps {
   contact: Contact

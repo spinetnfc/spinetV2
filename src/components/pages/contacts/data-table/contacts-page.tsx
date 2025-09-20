@@ -10,7 +10,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { useIsSidebarExpanded } from "@/store/sidebar-store"
+import { useIsSidebarExpanded } from "@/lib/store/sidebar-store"
 import { useIsLGScreen, useIsXLScreen } from "@/hooks/screens"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
 import { contactColumns } from "./contact-columns"
@@ -21,7 +21,7 @@ import { ContactsModals } from "./contacts-modals"
 import { ContactsHeader } from "./contacts-header"
 import { ContactsTable } from "./contacts-table"
 import { ExportDialogue } from "./export-dialogue"
-import { useUser } from "@/store/auth-store"
+import { useUser } from "@/lib/store/auth-store"
 import PhoneMockup from "../contact-details"
 
 interface ContactsDataTableProps {

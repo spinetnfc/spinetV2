@@ -9,7 +9,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import { FormattedMessage } from "react-intl";
-import { useIsSidebarExpanded } from "@/store/sidebar-store";
+import { useIsSidebarExpanded } from "@/lib/store/sidebar-store";
 import { ProfileData } from "@/types/profile";
 
 interface ProfileCarouselProps {

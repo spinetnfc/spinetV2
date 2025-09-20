@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/dropdown";
 import { FormattedMessage } from "react-intl";
 import { useRouter } from "next/navigation";
-import { useUser, useLogout } from "@/store/auth-store";
+import { useUser, useLogout } from "@/lib/store/auth-store";
 import SwitchProfile from "@/components/switch-profile-drawer";
 import { useEffect, useState } from "react";
-import { useProfileStore } from "@/store/profile-store";
+import { useProfileStore } from "@/lib/store/profile-store";
 
 import { ProfileAvatar } from "./pages/profile/profile-avatar";
 const UserMenu = ({ locale }: { locale: string }) => {

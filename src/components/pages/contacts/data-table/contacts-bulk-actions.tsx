@@ -7,7 +7,7 @@ import { FormattedMessage, useIntl } from "react-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { useContactsActions } from "@/store/contacts-store"
+import { useContactsActions } from "@/lib/store/contacts-store"
 import type { Contact } from "@/types/contact"
 
 interface ContactsBulkActionsProps {

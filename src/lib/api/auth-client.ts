@@ -3,25 +3,16 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 // Create axios instance for authentication
 export const authClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://localhost:4433',
-  withCredentials: true, // Enable httpOnly cookies
-  timeout: 10000,
+  withCredentials: true,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor - attach auth tokens if available
+// Request interceptor: attach auth tokens
 authClient.interceptors.request.use(
   (config) => {
-    // Add any auth headers if needed
-    // For session-based auth, cookies are automatically included due to withCredentials: true
-
-    // Could add CSRF token here if needed:
-    // const csrfToken = getCsrfToken();
-    // if (csrfToken) {
-    //   config.headers['X-CSRF-Token'] = csrfToken;
-    // }
-
     return config;
   },
   (error) => {
@@ -29,7 +20,7 @@ authClient.interceptors.request.use(
   },
 );
 
-// Response interceptor - handle auth errors and token refresh
+// Response interceptor: handle auth errors and token refresh
 authClient.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;

@@ -19,7 +19,7 @@ import { toast } from "sonner"
 import { useIntl, FormattedMessage } from "react-intl"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useRouter } from "next/navigation"
-import { useUser } from "@/store/auth-store"
+import { useUser } from "@/lib/store/auth-store"
 
 // Define the contact schema with Zod
 const contactSchema = z.object({

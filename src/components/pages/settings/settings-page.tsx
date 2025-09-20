@@ -11,7 +11,7 @@ import ChangeEmailForm from "../profile/change-email-form"
 import ChangePhoneForm from "../profile/change-phone"
 import Link from "next/link"
 import { getLocale } from "@/utils/getClientLocale"
-import { useUser, useLogout } from "@/store/auth-store"
+import { useUser, useLogout } from "@/lib/store/auth-store"
 import { toast } from "sonner"
 import { useIntl, FormattedMessage } from "react-intl"
 

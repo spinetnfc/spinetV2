@@ -3,8 +3,8 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 // Create main axios instance for general API calls
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
-  withCredentials: true, // Enable httpOnly cookies
-  timeout: 10000,
+  withCredentials: true,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,7 +13,7 @@ export const apiClient = axios.create({
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    // Cookies are automatically included due to withCredentials: true
+    // Cookies are automatically included with withCredentials: true
     return config;
   },
   (error) => {

@@ -7,8 +7,8 @@ import { Progress } from "@/components/ui/progress"
 import { toast } from "sonner"
 import { QrCode, Upload } from "lucide-react"
 import QrScanner from "qr-scanner"
-import { useUser } from "@/store/auth-store"
-import { useContactsActions } from "@/store/contacts-store"
+import { useUser } from "@/lib/store/auth-store"
+import { useContactsActions } from "@/lib/store/contacts-store"
 import { useRouter } from "next/navigation"
 
 interface ScanContactProps {

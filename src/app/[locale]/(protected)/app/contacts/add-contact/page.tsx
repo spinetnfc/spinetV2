@@ -16,7 +16,7 @@ import { cn } from '@/utils/cn'
 import z from "zod"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
-import { useUser } from "@/store/auth-store"
+import { useUser } from "@/lib/store/auth-store"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"

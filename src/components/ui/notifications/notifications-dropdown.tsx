@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useUser } from "@/store/auth-store"
+import { useUser } from "@/lib/store/auth-store"
 import avatar from "@/assets/images/user.png"
 import { Invitation, NotificationItem } from "@/types/notifications"
 import { set } from "date-fns"

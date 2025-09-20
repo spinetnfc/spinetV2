@@ -9,7 +9,7 @@ import { cn } from '@/utils/cn';
 import type { SideNavigationItem } from '@/types/layout-types';
 // import { userRole } from '@/utils/role';
 import Header from '../header';
-import { useIsSidebarExpanded, useSidebarActions } from '@/store/sidebar-store';
+import { useIsSidebarExpanded, useSidebarActions } from '@/lib/store/sidebar-store';
 
 
 const Layout = ({

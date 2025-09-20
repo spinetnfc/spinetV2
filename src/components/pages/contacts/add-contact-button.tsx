@@ -2,7 +2,7 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { useUser, useIsAuthenticated } from "@/store/auth-store";
+import { useUser, useIsAuthenticated } from "@/lib/store/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, set } from "date-fns";
 import { CalendarIcon, UserPlus, X } from "lucide-react";
@@ -17,7 +17,7 @@ import { cn } from "@/utils/cn";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { InviteContact } from "@/types/contact";
-import { useContactsActions } from "@/store/contacts-store";
+import { useContactsActions } from "@/lib/store/contacts-store";
 
 const contactSchema = z.object({
     profile: z.string().length(24, { message: "Profile ID must be 24 characters" }),
