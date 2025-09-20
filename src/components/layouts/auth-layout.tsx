@@ -31,9 +31,9 @@ export const AuthLayout = ({ children }: LayoutProps) => {
             </div>
          }
       >
-         <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+         <div className="h-screen bg-gradient-to-br from-background to-muted/20 flex flex-col">
             {/* Header */}
-            <header className="flex items-center justify-between p-6">
+            <header className="flex items-center justify-between p-6 flex-shrink-0">
                {/* Logo and Back Button */}
                <Link
                   href={`/${locale}`}
@@ -51,8 +51,8 @@ export const AuthLayout = ({ children }: LayoutProps) => {
             </header>
 
             {/* Main Content */}
-            <main className="flex items-center justify-center px-6 pb-6">
-               <div className="w-full max-w-md">
+            <main className="flex-1 flex items-center justify-center px-6 pb-6">
+               <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl">
                   <div className="rounded-lg border bg-card p-8 shadow-lg">
                      {children}
                   </div>
