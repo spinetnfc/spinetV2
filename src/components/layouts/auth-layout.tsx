@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ThemeSwitch from '../theme-switch';
-import Logo from '../logo-spinet';
 import { useLocale } from '@/hooks/use-locale';
 import ChangeLanguage from '../change-language';
 import { ArrowLeft } from 'lucide-react';
@@ -41,7 +40,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
                   className="flex items-center gap-3 text-foreground hover:text-muted-foreground transition-colors"
                >
                   <ArrowLeft className="h-5 w-5" />
-                  <SpinetLogo className="hover:cursor-pointer" width={151} height={31} />
+                  <SpinetLogo className="hover:cursor-pointer w-28 md:w-40" width={151} height={31} />
                </Link>
 
                {/* Theme and Language Switchers */}
