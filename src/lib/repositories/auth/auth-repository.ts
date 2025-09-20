@@ -18,7 +18,29 @@ export class AuthRepository {
       // Mock response for development
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      throw new Error('AuthRepository.login - API not implemented yet');
+      // Return mock successful response for development
+      return {
+        user: {
+          id: 'mock-user-id',
+          email: credentials.email,
+          firstName: 'Demo',
+          lastName: 'User',
+          fullName: 'Demo User',
+          isEmailVerified: true,
+          roles: ['user'],
+          selectedProfile: 'profile-dev-1',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        session: {
+          id: 'mock-session-id',
+          userId: 'mock-user-id',
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          isActive: true,
+        },
+        requires2FA: false,
+        message: 'Login successful (mock)',
+      };
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -34,7 +56,28 @@ export class AuthRepository {
       // Mock response for development
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      throw new Error('AuthRepository.register - API not implemented yet');
+      // Return mock successful response for development
+      return {
+        user: {
+          id: 'mock-new-user-id',
+          email: data.email,
+          firstName: 'New',
+          lastName: 'User',
+          fullName: 'New User',
+          isEmailVerified: false,
+          roles: ['user'],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        session: {
+          id: 'mock-session-id',
+          userId: 'mock-new-user-id',
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          isActive: true,
+        },
+        requires2FA: false,
+        message: 'Registration successful (mock)',
+      };
     } catch (error) {
       console.error('Register error:', error);
       throw error;
@@ -67,7 +110,28 @@ export class AuthRepository {
       // Mock response for development
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      throw new Error('AuthRepository.verifyOTP - API not implemented yet');
+      // Return mock successful response for development
+      return {
+        user: {
+          id: 'mock-user-id',
+          email: 'user@example.com',
+          firstName: 'Demo',
+          lastName: 'User',
+          fullName: 'Demo User',
+          isEmailVerified: true,
+          roles: ['user'],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        session: {
+          id: 'mock-session-id',
+          userId: 'mock-user-id',
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          isActive: true,
+        },
+        requires2FA: false,
+        message: 'OTP verification successful (mock)',
+      };
     } catch (error) {
       console.error('OTP verification error:', error);
       throw error;

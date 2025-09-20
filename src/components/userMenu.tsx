@@ -9,14 +9,15 @@ import {
 } from "@/components/ui/dropdown";
 import { FormattedMessage } from "react-intl";
 import { useRouter } from "next/navigation";
-import { useUser, useLogout } from "@/lib/store/auth-store";
+import { useUser } from "@/lib/store/auth/auth-store";
+// TODO: useLogout will be moved to ViewModel when implemented
 import SwitchProfile from "@/components/switch-profile-drawer";
 import { useEffect, useState } from "react";
 import { useProfileStore } from "@/lib/store/profile-store";
 
 import { ProfileAvatar } from "./pages/profile/profile-avatar";
 const UserMenu = ({ locale }: { locale: string }) => {
-    const logout = useLogout();
+    // const logout = useLogout(); // TODO: Will be handled by ViewModel
     const user = useUser();
     const getProfileData = useProfileStore((state) => state.fetchProfile);
     const profileId = user?.selectedProfile || null;
@@ -50,7 +51,10 @@ const UserMenu = ({ locale }: { locale: string }) => {
                 <SwitchProfile />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-primary cursor-pointer" onClick={logout}>
+            <DropdownMenuItem className="text-primary cursor-pointer" onClick={() => {
+                // TODO: Implement logout via ViewModel
+                console.log('Logout clicked - will be handled by ViewModel');
+            }}>
                 <FormattedMessage id="logout" defaultMessage="Logout" />
             </DropdownMenuItem>
         </DropdownMenuContent>

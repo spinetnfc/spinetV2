@@ -11,7 +11,8 @@ import ChangeEmailForm from "../profile/change-email-form"
 import ChangePhoneForm from "../profile/change-phone"
 import Link from "next/link"
 import { getLocale } from "@/utils/getClientLocale"
-import { useUser, useLogout } from "@/lib/store/auth-store"
+import { useUser } from "@/lib/store/auth/auth-store"
+// TODO: useLogout will be moved to ViewModel when implemented
 import { toast } from "sonner"
 import { useIntl, FormattedMessage } from "react-intl"
 
@@ -22,7 +23,7 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
     const [profileLink, setProfileLink] = useState<string | undefined>(undefined)
     const [language, setLanguage] = useState<string | undefined>(undefined)
     const [searchable, setSearchable] = useState<boolean>(false)
-    const logout = useLogout()
+    // const logout = useLogout() // TODO: Will be handled by ViewModel
     const intl = useIntl()
 
     useEffect(() => {
@@ -215,7 +216,10 @@ export default function SettingsPage({ user }: { user: Promise<User | null> }) {
                 </Card>
 
                 {/* Sign Out */}
-                <Card className="p-4 border-red-600 cursor-pointer" onClick={logout}>
+                <Card className="p-4 border-red-600 cursor-pointer" onClick={() => {
+                    // TODO: Implement logout via ViewModel
+                    console.log('Logout clicked - will be handled by ViewModel');
+                }}>
                     <span className="text-red-600 font-medium">
                         <FormattedMessage id="sign-out" defaultMessage="Sign out" />
                     </span>
