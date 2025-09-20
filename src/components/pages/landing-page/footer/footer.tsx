@@ -5,7 +5,7 @@ import EnvolopIcon from '@/components/icons/envolop-icon';
 import HandshakeIcon from '@/components/icons/handshake-icon';
 import PersonHeadset from '@/components/icons/person-headset';
 import SpinetLogo from '@/components/icons/spinet-logo';
-import FooterLinks from './footerLinks'; // Import the client component
+import FooterLinks from './footerLinks';
 import useTranslate from '@/hooks/use-translate';
 
 type Props = {

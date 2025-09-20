@@ -19,13 +19,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useProfileActions } from "@/store/profile-store"
 import { FormattedMessage } from "react-intl"
-import { startTransition, useEffect, useState } from "react"
-import { CirclePlus, Loader } from "lucide-react"
-import Image from "next/image"
+import { useEffect, useState } from "react"
+import { CirclePlus } from "lucide-react"
 import { getLocale } from "@/utils/getClientLocale"
 import { useUser, useIsAuthenticated, useSelectProfile } from "@/store/auth-store"
+import { useLocale } from "@/hooks/use-locale"
 import { Spinner } from "./ui/spinner"
 import { ProfileAvatar } from "./pages/profile/profile-avatar"
 import { mockProfiles } from "@/mockdata/profiles"
@@ -36,7 +35,7 @@ export default function SwitchProfileDrawer() {
     const user = useUser();
     const isAuthenticated = useIsAuthenticated();
     const selectProfile = useSelectProfile();
-    const locale = getLocale() || "en";
+    const locale = useLocale();
     const [profiles, setProfiles] = useState<ProfileData[]>([])
     const [selectedProfile, setSelectedProfile] = useState<ProfileData | null>(null)
     const [showAlert, setShowAlert] = useState(false)
@@ -102,7 +101,7 @@ export default function SwitchProfileDrawer() {
                                             key={profile._id}
                                             className={`flex-shrink-0 h-60 w-60 flex flex-col items-center m-2 gap-4 p-3 rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:opacity-70 transition-colors ${user.selectedProfile === profile._id ? "border-2 border-azure" : ""
                                                 }`}
-                                            onClick={() => { if (profile._id !== user.selectedProfile) handleProfileClick(profile) }}
+                                            onClick={() => { if (profile._id !== user?.selectedProfile) handleProfileClick(profile) }}
                                         >
                                             <div className="border-2  rounded-full">
                                                 <ProfileAvatar profilePicture={profile.profilePicture} height={96} width={96} />

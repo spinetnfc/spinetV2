@@ -1,8 +1,7 @@
 'use client';
 
 import { useIsAuthenticated, useAuthLoading } from '@/store/auth-store';
-
-import { getLocale } from '@/utils/getClientLocale';
+import { useLocale } from '@/hooks/use-locale';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -22,7 +21,7 @@ export default function ProtectedLayout({
         setIsClient(true);
     }, []);
 
-    const locale = getLocale() || 'en';
+    const locale = useLocale();
 
     // DEVELOPMENT MODE: Skip auth check
     const SKIP_AUTH = process.env.NEXT_PUBLIC_SKIP_AUTH === 'true';

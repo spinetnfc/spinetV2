@@ -1,15 +1,10 @@
 import React from 'react';
-import Login from '@/components/pages/auth/login';
-
-async function getMessages(locale: string) {
-  return (await import(`../../../../lang/${locale}.json`)).default;
-}
+import LoginForm from '@/components/pages/auth/login-form';
 
 const LoginPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params;
-  const messages = await getMessages(locale);
 
-  return <Login locale={locale} messages={messages} />;
+  return <LoginForm />;
 };
 
 export default LoginPage;

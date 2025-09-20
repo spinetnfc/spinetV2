@@ -28,7 +28,7 @@ interface AuthState {
   setError: (error: string | null) => void;
   clearAuth: () => void;
   checkAuthStatus: () => Promise<boolean>;
-  selectProfile: (profileId: string) => void;
+  selectProfile: (profileId: string) => void; // Legacy compatibility
 }
 
 const useAuthStore = create<AuthState>()(
