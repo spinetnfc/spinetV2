@@ -7,7 +7,7 @@ import Logo from "@/components/logo";
 import ThemeSwitch from "@/components/theme-switch";
 import { cn } from "@/utils/cn";
 import CtaButton from "../cta-button";
-import { useIsAuthenticated, useAuthLoading } from "@/lib/store/auth-store";
+import { useIsAuthenticated, useAuthLoading } from "@/lib/store/auth/auth-store";
 import UserMenu from "@/components/userMenu";
 
 // Memoize CtaButton and UserMenu to prevent unnecessary re-renders
