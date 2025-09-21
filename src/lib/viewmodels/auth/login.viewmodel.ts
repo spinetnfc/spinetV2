@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { z } from 'zod';
 import { authRepository } from '@/lib/repositories/auth/auth-repository';
