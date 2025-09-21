@@ -190,9 +190,9 @@ export default function LoginForm() {
 
             <Button
                variant="outline"
-               className="w-full border-border hover:bg-muted transition-colors"
+               className="w-full border-border hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                onClick={() => console.log('SSO login clicked')}
-               disabled={isLoading}
+               disabled={true}
             >
                {t('auth.login.sso')}
             </Button>
