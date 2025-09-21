@@ -18,7 +18,6 @@ export default function PasswordRecoveryForm() {
       handleEmailChange,
       handleEmailBlur,
       handleForgotPassword,
-      handleGetNewLink,
       hasEmailError,
       canSubmit,
    } = useForgotPasswordViewModel();

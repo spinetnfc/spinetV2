@@ -106,12 +106,6 @@ export const useForgotPasswordViewModel = () => {
     }
   };
 
-  // Handler for "Get new reset link"
-  const handleGetNewLink = async () => {
-    setEmailSent(false);
-    setFieldErrors({});
-    await handleForgotPassword();
-  };
 
   return {
     // State
@@ -124,7 +118,6 @@ export const useForgotPasswordViewModel = () => {
     handleEmailChange,
     handleEmailBlur,
     handleForgotPassword,
-    handleGetNewLink,
 
     // Computed
     hasEmailError: !!fieldErrors.email,
