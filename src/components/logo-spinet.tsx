@@ -2,7 +2,6 @@
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/utils/cn';
-import { useSafeAuth } from '@/hooks/use-locale';
 
 const Logo = ({
     locale,
@@ -13,7 +12,6 @@ const Logo = ({
     parentDarkMode?: boolean;
     asImage?: boolean;
 }) => {
-    const { isAuthenticated, mounted } = useSafeAuth();
 
     const logoImage = (
         <Image
@@ -35,7 +33,7 @@ const Logo = ({
     }
 
     // Always use the same href during SSR to prevent hydration mismatch
-    const href = mounted && isAuthenticated ? `/${locale}/app` : `/${locale}`;
+    const href = `/${locale}`;
 
     return (
         <NextLink className="flex items-center text-white" href={href}>

@@ -79,7 +79,7 @@ export default function LoginForm() {
                   <Label htmlFor="password" className="text-foreground">Password</Label>
                   <Link
                      href={`/${locale}/auth/forgot-password`}
-                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                     className="text-sm text-muted-foreground dark:text-gray-300 dark:hover:text-gray-200 hover:text-foreground transition-colors"
                   >
                      Forgot password?
                   </Link>

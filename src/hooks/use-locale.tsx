@@ -20,20 +20,3 @@ export function useLocale(): string {
    // Return 'en' during SSR to prevent hydration mismatch
    return mounted ? locale : 'en';
 }
-
-/**
- * Hook that safely checks authentication state without causing hydration mismatches.
- * Returns false during SSR and the actual auth state after hydration.
- */
-export function useSafeAuth(): { isAuthenticated: boolean; mounted: boolean } {
-   const [mounted, setMounted] = useState(false);
-
-   useEffect(() => {
-      setMounted(true);
-   }, []);
-
-   return {
-      isAuthenticated: false, // Always return false during SSR
-      mounted
-   };
-}
