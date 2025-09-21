@@ -51,9 +51,9 @@ export const AuthLayout = ({ children }: LayoutProps) => {
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 flex items-center justify-center px-6 pb-6">
+            <main className="flex-1 flex items-center justify-center px-3 sm:px-3 pb-6">
                <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl">
-                  <div className="rounded-lg border bg-card p-8 shadow-lg">
+                  <div className="rounded-lg border bg-card p-4 sm:p-8 shadow-lg">
                      {children}
                   </div>
                </div>

@@ -9,9 +9,11 @@ import { Label } from '@/components/ui/label';
 import SpinetLogo from '@/components/icons/spinet-logo';
 import { useLoginViewModel } from '@/lib/viewmodels/auth/login.viewmodel';
 import { useLocale } from '@/hooks/use-locale';
+import { useClientTranslate } from '@/hooks/use-client-translate';
 
 export default function LoginForm() {
    const locale = useLocale();
+   const { t } = useClientTranslate();
    const [showPassword, setShowPassword] = useState(false);
 
    const {
@@ -40,12 +42,12 @@ export default function LoginForm() {
          <div className="text-center">
             <SpinetLogo className="mx-auto mb-6" width={152} height={32} />
             <p className="text-sm text-muted-foreground">
-               Don't have an account?{' '}
+               {t('auth.login.subtitle')}{' '}
                <Link
                   href={`/${locale}/auth/register`}
                   className="text-primary hover:text-primary/80 font-medium transition-colors"
                >
-                  Sign up
+                  {t('auth.login.sign-up')}
                </Link>
             </p>
          </div>
@@ -54,7 +56,7 @@ export default function LoginForm() {
          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email Field */}
             <div className="space-y-2">
-               <Label htmlFor="email" className="text-foreground">Email</Label>
+               <Label htmlFor="email" className="text-foreground">{t('auth.login.email')}</Label>
                <Input
                   id="email"
                   type="email"
@@ -65,7 +67,7 @@ export default function LoginForm() {
                      ? 'border-destructive focus:border-destructive focus:ring-destructive/20'
                      : 'focus:border-primary focus:ring-primary/20'
                      }`}
-                  placeholder="Enter your email"
+                  placeholder={t('auth.login.email-placeholder')}
                   disabled={isLoading}
                />
                {hasEmailError && (
@@ -76,12 +78,12 @@ export default function LoginForm() {
             {/* Password Field */}
             <div className="space-y-2">
                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-foreground">Password</Label>
+                  <Label htmlFor="password" className="text-foreground">{t('auth.login.password')}</Label>
                   <Link
                      href={`/${locale}/auth/forgot-password`}
                      className="text-sm text-muted-foreground dark:text-gray-300 dark:hover:text-gray-200 hover:text-foreground transition-colors"
                   >
-                     Forgot password?
+                     {t('auth.login.forgot-password')}
                   </Link>
                </div>
                <div className="relative">
@@ -95,7 +97,7 @@ export default function LoginForm() {
                         ? 'border-destructive focus:border-destructive focus:ring-destructive/20'
                         : 'focus:border-primary focus:ring-primary/20'
                         }`}
-                     placeholder="Enter your password"
+                     placeholder={t('auth.login.password-placeholder')}
                      disabled={isLoading}
                   />
                   <button
@@ -125,10 +127,10 @@ export default function LoginForm() {
                {isLoading ? (
                   <div className="flex items-center gap-2">
                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                     Signing in...
+                     {t('auth.login.signing-in')}
                   </div>
                ) : (
-                  'Login'
+                  t('auth.login.login-button')
                )}
             </Button>
          </form>
@@ -140,7 +142,7 @@ export default function LoginForm() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
                <span className="bg-card px-2 text-muted-foreground">
-                  Or continue with
+                  {t('auth.login.or-continue-with')}
                </span>
             </div>
          </div>
@@ -159,7 +161,7 @@ export default function LoginForm() {
                   <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                </svg>
-               Login with Google
+               {t('auth.login.google')}
             </Button>
 
             <Button
@@ -171,7 +173,7 @@ export default function LoginForm() {
                <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
                </svg>
-               Login with Apple
+               {t('auth.login.apple')}
             </Button>
 
             <Button
@@ -183,7 +185,7 @@ export default function LoginForm() {
                <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                </svg>
-               Login with Facebook
+               {t('auth.login.facebook')}
             </Button>
 
             <Button
@@ -192,7 +194,7 @@ export default function LoginForm() {
                onClick={() => console.log('SSO login clicked')}
                disabled={isLoading}
             >
-               Login with SSO
+               {t('auth.login.sso')}
             </Button>
          </div>
       </div>

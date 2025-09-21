@@ -10,15 +10,13 @@ import {
   useSetAuthLoading,
   useSetAuthError,
 } from '@/lib/store/auth/auth-store';
+import { useClientTranslate } from '@/hooks/use-client-translate';
 import type { LoginCredentials, AuthUser, Session } from '@/types/auth';
 
-// Validation schema
-const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = {
+  email: string;
+  password: string;
+};
 
 interface LoginFieldErrors {
   email?: string;
@@ -26,6 +24,14 @@ interface LoginFieldErrors {
 }
 
 export const useLoginViewModel = () => {
+  const { t } = useClientTranslate();
+
+  // Create validation schema with translated messages
+  const loginSchema = z.object({
+    email: z.string().email(t('auth.validation.email-required')),
+    password: z.string().min(1, t('auth.validation.password-required')),
+  });
+
   // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
