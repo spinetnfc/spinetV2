@@ -5,6 +5,12 @@ export interface LoginCredentials {
   rememberMe?: boolean;
 }
 
+export interface RegisterCredentials {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export interface RegisterData {
   email: string;
   password: string;

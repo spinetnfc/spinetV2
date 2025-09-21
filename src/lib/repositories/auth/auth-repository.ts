@@ -1,6 +1,7 @@
 import { authClient } from '@/lib/api/auth-client';
 import type {
   LoginCredentials,
+  RegisterCredentials,
   RegisterData,
   AuthResponse,
   PasswordResetData,
@@ -48,10 +49,10 @@ export class AuthRepository {
   }
 
   // Register new user
-  async register(data: RegisterData): Promise<AuthResponse> {
+  async register(credentials: RegisterCredentials): Promise<AuthResponse> {
     try {
       // TODO: Replace with actual API call when backend is ready
-      console.log('AuthRepository.register called with:', data);
+      console.log('AuthRepository.register called with:', credentials);
 
       // Mock response for development
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -60,7 +61,7 @@ export class AuthRepository {
       return {
         user: {
           id: 'mock-new-user-id',
-          email: data.email,
+          email: credentials.email,
           firstName: 'New',
           lastName: 'User',
           fullName: 'New User',
