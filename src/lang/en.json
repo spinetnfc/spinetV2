@@ -244,7 +244,7 @@
   "auth.register.login": "Already have an account? Sign in",
   "auth.register.terms": "By creating an account, you agree to our Terms of Service and Privacy Policy",
   "auth.otp.title": "Check your email",
-  "auth.otp.subtitle": "We've sent a verification code to your email",
+  "auth.otp.subtitle": "We have sent a verification code to your email",
   "auth.otp.email-sent-to": "Please enter the code below to continue",
   "auth.otp.code-placeholder": "Enter verification code",
   "auth.otp.continue": "Continue",

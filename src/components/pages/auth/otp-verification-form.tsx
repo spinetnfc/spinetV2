@@ -54,15 +54,37 @@ export default function OTPVerificationForm() {
             setCurrentIndex(index + 1);
          }
       }
+
+      // Auto-submit when all 6 digits are entered
+      if (updatedCode.length === 6 && !hasCodeError) {
+         setTimeout(() => {
+            handleVerifyOTP();
+         }, 100); // Small delay to ensure state is updated
+      }
    };
 
    // Handle key down for navigation
    const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-      if (e.key === 'Backspace' && !codeDigits[index] && index > 0) {
-         const prevInput = inputRefs.current[index - 1];
-         if (prevInput) {
-            prevInput.focus();
-            setCurrentIndex(index - 1);
+      if (e.key === 'Backspace') {
+         // If current field has content, delete it
+         if (codeDigits[index] && codeDigits[index].trim()) {
+            const newCode = code.split('');
+            newCode[index] = '';
+            const updatedCode = newCode.join('').replace(/\s+$/, ''); // Remove trailing spaces
+            handleCodeChange(updatedCode);
+         }
+         // If current field is empty, move to previous field and delete its content
+         else if (index > 0) {
+            const newCode = code.split('');
+            newCode[index - 1] = '';
+            const updatedCode = newCode.join('').replace(/\s+$/, ''); // Remove trailing spaces
+            handleCodeChange(updatedCode);
+            
+            const prevInput = inputRefs.current[index - 1];
+            if (prevInput) {
+               prevInput.focus();
+               setCurrentIndex(index - 1);
+            }
          }
       } else if (e.key === 'ArrowLeft' && index > 0) {
          const prevInput = inputRefs.current[index - 1];
@@ -91,6 +113,13 @@ export default function OTPVerificationForm() {
       if (targetInput) {
          targetInput.focus();
          setCurrentIndex(targetIndex);
+      }
+
+      // Auto-submit if pasted text is 6 digits
+      if (pastedText.length === 6) {
+         setTimeout(() => {
+            handleVerifyOTP();
+         }, 100); // Small delay to ensure state is updated
       }
    };
 
