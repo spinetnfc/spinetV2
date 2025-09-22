@@ -657,5 +657,9 @@
   "profile-switch-confirmation": "Are you sure you want to switch to this profile?",
   "confirm": "Confirm",
   "Contact saved successfully": "Contact saved successfully",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "not-found.title": "Page Not Found",
+  "not-found.subtitle": "The page you are looking for doesn't exist or has been moved",
+  "not-found.back-home": "Back to Home",
+  "not-found.error-code": "404"
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useIsAuthenticated, useAuthLoading } from '@/lib/store/auth-store';
+import { useIsAuthenticated, useAuthLoading } from '@/lib/store/auth/auth-store';
 import { useLocale } from '@/hooks/use-locale';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';

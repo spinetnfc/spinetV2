@@ -1,10 +1,14 @@
 // import { Metadata } from 'next';
 import { ReactNode } from 'react';
+import { notFound } from 'next/navigation';
 import { AppProvider } from '@/app/[locale]/provider';
 import '@/styles/globals.css';
 // getIntl;
 import { getDirection } from '@/lib/intl';
 import { Poppins, Inter, Cairo } from 'next/font/google'
+
+// Define supported locales
+const locales = ['en', 'fr', 'ar'];
 
 const poppins = Poppins({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -40,6 +44,12 @@ const RootLayout = async (
   // Await params (without calling it as a function)
   // Ensure locale is always a string
   const locale = params.locale ?? "en";
+
+  // Validate locale - trigger 404 if invalid
+  if (!locales.includes(locale)) {
+    notFound();
+  }
+
   const dir = getDirection(locale);
   const fontClass = locale === 'ar' ? arabic.variable : poppins.variable;
 
