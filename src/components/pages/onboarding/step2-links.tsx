@@ -1,172 +1,268 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog/dialog';
 import { useOnboardingViewModel } from '@/lib/viewmodels/onboarding/onboarding.viewmodel';
 import { useClientTranslate } from '@/hooks/use-client-translate';
-import { X, Plus, Link as LinkIcon } from 'lucide-react';
-import { UserLink } from '@/types/onboarding';
+import { Link as LinkIcon, Phone, Mail, Instagram, MessageCircle, Youtube, Linkedin, Camera, Music, Video, Zap, Globe } from 'lucide-react';
+
+// Platform configurations with icons and colors
+const platformConfig = {
+   facebook: {
+      name: 'Facebook',
+      icon: (className: string) => (
+         <div className={`${className} bg-blue-600 text-white rounded-lg flex items-center justify-center`}>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+         </div>
+      ),
+      placeholder: '@username'
+   },
+   phone: {
+      name: 'Phone',
+      icon: (className: string) => (
+         <div className={`${className} bg-green-500 text-white rounded-lg flex items-center justify-center`}>
+            <Phone className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: '+213'
+   },
+   gmail: {
+      name: 'Gmail',
+      icon: (className: string) => (
+         <div className={`${className} bg-red-500 text-white rounded-lg flex items-center justify-center`}>
+            <Mail className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: 'email@gmail.com'
+   },
+   instagram: {
+      name: 'Instagram',
+      icon: (className: string) => (
+         <div className={`${className} bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-lg flex items-center justify-center`}>
+            <Instagram className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: '@username'
+   },
+   whatsapp: {
+      name: 'WhatsApp',
+      icon: (className: string) => (
+         <div className={`${className} bg-green-500 text-white rounded-lg flex items-center justify-center`}>
+            <MessageCircle className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: '+213'
+   },
+   youtube: {
+      name: 'YouTube',
+      icon: (className: string) => (
+         <div className={`${className} bg-red-600 text-white rounded-lg flex items-center justify-center`}>
+            <Youtube className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: 'youtube.com/c/channel'
+   },
+   linkedin: {
+      name: 'LinkedIn',
+      icon: (className: string) => (
+         <div className={`${className} bg-blue-700 text-white rounded-lg flex items-center justify-center`}>
+            <Linkedin className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: 'linkedin.com/in/username'
+   },
+   pinterest: {
+      name: 'Pinterest',
+      icon: (className: string) => (
+         <div className={`${className} bg-red-600 text-white rounded-lg flex items-center justify-center`}>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+               <path d="M12 0C5.374 0 0 5.374 0 12s5.374 12 12 12 12-5.374 12-12S18.626 0 12 0zm0 19c-.721 0-1.418-.109-2.073-.312.286-.465.713-1.227.87-1.835l.437-1.664c.229.436.895.810 1.604.810 2.111 0 3.633-1.941 3.633-4.354 0-2.312-1.888-4.042-4.316-4.042-3.021 0-4.625 2.003-4.625 4.137 0 .946.368 2.088 1.162 2.458.131.061.201.034.232-.092.025-.1.08-.32.105-.414.033-.123.021-.166-.076-.274-.209-.235-.375-.664-.375-1.075 0-1.386.967-2.681 2.613-2.681 1.415 0 2.4.97 2.4 2.338 0 1.549-.623 2.633-1.33 2.633-.423 0-.738-.359-.637-.804.12-.529.354-1.1.354-1.484 0-.342-.188-.629-.576-.629-.457 0-.824.484-.824 1.132 0 .414.14.695.14.695s-.477 2.06-.564 2.428c-.123.523-.092 1.235-.048 1.696z" />
+            </svg>
+         </div>
+      ),
+      placeholder: 'pinterest.com/username'
+   },
+   spotify: {
+      name: 'Spotify',
+      icon: (className: string) => (
+         <div className={`${className} bg-green-500 text-white rounded-lg flex items-center justify-center`}>
+            <Music className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: 'open.spotify.com/user/username'
+   },
+   tiktok: {
+      name: 'TikTok',
+      icon: (className: string) => (
+         <div className={`${className} bg-black text-white rounded-lg flex items-center justify-center`}>
+            <Video className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: '@username'
+   },
+   snapchat: {
+      name: 'Snapchat',
+      icon: (className: string) => (
+         <div className={`${className} bg-yellow-400 text-black rounded-lg flex items-center justify-center`}>
+            <Camera className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: '@username'
+   },
+   website: {
+      name: 'Website',
+      icon: (className: string) => (
+         <div className={`${className} bg-gray-600 text-white rounded-lg flex items-center justify-center`}>
+            <Globe className="w-4 h-4" />
+         </div>
+      ),
+      placeholder: 'https://yourwebsite.com'
+   }
+};
 
 export default function Step2Links() {
    const { t } = useClientTranslate();
-   const { data, errors, validateAndAddLink, removeLink, isValidUrl, getHostname } = useOnboardingViewModel();
-   const [newPlatform, setNewPlatform] = useState('');
-   const [newUrl, setNewUrl] = useState('');
+   const { data, errors, validateAndAddLink, removeLink, isValidUrl } = useOnboardingViewModel();
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [linkValues, setLinkValues] = useState<Record<string, string>>({});
 
-   const handleAddLink = async () => {
-      const success = await validateAndAddLink(newPlatform, newUrl);
-      if (success) {
-         setNewPlatform('');
-         setNewUrl('');
+   // Main platforms shown in the UI
+   const mainPlatforms = ['facebook', 'phone', 'gmail'];
+
+   // Additional platforms in the modal
+   const modalPlatforms = ['instagram', 'whatsapp', 'youtube', 'linkedin', 'pinterest', 'spotify', 'tiktok', 'snapchat', 'website'];
+
+   const handleLinkChange = (platform: string, value: string) => {
+      setLinkValues(prev => ({ ...prev, [platform]: value }));
+   };
+
+   const handleAddLink = async (platform: string, url: string) => {
+      if (url.trim() && isValidUrl(url)) {
+         const platformName = platformConfig[platform as keyof typeof platformConfig].name;
+         await validateAndAddLink(platformName, url);
+         setLinkValues(prev => ({ ...prev, [platform]: '' }));
       }
    };
 
-   const handleRemoveLink = (index: number) => {
-      removeLink(index);
+   const handleAddSelectedLinks = async () => {
+      const selectedLinks = Object.entries(linkValues).filter(([, value]) => value.trim());
+
+      for (const [platform, url] of selectedLinks) {
+         if (url.trim() && isValidUrl(url)) {
+            await validateAndAddLink(platformConfig[platform as keyof typeof platformConfig].name, url);
+         }
+      }
+
+      setLinkValues({});
+      setIsModalOpen(false);
    };
 
-   const popularPlatforms = [
-      'Instagram',
-      'Twitter',
-      'LinkedIn',
-      'Facebook',
-      'GitHub',
-      'Website',
-      'YouTube',
-      'TikTok',
-   ];
+   const renderLinkRow = (platformKey: string, value: string = '', onChange?: (value: string) => void) => {
+      const config = platformConfig[platformKey as keyof typeof platformConfig];
+      if (!config) return null;
+
+      return (
+         <div key={platformKey} className="flex items-center gap-3 p-3 bg-background border rounded-lg">
+            {config.icon('w-8 h-8')}
+            <Input
+               value={value}
+               onChange={(e) => onChange?.(e.target.value)}
+               placeholder={config.placeholder}
+               className="flex-1 border-none bg-transparent focus-visible:ring-0"
+            />
+         </div>
+      );
+   };
 
    return (
       <div className="space-y-6">
-         {/* Add New Link */}
-         <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
-            <div className="flex items-center gap-2">
-               <LinkIcon className="w-4 h-4" />
-               <h3 className="font-medium">{t('onboarding.add-link')}</h3>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               <div className="space-y-2">
-                  <Label htmlFor="platform">{t('onboarding.platform')}</Label>
-                  <Input
-                     id="platform"
-                     value={newPlatform}
-                     onChange={(e) => setNewPlatform(e.target.value)}
-                     placeholder={t('onboarding.platform-placeholder')}
-                     className={errors['link-platform'] ? 'border-destructive focus-visible:ring-destructive' : ''}
-                  />
-                  {errors['link-platform'] && (
-                     <p className="text-xs text-destructive">
-                        {errors['link-platform']}
-                     </p>
-                  )}
-               </div>
-               <div className="space-y-2">
-                  <Label htmlFor="url">{t('onboarding.url')}</Label>
-                  <Input
-                     id="url"
-                     type="url"
-                     value={newUrl}
-                     onChange={(e) => setNewUrl(e.target.value)}
-                     placeholder={t('onboarding.url-placeholder')}
-                     className={
-                        errors['link-url'] || (newUrl.trim() && !isValidUrl(newUrl))
-                           ? 'border-destructive focus-visible:ring-destructive'
-                           : ''
-                     }
-                  />
-                  {(errors['link-url'] || (newUrl.trim() && !isValidUrl(newUrl))) && (
-                     <p className="text-xs text-destructive">
-                        {errors['link-url'] || 'Please enter a valid URL (e.g., https://example.com)'}
-                     </p>
-                  )}
-               </div>
-            </div>
-
-            {errors['link-form'] && (
-               <p className="text-xs text-destructive">
-                  {errors['link-form']}
-               </p>
+         {/* Main Link Inputs */}
+         <div className="space-y-4">
+            {mainPlatforms.map((platform) =>
+               renderLinkRow(
+                  platform,
+                  linkValues[platform] || '',
+                  (value) => handleLinkChange(platform, value)
+               )
             )}
-
-            <Button
-               onClick={handleAddLink}
-               disabled={!newPlatform.trim() || !newUrl.trim() || (!!newUrl && !isValidUrl(newUrl))}
-               className="w-full sm:w-auto"
-            >
-               <Plus className="w-4 h-4 mr-2" />
-               {t('onboarding.add-link')}
-            </Button>
          </div>
 
-         {/* Popular Platforms */}
-         <div className="space-y-3">
-            <Label className="text-sm font-medium text-muted-foreground">
-               {t('onboarding.popular-platforms')}
-            </Label>
-            <div className="flex flex-wrap gap-2">
-               {popularPlatforms.map((platform) => (
-                  <Badge
-                     key={platform}
-                     variant="outline"
-                     className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                     onClick={() => setNewPlatform(platform)}
-                  >
-                     {platform}
-                  </Badge>
-               ))}
-            </div>
-         </div>
+         {/* More Links Button */}
+         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogTrigger asChild>
+               <Button className="w-full py-6 bg-white text-spinet-dark hover:bg-slate-100 transition-all duration-200 border border-slate-200">
+                  <LinkIcon className="w-4 h-4 mr-2" />
+                  More links
+               </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+               <DialogHeader>
+                  <DialogTitle>Recommended</DialogTitle>
+               </DialogHeader>
+               <div className="space-y-4">
+                  <div className="space-y-3">
+                     {modalPlatforms.slice(0, 5).map((platform) =>
+                        renderLinkRow(platform, linkValues[platform] || '', (value) => handleLinkChange(platform, value))
+                     )}
+                  </div>
+
+                  <div>
+                     <h4 className="text-sm font-medium mb-3">Social media</h4>
+                     <div className="space-y-3">
+                        {modalPlatforms.slice(5).map((platform) =>
+                           renderLinkRow(platform, linkValues[platform] || '', (value) => handleLinkChange(platform, value))
+                        )}
+                     </div>
+                  </div>
+
+                  <Button onClick={handleAddSelectedLinks} className="w-full">
+                     Add selected links
+                  </Button>
+               </div>
+            </DialogContent>
+         </Dialog>
 
          {/* Current Links */}
          {data.links.length > 0 && (
             <div className="space-y-3">
-               <Label className="text-sm font-medium">
-                  {t('onboarding.your-links')} ({data.links.length})
-               </Label>
+               <h4 className="text-sm font-medium text-muted-foreground">Added Links ({data.links.length})</h4>
                <div className="space-y-2">
-                  {data.links.map((link: UserLink, index: number) => (
-                     <div
-                        key={index}
-                        className={`flex items-center justify-between p-3 bg-background border rounded-lg ${isValidUrl(link.url)
-                           ? 'border-border'
-                           : 'border-destructive/50 bg-destructive/5'
-                           }`}
-                     >
-                        <div className="flex-1 min-w-0">
-                           <div className="flex items-center gap-2">
-                              <span className="font-medium text-sm">{link.platform}</span>
-                              <Badge variant="secondary" className="text-xs">
-                                 {getHostname(link.url)}
-                              </Badge>
+                  {data.links.map((link: any, index: number) => {
+                     const platformKey = Object.keys(platformConfig).find(
+                        key => platformConfig[key as keyof typeof platformConfig].name.toLowerCase() === link.platform.toLowerCase()
+                     );
+                     const config = platformKey ? platformConfig[platformKey as keyof typeof platformConfig] : null;
+
+                     return (
+                        <div key={index} className="flex items-center gap-3 p-3 bg-muted/50 border rounded-lg">
+                           {config ? config.icon('w-6 h-6') : (
+                              <div className="w-6 h-6 bg-gray-400 text-white rounded-lg flex items-center justify-center">
+                                 <LinkIcon className="w-3 h-3" />
+                              </div>
+                           )}
+                           <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium">{link.platform}</p>
+                              <p className="text-xs text-muted-foreground truncate">{link.url}</p>
                            </div>
-                           <p className="text-sm text-muted-foreground truncate">
-                              {link.url}
-                           </p>
+                           <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeLink(index)}
+                              className="text-muted-foreground hover:text-destructive"
+                           >
+                              ×
+                           </Button>
                         </div>
-                        <Button
-                           size="sm"
-                           variant="ghost"
-                           onClick={() => handleRemoveLink(index)}
-                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                           <X className="w-4 h-4" />
-                        </Button>
-                     </div>
-                  ))}
+                     );
+                  })}
                </div>
             </div>
          )}
 
-         {/* Help Text */}
-         <div className="p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
-               {t('onboarding.links-help')}
-            </p>
-         </div>
       </div>
    );
 }

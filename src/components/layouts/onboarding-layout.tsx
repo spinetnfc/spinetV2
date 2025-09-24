@@ -91,7 +91,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                   <Button
                      onClick={nextStep}
                      disabled={!canProceed || isLoading}
-                     className={`px-6 py-5 ${(currentStep === 2 || currentStep === 3 || currentStep === 5) ? 'flex-[80]' : 'flex-1'}`}
+                     className={`px-6 py-5 transition-all duration-200 ${(currentStep === 2 || currentStep === 3 || currentStep === 5) ? 'flex-[80]' : 'flex-1'}`}
                   >
                      {isLoading ? (
                         <div className="flex items-center gap-2">
@@ -110,7 +110,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                         variant="ghost"
                         onClick={skipStep}
                         disabled={isLoading}
-                        className="text-muted-foreground flex-[20] py-5"
+                        className="text-muted-foreground flex-[20] py-5 transition-all duration-200"
                      >
                         {t('onboarding.skip')}
                      </Button>
