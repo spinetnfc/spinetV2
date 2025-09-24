@@ -13,8 +13,6 @@ import {
   DEFAULT_PROFILE_THEMES,
 } from '@/types/onboarding';
 
-
-
 // Initial onboarding data
 const initialOnboardingData: OnboardingData = {
   fullName: '',
