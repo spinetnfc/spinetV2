@@ -1,62 +1,26 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type {
-  OnboardingStep,
-  OnboardingData,
-  OnboardingState,
-  OnboardingActions,
-  UserLink,
-  ProfileTheme,
-  OrganizationData,
-  OrganizationMember,
-  StepValidation,
+import {
+  type OnboardingStep,
+  type OnboardingData,
+  type OnboardingState,
+  type OnboardingActions,
+  type UserLink,
+  type ProfileTheme,
+  type OrganizationData,
+  type OrganizationMember,
+  type StepValidation,
+  DEFAULT_PROFILE_THEMES,
 } from '@/types/onboarding';
 
-// Import default themes
-const defaultThemes: ProfileTheme[] = [
-  {
-    id: 'blue-theme',
-    name: 'Professional Blue',
-    textColor: '#1a1a1a',
-    backgroundColor: '#ffffff',
-    primaryColor: '#2563eb',
-  },
-  {
-    id: 'green-theme',
-    name: 'Nature Green',
-    textColor: '#1a1a1a',
-    backgroundColor: '#f0fdf4',
-    primaryColor: '#16a34a',
-  },
-  {
-    id: 'purple-theme',
-    name: 'Creative Purple',
-    textColor: '#1a1a1a',
-    backgroundColor: '#faf5ff',
-    primaryColor: '#9333ea',
-  },
-  {
-    id: 'orange-theme',
-    name: 'Energetic Orange',
-    textColor: '#1a1a1a',
-    backgroundColor: '#fff7ed',
-    primaryColor: '#ea580c',
-  },
-  {
-    id: 'dark-theme',
-    name: 'Dark Mode',
-    textColor: '#ffffff',
-    backgroundColor: '#1a1a1a',
-    primaryColor: '#60a5fa',
-  },
-];
+
 
 // Initial onboarding data
 const initialOnboardingData: OnboardingData = {
   fullName: '',
   links: [],
   profilePicture: null,
-  theme: defaultThemes[0], // Default to first theme
+  theme: DEFAULT_PROFILE_THEMES[0], // Default to first theme
   organization: null,
 };
 
