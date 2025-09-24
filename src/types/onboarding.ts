@@ -98,7 +98,7 @@ export const DEFAULT_PROFILE_THEMES: ProfileTheme[] = [
     id: 'blue-theme',
     name: 'Professional Blue',
     textColor: '#1a1a1a',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#E2E8F0',
     primaryColor: '#2563eb',
   },
   {
