@@ -1,12 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { useOnboardingViewModel } from '@/lib/viewmodels/onboarding/onboarding.viewmodel';
 import { useClientTranslate } from '@/hooks/use-client-translate';
 import SpinetLogo from '@/components/icons/spinet-logo';
-import { ArrowLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { useLocale } from '@/hooks/use-locale';
 
 interface OnboardingLayoutProps {
@@ -14,14 +13,11 @@ interface OnboardingLayoutProps {
 }
 
 export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
-   const locale = useLocale();
    const { t } = useClientTranslate();
 
    const {
       currentStep,
-      data,
       isLoading,
-      errors,
       getStepInfo,
       getProgressPercentage,
       isFinalStep,
@@ -41,7 +37,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
    return (
       <div className="flex min-h-screen">
          {/* Left Side - Form Content */}
-         <div className="w-full lg:w-1/2 p-6 lg:p-12">
+         <div className="w-full lg:w-1/2 p-6 sm:p-20 lg:p-24">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                <div className="flex items-center gap-4">
@@ -50,7 +46,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                      onClick={exitOnboarding}
                      className="flex items-center gap-3 text-foreground hover:text-muted-foreground transition-colors"
                   >
-                     <ArrowLeft className="h-5 w-5" />
+                     <ChevronLeft className="h-5 w-5" />
                      <SpinetLogo className="hover:cursor-pointer w-28 md:w-40" width={151} height={31} />
                   </button>
                </div>
@@ -70,8 +66,8 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
             </div>
 
             {/* Step Content */}
-            <div className="mb-8">
-               <h1 className="text-3xl font-bold text-foreground mb-4">
+            <div className="mt-20 mb-8">
+               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
                   {stepInfo.title}
                </h1>
                <p className="text-muted-foreground text-lg">
@@ -84,27 +80,21 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                {children}
             </div>
 
-            {/* Error Display */}
-            {Object.keys(errors).length > 0 && (
-               <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  {Object.values(errors).map((error, index) => (
-                     <p key={index} className="text-destructive text-sm">
-                        {error}
-                     </p>
-                  ))}
-               </div>
-            )}
-
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between">
-               <Button
-                  variant="outline"
-                  onClick={previousStep}
-                  disabled={isFirstStep()}
-                  className="px-6"
-               >
-                  {t('onboarding.previous')}
-               </Button>
+               {/* Previous Button - Only show if not first step */}
+               {!isFirstStep() && (
+                  <Button
+                     variant="outline"
+                     onClick={previousStep}
+                     className="px-6"
+                  >
+                     {t('onboarding.previous')}
+                  </Button>
+               )}
+
+               {/* Spacer for first step to push next button to the right */}
+               {isFirstStep() && <div></div>}
 
                <div className="flex gap-3">
                   {(currentStep === 2 || currentStep === 3 || currentStep === 5) && (

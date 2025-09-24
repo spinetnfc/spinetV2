@@ -11,6 +11,10 @@ const createTranslatedSchema = (t: (key: string, values?: any) => string) => {
       .min(2, t('validation.name-too-short'))
       .max(100, t('validation.name-too-long'))
       .regex(/^[a-zA-Z\s]+$/, t('validation.name-invalid-characters'))
+      .refine((name) => {
+        const words = name.trim().split(/\s+/);
+        return words.length >= 2;
+      }, t('validation.name-two-words-required'))
       .transform((name) => name.trim().replace(/\s+/g, ' ')), // Format: trim and normalize spaces
   });
 

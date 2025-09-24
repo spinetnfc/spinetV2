@@ -55,7 +55,6 @@
   "onboarding.validation.email-invalid": "يرجى إدخال عنوان بريد إلكتروني صحيح",
   "onboarding.validation.org-name-required": "اسم المنظمة مطلوب",
   "onboarding.full-name-label": "الاسم الكامل",
-  "onboarding.full-name-description": "سيتم عرض هذا في ملفك الشخصي العام.",
   "onboarding.preview": "معاينة",
   "onboarding.your-name-placeholder": "اسمك",
   "onboarding.platform": "المنصة",
@@ -733,5 +732,10 @@
   "profile-switch-confirmation": "هل أنت متأكد أنك تريد تغيير هذا الملف الشخصي؟",
   "confirm": "تأكيد",
   "Contact saved successfully": "تم حفظ جهة الاتصال بنجاح",
-  "loading": "جارٍ التحميل..."
+  "loading": "جارٍ التحميل...",
+  "validation.required": "هذا الحقل مطلوب",
+  "validation.name-too-short": "يجب أن يحتوي الاسم على حرفين على الأقل",
+  "validation.name-too-long": "يجب أن يحتوي الاسم على أقل من 100 حرف",
+  "validation.name-invalid-characters": "يمكن أن يحتوي الاسم على أحرف ومسافات فقط",
+  "validation.name-two-words-required": "يرجى إدخال كلمتين على الأقل (الاسم الأول والأخير)"
 }

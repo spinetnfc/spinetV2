@@ -690,8 +690,6 @@
   "onboarding.validation.url-invalid": "Veuillez entrer une URL valide",
   "onboarding.validation.email-invalid": "Veuillez entrer une adresse email valide",
   "onboarding.validation.org-name-required": "Le nom de l'organisation est requis",
-  "onboarding.full-name-label": "Nom Complet",
-  "onboarding.full-name-description": "Ceci sera affiché sur votre profil public.",
   "onboarding.preview": "Aperçu",
   "onboarding.your-name-placeholder": "Votre Nom",
   "onboarding.platform": "Plateforme",
@@ -732,5 +730,10 @@
   "onboarding.org-with-members": "Votre organisation est prête avec {count} membre(s) !",
   "onboarding.individual-setup": "Configuration Individuelle",
   "onboarding.individual-description": "Vous pouvez toujours configurer une organisation plus tard depuis vos paramètres.",
-  "onboarding.can-setup-org-later": "Vous pouvez configurer une organisation à tout moment depuis les paramètres de votre tableau de bord."
+  "onboarding.can-setup-org-later": "Vous pouvez configurer une organisation à tout moment depuis les paramètres de votre tableau de bord.",
+  "validation.required": "Ce champ est obligatoire",
+  "validation.name-too-short": "Le nom doit contenir au moins 2 caractères",
+  "validation.name-too-long": "Le nom doit contenir moins de 100 caractères",
+  "validation.name-invalid-characters": "Le nom ne peut contenir que des lettres et des espaces",
+  "validation.name-two-words-required": "Veuillez entrer au moins deux mots (prénom et nom de famille)"
 }

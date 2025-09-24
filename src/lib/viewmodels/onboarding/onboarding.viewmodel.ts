@@ -125,22 +125,19 @@ export const useOnboardingViewModel = () => {
 
   const updateFullName = useCallback(
     (name: string) => {
-      // Format name immediately
-      const formatted = formatName(name);
-
-      // Update store with formatted name
-      store.updateField('fullName', formatted);
+      // Update store with raw input - don't format immediately
+      store.updateField('fullName', name);
 
       // Clear any existing errors for this field
       store.clearError('fullName');
 
-      // Async validation
+      // Async validation with debouncing
       setTimeout(() => {
         const validation = validateCurrentStep();
         if (!validation.isValid && validation.errors.fullName) {
           store.addError('fullName', validation.errors.fullName);
         }
-      }, 0);
+      }, 300); // Add slight delay for better UX
     },
     [store, validateCurrentStep],
   );
