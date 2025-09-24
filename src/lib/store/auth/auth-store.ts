@@ -29,7 +29,7 @@ const useAuthStore = create<AuthState>()(
         // Initial state
         user: null,
         session: null,
-        isAuthenticated: false,
+        isAuthenticated: true,
         isLoading: false,
         requires2FA: false,
         error: null,

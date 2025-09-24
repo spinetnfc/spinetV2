@@ -2,7 +2,7 @@ import { AuthLayout } from '@/components/layouts/auth-layout';
 import type { ReactNode } from 'react';
 
 export const metadata = {
-  title: 'Authentification',
+  title: 'Authentification - Spinet',
   description: 'Authentification for Spinet NFC application',
 };
 
