@@ -211,21 +211,36 @@ function ProfilePreview() {
             <div className="ml-16 p-6">
                {/* Header */}
                <div className="mb-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-1">
-                     My organization
+                  <h2
+                     className="text-xl font-bold mb-1 transition-colors duration-300 ease-out"
+                     style={{ color: data.theme.textColor }}
+                  >
+                     {data.fullName || 'Your Name'}
                   </h2>
                </div>
 
                {/* Content Placeholders */}
                <div className="space-y-4">
                   {/* Large Content Block */}
-                  <div className="h-20 bg-gray-200 rounded-lg"></div>
+                  <div
+                     className="h-20 rounded-lg opacity-20"
+                     style={{ backgroundColor: data.theme.textColor }}
+                  ></div>
 
                   {/* Medium Content Blocks */}
                   <div className="space-y-2">
-                     <div className="h-4 bg-gray-200 rounded w-full"></div>
-                     <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                     <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                     <div
+                        className="h-4 rounded w-full opacity-20"
+                        style={{ backgroundColor: data.theme.textColor }}
+                     ></div>
+                     <div
+                        className="h-4 rounded w-3/4 opacity-20"
+                        style={{ backgroundColor: data.theme.textColor }}
+                     ></div>
+                     <div
+                        className="h-4 rounded w-2/3 opacity-20"
+                        style={{ backgroundColor: data.theme.textColor }}
+                     ></div>
                   </div>
 
                   {/* Spacing */}
@@ -233,15 +248,24 @@ function ProfilePreview() {
 
                   {/* More Content Blocks */}
                   <div className="space-y-2">
-                     <div className="h-4 bg-gray-200 rounded w-full"></div>
-                     <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                     <div
+                        className="h-4 rounded w-full opacity-20"
+                        style={{ backgroundColor: data.theme.textColor }}
+                     ></div>
+                     <div
+                        className="h-4 rounded w-4/5 opacity-20"
+                        style={{ backgroundColor: data.theme.textColor }}
+                     ></div>
                   </div>
 
                   {/* Spacing */}
                   <div className="h-12"></div>
 
                   {/* Bottom Content Block */}
-                  <div className="h-16 bg-gray-200 rounded-lg"></div>
+                  <div
+                     className="h-16 rounded-lg opacity-20"
+                     style={{ backgroundColor: data.theme.textColor }}
+                  ></div>
                </div>
 
                {/* Navigation Labels (visible on hover or as text) */}
