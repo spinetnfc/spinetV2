@@ -37,7 +37,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
                {/* Logo and Back Button */}
                <Link
                   href={`/${locale}`}
-                  className="flex items-center gap-3 text-foreground hover:text-muted-foreground transition-colors"
+                  className="flex items-center gap-3 cursor-pointer text-foreground hover:text-muted-foreground transition-colors"
                >
                   <ChevronLeft className="h-5 w-5" />
                   <SpinetLogo className="hover:cursor-pointer w-28 md:w-40" width={151} height={31} />
