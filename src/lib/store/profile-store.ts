@@ -117,7 +117,7 @@ export const useProfileStore = create<ProfileState>()(
           // Check cache first
           const cachedProfile = get().getProfile(query);
           if (cachedProfile) {
-            console.log('✅ Profile found in cache:', key);
+            console.log('Profile found in cache:', key);
             return cachedProfile;
           }
 
@@ -174,7 +174,7 @@ export const useProfileStore = create<ProfileState>()(
               'profile/fetchProfile/success',
             );
 
-            console.log('✅ Profile fetched successfully:', key);
+            console.log('Profile fetched successfully:', key);
             return profile;
           } catch (err: any) {
             const errorMessage = err.message || 'Failed to fetch profile';
@@ -219,7 +219,7 @@ export const useProfileStore = create<ProfileState>()(
           // Preload without affecting global loading state
           try {
             await get().fetchProfile(query);
-            console.log('✅ Profile preloaded:', key);
+            console.log('Profile preloaded:', key);
           } catch (err) {
             console.error('❌ Failed to preload profile:', err);
           }

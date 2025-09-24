@@ -2,18 +2,14 @@
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { useOnboardingStore } from '@/lib/store/onboarding/onboarding-store';
+import { useOnboardingViewModel } from '@/lib/viewmodels/onboarding/onboarding.viewmodel';
 import { useClientTranslate } from '@/hooks/use-client-translate';
 import { DEFAULT_PROFILE_THEMES, ProfileTheme } from '@/types/onboarding';
 import { Check, Palette } from 'lucide-react';
 
 export default function Step4Theme() {
    const { t } = useClientTranslate();
-   const { data, updateTheme } = useOnboardingStore();
-
-   const handleThemeChange = (theme: ProfileTheme) => {
-      updateTheme(theme);
-   };
+   const { data, errors, selectTheme } = useOnboardingViewModel();
 
    return (
       <div className="space-y-6">
@@ -34,10 +30,10 @@ export default function Step4Theme() {
             {DEFAULT_PROFILE_THEMES.map((theme) => (
                <button
                   key={theme.id}
-                  onClick={() => handleThemeChange(theme)}
+                  onClick={() => selectTheme(theme)}
                   className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${data.theme.id === theme.id
-                        ? 'border-primary bg-primary/5 shadow-md'
-                        : 'border-border hover:border-primary/50 hover:shadow-sm'
+                     ? 'border-primary bg-primary/5 shadow-md'
+                     : 'border-border hover:border-primary/50 hover:shadow-sm'
                      }`}
                >
                   {/* Selected Indicator */}
@@ -101,6 +97,15 @@ export default function Step4Theme() {
                </button>
             ))}
          </div>
+
+         {/* Error Display */}
+         {errors.theme && (
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+               <p className="text-sm text-destructive">
+                  {errors.theme}
+               </p>
+            </div>
+         )}
 
          {/* Current Theme Info */}
          <div className="p-4 bg-muted/50 rounded-lg">

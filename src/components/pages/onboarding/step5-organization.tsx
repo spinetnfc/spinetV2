@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { useOnboardingStore } from '@/lib/store/onboarding/onboarding-store';
+import { useOnboardingViewModel } from '@/lib/viewmodels/onboarding/onboarding.viewmodel';
 import { useClientTranslate } from '@/hooks/use-client-translate';
 import {
    Building,
@@ -25,60 +25,33 @@ export default function Step5Organization() {
    const { t } = useClientTranslate();
    const {
       data,
-      updateOrganization,
+      errors,
       updateOrganizationName,
       addOrganizationMember,
       removeOrganizationMember
-   } = useOnboardingStore();
+   } = useOnboardingViewModel();
 
    const [newMemberEmail, setNewMemberEmail] = useState('');
    const [newMemberRole, setNewMemberRole] = useState<'admin' | 'member'>('member');
    const [skipOrganization, setSkipOrganization] = useState(!data.organization);
 
    const handleOrganizationNameChange = (name: string) => {
-      if (!name.trim() && data.organization) {
-         // If name is cleared, set to skip mode
-         setSkipOrganization(true);
-         updateOrganization(null);
-      } else if (name.trim()) {
-         // If name is provided, create or update organization
-         setSkipOrganization(false);
-         if (data.organization) {
-            updateOrganizationName(name);
-         } else {
-            updateOrganization({
-               name: name,
-               members: [],
-            });
-         }
-      }
+      updateOrganizationName(name);
    };
 
-   const handleAddMember = () => {
-      if (newMemberEmail && data.organization) {
-         const newMember: OrganizationMember = {
-            email: newMemberEmail,
-            role: newMemberRole,
-            status: 'pending',
-         };
-         addOrganizationMember(newMember);
-         setNewMemberEmail('');
-         setNewMemberRole('member');
+   const handleAddMember = async () => {
+      if (newMemberEmail) {
+         const success = await addOrganizationMember(newMemberEmail, newMemberRole);
+         if (success) {
+            setNewMemberEmail('');
+            setNewMemberRole('member');
+         }
       }
    };
 
    const handleToggleSkip = () => {
       setSkipOrganization(!skipOrganization);
-      if (!skipOrganization) {
-         // Switching to skip mode
-         updateOrganization(null);
-      } else {
-         // Switching to setup mode
-         updateOrganization({
-            name: '',
-            members: [],
-         });
-      }
+      updateOrganizationName(skipOrganization ? '' : '');
    };
 
    const getRoleIcon = (role: 'admin' | 'member') => {
@@ -128,8 +101,13 @@ export default function Step5Organization() {
                      value={data.organization?.name || ''}
                      onChange={(e) => handleOrganizationNameChange(e.target.value)}
                      placeholder={t('onboarding.organization-name-placeholder')}
-                     className="text-lg"
+                     className={`text-lg ${errors.organizationName ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                   />
+                  {errors.organizationName && (
+                     <p className="text-xs text-destructive mt-1">
+                        {errors.organizationName}
+                     </p>
+                  )}
                   <p className="text-sm text-muted-foreground">
                      {t('onboarding.organization-name-description')}
                   </p>
@@ -151,7 +129,13 @@ export default function Step5Organization() {
                                  value={newMemberEmail}
                                  onChange={(e) => setNewMemberEmail(e.target.value)}
                                  placeholder={t('onboarding.member-email-placeholder')}
+                                 className={errors['member-email'] ? 'border-destructive focus-visible:ring-destructive' : ''}
                               />
+                              {errors['member-email'] && (
+                                 <p className="text-xs text-destructive mt-1">
+                                    {errors['member-email']}
+                                 </p>
+                              )}
                            </div>
                            <div className="flex gap-2">
                               <Button

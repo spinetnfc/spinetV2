@@ -1,44 +1,36 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboardingStore } from '@/lib/store/onboarding/onboarding-store';
 import { useClientTranslate } from '@/hooks/use-client-translate';
+import { useLocale } from '@/hooks/use-locale';
+import {
+  OnboardingValidation,
+  ValidationResult,
+  formatUrl,
+  formatName,
+  isValidUrl,
+  getHostname,
+} from '@/lib/validations/onboarding.validation';
 import type {
   OnboardingStep,
   UserLink,
   ProfileTheme,
   OrganizationMember,
+  OrganizationData,
 } from '@/types/onboarding';
 
 export const useOnboardingViewModel = () => {
   const router = useRouter();
+  const locale = useLocale();
   const { t } = useClientTranslate();
 
-  // Store selectors
-  const {
-    currentStep,
-    data,
-    isLoading,
-    errors,
-    nextStep,
-    previousStep,
-    goToStep,
-    updateFullName,
-    updateLinks,
-    addLink,
-    removeLink,
-    updateProfilePicture,
-    updateTheme,
-    updateOrganization,
-    updateOrganizationName,
-    addOrganizationMember,
-    removeOrganizationMember,
-    validateCurrentStep,
-    canProceedToNextStep,
-    isStepSkippable,
-    skipCurrentStep,
-    completeOnboarding,
-    resetOnboarding,
-  } = useOnboardingStore();
+  // Store access (only data and simple mutations)
+  const store = useOnboardingStore();
+
+  // Initialize validation with translation
+  const validation = useMemo(() => new OnboardingValidation(t), [t]);
+
+  // === COMPUTED VALUES ===
 
   // Step information
   const getStepInfo = useCallback(
@@ -76,212 +68,413 @@ export const useOnboardingViewModel = () => {
     [t],
   );
 
-  // Navigation handlers
-  const handleNext = useCallback(() => {
-    const validation = validateCurrentStep();
-    if (validation.isValid) {
-      if (currentStep === 5) {
-        // Complete onboarding on final step
-        completeOnboarding();
-      } else {
-        nextStep();
-      }
+  // Check if step is skippable
+  const isStepSkippable = useCallback((step: OnboardingStep): boolean => {
+    switch (step) {
+      case 1:
+        return false; // Full name - not skippable
+      case 2:
+        return true; // Links - skippable
+      case 3:
+        return true; // Profile picture - skippable
+      case 4:
+        return false; // Theme - not skippable (has default)
+      case 5:
+        return true; // Organization - skippable
+      default:
+        return false;
     }
-  }, [currentStep, validateCurrentStep, nextStep, completeOnboarding]);
+  }, []);
 
-  const handlePrevious = useCallback(() => {
-    previousStep();
-  }, [previousStep]);
+  // Get step progress percentage
+  const getProgressPercentage = useCallback(() => {
+    return (store.currentStep / 5) * 100;
+  }, [store.currentStep]);
 
-  const handleSkip = useCallback(() => {
-    skipCurrentStep();
-  }, [skipCurrentStep]);
+  // Check if it's the final step
+  const isFinalStep = useCallback(() => {
+    return store.currentStep === 5;
+  }, [store.currentStep]);
 
-  const handleGoToStep = useCallback(
-    (step: OnboardingStep) => {
-      // Only allow going to previous steps or current step
-      if (step <= currentStep) {
-        goToStep(step);
-      }
-    },
-    [currentStep, goToStep],
-  );
+  // Check if it's the first step
+  const isFirstStep = useCallback(() => {
+    return store.currentStep === 1;
+  }, [store.currentStep]);
 
-  // Step 1: Full name handlers
-  const handleFullNameChange = useCallback(
+  // === VALIDATION ===
+
+  // Validate current step
+  const validateCurrentStep = useCallback((): ValidationResult => {
+    return validation.validateStep(store.currentStep, store.data);
+  }, [validation, store.currentStep, store.data]);
+
+  // Check if user can proceed to next step
+  const canProceedToNextStep = useCallback((): boolean => {
+    const stepValidation = validateCurrentStep();
+
+    // If step is skippable, user can always proceed
+    if (isStepSkippable(store.currentStep)) {
+      return true;
+    }
+
+    // Otherwise, validation must pass
+    return stepValidation.isValid;
+  }, [validateCurrentStep, isStepSkippable, store.currentStep]);
+
+  // === STEP 1: FULL NAME ===
+
+  const updateFullName = useCallback(
     (name: string) => {
-      updateFullName(name);
+      // Format name immediately
+      const formatted = formatName(name);
+
+      // Update store with formatted name
+      store.updateField('fullName', formatted);
+
+      // Clear any existing errors for this field
+      store.clearError('fullName');
+
+      // Async validation
+      setTimeout(() => {
+        const validation = validateCurrentStep();
+        if (!validation.isValid && validation.errors.fullName) {
+          store.addError('fullName', validation.errors.fullName);
+        }
+      }, 0);
     },
-    [updateFullName],
+    [store, validateCurrentStep],
   );
 
-  // Step 2: Links handlers
-  const handleAddLink = useCallback(
-    (platform: string, url: string) => {
-      if (platform && url) {
-        addLink({ platform, url });
+  // === STEP 2: LINKS ===
+
+  const validateAndAddLink = useCallback(
+    async (platform: string, url: string): Promise<boolean> => {
+      if (!platform.trim() || !url.trim()) {
+        store.addError('link-form', t('validation.required'));
+        return false;
       }
+
+      // Validate link
+      const linkValidation = validation.validateLink(
+        platform.trim(),
+        url.trim(),
+      );
+
+      if (!linkValidation.isValid) {
+        // Set field-specific errors
+        Object.entries(linkValidation.errors).forEach(([field, error]) => {
+          store.addError(`link-${field}`, error);
+        });
+        return false;
+      }
+
+      // Clear any form errors
+      store.clearError('link-form');
+      store.clearError('link-platform');
+      store.clearError('link-url');
+
+      // Add the validated and formatted link using updateField
+      const newLinks = [...store.data.links, linkValidation.data];
+      store.updateField('links', newLinks);
+      return true;
     },
-    [addLink],
+    [store, validation, t],
   );
 
-  const handleRemoveLink = useCallback(
+  const removeLink = useCallback(
     (index: number) => {
-      removeLink(index);
+      // Remove link using updateField
+      const newLinks = store.data.links.filter((_, i) => i !== index);
+      store.updateField('links', newLinks);
     },
-    [removeLink],
+    [store],
   );
 
-  const handleUpdateLinks = useCallback(
-    (links: UserLink[]) => {
-      updateLinks(links);
-    },
-    [updateLinks],
-  );
+  // === STEP 3: PROFILE PICTURE ===
 
-  // Step 3: Profile picture handlers
-  const handleProfilePictureChange = useCallback(
-    (picture: string | null) => {
-      updateProfilePicture(picture);
-    },
-    [updateProfilePicture],
-  );
-
-  const handleProfilePictureUpload = useCallback(
+  const uploadProfilePicture = useCallback(
     async (file: File): Promise<void> => {
+      // Validate file
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const allowedTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'image/gif',
+      ];
+
+      if (file.size > maxSize) {
+        store.addError('profilePicture', t('validation.file-too-large'));
+        return;
+      }
+
+      if (!allowedTypes.includes(file.type)) {
+        store.addError('profilePicture', t('validation.unsupported-file-type'));
+        return;
+      }
+
+      store.setLoading(true);
+      store.clearError('profilePicture');
+
       try {
         // TODO: Implement actual file upload
         // const uploadedUrl = await fileUploadService.upload(file);
 
         // Mock file upload
         const mockUrl = URL.createObjectURL(file);
-        updateProfilePicture(mockUrl);
+        store.updateField('profilePicture', mockUrl);
 
         console.log('Profile picture uploaded (mock):', mockUrl);
       } catch (error) {
         console.error('Failed to upload profile picture:', error);
+        store.addError('profilePicture', t('validation.upload-failed'));
+      } finally {
+        store.setLoading(false);
       }
     },
-    [updateProfilePicture],
+    [store, t],
   );
 
-  // Step 4: Theme handlers
-  const handleThemeChange = useCallback(
+  const removeProfilePicture = useCallback(() => {
+    store.updateField('profilePicture', null);
+    store.clearError('profilePicture');
+  }, [store]);
+
+  // === STEP 4: THEME ===
+
+  const selectTheme = useCallback(
     (theme: ProfileTheme) => {
-      updateTheme(theme);
+      store.updateField('theme', theme);
+      store.clearError('theme');
     },
-    [updateTheme],
+    [store],
   );
 
-  // Step 5: Organization handlers
-  const handleOrganizationNameChange = useCallback(
+  // === STEP 5: ORGANIZATION ===
+
+  const updateOrganizationName = useCallback(
     (name: string) => {
-      updateOrganizationName(name);
+      const formatted = formatName(name);
+
+      if (!formatted && store.data.organization) {
+        // If name is cleared, remove organization
+        store.updateField('organization', null);
+      } else if (formatted) {
+        // Create or update organization
+        const organization: OrganizationData = store.data.organization || {
+          name: '',
+          members: [],
+        };
+        store.updateField('organization', { ...organization, name: formatted });
+      }
+
+      store.clearError('organizationName');
     },
-    [updateOrganizationName],
+    [store],
   );
 
-  const handleAddOrganizationMember = useCallback(
-    (email: string, role: 'admin' | 'member' = 'member') => {
-      if (email) {
-        addOrganizationMember({
-          email,
-          role,
-          status: 'pending',
+  const addOrganizationMember = useCallback(
+    async (
+      email: string,
+      role: 'admin' | 'member' = 'member',
+    ): Promise<boolean> => {
+      const memberValidation = validation.validateOrganizationMember(
+        email,
+        role,
+      );
+
+      if (!memberValidation.isValid) {
+        Object.entries(memberValidation.errors).forEach(([field, error]) => {
+          store.addError(`member-${field}`, error);
         });
+        return false;
+      }
+
+      // Check for duplicate emails
+      const existingMembers = store.data.organization?.members || [];
+      if (
+        existingMembers.some(
+          (member) => member.email.toLowerCase() === email.toLowerCase(),
+        )
+      ) {
+        store.addError('member-email', t('validation.member-already-exists'));
+        return false;
+      }
+
+      // Clear errors and add member using updateField
+      store.clearError('member-email');
+      store.clearError('member-role');
+
+      // Add member to organization
+      const currentOrg = store.data.organization || { name: '', members: [] };
+      const newMembers = [...currentOrg.members, memberValidation.data];
+      store.updateField('organization', { ...currentOrg, members: newMembers });
+      return true;
+    },
+    [store, validation, t],
+  );
+
+  const removeOrganizationMember = useCallback(
+    (index: number) => {
+      // Remove member using updateField
+      const currentOrg = store.data.organization;
+      if (!currentOrg) return;
+
+      const newMembers = currentOrg.members.filter((_, i) => i !== index);
+      store.updateField('organization', { ...currentOrg, members: newMembers });
+    },
+    [store],
+  );
+
+  // === NAVIGATION ===
+
+  const nextStep = useCallback(async () => {
+    // Validate current step
+    const stepValidation = validateCurrentStep();
+
+    if (!stepValidation.isValid) {
+      // Set all errors
+      store.setErrors(stepValidation.errors);
+      return;
+    }
+
+    // Clear errors
+    store.clearAllErrors();
+
+    // Move to next step
+    if (store.currentStep < 5) {
+      store.setCurrentStep((store.currentStep + 1) as OnboardingStep);
+    } else {
+      // Complete onboarding on final step
+      await completeOnboarding();
+    }
+  }, [store, validateCurrentStep]);
+
+  const previousStep = useCallback(() => {
+    if (store.currentStep > 1) {
+      store.setCurrentStep((store.currentStep - 1) as OnboardingStep);
+      store.clearAllErrors();
+    }
+  }, [store]);
+
+  const skipStep = useCallback(() => {
+    if (isStepSkippable(store.currentStep)) {
+      nextStep();
+    }
+  }, [store, isStepSkippable, nextStep]);
+
+  const goToStep = useCallback(
+    (step: OnboardingStep) => {
+      // Only allow going to previous steps or current step
+      if (step <= store.currentStep) {
+        store.setCurrentStep(step);
+        store.clearAllErrors();
       }
     },
-    [addOrganizationMember],
+    [store],
   );
 
-  const handleRemoveOrganizationMember = useCallback(
-    (index: number) => {
-      removeOrganizationMember(index);
-    },
-    [removeOrganizationMember],
-  );
+  // === SUBMISSION ===
 
-  const handleSkipOrganization = useCallback(() => {
-    updateOrganization(null);
-    completeOnboarding();
-  }, [updateOrganization, completeOnboarding]);
+  const completeOnboarding = useCallback(async (): Promise<void> => {
+    store.setLoading(true);
+    store.clearAllErrors();
 
-  // Exit onboarding
-  const handleExitOnboarding = useCallback(() => {
+    try {
+      // Final validation
+      const completeValidation = validation.validateComplete(store.data);
+
+      if (!completeValidation.isValid) {
+        store.setErrors(completeValidation.errors);
+        return;
+      }
+
+      // Log the final onboarding data
+      console.log('Onboarding completed! Final data:', completeValidation.data);
+
+      // TODO: Send data to backend API
+      // await onboardingRepository.completeOnboarding(completeValidation.data);
+
+      // Mock API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      console.log('Onboarding data saved successfully (mock)');
+
+      // Navigate to dashboard or home
+      router.push(`/${locale}`);
+    } catch (error) {
+      console.error('Failed to complete onboarding:', error);
+      store.addError('general', t('validation.submission-failed'));
+    } finally {
+      store.setLoading(false);
+    }
+  }, [store, validation, router, locale, t]);
+
+  // === RESET ===
+
+  const resetOnboarding = useCallback(() => {
+    store.reset();
+  }, [store]);
+
+  const exitOnboarding = useCallback(() => {
     // TODO: Show confirmation dialog
     resetOnboarding();
-    router.push('/');
-  }, [resetOnboarding, router]);
+    router.push(`/${locale}`);
+  }, [resetOnboarding, router, locale]);
 
-  // Get current step validation status
-  const getCurrentStepValidation = useCallback(() => {
-    return validateCurrentStep();
-  }, [validateCurrentStep]);
-
-  // Check if user can proceed
-  const canProceed = useCallback(() => {
-    return canProceedToNextStep();
-  }, [canProceedToNextStep]);
-
-  // Get step progress percentage
-  const getProgressPercentage = useCallback(() => {
-    return (currentStep / 5) * 100;
-  }, [currentStep]);
-
-  // Check if it's the final step
-  const isFinalStep = useCallback(() => {
-    return currentStep === 5;
-  }, [currentStep]);
-
-  // Check if it's the first step
-  const isFirstStep = useCallback(() => {
-    return currentStep === 1;
-  }, [currentStep]);
+  // === RETURN INTERFACE ===
 
   return {
-    // State
-    currentStep,
-    data,
-    isLoading,
-    errors,
+    // === STATE (from store) ===
+    currentStep: store.currentStep,
+    data: store.data,
+    isLoading: store.isLoading,
+    errors: store.errors,
 
-    // Step information
+    // === COMPUTED VALUES ===
     getStepInfo,
-    getCurrentStepValidation,
-    canProceed,
     getProgressPercentage,
     isFinalStep,
     isFirstStep,
+    isStepSkippable,
 
-    // Navigation
-    handleNext,
-    handlePrevious,
-    handleSkip,
-    handleGoToStep,
-    handleExitOnboarding,
+    // === VALIDATION ===
+    validateCurrentStep,
+    canProceedToNextStep,
 
-    // Step 1: Full name
-    handleFullNameChange,
+    // === STEP 1: FULL NAME ===
+    updateFullName,
 
-    // Step 2: Links
-    handleAddLink,
-    handleRemoveLink,
-    handleUpdateLinks,
+    // === STEP 2: LINKS ===
+    validateAndAddLink,
+    removeLink,
+    // Utility functions for components
+    isValidUrl,
+    getHostname,
 
-    // Step 3: Profile picture
-    handleProfilePictureChange,
-    handleProfilePictureUpload,
+    // === STEP 3: PROFILE PICTURE ===
+    uploadProfilePicture,
+    removeProfilePicture,
 
-    // Step 4: Theme
-    handleThemeChange,
+    // === STEP 4: THEME ===
+    selectTheme,
 
-    // Step 5: Organization
-    handleOrganizationNameChange,
-    handleAddOrganizationMember,
-    handleRemoveOrganizationMember,
-    handleSkipOrganization,
+    // === STEP 5: ORGANIZATION ===
+    updateOrganizationName,
+    addOrganizationMember,
+    removeOrganizationMember,
 
-    // Utilities
-    isStepSkippable: (step: OnboardingStep) => isStepSkippable(step),
+    // === NAVIGATION ===
+    nextStep,
+    previousStep,
+    skipStep,
+    goToStep,
+
+    // === SUBMISSION ===
+    completeOnboarding,
+
+    // === RESET ===
+    resetOnboarding,
+    exitOnboarding,
   };
 };

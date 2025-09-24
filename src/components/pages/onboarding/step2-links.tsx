@@ -5,47 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { useOnboardingStore } from '@/lib/store/onboarding/onboarding-store';
+import { useOnboardingViewModel } from '@/lib/viewmodels/onboarding/onboarding.viewmodel';
 import { useClientTranslate } from '@/hooks/use-client-translate';
 import { X, Plus, Link as LinkIcon } from 'lucide-react';
 import { UserLink } from '@/types/onboarding';
 
 export default function Step2Links() {
    const { t } = useClientTranslate();
-   const { data, addLink, removeLink } = useOnboardingStore();
+   const { data, errors, validateAndAddLink, removeLink, isValidUrl, getHostname } = useOnboardingViewModel();
    const [newPlatform, setNewPlatform] = useState('');
    const [newUrl, setNewUrl] = useState('');
 
-   const isValidUrl = (url: string): boolean => {
-      try {
-         new URL(url);
-         return true;
-      } catch {
-         return false;
-      }
-   };
-
-   const getHostname = (url: string): string => {
-      try {
-         return new URL(url).hostname;
-      } catch {
-         return 'Invalid URL';
-      }
-   };
-
-   const handleAddLink = () => {
-      if (newPlatform && newUrl) {
-         // Add validation check for URL
-         if (!isValidUrl(newUrl)) {
-            // Could show a toast or error message here
-            console.error('Invalid URL format:', newUrl);
-            return;
-         }
-
-         addLink({
-            platform: newPlatform,
-            url: newUrl,
-         });
+   const handleAddLink = async () => {
+      const success = await validateAndAddLink(newPlatform, newUrl);
+      if (success) {
          setNewPlatform('');
          setNewUrl('');
       }
@@ -83,7 +56,13 @@ export default function Step2Links() {
                      value={newPlatform}
                      onChange={(e) => setNewPlatform(e.target.value)}
                      placeholder={t('onboarding.platform-placeholder')}
+                     className={errors['link-platform'] ? 'border-destructive focus-visible:ring-destructive' : ''}
                   />
+                  {errors['link-platform'] && (
+                     <p className="text-xs text-destructive">
+                        {errors['link-platform']}
+                     </p>
+                  )}
                </div>
                <div className="space-y-2">
                   <Label htmlFor="url">{t('onboarding.url')}</Label>
@@ -93,15 +72,25 @@ export default function Step2Links() {
                      value={newUrl}
                      onChange={(e) => setNewUrl(e.target.value)}
                      placeholder={t('onboarding.url-placeholder')}
-                     className={newUrl.trim() && !isValidUrl(newUrl) ? 'border-destructive focus-visible:ring-destructive' : ''}
+                     className={
+                        errors['link-url'] || (newUrl.trim() && !isValidUrl(newUrl))
+                           ? 'border-destructive focus-visible:ring-destructive'
+                           : ''
+                     }
                   />
-                  {newUrl.trim() && !isValidUrl(newUrl) && (
+                  {(errors['link-url'] || (newUrl.trim() && !isValidUrl(newUrl))) && (
                      <p className="text-xs text-destructive">
-                        Please enter a valid URL (e.g., https://example.com)
+                        {errors['link-url'] || 'Please enter a valid URL (e.g., https://example.com)'}
                      </p>
                   )}
                </div>
             </div>
+
+            {errors['link-form'] && (
+               <p className="text-xs text-destructive">
+                  {errors['link-form']}
+               </p>
+            )}
 
             <Button
                onClick={handleAddLink}
@@ -143,8 +132,8 @@ export default function Step2Links() {
                      <div
                         key={index}
                         className={`flex items-center justify-between p-3 bg-background border rounded-lg ${isValidUrl(link.url)
-                              ? 'border-border'
-                              : 'border-destructive/50 bg-destructive/5'
+                           ? 'border-border'
+                           : 'border-destructive/50 bg-destructive/5'
                            }`}
                      >
                         <div className="flex-1 min-w-0">

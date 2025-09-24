@@ -72,7 +72,7 @@ export const useContactsStore = create<ContactsState>()(
           setTimeout(() => {
             try {
               setContacts(mockContacts);
-              console.log('✅ Contacts fetched successfully');
+              console.log('Contacts fetched successfully');
               resolve();
             } catch (err: any) {
               const errorMessage = err.message || 'Failed to fetch contacts';
@@ -101,7 +101,7 @@ export const useContactsStore = create<ContactsState>()(
           'contacts/addContact',
         );
 
-        console.log('✅ Contact added:', contact._id);
+        console.log('Contact added:', contact._id);
       },
 
       updateContact: (id: string, updates: Partial<Contact>) => {
@@ -116,7 +116,7 @@ export const useContactsStore = create<ContactsState>()(
           'contacts/updateContact',
         );
 
-        console.log('✅ Contact updated:', id);
+        console.log('Contact updated:', id);
       },
 
       deleteContact: (id: string) => {
@@ -129,7 +129,7 @@ export const useContactsStore = create<ContactsState>()(
           'contacts/deleteContact',
         );
 
-        console.log('✅ Contact deleted:', id);
+        console.log('Contact deleted:', id);
       },
 
       refreshContacts: async () => {

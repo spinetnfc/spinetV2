@@ -1,13 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
-import { useOnboardingStore } from '@/lib/store/onboarding/onboarding-store';
+import { useOnboardingViewModel } from '@/lib/viewmodels/onboarding/onboarding.viewmodel';
 import { useClientTranslate } from '@/hooks/use-client-translate';
 import SpinetLogo from '@/components/icons/spinet-logo';
 import { ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useLocale } from '@/hooks/use-locale';
 
 interface OnboardingLayoutProps {
@@ -16,7 +15,6 @@ interface OnboardingLayoutProps {
 
 export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
    const locale = useLocale();
-   const router = useRouter();
    const { t } = useClientTranslate();
 
    const {
@@ -24,91 +22,21 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
       data,
       isLoading,
       errors,
+      getStepInfo,
+      getProgressPercentage,
+      isFinalStep,
+      isFirstStep,
+      canProceedToNextStep,
       nextStep,
       previousStep,
-      skipCurrentStep,
-      completeOnboarding,
-      resetOnboarding,
-   } = useOnboardingStore();
+      skipStep,
+      exitOnboarding,
+   } = useOnboardingViewModel();
 
-   // Step information without causing infinite loops
-   const getStepInfo = (step: number) => {
-      const stepInfo = {
-         1: {
-            title: t('onboarding.step1.title'),
-            description: t('onboarding.step1.description'),
-            skippable: false,
-         },
-         2: {
-            title: t('onboarding.step2.title'),
-            description: t('onboarding.step2.description'),
-            skippable: true,
-         },
-         3: {
-            title: t('onboarding.step3.title'),
-            description: t('onboarding.step3.description'),
-            skippable: true,
-         },
-         4: {
-            title: t('onboarding.step4.title'),
-            description: t('onboarding.step4.description'),
-            skippable: false,
-         },
-         5: {
-            title: t('onboarding.step5.title'),
-            description: t('onboarding.step5.description'),
-            skippable: true,
-         },
-      };
-
-      return stepInfo[step as keyof typeof stepInfo];
-   };
-
+   // Get current step info
    const stepInfo = getStepInfo(currentStep);
-   const progress = (currentStep / 5) * 100;
-   const isFinalStep = currentStep === 5;
-   const isFirstStep = currentStep === 1;
-
-   const handleNext = () => {
-      // Only validate when the user actually clicks next
-      if (canProceed) {
-         if (currentStep === 5) {
-            completeOnboarding();
-         } else {
-            nextStep();
-         }
-      }
-   };
-
-   const handlePrevious = () => {
-      previousStep();
-   };
-
-   const handleSkip = () => {
-      skipCurrentStep();
-   };
-
-   const handleExitOnboarding = () => {
-      resetOnboarding();
-      router.push('/');
-   };
-
-   // Don't call validation functions during render - use the current state instead
-   const canProceed = useMemo(() => {
-      // Simple check without triggering validation side effects
-      switch (currentStep) {
-         case 1:
-            return data.fullName.trim().length > 0;
-         case 2:
-         case 3:
-         case 5:
-            return true; // These steps are optional/skippable
-         case 4:
-            return data.theme && data.theme.id;
-         default:
-            return false;
-      }
-   }, [currentStep, data.fullName, data.theme]);
+   const progress = getProgressPercentage();
+   const canProceed = canProceedToNextStep();
 
    return (
       <div className="flex min-h-screen">
@@ -118,13 +46,13 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
             <div className="flex items-center justify-between mb-8">
                <div className="flex items-center gap-4">
                   {/* Logo and Back Button */}
-               <Link
-                  href={`/${locale}`}
-                  className="flex items-center gap-3 text-foreground hover:text-muted-foreground transition-colors"
-               >
-                  <ArrowLeft className="h-5 w-5" />
-                  <SpinetLogo className="hover:cursor-pointer w-28 md:w-40" width={151} height={31} />
-               </Link>
+                  <button
+                     onClick={exitOnboarding}
+                     className="flex items-center gap-3 text-foreground hover:text-muted-foreground transition-colors"
+                  >
+                     <ArrowLeft className="h-5 w-5" />
+                     <SpinetLogo className="hover:cursor-pointer w-28 md:w-40" width={151} height={31} />
+                  </button>
                </div>
             </div>
 
@@ -171,8 +99,8 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
             <div className="flex items-center justify-between">
                <Button
                   variant="outline"
-                  onClick={handlePrevious}
-                  disabled={isFirstStep}
+                  onClick={previousStep}
+                  disabled={isFirstStep()}
                   className="px-6"
                >
                   {t('onboarding.previous')}
@@ -182,7 +110,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                   {(currentStep === 2 || currentStep === 3 || currentStep === 5) && (
                      <Button
                         variant="ghost"
-                        onClick={handleSkip}
+                        onClick={skipStep}
                         disabled={isLoading}
                         className="text-muted-foreground"
                      >
@@ -191,7 +119,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                   )}
 
                   <Button
-                     onClick={handleNext}
+                     onClick={nextStep}
                      disabled={!canProceed || isLoading}
                      className="px-6"
                   >
@@ -200,7 +128,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                            {t('onboarding.completing')}
                         </div>
-                     ) : isFinalStep ? (
+                     ) : isFinalStep() ? (
                         t('onboarding.complete')
                      ) : (
                         t('onboarding.continue')
@@ -219,7 +147,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
 }
 
 function ProfilePreview() {
-   const { data } = useOnboardingStore();
+   const { data } = useOnboardingViewModel();
 
    return (
       <div className="w-80 bg-background border border-border rounded-xl p-6">

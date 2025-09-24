@@ -2,16 +2,12 @@
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useOnboardingStore } from '@/lib/store/onboarding/onboarding-store';
+import { useOnboardingViewModel } from '@/lib/viewmodels/onboarding/onboarding.viewmodel';
 import { useClientTranslate } from '@/hooks/use-client-translate';
 
 export default function Step1FullName() {
    const { t } = useClientTranslate();
-   const { data, updateFullName } = useOnboardingStore();
-
-   const handleFullNameChange = (value: string) => {
-      updateFullName(value);
-   };
+   const { data, errors, updateFullName } = useOnboardingViewModel();
 
    return (
       <div className="space-y-6">
@@ -23,10 +19,15 @@ export default function Step1FullName() {
                id="fullName"
                type="text"
                value={data.fullName}
-               onChange={(e) => handleFullNameChange(e.target.value)}
+               onChange={(e) => updateFullName(e.target.value)}
                placeholder={t('onboarding.full-name-placeholder')}
-               className="text-lg p-6"
+               className={`text-lg p-6 ${errors.fullName ? 'border-destructive focus-visible:ring-destructive' : ''}`}
             />
+            {errors.fullName && (
+               <p className="text-xs text-destructive mt-1">
+                  {errors.fullName}
+               </p>
+            )}
             <p className="text-sm text-muted-foreground">
                {t('onboarding.full-name-description')}
             </p>
