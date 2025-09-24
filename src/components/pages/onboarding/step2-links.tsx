@@ -194,7 +194,7 @@ export default function Step2Links() {
          {/* More Links Button */}
          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
-               <Button className="w-full py-6 bg-white text-spinet-dark hover:bg-slate-100 transition-all duration-200 border border-slate-200">
+               <Button className="w-full py-6 bg-white text-spinet-text-muted hover:bg-slate-100 transition-all duration-200 border border-slate-200">
                   <LinkIcon className="w-4 h-4 mr-2" />
                   More links
                </Button>
