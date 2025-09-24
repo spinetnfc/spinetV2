@@ -1,11 +1,11 @@
 'use client';
 
 import OnboardingLayout from '@/components/layouts/onboarding-layout';
-import Step1FullName from '@/components/pages/onboarding/steps/step1-full-name';
-import Step2Links from '@/components/pages/onboarding/steps/step2-links';
-import Step3ProfilePicture from '@/components/pages/onboarding/steps/step3-profile-picture';
-import Step4Theme from '@/components/pages/onboarding/steps/step4-theme';
-import Step5Organization from '@/components/pages/onboarding/steps/step5-organization';
+import Step1FullName from '@/components/pages/onboarding/step1-full-name';
+import Step2Links from '@/components/pages/onboarding/step2-links';
+import Step3ProfilePicture from '@/components/pages/onboarding/step3-profile-picture';
+import Step4Theme from '@/components/pages/onboarding/step4-theme';
+import Step5Organization from '@/components/pages/onboarding/step5-organization';
 import { useOnboardingStore } from '@/lib/store/onboarding/onboarding-store';
 
 export default function OnboardingPage() {
