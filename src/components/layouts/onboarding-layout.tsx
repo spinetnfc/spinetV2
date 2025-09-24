@@ -44,7 +44,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                <div className="flex items-center gap-4">
                   {/* Logo and Back Button */}
                   <button
-                     onClick={exitOnboarding}
+                     onClick={isFirstStep() ? exitOnboarding : previousStep}
                      className="flex items-center gap-3 cursor-pointer text-foreground hover:text-muted-foreground transition-colors"
                   >
                      <ChevronLeft className="h-5 w-5" />
@@ -83,36 +83,15 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
 
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between">
-               {/* Previous Button - Only show if not first step */}
-               {!isFirstStep() && (
-                  <Button
-                     variant="outline"
-                     onClick={previousStep}
-                     className="px-6"
-                  >
-                     {t('onboarding.previous')}
-                  </Button>
-               )}
 
                {/* Spacer for first step to push next button to the right */}
                {isFirstStep() && <div></div>}
 
-               <div className="flex gap-3">
-                  {(currentStep === 2 || currentStep === 3 || currentStep === 5) && (
-                     <Button
-                        variant="ghost"
-                        onClick={skipStep}
-                        disabled={isLoading}
-                        className="text-muted-foreground"
-                     >
-                        {t('onboarding.skip')}
-                     </Button>
-                  )}
-
+               <div className={`flex gap-3 ${isFirstStep() ? 'flex-1' : 'w-full'}`}>
                   <Button
                      onClick={nextStep}
                      disabled={!canProceed || isLoading}
-                     className="px-6"
+                     className={`px-6 ${(currentStep === 2 || currentStep === 3 || currentStep === 5) ? 'flex-[85]' : 'flex-1'}`}
                   >
                      {isLoading ? (
                         <div className="flex items-center gap-2">
@@ -125,6 +104,17 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                         t('onboarding.continue')
                      )}
                   </Button>
+
+                  {(currentStep === 2 || currentStep === 3 || currentStep === 5) && (
+                     <Button
+                        variant="ghost"
+                        onClick={skipStep}
+                        disabled={isLoading}
+                        className="text-muted-foreground flex-[30]"
+                     >
+                        {t('onboarding.skip')}
+                     </Button>
+                  )}
                </div>
             </div>
          </div>
