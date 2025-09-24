@@ -164,34 +164,14 @@ export default function Step2Links() {
          }
       });
 
-      // Also include any pending links that were in progress
-      const pendingLinks = getPendingLinksForStep2();
-      Object.entries(pendingLinks).forEach(([platform, value]) => {
-         if (value.trim()) {
-            initialValues[platform] = value;
-            // If this platform is not in default main platforms and not already in main, add it to main area
-            if (!['facebook', 'phone', 'gmail'].includes(platform) && !platformsInMainFromData.includes(platform)) {
-               platformsInMainFromData.push(platform);
-            }
-         }
-      });
-
       setLinkValues(initialValues);
 
       // Update platform organization based on existing data
       if (platformsInMainFromData.length > 0) {
-         setMainAreaPlatforms(prev => {
-            const defaultPlatforms = ['facebook', 'phone', 'gmail'];
-            const newMainPlatforms = [...defaultPlatforms, ...platformsInMainFromData];
-            return newMainPlatforms;
-         });
+         setMainAreaPlatforms(prev => [...prev, ...platformsInMainFromData]);
          setModalPlatforms(prev => prev.filter(platform => !platformsInMainFromData.includes(platform)));
-      } else {
-         // Reset to defaults if no additional platforms
-         setMainAreaPlatforms(['facebook', 'phone', 'gmail']);
-         setModalPlatforms(allModalPlatforms);
       }
-   }, [data.links]); // Add data.links as dependency so it updates when we navigate back
+   }, []);
 
    // Sync linkValues with global pending links (but only values not already saved)
    useEffect(() => {
@@ -256,9 +236,12 @@ export default function Step2Links() {
       // Clear the link value in local state
       setLinkValues(prev => ({ ...prev, [platform]: '' }));
 
-      // Move ALL platforms from main to modal when X is clicked (including default ones)
-      setMainAreaPlatforms(prev => prev.filter(p => p !== platform));
-      setModalPlatforms(prev => [...prev, platform]);
+      // Move platform from main to modal (unless it's a default main platform)
+      const defaultMainPlatforms = ['facebook', 'phone', 'gmail'];
+      if (!defaultMainPlatforms.includes(platform)) {
+         setMainAreaPlatforms(prev => prev.filter(p => p !== platform));
+         setModalPlatforms(prev => [...prev, platform]);
+      }
    };
 
    const renderLinkRow = (platformKey: string, value: string = '', onChange?: (value: string) => void, showRemove: boolean = false, onRemove?: () => void) => {
@@ -311,11 +294,11 @@ export default function Step2Links() {
                   More links
                </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md h-[600px] flex flex-col">
-               <DialogHeader className="flex-shrink-0">
+            <DialogContent className="sm:max-w-md">
+               <DialogHeader>
                   <DialogTitle>Recommended</DialogTitle>
                </DialogHeader>
-               <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+               <div className="space-y-4">
                   <div className="space-y-3">
                      {modalPlatforms.slice(0, 5).map((platform) =>
                         renderLinkRow(platform, linkValues[platform] || '', (value) => handleLinkChange(platform, value))
@@ -330,8 +313,7 @@ export default function Step2Links() {
                         )}
                      </div>
                   </div>
-               </div>
-               <div className="flex-shrink-0 pt-4 border-t">
+
                   <Button onClick={handleAddSelectedLinks} className="w-full">
                      Add selected links
                   </Button>

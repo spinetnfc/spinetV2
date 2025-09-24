@@ -187,6 +187,20 @@ export const useOnboardingViewModel = () => {
     [store],
   );
 
+  // Save multiple links at once (for step 2 pending inputs)
+  const savePendingLinks = useCallback(
+    async (
+      pendingLinks: { platform: string; url: string }[],
+    ): Promise<void> => {
+      for (const { platform, url } of pendingLinks) {
+        if (url.trim() && isValidUrl(url)) {
+          await validateAndAddLink(platform, url);
+        }
+      }
+    },
+    [validateAndAddLink, isValidUrl],
+  );
+
   // === STEP 3: PROFILE PICTURE ===
 
   const uploadProfilePicture = useCallback(
@@ -326,6 +340,49 @@ export const useOnboardingViewModel = () => {
   // === NAVIGATION ===
 
   const nextStep = useCallback(async () => {
+    // Special handling for Step 2 - save pending links
+    if (store.currentStep === 2) {
+      try {
+        const { getPendingLinksForStep2, clearPendingLinksForStep2 } =
+          await import('@/components/pages/onboarding/step2-links');
+        const pendingLinks = getPendingLinksForStep2();
+
+        // Save any pending link values that haven't been added yet
+        const linksToSave = Object.entries(pendingLinks).filter(([, value]) =>
+          value.trim(),
+        );
+
+        for (const [platform, url] of linksToSave) {
+          if (url.trim() && isValidUrl(url)) {
+            // Map platform key to proper display name
+            const platformDisplayNames: Record<string, string> = {
+              facebook: 'Facebook',
+              phone: 'Phone',
+              gmail: 'Gmail',
+              instagram: 'Instagram',
+              whatsapp: 'WhatsApp',
+              youtube: 'YouTube',
+              linkedin: 'LinkedIn',
+              pinterest: 'Pinterest',
+              spotify: 'Spotify',
+              tiktok: 'TikTok',
+              snapchat: 'Snapchat',
+              website: 'Website',
+            };
+            const platformName =
+              platformDisplayNames[platform] ||
+              platform.charAt(0).toUpperCase() + platform.slice(1);
+            await validateAndAddLink(platformName, url);
+          }
+        }
+
+        // Clear pending links after saving
+        clearPendingLinksForStep2();
+      } catch (error) {
+        console.error('Error saving pending links:', error);
+      }
+    }
+
     // Validate current step
     const stepValidation = validateCurrentStep();
 
@@ -345,7 +402,7 @@ export const useOnboardingViewModel = () => {
       // Complete onboarding on final step
       await completeOnboarding();
     }
-  }, [store, validateCurrentStep]);
+  }, [store, validateCurrentStep, validateAndAddLink, isValidUrl]);
 
   const previousStep = useCallback(() => {
     if (store.currentStep > 1) {
@@ -354,11 +411,29 @@ export const useOnboardingViewModel = () => {
     }
   }, [store]);
 
-  const skipStep = useCallback(() => {
-    if (isStepSkippable(store.currentStep)) {
-      nextStep();
+  const skipStep = useCallback(async () => {
+    // Special handling for Step 2 - clear pending links without saving
+    if (store.currentStep === 2) {
+      try {
+        const { clearPendingLinksForStep2 } = await import(
+          '@/components/pages/onboarding/step2-links'
+        );
+        clearPendingLinksForStep2();
+      } catch (error) {
+        console.error('Error clearing pending links:', error);
+      }
     }
-  }, [store, isStepSkippable, nextStep]);
+
+    if (isStepSkippable(store.currentStep)) {
+      // Clear errors and move to next step without validation
+      store.clearAllErrors();
+      if (store.currentStep < 5) {
+        store.setCurrentStep((store.currentStep + 1) as OnboardingStep);
+      } else {
+        // Will be handled when nextStep is called later
+      }
+    }
+  }, [store, isStepSkippable]);
 
   const goToStep = useCallback(
     (step: OnboardingStep) => {
@@ -445,6 +520,7 @@ export const useOnboardingViewModel = () => {
     // === STEP 2: LINKS ===
     validateAndAddLink,
     removeLink,
+    savePendingLinks,
     // Utility functions for components
     isValidUrl,
     getHostname,
