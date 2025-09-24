@@ -10,7 +10,6 @@ import type {
   OrganizationData,
   OrganizationMember,
   StepValidation,
-  DEFAULT_PROFILE_THEMES,
 } from '@/types/onboarding';
 
 // Import default themes
