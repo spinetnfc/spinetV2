@@ -137,12 +137,12 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
    );
 }
 
-type ProfilePreviewProps = { currentStep: number };
-function ProfilePreview({ currentStep }: ProfilePreviewProps) {
+export type ProfilePreviewProps = { currentStep: number };
+export function ProfilePreview({ currentStep }: ProfilePreviewProps) {
    const { data } = useOnboardingViewModel();
 
    return (
-      <div className="w-[70%]">
+      <div className="w-full lg:w-[70%]">
          {/* Dashboard-like Layout */}
          <div
             className="relative bg-white rounded-xl shadow-xl overflow-hidden transition-all duration-300 ease-out"
