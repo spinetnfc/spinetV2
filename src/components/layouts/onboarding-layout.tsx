@@ -110,7 +110,7 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
                      )}
                   </Button>
 
-                  {(currentStep === 2 || currentStep === 3 || currentStep === 5) && (
+                  {(currentStep === 2 || currentStep === 3) && (
                      <Button
                         variant="ghost"
                         onClick={skipStep}
