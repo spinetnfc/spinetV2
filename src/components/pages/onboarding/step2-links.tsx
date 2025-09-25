@@ -8,7 +8,7 @@ import { useOnboardingViewModel } from '@/lib/viewmodels/onboarding/onboarding.v
 import { useClientTranslate } from '@/hooks/use-client-translate';
 import { Link as LinkIcon, Phone, Mail, Instagram, MessageCircle, Youtube, Linkedin, Camera, Music, Video, Globe } from 'lucide-react';
 
-// Platform configurations with icons and colors
+// Platform configurations with icons, validation, and dynamic placeholders
 const platformConfig = {
    facebook: {
       name: 'Facebook',
@@ -19,7 +19,8 @@ const platformConfig = {
             </svg>
          </div>
       ),
-      placeholder: '@username'
+      placeholder: 'Username or URL',
+      validate: (v: string) => '', // No validation
    },
    phone: {
       name: 'Phone',
@@ -28,7 +29,8 @@ const platformConfig = {
             <Phone className="w-4 h-4" />
          </div>
       ),
-      placeholder: '+213'
+      placeholder: 'Enter phone number',
+      validate: (v: string) => v && !/^\+?\d{6,15}$/.test(v.trim()) ? 'Invalid phone number' : '',
    },
    gmail: {
       name: 'Gmail',
@@ -37,7 +39,8 @@ const platformConfig = {
             <Mail className="w-4 h-4" />
          </div>
       ),
-      placeholder: 'email@gmail.com'
+      placeholder: 'email@gmail.com',
+      validate: (v: string) => v && !/^([a-zA-Z0-9_.+-]+)@gmail\.com$/.test(v.trim()) ? 'Invalid Gmail address' : '',
    },
    instagram: {
       name: 'Instagram',
@@ -46,7 +49,8 @@ const platformConfig = {
             <Instagram className="w-4 h-4" />
          </div>
       ),
-      placeholder: '@username'
+      placeholder: 'Username or URL',
+      validate: (v: string) => '', // No validation
    },
    whatsapp: {
       name: 'WhatsApp',
@@ -55,7 +59,8 @@ const platformConfig = {
             <MessageCircle className="w-4 h-4" />
          </div>
       ),
-      placeholder: '+213'
+      placeholder: 'Enter WhatsApp number',
+      validate: (v: string) => v && !/^\+?\d{6,15}$/.test(v.trim()) ? 'Invalid WhatsApp number' : '',
    },
    youtube: {
       name: 'YouTube',
@@ -64,7 +69,8 @@ const platformConfig = {
             <Youtube className="w-4 h-4" />
          </div>
       ),
-      placeholder: 'youtube.com/c/channel'
+      placeholder: 'YouTube channel URL',
+      validate: (v: string) => v && !/^https?:\/\//.test(v.trim()) ? 'Invalid URL' : '',
    },
    linkedin: {
       name: 'LinkedIn',
@@ -73,7 +79,8 @@ const platformConfig = {
             <Linkedin className="w-4 h-4" />
          </div>
       ),
-      placeholder: 'linkedin.com/in/username'
+      placeholder: 'LinkedIn profile URL',
+      validate: (v: string) => v && !/^https?:\/\//.test(v.trim()) ? 'Invalid URL' : '',
    },
    pinterest: {
       name: 'Pinterest',
@@ -84,7 +91,8 @@ const platformConfig = {
             </svg>
          </div>
       ),
-      placeholder: 'pinterest.com/username'
+      placeholder: 'Pinterest profile URL',
+      validate: (v: string) => v && !/^https?:\/\//.test(v.trim()) ? 'Invalid URL' : '',
    },
    spotify: {
       name: 'Spotify',
@@ -93,7 +101,8 @@ const platformConfig = {
             <Music className="w-4 h-4" />
          </div>
       ),
-      placeholder: 'open.spotify.com/user/username'
+      placeholder: 'Spotify profile URL',
+      validate: (v: string) => v && !/^https?:\/\//.test(v.trim()) ? 'Invalid URL' : '',
    },
    tiktok: {
       name: 'TikTok',
@@ -102,7 +111,8 @@ const platformConfig = {
             <Video className="w-4 h-4" />
          </div>
       ),
-      placeholder: '@username'
+      placeholder: 'TikTok username',
+      validate: (v: string) => v && /[^a-zA-Z0-9_.]/.test(v.trim()) ? 'Invalid username' : '',
    },
    snapchat: {
       name: 'Snapchat',
@@ -111,7 +121,8 @@ const platformConfig = {
             <Camera className="w-4 h-4" />
          </div>
       ),
-      placeholder: '@username'
+      placeholder: 'Snapchat username',
+      validate: (v: string) => v && /[^a-zA-Z0-9_.]/.test(v.trim()) ? 'Invalid username' : '',
    },
    website: {
       name: 'Website',
@@ -120,13 +131,17 @@ const platformConfig = {
             <Globe className="w-4 h-4" />
          </div>
       ),
-      placeholder: 'https://yourwebsite.com'
-   }
+      placeholder: 'Website URL',
+      validate: (v: string) => v && !/^https?:\/\//.test(v.trim()) ? 'Invalid URL' : '',
+   },
 };
 
 
 
 
+
+// Helper to check if a value is non-empty
+const isNonEmpty = (v: string | undefined) => v && v.trim() !== '';
 
 export default function Step2Links() {
    const { t } = useClientTranslate();
@@ -150,6 +165,21 @@ export default function Step2Links() {
    ];
    const modalPlatforms = allPlatforms.filter(p => !mainAreaPlatforms.includes(p));
 
+   // --- Validation: block continue if any visible input has error ---
+   // Check all main area platforms for errors
+   const hasLinkValidationError = mainAreaPlatforms.some((platform) => {
+      const value = linkValues[platform] || '';
+      const config = platformConfig[platform as keyof typeof platformConfig];
+      if (!config) return false;
+      // Only validate if field is non-empty
+      return isNonEmpty(value) && !!config.validate(value);
+   });
+
+   // Expose to parent/layout via window (quick hack, ideally use context or viewmodel)
+   if (typeof window !== 'undefined') {
+      (window as any).__onboardingStep2HasError = hasLinkValidationError;
+   }
+
    // On every input change, call updateLink from viewmodel (main area)
    const handleLinkChange = (platform: string, value: string) => {
       updateLink(platform, value);
@@ -159,6 +189,14 @@ export default function Step2Links() {
    const handleModalLinkChange = (platform: string, value: string) => {
       setModalLinkValues((prev) => ({ ...prev, [platform]: value }));
    };
+
+
+   // Check for validation errors in modal inputs
+   const hasModalValidationError = Object.entries(modalLinkValues).some(([platform, value]) => {
+      const config = platformConfig[platform as keyof typeof platformConfig];
+      if (!config) return false;
+      return isNonEmpty(value) && !!config.validate(value);
+   });
 
    const handleAddSelectedLinks = () => {
       // Persist all non-empty modal link values to store
@@ -181,11 +219,13 @@ export default function Step2Links() {
    const renderLinkRow = (platformKey: string, value: string = '', showRemove: boolean = false, onRemove?: () => void, index?: number, isModal?: boolean) => {
       const config = platformConfig[platformKey as keyof typeof platformConfig];
       if (!config) return null;
-      // Find error for this link (if any)
-      let linkError = '';
-      if (errors && errors[`links.${index}.url`]) {
+      // Real-time validation
+      const error = config.validate(value);
+      // Find error for this link (if any from backend/errors)
+      let linkError = error;
+      if (!linkError && errors && errors[`links.${index}.url`]) {
          linkError = errors[`links.${index}.url`];
-      } else if (errors && errors[`links.${index}.platform`]) {
+      } else if (!linkError && errors && errors[`links.${index}.platform`]) {
          linkError = errors[`links.${index}.platform`];
       }
       return (
@@ -288,14 +328,12 @@ export default function Step2Links() {
                   </div>
                </div>
                <div className="flex-shrink-0 pt-4 border-t">
-                  <Button onClick={handleAddSelectedLinks} className="w-full">
+                  <Button onClick={handleAddSelectedLinks} className="w-full" disabled={hasModalValidationError}>
                      Add selected links
                   </Button>
                </div>
             </DialogContent>
          </Dialog>
-
-
       </div>
    );
 }

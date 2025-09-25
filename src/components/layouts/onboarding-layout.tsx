@@ -33,7 +33,12 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
    // Get current step info
    const stepInfo = getStepInfo(currentStep);
    const progress = getProgressPercentage();
-   const canProceed = canProceedToNextStep();
+   // For Step 2, also check for link validation errors exposed on window
+   let hasStep2Error = false;
+   if (typeof window !== 'undefined' && currentStep === 2) {
+      hasStep2Error = Boolean((window as any).__onboardingStep2HasError);
+   }
+   const canProceed = canProceedToNextStep() && !(currentStep === 2 && hasStep2Error);
 
    return (
       <div className="flex min-h-screen">
