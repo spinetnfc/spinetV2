@@ -378,9 +378,11 @@ export const useOnboardingViewModel = () => {
   }, [store]);
 
   const skipStep = useCallback(async () => {
-    // No more pending links logic needed for Step 2.
+    // If skipping step 2, clear all links before moving on
     if (isStepSkippable(store.currentStep)) {
-      // Clear errors and move to next step without validation
+      if (store.currentStep === 2) {
+        store.updateField('links', []);
+      }
       store.clearAllErrors();
       if (store.currentStep < 5) {
         store.setCurrentStep((store.currentStep + 1) as OnboardingStep);

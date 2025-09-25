@@ -132,6 +132,8 @@ export default function Step2Links() {
    const { t } = useClientTranslate();
    const { linkValues, updateLink, removeLinkByPlatform, errors } = useOnboardingViewModel();
    const [isModalOpen, setIsModalOpen] = useState(false);
+   // Local state for modal link values
+   const [modalLinkValues, setModalLinkValues] = useState<Record<string, string>>({});
 
    // All platforms
    const allPlatforms = [
@@ -148,12 +150,25 @@ export default function Step2Links() {
    ];
    const modalPlatforms = allPlatforms.filter(p => !mainAreaPlatforms.includes(p));
 
-   // On every input change, call updateLink from viewmodel
+   // On every input change, call updateLink from viewmodel (main area)
    const handleLinkChange = (platform: string, value: string) => {
       updateLink(platform, value);
    };
 
+   // Modal input change: update local state only
+   const handleModalLinkChange = (platform: string, value: string) => {
+      setModalLinkValues((prev) => ({ ...prev, [platform]: value }));
+   };
+
    const handleAddSelectedLinks = () => {
+      // Persist all non-empty modal link values to store
+      Object.entries(modalLinkValues).forEach(([platform, value]) => {
+         if (value && value.trim()) {
+            updateLink(platform, value);
+         }
+      });
+      // Clear modal state and close
+      setModalLinkValues({});
       setIsModalOpen(false);
    };
 
@@ -162,7 +177,8 @@ export default function Step2Links() {
       removeLinkByPlatform(platform);
    };
 
-   const renderLinkRow = (platformKey: string, value: string = '', showRemove: boolean = false, onRemove?: () => void, index?: number) => {
+   // Add prop to control input handler (main vs modal)
+   const renderLinkRow = (platformKey: string, value: string = '', showRemove: boolean = false, onRemove?: () => void, index?: number, isModal?: boolean) => {
       const config = platformConfig[platformKey as keyof typeof platformConfig];
       if (!config) return null;
       // Find error for this link (if any)
@@ -178,7 +194,11 @@ export default function Step2Links() {
                {config.icon('w-8 h-8')}
                <Input
                   value={value}
-                  onChange={(e) => handleLinkChange(platformKey, e.target.value)}
+                  onChange={(e) =>
+                     isModal
+                        ? handleModalLinkChange(platformKey, e.target.value)
+                        : handleLinkChange(platformKey, e.target.value)
+                  }
                   placeholder={config.placeholder}
                   className={`flex-1 border-none bg-transparent focus-visible:ring-0 shadow-none ${linkError ? 'border-destructive ring-destructive' : ''}`}
                />
@@ -216,7 +236,17 @@ export default function Step2Links() {
          </div>
 
          {/* More Links Button */}
-         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+         <Dialog open={isModalOpen} onOpenChange={(open) => {
+            setIsModalOpen(open);
+            if (open) {
+               // When opening modal, initialize modalLinkValues with current values for modal platforms
+               const initial: Record<string, string> = {};
+               modalPlatforms.forEach((platform) => {
+                  initial[platform] = linkValues[platform] || '';
+               });
+               setModalLinkValues(initial);
+            }
+         }}>
             <DialogTrigger asChild>
                <Button className="w-full py-6 bg-white text-spinet-text-muted hover:bg-slate-100 transition-all duration-200 border border-slate-200">
                   <LinkIcon className="w-4 h-4 mr-2" />
@@ -230,7 +260,14 @@ export default function Step2Links() {
                <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                   <div className="space-y-3">
                      {modalPlatforms.slice(0, 5).map((platform, idx) =>
-                        renderLinkRow(platform, linkValues[platform] || '', false, undefined, idx + mainAreaPlatforms.length)
+                        renderLinkRow(
+                           platform,
+                           modalLinkValues[platform] || '',
+                           false,
+                           undefined,
+                           idx + mainAreaPlatforms.length,
+                           true // isModal
+                        )
                      )}
                   </div>
 
@@ -238,7 +275,14 @@ export default function Step2Links() {
                      <h4 className="text-sm font-medium mb-3">Social media</h4>
                      <div className="space-y-3">
                         {modalPlatforms.slice(5).map((platform, idx) =>
-                           renderLinkRow(platform, linkValues[platform] || '', false, undefined, idx + mainAreaPlatforms.length + 5)
+                           renderLinkRow(
+                              platform,
+                              modalLinkValues[platform] || '',
+                              false,
+                              undefined,
+                              idx + mainAreaPlatforms.length + 5,
+                              true // isModal
+                           )
                         )}
                      </div>
                   </div>
