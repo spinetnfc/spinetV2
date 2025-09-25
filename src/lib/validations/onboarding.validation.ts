@@ -3,19 +3,16 @@ import { OnboardingStep } from '@/types/onboarding';
 
 // Helper function to create validation message with translation
 const createTranslatedSchema = (t: (key: string, values?: any) => string) => {
-  // Step 1: Full Name Schema
+  // Step 1: Full Name Schema (robust validation)
+  // Allow Unicode letters, spaces, hyphens, apostrophes, periods, commas, min 2 chars, no numbers or symbols
+  // Regex: /^[\p{L} ,.'-]{2,}$/u
   const step1Schema = z.object({
     fullName: z
       .string()
-      .min(1, t('validation.required'))
-      .min(2, t('validation.name-too-short'))
-      .max(100, t('validation.name-too-long'))
-      .regex(/^[a-zA-Z\s]+$/, t('validation.name-invalid-characters'))
-      .refine((name) => {
-        const words = name.trim().split(/\s+/);
-        return words.length >= 2;
-      }, t('validation.name-two-words-required'))
-      .transform((name) => name.trim().replace(/\s+/g, ' ')), // Format: trim and normalize spaces
+      .min(2, t('validation.full-name-too-short'))
+      .max(100, t('validation.full-name-too-long'))
+      .regex(/^[\p{L} ,.'-]{2,}$/u, t('validation.full-name-invalid'))
+      .transform((name) => name.trim()),
   });
 
   // Step 2: Links Schema

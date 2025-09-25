@@ -1,4 +1,5 @@
 {
+  "validation.full-name-invalid": "Please enter a valid full name (letters only, no numbers or symbols)",
   "common.footer": "internationalization tutorial",
   "page.home.head.title": "Next.js i18n example",
   "page.home.head.meta.description": "Next.js i18n example - English",

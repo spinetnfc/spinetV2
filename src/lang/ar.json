@@ -54,6 +54,7 @@
   "onboarding.validation.url-invalid": "يرجى إدخال رابط صحيح",
   "onboarding.validation.email-invalid": "يرجى إدخال عنوان بريد إلكتروني صحيح",
   "onboarding.validation.org-name-required": "اسم المنظمة مطلوب",
+  "validation.full-name-invalid": "يرجى إدخال اسم كامل صالح (حروف فقط، بدون أرقام أو رموز)",
   "onboarding.full-name-label": "الاسم الكامل",
   "onboarding.preview": "معاينة",
   "onboarding.your-name-placeholder": "اسمك",

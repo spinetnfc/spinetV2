@@ -132,13 +132,11 @@ export const useOnboardingViewModel = () => {
       // Clear any existing errors for this field
       store.clearError('fullName');
 
-      // Async validation with debouncing
-      setTimeout(() => {
-        const validation = validateCurrentStep();
-        if (!validation.isValid && validation.errors.fullName) {
-          store.addError('fullName', validation.errors.fullName);
-        }
-      }, 300); // Add slight delay for better UX
+      // Immediate validation
+      const validation = validateCurrentStep();
+      if (!validation.isValid && validation.errors.fullName) {
+        store.addError('fullName', validation.errors.fullName);
+      }
     },
     [store, validateCurrentStep],
   );

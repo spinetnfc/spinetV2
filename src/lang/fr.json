@@ -162,6 +162,7 @@
   "activity-sector-required": "Le secteur d'activité est obligatoire",
   "position-required": "Le poste est obligatoire",
   "company-name-invalid": "Le nom de l'entreprise est invalide",
+  "validation.full-name-invalid": "Veuillez saisir un nom complet valide (lettres uniquement, pas de chiffres ou de symboles)",
   "activity-sector-invalid": "Le secteur d'activité est invalide",
   "position-invalid": "Le poste est invalide",
   "school-required": "L'école est obligatoire",
