@@ -124,165 +124,90 @@ const platformConfig = {
    }
 };
 
-// Global state for Step 2 pending links (accessible from viewmodel)
-let pendingLinksForStep2: Record<string, string> = {};
 
-export const getPendingLinksForStep2 = () => pendingLinksForStep2;
-export const clearPendingLinksForStep2 = () => {
-   pendingLinksForStep2 = {};
-};
+
 
 export default function Step2Links() {
    const { t } = useClientTranslate();
-   const { data, errors, validateAndAddLink, removeLink, isValidUrl } = useOnboardingViewModel();
+   const { data, errors, validateAndAddLink, removeLink } = useOnboardingViewModel();
    const [isModalOpen, setIsModalOpen] = useState(false);
-   const [linkValues, setLinkValues] = useState<Record<string, string>>({});
 
-   // Track which platforms are shown in main area vs modal
-   const [mainAreaPlatforms, setMainAreaPlatforms] = useState(['facebook', 'phone', 'gmail']);
+   // All platforms
+   const allPlatforms = [
+      'facebook', 'phone', 'gmail', 'instagram', 'whatsapp', 'youtube', 'linkedin', 'pinterest', 'spotify', 'tiktok', 'snapchat', 'website'
+   ];
 
-   // All other platforms start in modal
-   const allModalPlatforms = ['instagram', 'whatsapp', 'youtube', 'linkedin', 'pinterest', 'spotify', 'tiktok', 'snapchat', 'website'];
-   const [modalPlatforms, setModalPlatforms] = useState(allModalPlatforms);
-
-   // Initialize link values from existing data on mount and organize platforms
-   useEffect(() => {
-      const initialValues: Record<string, string> = {};
-      const platformsInMainFromData: string[] = [];
-
-      // Load existing links from data into linkValues for editing
-      data.links.forEach((link: any) => {
-         const platformKey = Object.keys(platformConfig).find(
-            key => platformConfig[key as keyof typeof platformConfig].name.toLowerCase() === link.platform.toLowerCase()
-         );
-         if (platformKey) {
-            initialValues[platformKey] = link.url;
-            // If this platform is not in default main platforms, add it to main area
-            if (!['facebook', 'phone', 'gmail'].includes(platformKey)) {
-               platformsInMainFromData.push(platformKey);
-            }
-         }
-      });
-
-      // Also include any pending links that were in progress
-      const pendingLinks = getPendingLinksForStep2();
-      Object.entries(pendingLinks).forEach(([platform, value]) => {
-         if (value.trim()) {
-            initialValues[platform] = value;
-            // If this platform is not in default main platforms and not already in main, add it to main area
-            if (!['facebook', 'phone', 'gmail'].includes(platform) && !platformsInMainFromData.includes(platform)) {
-               platformsInMainFromData.push(platform);
-            }
-         }
-      });
-
-      setLinkValues(initialValues);
-
-      // Update platform organization based on existing data
-      if (platformsInMainFromData.length > 0) {
-         setMainAreaPlatforms(prev => {
-            const defaultPlatforms = ['facebook', 'phone', 'gmail'];
-            const newMainPlatforms = [...defaultPlatforms, ...platformsInMainFromData];
-            return newMainPlatforms;
-         });
-         setModalPlatforms(prev => prev.filter(platform => !platformsInMainFromData.includes(platform)));
-      } else {
-         // Reset to defaults if no additional platforms
-         setMainAreaPlatforms(['facebook', 'phone', 'gmail']);
-         setModalPlatforms(allModalPlatforms);
+   // Always derive link values from store (data.links)
+   const linkValues: Record<string, string> = {};
+   (data.links || []).forEach((link: any) => {
+      const platformKey = Object.keys(platformConfig).find(
+         key => platformConfig[key as keyof typeof platformConfig].name.toLowerCase() === link.platform.toLowerCase()
+      );
+      if (platformKey) {
+         linkValues[platformKey] = link.url;
       }
-   }, [data.links]); // Add data.links as dependency so it updates when we navigate back
+   });
 
-   // Sync linkValues with global pending links (but only values not already saved)
-   useEffect(() => {
-      const pendingOnly: Record<string, string> = {};
-      Object.entries(linkValues).forEach(([platform, value]) => {
-         // Only include in pending if not already saved in data.links
-         const isAlreadySaved = data.links.some((link: any) => {
-            const platformKey = Object.keys(platformConfig).find(
-               key => platformConfig[key as keyof typeof platformConfig].name.toLowerCase() === link.platform.toLowerCase()
-            );
-            return platformKey === platform;
-         });
+   // Main area platforms: always show facebook, phone, gmail, plus any others with values
+   const defaultMain = ['facebook', 'phone', 'gmail'];
+   const mainAreaPlatforms = [
+      ...defaultMain,
+      ...allPlatforms.filter(
+         p => !defaultMain.includes(p) && linkValues[p] && linkValues[p].trim()
+      )
+   ];
+   const modalPlatforms = allPlatforms.filter(p => !mainAreaPlatforms.includes(p));
 
-         if (!isAlreadySaved && value.trim()) {
-            pendingOnly[platform] = value;
-         }
-      });
-
-      pendingLinksForStep2 = pendingOnly;
-   }, [linkValues, data.links]);
-
+   // On every input change, persist directly to store
    const handleLinkChange = (platform: string, value: string) => {
-      setLinkValues(prev => ({ ...prev, [platform]: value }));
+      const platformName = platformConfig[platform as keyof typeof platformConfig].name;
+      validateAndAddLink(platformName, value);
    };
 
-   const handleAddSelectedLinks = async () => {
-      // Find platforms from modal that have values
-      const selectedLinks = Object.entries(linkValues).filter(([platform, value]) =>
-         modalPlatforms.includes(platform) && value.trim()
-      );
-
-      // Add these links to the global data
-      for (const [platform, url] of selectedLinks) {
-         if (url.trim() && isValidUrl(url)) {
-            const platformName = platformConfig[platform as keyof typeof platformConfig].name;
-            await validateAndAddLink(platformName, url);
-         }
-      }
-
-      // Move filled platforms from modal to main area
-      const platformsToMove = selectedLinks.map(([platform]) => platform);
-      setMainAreaPlatforms(prev => [...prev, ...platformsToMove]);
-      setModalPlatforms(prev => prev.filter(platform => !platformsToMove.includes(platform)));
-
+   const handleAddSelectedLinks = () => {
       setIsModalOpen(false);
    };
 
    // Move a platform from main area back to modal
    const handleMoveToModal = (platform: string) => {
-      // Remove any existing link for this platform from global data first
-      const existingLinkIndex = data.links.findIndex((link: any) => {
-         const platformKey = Object.keys(platformConfig).find(
-            key => platformConfig[key as keyof typeof platformConfig].name.toLowerCase() === link.platform.toLowerCase()
-         );
-         return platformKey === platform;
-      });
-
-      if (existingLinkIndex !== -1) {
-         removeLink(existingLinkIndex);
-      }
-
-      // Clear the link value in local state
-      setLinkValues(prev => ({ ...prev, [platform]: '' }));
-
-      // Move ALL platforms from main to modal when X is clicked (including default ones)
-      setMainAreaPlatforms(prev => prev.filter(p => p !== platform));
-      setModalPlatforms(prev => [...prev, platform]);
+      // Remove any existing link for this platform from global data
+      const platformName = platformConfig[platform as keyof typeof platformConfig].name;
+      validateAndAddLink(platformName, ''); // Clear link in store
    };
 
-   const renderLinkRow = (platformKey: string, value: string = '', onChange?: (value: string) => void, showRemove: boolean = false, onRemove?: () => void) => {
+   const renderLinkRow = (platformKey: string, value: string = '', showRemove: boolean = false, onRemove?: () => void, index?: number) => {
       const config = platformConfig[platformKey as keyof typeof platformConfig];
       if (!config) return null;
-
+      // Find error for this link (if any)
+      let linkError = '';
+      if (errors && errors[`links.${index}.url`]) {
+         linkError = errors[`links.${index}.url`];
+      } else if (errors && errors[`links.${index}.platform`]) {
+         linkError = errors[`links.${index}.platform`];
+      }
       return (
-         <div key={platformKey} className="flex items-center gap-3 p-3 bg-background border rounded-lg">
-            {config.icon('w-8 h-8')}
-            <Input
-               value={value}
-               onChange={(e) => onChange?.(e.target.value)}
-               placeholder={config.placeholder}
-               className="flex-1 border-none bg-transparent focus-visible:ring-0 shadow-none"
-            />
-            {showRemove && (
-               <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={onRemove}
-                  className="text-muted-foreground hover:text-destructive p-1 h-6 w-6"
-               >
-                  ×
-               </Button>
+         <div key={platformKey} className="flex flex-col gap-1">
+            <div className="flex items-center gap-3 p-3 bg-background border rounded-lg">
+               {config.icon('w-8 h-8')}
+               <Input
+                  value={value}
+                  onChange={(e) => handleLinkChange(platformKey, e.target.value)}
+                  placeholder={config.placeholder}
+                  className={`flex-1 border-none bg-transparent focus-visible:ring-0 shadow-none ${linkError ? 'border-destructive ring-destructive' : ''}`}
+               />
+               {showRemove && (
+                  <Button
+                     size="sm"
+                     variant="ghost"
+                     onClick={onRemove}
+                     className="text-muted-foreground hover:text-destructive p-1 h-6 w-6"
+                  >
+                     ×
+                  </Button>
+               )}
+            </div>
+            {linkError && (
+               <p className="text-xs text-destructive ml-12">{linkError}</p>
             )}
          </div>
       );
@@ -292,13 +217,13 @@ export default function Step2Links() {
       <div className="space-y-6">
          {/* Main Link Inputs */}
          <div className="space-y-4">
-            {mainAreaPlatforms.map((platform) =>
+            {mainAreaPlatforms.map((platform, idx) =>
                renderLinkRow(
                   platform,
                   linkValues[platform] || '',
-                  (value) => handleLinkChange(platform, value),
                   true, // Always show remove button
-                  () => handleMoveToModal(platform)
+                  () => handleMoveToModal(platform),
+                  idx
                )
             )}
          </div>
@@ -317,16 +242,16 @@ export default function Step2Links() {
                </DialogHeader>
                <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                   <div className="space-y-3">
-                     {modalPlatforms.slice(0, 5).map((platform) =>
-                        renderLinkRow(platform, linkValues[platform] || '', (value) => handleLinkChange(platform, value))
+                     {modalPlatforms.slice(0, 5).map((platform, idx) =>
+                        renderLinkRow(platform, linkValues[platform] || '', false, undefined, idx + mainAreaPlatforms.length)
                      )}
                   </div>
 
                   <div>
                      <h4 className="text-sm font-medium mb-3">Social media</h4>
                      <div className="space-y-3">
-                        {modalPlatforms.slice(5).map((platform) =>
-                           renderLinkRow(platform, linkValues[platform] || '', (value) => handleLinkChange(platform, value))
+                        {modalPlatforms.slice(5).map((platform, idx) =>
+                           renderLinkRow(platform, linkValues[platform] || '', false, undefined, idx + mainAreaPlatforms.length + 5)
                         )}
                      </div>
                   </div>
@@ -339,42 +264,7 @@ export default function Step2Links() {
             </DialogContent>
          </Dialog>
 
-         {/* Current Links Display */}
-         {data.links.length > 0 && (
-            <div className="space-y-3">
-               <h4 className="text-sm font-medium text-muted-foreground">Added Links ({data.links.length})</h4>
-               <div className="space-y-2">
-                  {data.links.map((link: any, index: number) => {
-                     const platformKey = Object.keys(platformConfig).find(
-                        key => platformConfig[key as keyof typeof platformConfig].name.toLowerCase() === link.platform.toLowerCase()
-                     );
-                     const config = platformKey ? platformConfig[platformKey as keyof typeof platformConfig] : null;
-
-                     return (
-                        <div key={index} className="flex items-center gap-3 p-3 bg-muted/50 border rounded-lg">
-                           {config ? config.icon('w-6 h-6') : (
-                              <div className="w-6 h-6 bg-gray-400 text-white rounded-lg flex items-center justify-center">
-                                 <LinkIcon className="w-3 h-3" />
-                              </div>
-                           )}
-                           <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium">{link.platform}</p>
-                              <p className="text-xs text-muted-foreground truncate">{link.url}</p>
-                           </div>
-                           <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => removeLink(index)}
-                              className="text-muted-foreground hover:text-destructive"
-                           >
-                              ×
-                           </Button>
-                        </div>
-                     );
-                  })}
-               </div>
-            </div>
-         )}
+         
       </div>
    );
 }

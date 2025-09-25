@@ -41,6 +41,9 @@ interface OnboardingStoreActions {
 
   // Reset
   reset: () => void;
+
+  // Add a link for a platform
+  addLink: (platform: string, url: string) => void;
 }
 
 type OnboardingStore = OnboardingStoreState & OnboardingStoreActions;
@@ -79,6 +82,29 @@ export const useOnboardingStore = create<OnboardingStore>()(
         set((state) => ({
           data: { ...state.data, [field]: value },
         }));
+      },
+
+      // Add a link for a platform
+      addLink: (platform: string, url: string) => {
+        set((state) => {
+          const updatedLinks = [...state.data.links];
+          const existingIndex = updatedLinks.findIndex(
+            (link) => link.platform === platform,
+          );
+
+          if (existingIndex !== -1) {
+            updatedLinks[existingIndex] = { platform, url };
+          } else {
+            updatedLinks.push({ platform, url });
+          }
+
+          return {
+            data: {
+              ...state.data,
+              links: updatedLinks,
+            },
+          };
+        });
       },
 
       // === NAVIGATION ===

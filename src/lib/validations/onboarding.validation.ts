@@ -19,22 +19,10 @@ const createTranslatedSchema = (t: (key: string, values?: any) => string) => {
   });
 
   // Step 2: Links Schema
+  // Remove all validation for platform and url, allow any string
   const linkSchema = z.object({
-    platform: z
-      .string()
-      .min(1, t('validation.platform-required'))
-      .max(50, t('validation.platform-too-long')),
-    url: z
-      .string()
-      .min(1, t('validation.url-required'))
-      .url(t('validation.url-invalid'))
-      .transform((url) => {
-        // Format URL: ensure it has protocol
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-          return `https://${url}`;
-        }
-        return url;
-      }),
+    platform: z.string(),
+    url: z.string(),
   });
 
   const step2Schema = z.object({

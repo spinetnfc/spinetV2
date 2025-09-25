@@ -18,6 +18,7 @@ import type {
   OrganizationMember,
   OrganizationData,
 } from '@/types/onboarding';
+import { apiClient } from '@/lib/api/axios';
 
 export const useOnboardingViewModel = () => {
   const router = useRouter();
@@ -144,38 +145,14 @@ export const useOnboardingViewModel = () => {
 
   // === STEP 2: LINKS ===
 
+  // No validation, just add the link
   const validateAndAddLink = useCallback(
     async (platform: string, url: string): Promise<boolean> => {
-      if (!platform.trim() || !url.trim()) {
-        store.addError('link-form', t('validation.required'));
-        return false;
-      }
-
-      // Validate link
-      const linkValidation = validation.validateLink(
-        platform.trim(),
-        url.trim(),
-      );
-
-      if (!linkValidation.isValid) {
-        // Set field-specific errors
-        Object.entries(linkValidation.errors).forEach(([field, error]) => {
-          store.addError(`link-${field}`, error);
-        });
-        return false;
-      }
-
-      // Clear any form errors
-      store.clearError('link-form');
-      store.clearError('link-platform');
-      store.clearError('link-url');
-
-      // Add the validated and formatted link using updateField
-      const newLinks = [...store.data.links, linkValidation.data];
-      store.updateField('links', newLinks);
+      store.clearError('links');
+      store.addLink(platform, url);
       return true;
     },
-    [store, validation, t],
+    [store],
   );
 
   const removeLink = useCallback(
@@ -340,48 +317,7 @@ export const useOnboardingViewModel = () => {
   // === NAVIGATION ===
 
   const nextStep = useCallback(async () => {
-    // Special handling for Step 2 - save pending links
-    if (store.currentStep === 2) {
-      try {
-        const { getPendingLinksForStep2, clearPendingLinksForStep2 } =
-          await import('@/components/pages/onboarding/step2-links');
-        const pendingLinks = getPendingLinksForStep2();
-
-        // Save any pending link values that haven't been added yet
-        const linksToSave = Object.entries(pendingLinks).filter(([, value]) =>
-          value.trim(),
-        );
-
-        for (const [platform, url] of linksToSave) {
-          if (url.trim() && isValidUrl(url)) {
-            // Map platform key to proper display name
-            const platformDisplayNames: Record<string, string> = {
-              facebook: 'Facebook',
-              phone: 'Phone',
-              gmail: 'Gmail',
-              instagram: 'Instagram',
-              whatsapp: 'WhatsApp',
-              youtube: 'YouTube',
-              linkedin: 'LinkedIn',
-              pinterest: 'Pinterest',
-              spotify: 'Spotify',
-              tiktok: 'TikTok',
-              snapchat: 'Snapchat',
-              website: 'Website',
-            };
-            const platformName =
-              platformDisplayNames[platform] ||
-              platform.charAt(0).toUpperCase() + platform.slice(1);
-            await validateAndAddLink(platformName, url);
-          }
-        }
-
-        // Clear pending links after saving
-        clearPendingLinksForStep2();
-      } catch (error) {
-        console.error('Error saving pending links:', error);
-      }
-    }
+    // No more pending links logic needed for Step 2. All links are persisted on change.
 
     // Validate current step
     const stepValidation = validateCurrentStep();
@@ -412,18 +348,7 @@ export const useOnboardingViewModel = () => {
   }, [store]);
 
   const skipStep = useCallback(async () => {
-    // Special handling for Step 2 - clear pending links without saving
-    if (store.currentStep === 2) {
-      try {
-        const { clearPendingLinksForStep2 } = await import(
-          '@/components/pages/onboarding/step2-links'
-        );
-        clearPendingLinksForStep2();
-      } catch (error) {
-        console.error('Error clearing pending links:', error);
-      }
-    }
-
+    // No more pending links logic needed for Step 2.
     if (isStepSkippable(store.currentStep)) {
       // Clear errors and move to next step without validation
       store.clearAllErrors();
@@ -473,7 +398,7 @@ export const useOnboardingViewModel = () => {
       console.log('Onboarding data saved successfully (mock)');
 
       // Navigate to dashboard or home
-      router.push(`/${locale}`);
+      // router.push(`/${locale}`);
     } catch (error) {
       console.error('Failed to complete onboarding:', error);
       store.addError('general', t('validation.submission-failed'));
@@ -481,6 +406,16 @@ export const useOnboardingViewModel = () => {
       store.setLoading(false);
     }
   }, [store, validation, router, locale, t]);
+
+  // Submit onboarding data directly (bypassing some validations)
+  const submitOnboardingData = useCallback(async () => {
+    const submissionData = {
+      ...store.data,
+      links: store.data.links.filter((link) => link.url),
+    };
+
+    await apiClient.post('/onboarding/submit', submissionData);
+  }, [store]);
 
   // === RESET ===
 
@@ -545,6 +480,7 @@ export const useOnboardingViewModel = () => {
 
     // === SUBMISSION ===
     completeOnboarding,
+    submitOnboardingData,
 
     // === RESET ===
     resetOnboarding,
