@@ -1,7 +1,6 @@
 import NextLink from 'next/link';
 import { cn } from '@/utils/cn';
 import LogoIcon from './icons/logo';
-import { useAuth } from '@/context/authContext';
 
 const Logo = ({
   locale,
@@ -10,9 +9,12 @@ const Logo = ({
   locale: string;
   parentDarkMode?: boolean;
 }) => {
-  const { isAuthenticated } = useAuth();
+
+  // Always use the same href during SSR to prevent hydration mismatch
+  const href = `/${locale}`;
+
   return (
-    <NextLink className="flex items-center text-white" href={isAuthenticated ? `/${locale}/app` : `/${locale}`}>
+    <NextLink className="flex items-center text-white" href={href}>
       <LogoIcon
         className={cn(
           'text-blue-600 hover:text-blue-800 dark:hover:text-gray-400',
@@ -21,6 +23,4 @@ const Logo = ({
       />
     </NextLink>
   );
-};
-
-export default Logo;
+}; export default Logo;

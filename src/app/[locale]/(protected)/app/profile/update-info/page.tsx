@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import useTranslate from "@/hooks/use-translate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAllProfiles, getProfile } from "@/lib/api/profile";
 import type { ProfileData } from "@/types/profile";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
 import ProfileForm from "@/components/pages/profile/profile-form";
@@ -32,7 +31,39 @@ export default async function UpdateProfilePage({
     let profileData: ProfileData | null;
 
     try {
-        profileData = await getProfile(profileId);
+        // Mock profile data - replace with hardcoded data
+        profileData = {
+            _id: profileId || "mock-profile-1",
+            fullName: "John Doe",
+            status: "professional",
+            profession: "Software Engineer",
+            type: "personal",
+            groupId: "mock-group-1",
+            birthDate: "1990-01-01",
+            gender: "male",
+            profilePicture: "",
+            profileCover: "",
+            theme: { color: "#3b82f6" },
+            links: [
+                { name: "website", title: "My Website", link: "https://example.com" },
+                { name: "linkedin", title: "LinkedIn", link: "https://linkedin.com/in/johndoe" }
+            ],
+            lockedFeatures: {
+                profileCover: false,
+                logo: false,
+                qrCodeLogo: false,
+                displayLogo: false,
+                companyName: false,
+                activitySector: false,
+                position: false,
+                school: false,
+                profession: false,
+                theme: false,
+                canAddLinks: false,
+                canAddServices: false,
+                excludedLinks: []
+            }
+        };
     } catch (err: any) {
         console.error("Error fetching profile:", err);
         throw new Error(`Failed to load profile data: ${err.message}`);
@@ -44,10 +75,10 @@ export default async function UpdateProfilePage({
 
     const fullName = profileData.fullName ? profileData.fullName : `${profileData.firstName} ${profileData.lastName}`
     const profilePictureUrl = profileData.profilePicture
-        ? `/api/files/${profileData.profilePicture}`
+        ? `/img/user.png`
         : "/img/user.png";
     const coverImageUrl = profileData.profileCover
-        ? `/api/files/${profileData.profileCover}`
+        ? `/img/abstract.jpeg`
         : "";
     const themeColor = profileData.theme?.color || "#3b82f6"
 

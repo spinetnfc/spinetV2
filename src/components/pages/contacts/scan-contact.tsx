@@ -7,10 +7,9 @@ import { Progress } from "@/components/ui/progress"
 import { toast } from "sonner"
 import { QrCode, Upload } from "lucide-react"
 import QrScanner from "qr-scanner"
-import { getUserFromCookie } from "@/utils/cookie"
-import { useAuth } from "@/context/authContext"
-import { createContact } from "@/actions/contacts"
- import { useRouter } from "next/navigation"
+import { useUser } from "@/lib/store/auth-store"
+import { useContactsActions } from "@/lib/store/contacts-store"
+import { useRouter } from "next/navigation"
 
 interface ScanContactProps {
   locale: string
@@ -18,8 +17,9 @@ interface ScanContactProps {
 
 export default function ScanContact({ locale }: ScanContactProps) {
   const intl = useIntl()
-  const profileId = useAuth().user.selectedProfile
-  const user = getUserFromCookie()
+  const user = useUser()
+  const { addContact } = useContactsActions()
+  const profileId = user?.selectedProfile
   const [isScanning, setIsScanning] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -148,7 +148,7 @@ export default function ScanContact({ locale }: ScanContactProps) {
     }
 
     scanContact()
-  }, [scannedUrl, user?._id, createContact, intl])
+  }, [scannedUrl, user?._id, intl])
 
   // Handle QR code scan result
   const handleQrScan = async (data: string) => {

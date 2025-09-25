@@ -17,49 +17,47 @@ function DigitalIdentity({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   const intl = useIntl();
   return (
     <div
-      className={`relative flex h-full flex-col  overflow-hidden pt-16
+      className={`relative flex h-full flex-col overflow-hidden pt-16
         bg-cover bg-no-repeat`}
       style={{ backgroundImage: `url(${digitalIdentityBg.src})` }}
     >
       <div className="flex size-full flex-col lg:flex-row">
-        <div className="z-10 lg:mx-5 mt-20 flex h-3/5 w-full flex-col items-center gap-4 lg:me-0 lg:ms-10 lg:items-start">
-          {/* Section Text */}
-          <div className="flex flex-col gap-4 ">
-            {/* Top */}
-
-            <h1 className="text-4xl xs:text-5xl lg:text-6xl xl:text-7xl text-center lg:text-start font-semibold text-[#EEF6FF]">
-              {' '}
+        {/* Left Content Section */}
+        <div className="z-10 flex h-3/5 w-full flex-col justify-center lg:w-1/2 lg:h-auto px-4 lg:px-8 xl:px-12">
+          <div className="flex flex-col gap-6 lg:gap-8  mx-auto lg:mx-0">
+            {/* Title */}
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-8xl text-center lg:text-start font-semibold text-spinet-light leading-tight">
               <FormattedMessage id="digital-identity" />
             </h1>
 
-            {/* Paragraph */}
-            <p className="w-full text-base sm:text-xl text-center lg:text-start font-medium text-[#EEF6FF] ">
+            {/* Description */}
+            <p className="text-base sm:text-xl text-center lg:text-start font-medium text-spinet-light/80 leading-relaxed">
               <FormattedMessage id="digital-identity-text" />
             </p>
-          </div>
 
-          <CtaButton
-            icon={<Search className="size-6" />}
-            text={intl.formatMessage({ id: 'search-spinet' })}
-            className="lg:w-[308px] text-base xs:text-lg sm:text-xl"
-            link='/search'
-          />
+            {/* CTA Button */}
+            <div className="flex justify-center lg:justify-start">
+              <CtaButton
+                icon={<Search className="size-6" />}
+                text={intl.formatMessage({ id: 'search-spinet' })}
+                className="lg:w-[308px] text-base xs:text-lg sm:text-xl"
+                link='/search'
+              />
+            </div>
+          </div>
         </div>
-        <div className="relative flex size-full flex-col items-center justify-end flex-grow">
+
+        {/* Right Image Section */}
+        <div className="relative flex size-full flex-col items-center justify-end lg:w-1/2 lg:justify-center">
           <Image
             quality={100}
             src={handFingerPrint}
             alt="Hand image"
             width={600}
             height={600}
-            className='h-auto max-w-full mt-auto lg:w-[700px] aspect-[1/1]'
+            className='h-auto max-w-full lg:max-w-[80%] xl:max-w-[70%] aspect-[1/1] object-contain'
             priority
           />
-          {/* <Spline
-            scene="https://prod.spline.design/vE8CaPtt6QlDw0g3/scene.splinecode"
-            className="w-[300px] sm:w-[400px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto [&>canvas]:w-full [&>canvas]:h-full flex justify start items-start"
-          /> */}
-
         </div>
       </div>
     </div>

@@ -7,8 +7,7 @@ import { FormattedMessage, useIntl } from "react-intl"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from "@/components/ui/dropdown"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useAuth } from "@/context/authContext"
-import { getContactsAction } from "@/actions/contacts"
+import { useUser } from "@/lib/store/auth-store"
 // import { CalendarIcon } from "lucide-react"
 // import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 // import { Calendar } from "@/components/ui/calendar"
@@ -39,7 +38,8 @@ const priorityOptions = [
 
 export function LeadFilter() {
     const searchParams = useSearchParams()
-    const profileId = useAuth().user.selectedProfile
+    const user = useUser()
+    const profileId = user?.selectedProfile
     const [contacts, setContacts] = React.useState<SearchOption[]>([])
     const pathname = usePathname()
     const { replace } = useRouter()
@@ -55,15 +55,17 @@ export function LeadFilter() {
         const fetchData = async () => {
             if (profileId) {
                 try {
-                    const response = await getContactsAction(profileId)
-                    if (response?.success && response.data) {
-                        const contactOptions = response.data.map((contact: any) => ({
-                            value: contact._id,
-                            label: contact.Profile?.fullName || "Unknown",
-                            profilePicture: contact.Profile?.profilePicture,
-                        }))
-                        setContacts(contactOptions)
-                    }
+                    // Mock contacts - replace with hardcoded data
+                    const mockContacts = [
+                        { _id: "contact-1", Profile: { fullName: "John Smith", profilePicture: "" } },
+                        { _id: "contact-2", Profile: { fullName: "Jane Doe", profilePicture: "" } }
+                    ];
+                    const contactOptions = mockContacts.map((contact: any) => ({
+                        value: contact._id,
+                        label: contact.Profile?.fullName || "Unknown",
+                        profilePicture: contact.Profile?.profilePicture,
+                    }))
+                    setContacts(contactOptions)
                 } catch (error) {
                     console.error("Error fetching contacts:", error)
                 }

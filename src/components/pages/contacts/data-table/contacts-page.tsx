@@ -10,19 +10,18 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { useSidebar } from "@/context/sidebarContext"
+import { useIsSidebarExpanded } from "@/lib/store/sidebar-store"
 import { useIsLGScreen, useIsXLScreen } from "@/hooks/screens"
 import { useDynamicRowsPerPage } from "@/hooks/useDynamicRowsPerPage"
-import { getContacts } from "@/lib/api/contacts"
 import { contactColumns } from "./contact-columns"
 import { ContactsBulkActions } from "./contacts-bulk-actions"
 import { FilterDialogue } from "./filter-dialogue"
- import type { Contact } from "@/types/contact"
+import type { Contact } from "@/types/contact"
 import { ContactsModals } from "./contacts-modals"
 import { ContactsHeader } from "./contacts-header"
 import { ContactsTable } from "./contacts-table"
 import { ExportDialogue } from "./export-dialogue"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/lib/store/auth-store"
 import PhoneMockup from "../contact-details"
 
 interface ContactsDataTableProps {
@@ -37,7 +36,7 @@ interface ContactsDataTableProps {
 }
 
 export function ContactsDataTable({ locale, searchParams }: ContactsDataTableProps) {
- const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
+  const dynamicRowsPerPage = useDynamicRowsPerPage(5, 20)
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -49,11 +48,11 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
   const [columnOrder, setColumnOrder] = useState<string[]>([])
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
 
-  const { user } = useAuth()
+  const user = useUser()
   const profileId = user?.selectedProfile || undefined
   const router = useRouter()
   const urlSearchParams = useSearchParams()
-  const { isExpanded } = useSidebar()
+  const isExpanded = useIsSidebarExpanded()
   const isLGScreen = useIsLGScreen()
   const isXLScreen = useIsXLScreen()
 
@@ -218,8 +217,23 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
       try {
         setLoading(true)
         if (!profileId) return
-        const fetchedContacts = await getContacts(profileId)
-        setContacts(fetchedContacts)
+        // Mock contacts - replace with hardcoded data
+        const mockContacts = [
+          {
+            _id: "contact-1",
+            name: "John Smith",
+            Profile: {
+              _id: "profile-1",
+              fullName: "John Smith",
+              profilePicture: ""
+            },
+            type: "manual" as const,
+            leadCaptions: {
+              tags: ["friend"]
+            }
+          }
+        ];
+        setContacts(mockContacts)
       } catch (error) {
         console.error("Error fetching contacts:", error)
       } finally {
@@ -298,7 +312,7 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
     router.refresh()
   }, [router])
 
- 
+
 
   return (
     <main>
@@ -355,7 +369,7 @@ export function ContactsDataTable({ locale, searchParams }: ContactsDataTablePro
           {(selectedContact && !showInModal) && (
             <PhoneMockup contact={selectedContact} onClose={() => setSelectedContact(null)} />
           )}
-         
+
         </div>
       </div>
 

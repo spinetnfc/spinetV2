@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Lead } from "@/types/leads";
 import { FormattedMessage, useIntl } from "react-intl";
-import { updateLeadStatus } from "@/actions/leads";
 import { toast } from "sonner";
 
 type LeadStatus = | "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled"
@@ -27,18 +26,11 @@ export const UpdateLeadStatusDialog: React.FC<UpdateLeadStatusDialogProps> = ({ 
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const result = await updateLeadStatus(
-                lead.createdBy?.creator?.selectedProfile || lead.createdBy?.creator?._id,
-                lead._id,
-                status
-            );
-            if (result.success) {
-                toast.success(intl.formatMessage({ id: "Lead status updated successfully", defaultMessage: "Lead status updated successfully" }));
-                onOpenChange(false);
-                onStatusUpdated?.(status);
-            } else {
-                toast.error(result.message || intl.formatMessage({ id: "Failed to update status" }));
-            }
+            // Mock update lead status - replace with hardcoded behavior
+            console.log("Mock update lead status:", lead._id, status);
+            toast.success(intl.formatMessage({ id: "Lead status updated successfully", defaultMessage: "Lead status updated successfully" }));
+            onOpenChange(false);
+            onStatusUpdated?.(status);
         } catch (error: any) {
             toast.error(error.message || intl.formatMessage({ id: "Failed to update status" }));
         } finally {

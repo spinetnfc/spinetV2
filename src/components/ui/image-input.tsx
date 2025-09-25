@@ -4,7 +4,6 @@ import { useState, useRef } from 'react';
 import { Upload, ImageIcon, X } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { toast } from 'sonner';
-import { uploadFile } from '@/actions/files';
 
 interface StyledFileInputProps {
     onChange: (fileOrId: File | string | null) => void;
@@ -38,7 +37,9 @@ export default function StyledFileInput({
             formData.append('type', 'profile');
 
             try {
-                result = await uploadFile(formData); // Upload and get file ID
+                // Mock file upload - replace with hardcoded behavior
+                result = "mock-file-id-" + Date.now(); // Mock file ID
+                console.log("Mock file upload:", file.name);
                 toast.success(intl.formatMessage({ id: 'file_upload_success', defaultMessage: 'File uploaded successfully' }));
             } catch (error) {
                 console.error('Error uploading file:', error);

@@ -34,6 +34,7 @@ const Pricing: React.FC = () => {
   const pricingOptions = [
     {
       title: 'free',
+      subtitle: 'free-subtitle',
       price: '0 DA',
       features: ['free-f1', 'free-f2', 'free-f3', 'free-f4', 'free-f5'],
       limittedFeatures: ['free-f2', 'free-f3', 'free-f4', 'free-f5'],
@@ -63,7 +64,7 @@ const Pricing: React.FC = () => {
       <div className="hidden w-full flex-col gap-4 p-4 lg:flex ">
         <PricingCard
           title={pricingOptions[0].title}
-          subtitle="Fames ornare libero nunc, eget."
+          subtitle={pricingOptions[0].subtitle}
           price={pricingOptions[0].price}
           features={pricingOptions[0].features}
           limittedFeatures={pricingOptions[0].limittedFeatures}

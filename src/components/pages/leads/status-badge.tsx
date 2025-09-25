@@ -1,9 +1,9 @@
 import { Check, X, Circle } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 
 export interface StatusBadgeProps {
   status:
- "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled" | undefined;
+  "pending" | "prospecting" | "offer-sent" | "negotiation" | "administrative-validation" | "done" | "failed" | "canceled" | undefined;
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
@@ -16,7 +16,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
           className: "text-[#16A34A] bg-[#F0FDF4]",
         }
       case "failed":
-         return {
+        return {
           icon: X,
           text: status,
           className: "text-[#EF4444] bg-[#FEF2F2]",
@@ -30,7 +30,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
       case "pending":
         return {
           icon: Circle,
-          text:  status,
+          text: status,
           className: "text-[#EAB308] bg-[#FEFCE8] ",
         }
       case "prospecting":

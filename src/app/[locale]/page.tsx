@@ -10,7 +10,7 @@ import Products from '@/components/pages/landing-page/products/products';
 import { i18n } from '../../../i18n-config';
 import NavBarWrapper from '@/components/NavBarWrapper.client';
 
- 
+
 async function getMessages(locale: string) {
   return (await import(`../../lang/${locale}.json`)).default;
 }
@@ -26,19 +26,19 @@ const Page = async (
 
   return (
     <>
-      <NavBarWrapper  parent="home" />
-      <div className="flex flex-col gap-3 overflow-x-hidden lg:gap-12">
+      <NavBarWrapper parent="home" />
+      <div className="flex flex-col overflow-x-hidden">
         <section id="hero">
-          <HeroSection   messages={messages} />
+          <HeroSection messages={messages} />
         </section>
         <section id="discover-more">
           <DiscoverMore />
         </section>
         <section id="features">
-          <Features  messages={messages} />
+          <Features messages={messages} />
         </section>
         <section id="pricing">
-          <ChoosePlan    />
+          <ChoosePlan />
         </section>
         <section id="how-it-works">
           <HowItWorks locale={locale} />

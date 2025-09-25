@@ -12,18 +12,17 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon, X } from "lucide-react"
 import { useRef, useState } from "react"
 import { format } from "date-fns"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import z from "zod"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
-import { useAuth } from "@/context/authContext"
+import { useUser } from "@/lib/store/auth-store"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { getLocale } from "@/utils/getClientLocale"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
-import { createContact } from "@/actions/contacts"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +31,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import ImportContacts from "@/components/pages/contacts/import-contacts"
 import ScanContact from "@/components/pages/contacts/scan-contact"
 
 export const ImportIcon = () => {
@@ -105,7 +103,8 @@ export default function AddContactPage() {
   const [displayText, setDisplayText] = useState("")
   const [url, setUrl] = useState("")
   const intl = useIntl()
-  const profileId = useAuth().user.selectedProfile
+  const user = useUser()
+  const profileId = user?.selectedProfile
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -199,41 +198,37 @@ export default function AddContactPage() {
       })
 
       // Submit the form
-      const result = await createContact(profileId, formData, "manual")
-      console.log("Form submission result:", profileId, formData, "manual")
-      if (result?.success) {
-        toast.success(intl.formatMessage({ id: "Contact added successfully" }))
-        form.reset()
-        setTags([])
-        setLinks([])
-        setTagInput("")
-        setShowLinkForm(false)
-         if (actionType === "save") {
+      // Mock create contact - replace with hardcoded behavior
+      console.log("Mock create contact:", profileId, formData, "manual");
+      toast.success(intl.formatMessage({ id: "Contact added successfully" }))
+      form.reset()
+      setTags([])
+      setLinks([])
+      setTagInput("")
+      setShowLinkForm(false)
+      if (actionType === "save") {
         // go back to contacts page
         router.push(`/${locale}/app/contacts`)
       } else {
         // stay here for adding another contact
         router.refresh()
       }
-      } else {
-        toast.error(intl.formatMessage({ id: "Failed to add contact" }))
-      }
     } catch (error: any) {
       console.error("Error submitting form:", {
         message: error.message,
         response: error.response
           ? {
-              status: error.response.status,
-              statusText: error.response.statusText,
-              data: JSON.stringify(error.response.data, null, 2),
-            }
+            status: error.response.status,
+            statusText: error.response.statusText,
+            data: JSON.stringify(error.response.data, null, 2),
+          }
           : "No response data available",
         stack: error.stack,
       })
       toast.error(
         error.response?.data?.message ||
-          error.message ||
-          intl.formatMessage({ id: "An unexpected error occurred. Please try again." }),
+        error.message ||
+        intl.formatMessage({ id: "An unexpected error occurred. Please try again." }),
       )
     } finally {
       setIsSubmitting(false)
@@ -336,7 +331,6 @@ export default function AddContactPage() {
               </Button>
               <DialogTitle></DialogTitle>
               <DialogContent className="max-w-3xl">
-                {importSource && <ImportContacts source={importSource} />}
                 {scan && <ScanContact locale="en" />}
               </DialogContent>
             </Dialog>
@@ -351,8 +345,8 @@ export default function AddContactPage() {
             {/* Profile Picture Section */}
             <div className="w-full lg:w-2/3 flex justify-between items-center">
               <div>
-              <h3 className="text-sm font-medium text-gray-900 mb-2">Profile picture</h3>
-              <p className="text-sm text-gray-500 mb-4">This will be displayed on your contact's profile</p>
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Profile picture</h3>
+                <p className="text-sm text-gray-500 mb-4">This will be displayed on your contact's profile</p>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
@@ -439,71 +433,71 @@ export default function AddContactPage() {
                     )}
                   </div>
                 </div>
-                 {/* Links Section */}
-              <div className="w-full">
-                <h3 className="text-lg font-medium text-primary mt-8 mb-4">Links</h3>
-                <div className="bg-transparent rounded-lg p-6 mb-2 border border-gray-200">
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="displayText" className="text-sm font-medium text-primary">
-                        Display text
-                      </Label>
-                      <Input
-                        id="displayText"
-                        placeholder="eg. LinkedIn"
-                        value={displayText}
-                        onChange={(e) => setDisplayText(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="url" className="text-sm font-medium text-primary">
-                        Url
-                      </Label>
-                      <Input
-                        id="url"
-                        placeholder="https://"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <Button type="button" onClick={handleAddLinkSubmit} className="flex items-center gap-2" size="sm">
-                      <Plus className="h-4 w-4" />
-                      Add Link
-                    </Button>
-                  </div>
-                  {links.length > 0 && (
-                    <div className="mt-6">
-                      <h4 className="text-sm font-medium text-primary mb-3">Added Links</h4>
-                      <div className="space-y-2">
-                        {links.map((link, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                            <div>
-                              <p className="font-medium text-sm">{link.title}</p>
-                              <p className="text-sm text-gray-600 truncate">{link.link}</p>
-                            </div>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleRemoveLink(index)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
+                {/* Links Section */}
+                <div className="w-full">
+                  <h3 className="text-lg font-medium text-primary mt-8 mb-4">Links</h3>
+                  <div className="bg-transparent rounded-lg p-6 mb-2 border border-gray-200">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="displayText" className="text-sm font-medium text-primary">
+                          Display text
+                        </Label>
+                        <Input
+                          id="displayText"
+                          placeholder="eg. LinkedIn"
+                          value={displayText}
+                          onChange={(e) => setDisplayText(e.target.value)}
+                          className="mt-1"
+                        />
                       </div>
+                      <div>
+                        <Label htmlFor="url" className="text-sm font-medium text-primary">
+                          Url
+                        </Label>
+                        <Input
+                          id="url"
+                          placeholder="https://"
+                          value={url}
+                          onChange={(e) => setUrl(e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+                      <Button type="button" onClick={handleAddLinkSubmit} className="flex items-center gap-2" size="sm">
+                        <Plus className="h-4 w-4" />
+                        Add Link
+                      </Button>
                     </div>
-                  )}
+                    {links.length > 0 && (
+                      <div className="mt-6">
+                        <h4 className="text-sm font-medium text-primary mb-3">Added Links</h4>
+                        <div className="space-y-2">
+                          {links.map((link, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                              <div>
+                                <p className="font-medium text-sm">{link.title}</p>
+                                <p className="text-sm text-gray-600 truncate">{link.link}</p>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleRemoveLink(index)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
               </div>
 
-             
-               
+
+
 
               {/* Interaction Information */}
               <div className="w-full lg:w-1/3">
@@ -575,46 +569,46 @@ export default function AddContactPage() {
                   </div>
                 </div>
                 <div className="w-full mt-4">
-                <h3 className="text-lg font-medium text-primary mb-4">Tags</h3>
-                <div className="bg-transparent rounded-lg p-6 border border-gray-200">
-                  <div>
-                    <Label htmlFor="tagInput" className="text-sm font-medium text-primary">
-                      Add tags
-                    </Label>
-                    <Input
-                      id="tagInput"
-                      placeholder="Type a tag and press Enter"
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={handleAddTag}
-                      className="mt-1"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Press Enter to add a tag</p>
-                  </div>
-                  {tags.length > 0 && (
-                    <div className="mt-4">
-                      <h4 className="text-sm font-medium text-primary mb-3">Added Tags</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {tags.map((tag, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                          >
-                            <span>{tag}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveTag(tag)}
-                              className="text-blue-600 hover:text-blue-800"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                  <h3 className="text-lg font-medium text-primary mb-4">Tags</h3>
+                  <div className="bg-transparent rounded-lg p-6 border border-gray-200">
+                    <div>
+                      <Label htmlFor="tagInput" className="text-sm font-medium text-primary">
+                        Add tags
+                      </Label>
+                      <Input
+                        id="tagInput"
+                        placeholder="Type a tag and press Enter"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={handleAddTag}
+                        className="mt-1"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Press Enter to add a tag</p>
                     </div>
-                  )}
+                    {tags.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="text-sm font-medium text-primary mb-3">Added Tags</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {tags.map((tag, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                            >
+                              <span>{tag}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveTag(tag)}
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
 

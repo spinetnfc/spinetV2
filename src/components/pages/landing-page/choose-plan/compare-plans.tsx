@@ -51,7 +51,7 @@ function ComparePlans() {
     <div className="w-full">
       <Table>
         <TableHeader>
-          <TableRow className="bg-azure hover:bg-gray-50 hover:dark:bg-navy">
+          <TableRow className="bg-gray-50 dark:bg-navy">
             <TableHead className="font-semibold text-primary">Features</TableHead>
             {plans.map((plan) => (
               <TableHead key={plan.title} className="font-semibold text-primary">

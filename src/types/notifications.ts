@@ -1,4 +1,3 @@
-import { profile } from 'console';
 export type NotificationFilters = {
     direction?: "sent" | "received";
     from?: string[];

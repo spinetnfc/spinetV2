@@ -1,4 +1,3 @@
-import { getFile } from "@/actions/files"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 
@@ -14,9 +13,13 @@ export default function ContactAvatar({ name, profilePicture, initials }: Contac
     useEffect(() => {
         async function fetchImage() {
             if (profilePicture) {
-                const url = await getFile(profilePicture);
-                console.log("Fetched image URL:", url);
-                setImageUrl(url);
+                // Mock implementation - just use the profilePicture as URL if it looks like one
+                if (profilePicture.startsWith('http') || profilePicture.startsWith('/')) {
+                    setImageUrl(profilePicture);
+                } else {
+                    // For non-URL strings, use a placeholder or generate a mock URL
+                    setImageUrl(`/img/user.png`); // fallback image
+                }
             }
         }
         fetchImage();

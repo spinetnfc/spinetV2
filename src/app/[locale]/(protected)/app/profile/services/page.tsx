@@ -1,11 +1,9 @@
 import { ArrowLeft, Briefcase } from "lucide-react"
 import Link from "next/link"
-import { getProfile } from "@/lib/api/profile"
 import type { ProfileData } from "@/types/profile"
 import { getUserCookieOnServer } from "@/utils/server-cookie"
 import ServiceItem from "@/components/pages/profile/services/service-item"
 import AddServiceButton from "@/components/pages/profile/services/add-service-button"
-import { getServices } from "@/lib/api/services"
 import { Service } from "@/types/services"
 import useTranslate from "@/hooks/use-translate"
 
@@ -24,7 +22,36 @@ export default async function ServicesPage({
     // Fetch user profile data
     let profileData: ProfileData | null
     try {
-        profileData = await getProfile(profileId)
+        // Mock profile data - replace with hardcoded data
+        profileData = {
+            _id: profileId || "mock-profile-1",
+            fullName: "John Doe",
+            status: "professional",
+            profession: "Software Engineer",
+            type: "personal",
+            groupId: "mock-group-1",
+            birthDate: "1990-01-01",
+            gender: "male",
+            profilePicture: "",
+            profileCover: "",
+            theme: { color: "#3b82f6" },
+            links: [],
+            lockedFeatures: {
+                profileCover: false,
+                logo: false,
+                qrCodeLogo: false,
+                displayLogo: false,
+                companyName: false,
+                activitySector: false,
+                position: false,
+                school: false,
+                profession: false,
+                theme: false,
+                canAddLinks: false,
+                canAddServices: false,
+                excludedLinks: []
+            }
+        };
     } catch (err: any) {
         console.error("Error fetching profile:", err)
         throw new Error(`Failed to load profile data: ${err.message}`)
@@ -32,7 +59,14 @@ export default async function ServicesPage({
 
     let services: Service[] = []
     try {
-        services = await getServices(profileId);
+        // Mock services - replace with hardcoded data
+        services = [
+            {
+                _id: "mock-service-1",
+                name: "Web Development",
+                description: "Professional web development services"
+            }
+        ];
         console.log("services", services)
     } catch (err: any) {
         console.error("Error fetching services:", err);

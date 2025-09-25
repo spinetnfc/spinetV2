@@ -2,9 +2,8 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/context/authContext";
+import { useUser, useIsAuthenticated } from "@/lib/store/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { profile } from "console";
 import { format, set } from "date-fns";
 import { CalendarIcon, UserPlus, X } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -18,7 +17,7 @@ import { cn } from "@/utils/cn";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { InviteContact } from "@/types/contact";
-import { sendInvitationAction } from "@/actions/contacts";
+import { useContactsActions } from "@/lib/store/contacts-store";
 
 const contactSchema = z.object({
     profile: z.string().length(24, { message: "Profile ID must be 24 characters" }),
@@ -33,7 +32,9 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 
 
 const AddContactButton = () => {
-    const { isAuthenticated, user } = useAuth();
+    const isAuthenticated = useIsAuthenticated();
+    const user = useUser();
+    const { addContact } = useContactsActions();
     const profileId = user.selectedProfile;
     const pathname = usePathname();
     const newContactId = pathname.split("/").pop();
@@ -77,7 +78,17 @@ const AddContactButton = () => {
             // Log payload for debugging
             console.log("Add contact payload:", JSON.stringify(addedContact, null, 2));
 
-            const response = await sendInvitationAction(profileId, addedContact);
+            // Mock implementation - just add to contacts context
+            addContact({
+                name: `Contact ${Date.now()}`,
+                type: "manual",
+                Profile: {
+                    _id: data.profile,
+                    fullName: `Contact ${Date.now()}`
+                },
+                leadCaptions: addedContact.leadCaptions
+            });
+
             toast.success(intl.formatMessage({ id: "invitation-sent", defaultMessage: "Invitation sent" }));
 
         } catch (error: any) {

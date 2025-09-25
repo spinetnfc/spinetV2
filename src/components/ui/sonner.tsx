@@ -15,27 +15,27 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   if (!mounted) return null;
 
-  // Define theme-specific colors
+  // Define theme-specific colors using our color system
   const lightThemeStyles = {
-    '--normal-bg': 'white',
-    '--normal-text': '#010E37',
-    '--normal-border': '#e0e0e0',
-    '--success-bg': 'white',
+    '--normal-bg': 'hsl(var(--background))',
+    '--normal-text': 'hsl(var(--spinet-text-primary))',
+    '--normal-border': 'hsl(var(--border))',
+    '--success-bg': 'hsl(var(--background))',
     '--success-text': '#155724',
     '--success-border': '#c3e6cb',
-    '--error-bg': 'white',
+    '--error-bg': 'hsl(var(--background))',
     '--error-text': '#7f1d1d',
     '--error-border': '#7f1d1d',
   } as React.CSSProperties;
 
   const darkThemeStyles = {
-    '--normal-bg': '#010C32',
-    '--normal-text': '#e0e0e0',
-    '--normal-border': '#333333',
-    '--success-bg': '#010C32',
+    '--normal-bg': 'hsl(var(--spinet-dark))',
+    '--normal-text': 'hsl(var(--spinet-text-primary))',
+    '--normal-border': 'hsl(var(--border))',
+    '--success-bg': 'hsl(var(--spinet-dark))',
     '--success-text': '#d4edda',
     '--success-border': '#40916c',
-    '--error-bg': '#010C32',
+    '--error-bg': 'hsl(var(--spinet-dark))',
     '--error-text': '#7f1d1d',
     '--error-border': '#7f1d1d',
   } as React.CSSProperties;

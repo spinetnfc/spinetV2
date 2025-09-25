@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import ShopLayout from '@/components/layouts/shop-layout';
 
 export const metadata = {
-    title: 'Shop',
+    title: 'Shop - Spinet',
     description: 'Shop',
 };
 

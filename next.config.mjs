@@ -11,6 +11,10 @@ const nextConfig = {
         pathname: '/files/**',
       },
     ],
+    // Configure image qualities to include quality 100
+    qualities: [25, 50, 75, 90, 100],
+    // Enable optimization
+    unoptimized: false,
   },
   async rewrites() {
     const apiUrl = process.env.API_URL || 'https://api.spinetnfc.com';

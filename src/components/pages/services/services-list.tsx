@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import type { ServicesData, ServicesSearchParams } from "@/types/services"
-import { SerachServicesAction } from "@/actions/services"
 import { Input } from "@/components/ui/input"
 import { Briefcase, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -14,7 +13,7 @@ import avatar from "@/assets/images/user.png"
 import Image from "next/image"
 import Link from "next/link"
 import { Spinner } from "@/components/ui/spinner"
-import { ProfileAvatar } from "../profile-avatar"
+import { ProfileAvatar } from "../profile/profile-avatar"
 
 type ServicesCardListProps = {
     services: ServicesData[]
@@ -67,13 +66,24 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
             skip: 0, // Reset skip on new search
         }
         setIsLoading(true)
-        const response = await SerachServicesAction(userId, searchParams)
+        // Mock search services - replace with hardcoded behavior
+        const mockServices = [
+            {
+                name: "Web Development",
+                description: "Professional web development services",
+                Profile: {
+                    _id: "profile-1",
+                    firstName: "John",
+                    lastName: "Doe",
+                    profilePicture: "",
+                    numServices: 3
+                }
+            }
+        ];
+        setServices(mockServices)
+        setSkip(mockServices.length)
+        setHasMore(false)
         setIsLoading(false)
-        if (response.success && response.data) {
-            setServices(response.data)
-            setSkip(response.data.length)
-            setHasMore(response.data.length >= 10)
-        }
     }
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -92,14 +102,11 @@ export function ServicesCardList({ services: initialServices, locale, userId, se
             term: searchTerm,
             skip,
         }
-        const response = await SerachServicesAction(userId, searchParams)
+        // Mock load more services - replace with hardcoded behavior
+        console.log("Mock load more services:", searchParams);
         setIsLoading(false)
-
-        if (response.success && response.data) {
-            setServices((prevServices) => [...prevServices, ...response.data])
-            setSkip((prevSkip) => prevSkip + response.data.length)
-            setHasMore(response.data.length >= 10)
-        }
+        // No more services to load in mock
+        setHasMore(false)
     }
 
     // Intersection Observer to detect end of list

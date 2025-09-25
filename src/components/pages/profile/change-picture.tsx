@@ -6,8 +6,6 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import StyledFileInput from '@/components/ui/image-input';
-import { uploadFile } from '@/actions/files';
-import { updateProfileAction } from '@/actions/profile';
 
 interface ChangePictureProps {
     profileId: string;
@@ -29,23 +27,21 @@ export default function ChangePicture({ profileId, pictureType }: ChangePictureP
         formData.append('type', pictureType === 'profilePicture' ? 'profile' : 'cover');
 
         try {
-            const fileId = await uploadFile(formData);
-            if (!fileId) throw new Error('No file ID returned');
+            // Mock file upload - replace with hardcoded behavior
+            const fileId = "mock-file-id-" + Date.now();
+            console.log("Mock file upload:", fileOrId.name, pictureType);
 
             const updateData = { [pictureType]: fileId };
-            const result = await updateProfileAction(profileId, updateData);
+            // Mock update - replace with hardcoded behavior
+            console.log("Mock profile picture update:", updateData);
 
-            if (result.success) {
-                toast.success(
-                    intl.formatMessage({
-                        id: pictureType === 'profilePicture' ? 'profile-picture-updated' : 'cover-picture-updated',
-                        defaultMessage: pictureType === 'profilePicture' ? 'Profile picture updated successfully' : 'Cover picture updated successfully',
-                    })
-                );
-                setIsModalOpen(false);
-            } else {
-                throw new Error(result.message || 'Failed to update profile');
-            }
+            toast.success(
+                intl.formatMessage({
+                    id: pictureType === 'profilePicture' ? 'profile-picture-updated' : 'cover-picture-updated',
+                    defaultMessage: pictureType === 'profilePicture' ? 'Profile picture updated successfully' : 'Cover picture updated successfully',
+                })
+            );
+            setIsModalOpen(false);
         } catch (error) {
             console.error('Error uploading or updating picture:', error);
             toast.error(

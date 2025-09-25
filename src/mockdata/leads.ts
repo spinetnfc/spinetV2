@@ -1,0 +1,122 @@
+import { Lead } from '@/types/leads';
+
+export const mockLeads: Lead[] = [
+  {
+    _id: 'lead-1',
+    name: 'Enterprise SaaS Deal',
+    description: 'Large enterprise client interested in our full SaaS platform',
+    Contacts: ['contact-1', 'contact-2'],
+    mainContact: 'contact-1',
+    amount: 150000,
+    status: 'negotiation',
+    priority: 'high',
+    lifeTime: {
+      begins: '2024-01-15T00:00:00Z',
+      ends: '2024-12-31T23:59:59Z',
+    },
+    Tags: ['enterprise', 'saas', 'high-value'],
+    notes: [
+      {
+        _id: 'note-1',
+        note: 'Initial contact made, very interested in our platform',
+        createdAt: '2024-01-15T10:30:00Z',
+      },
+      {
+        _id: 'note-2',
+        note: 'Demo scheduled for next week',
+        createdAt: '2024-01-16T14:20:00Z',
+      },
+    ],
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-16T14:20:00Z',
+  },
+  {
+    _id: 'lead-2',
+    name: 'Marketing Automation Project',
+    description: 'Mid-size company looking for marketing automation solutions',
+    Contacts: ['contact-2'],
+    mainContact: 'contact-2',
+    amount: 75000,
+    status: 'prospecting',
+    priority: 'medium',
+    lifeTime: {
+      begins: '2024-01-10T00:00:00Z',
+      ends: '2024-06-30T23:59:59Z',
+    },
+    Tags: ['marketing', 'automation', 'mid-market'],
+    notes: [
+      {
+        _id: 'note-3',
+        note: 'Budget approved for Q1 implementation',
+        createdAt: '2024-01-12T16:45:00Z',
+      },
+    ],
+    createdAt: '2024-01-10T09:15:00Z',
+    updatedAt: '2024-01-12T16:45:00Z',
+  },
+  {
+    _id: 'lead-3',
+    name: 'Development Partnership',
+    description: 'Technical partnership opportunity for custom development',
+    Contacts: ['contact-3'],
+    mainContact: 'contact-3',
+    amount: 50000,
+    status: 'offer-sent',
+    priority: 'medium',
+    lifeTime: {
+      begins: '2024-01-08T00:00:00Z',
+      ends: '2024-08-31T23:59:59Z',
+    },
+    Tags: ['partnership', 'development', 'technical'],
+    notes: [
+      {
+        _id: 'note-4',
+        note: 'Discussing technical requirements and timeline',
+        createdAt: '2024-01-09T11:30:00Z',
+      },
+    ],
+    createdAt: '2024-01-08T14:20:00Z',
+    updatedAt: '2024-01-09T11:30:00Z',
+  },
+  {
+    _id: 'lead-4',
+    name: 'Strategic Partnership',
+    description: 'Long-term strategic partnership with innovation hub',
+    Contacts: ['contact-4'],
+    mainContact: 'contact-4',
+    amount: 200000,
+    status: 'pending',
+    priority: 'high',
+    lifeTime: {
+      begins: '2024-01-05T00:00:00Z',
+      ends: '2025-01-05T23:59:59Z',
+    },
+    Tags: ['partnership', 'strategic', 'long-term'],
+    notes: [
+      {
+        _id: 'note-5',
+        note: 'Initial meeting scheduled to discuss partnership opportunities',
+        createdAt: '2024-01-06T10:15:00Z',
+      },
+    ],
+    createdAt: '2024-01-05T16:45:00Z',
+    updatedAt: '2024-01-06T10:15:00Z',
+  },
+  {
+    _id: 'lead-5',
+    name: 'Small Business Package',
+    description: 'Small business interested in basic package',
+    Contacts: [],
+    amount: 15000,
+    status: 'prospecting',
+    priority: 'low',
+    lifeTime: {
+      begins: '2024-01-20T00:00:00Z',
+      ends: '2024-04-30T23:59:59Z',
+    },
+    Tags: ['small-business', 'basic-package'],
+    notes: [],
+    createdAt: '2024-01-20T08:30:00Z',
+    updatedAt: '2024-01-20T08:30:00Z',
+  },
+];

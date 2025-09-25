@@ -34,6 +34,7 @@ export interface FilterState {
   searchQuery: string
 }
 export type Lead = {
+    [x: string]: any;
     _id: string;
     name: string;
     description?: string;

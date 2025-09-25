@@ -1,7 +1,6 @@
 import ProfileCarousel from "@/components/pages/profile/profiles-carousel";
 import { Button } from "@/components/ui/button";
 import useTranslate from "@/hooks/use-translate";
-import { getAllProfiles } from "@/lib/api/profile";
 import { ProfileData } from "@/types/profile";
 import { getLocale } from "@/utils/getServerLocale";
 import { getUserCookieOnServer } from "@/utils/server-cookie";
@@ -19,7 +18,38 @@ export default async function HomePage() {
   }
   let profiles: ProfileData[] = [];
   try {
-    profiles = await getAllProfiles(user._id);
+    // Mock profiles - replace with hardcoded data
+    profiles = [
+      {
+        _id: "mock-profile-1",
+        fullName: "John Doe",
+        status: "professional",
+        profession: "Software Engineer",
+        profilePicture: "",
+        profileCover: "",
+        theme: { color: "#3b82f6" },
+        links: [],
+        type: "personal",
+        groupId: "mock-group-1",
+        birthDate: "1990-01-01",
+        gender: "male",
+        lockedFeatures: {
+          profileCover: false,
+          logo: false,
+          qrCodeLogo: false,
+          displayLogo: false,
+          companyName: false,
+          activitySector: false,
+          position: false,
+          school: false,
+          profession: false,
+          theme: false,
+          canAddLinks: false,
+          canAddServices: false,
+          excludedLinks: []
+        }
+      }
+    ];
     const selectedIndex = profiles.findIndex(p => p._id === user.selectedProfile);
     if (selectedIndex > 0) {
       const [selectedProfile] = profiles.splice(selectedIndex, 1);

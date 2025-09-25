@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FormattedMessage, useIntl } from 'react-intl';
 import * as z from 'zod';
-import { updatePreferencesAction } from '@/actions/profile';
 import type { ProfileData } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import {
@@ -63,8 +62,8 @@ export default function PreferencesForm({
                 theme: { color: data.themeColor },
             };
             console.log('Submitting preferences data:', formattedData);
-            // await updateProfile(profileId, formattedData);
-            await updatePreferencesAction(profileId, data.themeColor);
+            // Mock update - replace with hardcoded behavior
+            console.log("Mock preferences update:", data.themeColor);
             toast.success(intl.formatMessage({ id: "Preferences updated successfully" }));
         } catch (error: any) {
             console.error('Preferences update error:', error);

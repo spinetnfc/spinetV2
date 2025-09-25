@@ -4,7 +4,7 @@ import SearchLayout from '@/components/layouts/search-layout';
 import Footer from '@/components/pages/landing-page/footer/footer';
 
 export const metadata = {
-    title: 'Search',
+    title: 'Search - Spinet',
     description: 'Search',
 };
 

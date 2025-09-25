@@ -10,13 +10,12 @@ import { useParams } from 'next/navigation';
 
 type Props = {
   imageUrl: StaticImageData;
+  imageUrlLight?: StaticImageData;
   text: string;
   ordinal: string;
-
-
 };
 
-function StepCard({ imageUrl, text, ordinal }: Props) {
+function StepCard({ imageUrl, imageUrlLight, text, ordinal }: Props) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { locale } = useParams();
@@ -39,13 +38,9 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
         >
           <Image
             src={
-              ordinal !== 'Third' && ordinal !== 'Fourth'
-                ? imageUrl
-                : resolvedTheme === 'dark'
-                  ? imageUrl
-                  : imageUrl.src.slice(0, imageUrl.src.lastIndexOf('.')) +
-                  '-light' +
-                  imageUrl.src.slice(imageUrl.src.lastIndexOf('.'))
+              (ordinal === 'Third' || ordinal === 'Fourth') && imageUrlLight && resolvedTheme === 'light'
+                ? imageUrlLight
+                : imageUrl
             }
             alt={text}
             fill
@@ -57,11 +52,11 @@ function StepCard({ imageUrl, text, ordinal }: Props) {
         </div>
 
         <div className="flex flex-col space-y-2 p-6">
-          <div className="bg-linear-to-r from-[#145FF2] to-[#BDDDFF] bg-clip-text font-inter text-sm font-medium text-transparent dark:from-[#EEF6FF] dark:to-[#2375F3]">
+          <div className="bg-gradient-to-r from-spinet-primary to-spinet-accent bg-clip-text font-inter text-sm font-medium text-transparent">
             {ordinal}
           </div>
 
-          <h3 className=" text-center text-xl sm:text-2xl leading-8 text-[#1A3B8E]/80 dark:text-white">
+          <h3 className="text-center text-xl sm:text-2xl leading-8 text-spinet-text-muted">
             {text}
           </h3>
         </div>

@@ -1,14 +1,22 @@
-import { useParams } from "next/navigation";
-import enMessages from '@/lang/en.json';
-import arMessages from '@/lang/ar.json';
-import frMessages from '@/lang/fr.json';
+'use client';
 
-const messagesMap = {
-    en: enMessages,
-    ar: arMessages,
-    fr: frMessages,
-};
-export function useLocale(): keyof typeof messagesMap {
-    const params = useParams();
-    return (params?.locale as "en" | "ar" | "fr") || 'en';
+import { useEffect, useState } from 'react';
+import { getLocale } from '@/utils/getClientLocale';
+
+/**
+ * Hook that safely gets the locale without causing hydration mismatches.
+ * Returns 'en' during SSR and the actual locale after hydration.
+ */
+export function useLocale(): string {
+   const [mounted, setMounted] = useState(false);
+   const [locale, setLocale] = useState('en'); // Default fallback
+
+   useEffect(() => {
+      setMounted(true);
+      const currentLocale = getLocale() || 'en';
+      setLocale(currentLocale);
+   }, []);
+
+   // Return 'en' during SSR to prevent hydration mismatch
+   return mounted ? locale : 'en';
 }

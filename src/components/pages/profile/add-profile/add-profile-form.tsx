@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { toast } from 'sonner';
-import { createProfileAction } from '@/actions/profile';
 import { useRouter } from 'next/navigation';
 import { profileInput } from '@/types/profile';
 import {
@@ -188,13 +187,10 @@ const AddProfileForm = ({ user, linkTypes, roleOptions }: AddProfileFormProps) =
         setIsSubmitting(true);
         try {
             const profileData = createProfileData(data);
-            const result = await createProfileAction(user._id, profileData);
-            if (result.success) {
-                toast.success(intl.formatMessage({ id: 'Profile created successfully' }));
-                router.push('/app');
-            } else {
-                toast.error(result.message || intl.formatMessage({ id: 'Failed to create profile' }));
-            }
+            // Mock create profile - replace with hardcoded behavior
+            console.log("Mock create profile:", profileData);
+            toast.success(intl.formatMessage({ id: 'Profile created successfully' }));
+            router.push('/app');
         } catch (error) {
             console.error('Error creating profile:', error);
             toast.error(intl.formatMessage({ id: 'Something went wrong' }));

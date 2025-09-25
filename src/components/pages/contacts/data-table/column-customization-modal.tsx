@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { X, GripVertical } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 
 interface ColumnConfig {
   id: string
@@ -104,7 +104,7 @@ export function ColumnCustomizationModal({
   }
 
   const handleSave = () => {
-   // onSave(selectedColumns, orderedColumns)
+    // onSave(selectedColumns, orderedColumns)
     onClose()
   }
 

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Check, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/utils/cn';
 import { Badge } from "@/components/ui/badge";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";

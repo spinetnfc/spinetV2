@@ -1,16 +1,15 @@
 "use client";
 import * as React from "react";
 import Image from "next/image";
-import { getFile } from "@/actions/files";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn } from '@/utils/cn';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { CirclePlus, Eye, Share2, UserRoundPen } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import { FormattedMessage } from "react-intl";
-import { useSidebar } from "@/context/sidebarContext";
+import { useIsSidebarExpanded } from "@/lib/store/sidebar-store";
 import { ProfileData } from "@/types/profile";
 
 interface ProfileCarouselProps {
@@ -22,7 +21,7 @@ export default function ProfileCarousel({ profiles }: ProfileCarouselProps) {
     const [current, setCurrent] = React.useState(0);
     const pathname = usePathname();
     const router = useRouter();
-    const { isExpanded } = useSidebar();
+    const isExpanded = useIsSidebarExpanded();
 
     React.useEffect(() => {
         if (!api) return;
@@ -125,7 +124,8 @@ function ProfileCard({
         async function fetchImages() {
             if (profile.profilePicture) {
                 try {
-                    const url = await getFile(profile.profilePicture);
+                    // Mock file URL - replace with hardcoded behavior
+                    const url = "/img/user.png";
                     setPictureUrl(url);
                 } catch {
                     setPictureUrl("/img/user.png");
@@ -134,7 +134,8 @@ function ProfileCard({
 
             if (profile.profileCover) {
                 try {
-                    const url = await getFile(profile.profileCover);
+                    // Mock cover URL - replace with hardcoded behavior  
+                    const url = "/img/abstract.jpeg";
                     setCoverUrl(url);
                 } catch {
                     setCoverUrl(null);

@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X } from "lucide-react"
 import { toast } from "sonner"
 import { FormattedMessage, useIntl } from "react-intl"
-import { updateProfileAction } from "@/actions/profile"
 
 type LinkType = {
     name: string
@@ -48,7 +47,8 @@ export default function AddLinkForm({ profileId, existingLinks, onSuccess, onCan
 
         startTransition(async () => {
             try {
-                await updateProfileAction(profileId, { links: updatedLinks })
+                // Mock implementation - just show success
+                console.log('Adding link:', { profileId, links: updatedLinks });
 
                 toast.success(formatMessage({ id: "Link added successfully" }))
                 onSuccess()

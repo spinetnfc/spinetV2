@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronDown, Search, X } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 
 interface Members {
   id: string
@@ -15,7 +15,7 @@ interface Members {
   initials: string
 }
 
- 
+
 
 export function MembersFilter({
   currentMembers,
@@ -53,35 +53,35 @@ export function MembersFilter({
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col items-start gap-2">
             <span className="text-sm text-gray-700">Filter by Members</span>
-              </div>
+          </div>
           <ChevronDown className={cn("h-4 w-4 text-gray-500 transition-transform", isOpen && "rotate-180")} />
         </div>
       </Button>
       <div>
-            {selectedMembersData.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {selectedMembersData.map((member) => (
-                  <div key={member.id} className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1 text-xs">
-                    <Avatar className="h-4 w-4">
-                      <AvatarImage src={member.avatar || "/placeholder.svg"} alt={member.name} />
-                      <AvatarFallback className="text-xs bg-gray-300">{member.initials}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-gray-700">{member.name}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        removeMembers(member.id)
-                      }}
-                      className="ml-1 hover:bg-gray-200 rounded-full p-0.5"
-                    >
-                      <X className="h-3 w-3 text-gray-500" />
-                    </button>
-                  </div>
-                ))}
+        {selectedMembersData.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {selectedMembersData.map((member) => (
+              <div key={member.id} className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1 text-xs">
+                <Avatar className="h-4 w-4">
+                  <AvatarImage src={member.avatar || "/placeholder.svg"} alt={member.name} />
+                  <AvatarFallback className="text-xs bg-gray-300">{member.initials}</AvatarFallback>
+                </Avatar>
+                <span className="text-gray-700">{member.name}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    removeMembers(member.id)
+                  }}
+                  className="ml-1 hover:bg-gray-200 rounded-full p-0.5"
+                >
+                  <X className="h-3 w-3 text-gray-500" />
+                </button>
               </div>
-            )}
-        
-</div>
+            ))}
+          </div>
+        )}
+
+      </div>
       {/* Dropdown */}
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">

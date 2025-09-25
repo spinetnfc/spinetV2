@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import ContentLayout from "@/components/layouts/content-layout"
 
 export const metadata: Metadata = {
-    title: "Leads",
+    title: "Leads - Spinet",
     description: "Manage your leads on Spinet",
 }
 

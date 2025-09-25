@@ -7,7 +7,7 @@ import Logo from "@/components/logo";
 import ThemeSwitch from "@/components/theme-switch";
 import { cn } from "@/utils/cn";
 import CtaButton from "../cta-button";
-import { useAuth } from "@/context/authContext";
+import { useIsAuthenticated, useAuthLoading } from "@/lib/store/auth/auth-store";
 import UserMenu from "@/components/userMenu";
 
 // Memoize CtaButton and UserMenu to prevent unnecessary re-renders
@@ -48,7 +48,8 @@ function NavBar({
   const intl = useIntl();
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const isAuthenticated = useIsAuthenticated();
+  const authLoading = useAuthLoading();
 
   // Memoize scrollToSection to prevent re-creation
   const memoizedScrollToSection = useCallback(
@@ -70,7 +71,7 @@ function NavBar({
   // Memoize auth-dependent rendering to avoid unnecessary re-renders
   const authButton = React.useMemo(() => {
     if (authLoading) {
-      return <div className="h-12 w-24 animate-pulse bg-azure dark:bg-[#162556] rounded-2xl"></div>;
+      return <div className="h-12 w-24 animate-pulse bg-spinet-primary dark:bg-spinet-navy rounded-2xl"></div>;
     }
     return !isAuthenticated ? (
       <MemoizedCtaButton
@@ -86,7 +87,7 @@ function NavBar({
   return (
     <header
       className={cn(
-        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-2 transition-transform duration-300 bg-white dark:bg-[#010C32]",
+        "fixed z-50 flex w-full flex-row items-center justify-between px-3 py-2 lg:py-2 transition-transform duration-300 bg-white dark:bg-spinet-dark",
         visible ? "translate-y-0" : "-translate-y-full"
       )}
     >
@@ -119,7 +120,7 @@ function NavBar({
               onClick={() => memoizedScrollToSection(id)}
               className="flex h-12 items-center rounded-[14px] p-2 xl:p-3"
             >
-              <span className="cursor-pointer text-lg font-medium leading-6 text-[#010E37] hover:text-blue-600 dark:text-white dark:hover:text-gray-400">
+              <span className="cursor-pointer text-lg font-medium leading-6 text-spinet-text-primary hover:text-spinet-primary">
                 <FormattedMessage id={label} />
               </span>
             </button>
@@ -136,7 +137,7 @@ function NavBar({
       {/* Mobile Navigation */}
       <div
         className={cn(
-          "absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-[#010C32] lg:hidden transition-all duration-300 transform",
+          "absolute left-0 top-full w-full bg-white px-4 py-2 shadow-lg dark:bg-spinet-dark lg:hidden transition-all duration-300 transform",
           isMenuOpen
             ? "opacity-100 max-h-[500px] translate-y-0"
             : "opacity-0 max-h-0 -translate-y-2 pointer-events-none"
@@ -156,7 +157,7 @@ function NavBar({
               onClick={() => memoizedScrollToSection(id)}
               className="rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <span className="font-inter text-lg font-medium text-[#010E37] dark:text-white">
+              <span className="font-inter text-lg font-medium text-spinet-text-primary">
                 <FormattedMessage id={label} />
               </span>
             </button>

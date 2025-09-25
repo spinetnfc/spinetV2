@@ -10,7 +10,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown"
 import ConfirmationModal from "@/components/delete-confirmation-modal"
-import { removeContact } from "@/actions/contacts"
+import { useContactsActions } from "@/lib/store/contacts-store"
 import type { Contact } from "@/types/contact"
 
 interface ContactActionCellProps {
@@ -23,6 +23,7 @@ interface ContactActionCellProps {
 export function ContactActionCell({ contact, locale, profileId, onEdit }: ContactActionCellProps) {
   const router = useRouter()
   const intl = useIntl()
+  const { deleteContact } = useContactsActions()
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
@@ -31,14 +32,12 @@ export function ContactActionCell({ contact, locale, profileId, onEdit }: Contac
 
     try {
       setIsDeleting(true)
-      const response = await removeContact(profileId, contact._id)
 
-      if (response.success) {
-        toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
-        router.refresh()
-      } else {
-        throw new Error(response.message)
-      }
+      // Use context to delete contact
+      deleteContact(contact._id)
+
+      toast.success(intl.formatMessage({ id: "Contact deleted successfully" }))
+      // router.refresh() - not needed with context
     } catch (error) {
       console.error("Error deleting contact:", error)
       toast.error(intl.formatMessage({ id: "Failed to delete contact. Please try again." }))
@@ -61,7 +60,7 @@ export function ContactActionCell({ contact, locale, profileId, onEdit }: Contac
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
           onConfirm={handleDeleteConfirm}
-          itemName={ contact.Profile.fullName}
+          itemName={contact.Profile.fullName}
           isDeleting={isDeleting}
           messageId="delete-contact-message"
         />

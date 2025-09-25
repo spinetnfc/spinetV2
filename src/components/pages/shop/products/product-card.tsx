@@ -1,5 +1,5 @@
 import Image from "next/image";
-import imgUrl from "@/mockdata/keychain.png"
+import imgUrl from "@/assets/images/products/keychain.png"
 import { type Product } from "@/mockdata/products"
 import ShopButton from "../shop-button";
 import { FormattedMessage } from "react-intl";

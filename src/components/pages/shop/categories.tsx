@@ -25,7 +25,7 @@ const categories: Category[] = [
 
 export function BrowseCategories({ title, locale }: BrowseCategoriesProps) {
     return (
-        <div className="bg-navy p-6 md:p-8 rounded-3xl mt-8">
+        <div className="bg-spinet-navy p-6 md:p-8 rounded-3xl mt-8">
             <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-center">{title}</h2>
             {/* Mobile layout (vertical) */}
             <div className="flex flex-col gap-4 sm:hidden">
@@ -35,7 +35,7 @@ export function BrowseCategories({ title, locale }: BrowseCategoriesProps) {
                         href={`/${locale}${category.href}`}
                         className="block bg-blue-100 rounded-2xl p-6 h-24 transition-transform hover:scale-[1.02] hover:shadow-lg hover:shadow-black/10"
                     >
-                        <span className="text-navy text-lg font-semibold">{category.name}</span>
+                        <span className="text-spinet-deep text-lg font-semibold">{category.name}</span>
                     </Link>
                 ))}
             </div>
@@ -47,13 +47,13 @@ export function BrowseCategories({ title, locale }: BrowseCategoriesProps) {
                     href={`/${locale}${categories[0].href}`}
                     className="col-span-3 block bg-blue-100 rounded-2xl p-6 h-32 transition-transform hover:scale-[1.02] hover:shadow-lg hover:shadow-black/10"
                 >
-                    <span className="text-navy text-lg font-semibold">{categories[0].name}</span>
+                    <span className="text-spinet-deep text-lg font-semibold">{categories[0].name}</span>
                 </Link>
                 <Link
                     href={`/${locale}${categories[1].href}`}
                     className="col-span-2 block bg-blue-100 rounded-2xl p-6 h-32 transition-transform hover:scale-[1.02] hover:shadow-lg hover:shadow-black/10"
                 >
-                    <span className="text-navy text-lg font-semibold">{categories[1].name}</span>
+                    <span className="text-spinet-deep text-lg font-semibold">{categories[1].name}</span>
                 </Link>
 
                 {/* Bottom row */}
@@ -61,13 +61,13 @@ export function BrowseCategories({ title, locale }: BrowseCategoriesProps) {
                     href={`/${locale}${categories[2].href}`}
                     className="col-span-2 block bg-blue-100 rounded-2xl p-6 h-32 transition-transform hover:scale-[1.02] hover:shadow-lg hover:shadow-black/10"
                 >
-                    <span className="text-navy text-lg font-semibold">{categories[2].name}</span>
+                    <span className="text-spinet-deep text-lg font-semibold">{categories[2].name}</span>
                 </Link>
                 <Link
                     href={`/${locale}${categories[3].href}`}
                     className="col-span-3 block bg-blue-100 rounded-2xl p-6 h-32 transition-transform hover:scale-[1.02] hover:shadow-lg hover:shadow-black/10"
                 >
-                    <span className="text-navy text-lg font-semibold">{categories[3].name}</span>
+                    <span className="text-spinet-deep text-lg font-semibold">{categories[3].name}</span>
                 </Link>
             </div>
         </div>

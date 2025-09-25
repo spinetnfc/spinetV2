@@ -20,7 +20,6 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { requestEmailChangeAction, verifyEmailChangeOTPAction } from '@/actions/profile';
 import { toast } from 'sonner';
 import { User } from '@/types/user';
 import Cookies from 'js-cookie';
@@ -33,6 +32,28 @@ const emailSchema = z.object({
 const otpSchema = z.object({
     otp: z.string().length(5, { message: 'otp-length' }),
 });
+
+// Mock functions to replace backend calls
+const requestEmailChangeAction = async (userId: string, oldEmail: string, newEmail: string) => {
+    console.log("Mock request email change:", { userId, oldEmail, newEmail });
+    return {
+        success: true,
+        data: {
+            restSessionId: "mock-session-id-123",
+            restSessionID: "mock-session-id-123"
+        },
+        error: null
+    };
+};
+
+const verifyEmailChangeOTPAction = async (userId: string, sessionId: string, otp: string) => {
+    console.log("Mock verify email change OTP:", { userId, sessionId, otp });
+    return {
+        success: true,
+        data: { message: "Email changed successfully" },
+        error: null
+    };
+};
 
 export default function ChangeEmailForm({ user, onCancel }: { user: User, onCancel: () => void }) {
     const [step, setStep] = useState<'email' | 'otp'>('email');
@@ -60,7 +81,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
             setIsSubmitting(true);
             console.log('Requesting email change:', { userId: user._id, oldEmail: user.email, newEmail: data.email });
             const response = await requestEmailChangeAction(user._id, user.email, data.email);
-            if (!response.success) throw new Error(response.error);
+            if (!response.success) throw new Error(response.error || "Request failed");
             const receivedSessionID = response.data.restSessionId || response.data.restSessionID;
 
             if (!receivedSessionID) {
@@ -90,7 +111,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
             setIsSubmitting(true);
             console.log('Verifying OTP:', { userId: user._id, sessionID, otp: data.otp });
             const response = await verifyEmailChangeOTPAction(user._id, sessionID, data.otp);
-            if (!response.success) throw new Error(response.error);
+            if (!response.success) throw new Error(response.error || "OTP verification failed");
             console.log('OTP verification response:', response);
 
             // Update current-user cookie with new email
@@ -132,7 +153,7 @@ export default function ChangeEmailForm({ user, onCancel }: { user: User, onCanc
         try {
             console.log('Resending OTP:', { userId: user._id, oldEmail: user.email, newEmail });
             const response = await requestEmailChangeAction(user._id, user.email, newEmail);
-            if (!response.success) throw new Error(response.error);
+            if (!response.success) throw new Error(response.error || "Resend request failed");
 
             const receivedSessionID = response.data.restSessionId || response.data.restSessionID;
 

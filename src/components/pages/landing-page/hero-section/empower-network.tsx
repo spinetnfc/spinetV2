@@ -41,7 +41,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
   if (!mounted) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
-        <h1 className="z-10 mx-auto px-4 text-center text-6xl tracking-tighter lg:px-0 lg:text-6xl xl:text-8xl ">
+        <h1 className="z-10 mx-auto px-4 text-center tracking-tighter lg:px-0 text-6xl lg:text-6xl xl:text-8xl text-spinet-deep dark:text-spinet-light">
           <FormattedMessage id="empower-your-network" />
         </h1>
       </div>
@@ -103,7 +103,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
         {/* Title Container */}
         <div className="flex flex-col items-center gap-2 ">
           <div className="flex flex-row items-center justify-center gap-2">
-            <h1 className="text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-6xl xl:text-8xl  sm:pb-2">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-spinet-deep dark:text-spinet-light lg:text-6xl xl:text-8xl sm:pb-2">
               <FormattedMessage id="empower-your" />
             </h1>
             <h1 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#a8d0ff] dark:to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-transparent lg:text-6xl xl:text-8xl  sm:pb-2">
@@ -111,7 +111,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <h2 className="text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-[#1A3B8E] dark:text-[#EEF6FF] lg:text-6xl xl:text-8xl ">
+            <h2 className="text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-spinet-deep dark:text-spinet-light lg:text-6xl xl:text-8xl ">
               <FormattedMessage id="with" />
             </h2>
             <h2 className="bg-linear-to-r from-[#1650DF] via-[#8FC8FF] to-[#a8d0ff] dark:to-[#EEF6FF] bg-clip-text text-3xl xs:text-4xl sm:text-5xl tracking-tighter text-transparent lg:text-6xl xl:text-8xl ">
@@ -122,7 +122,7 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
 
         {/* Description */}
         <div className="mx-auto mt-5 max-w-4/5 sm:max-w-[60%] lg:max-w-[800px]">
-          <p className=" text-xs xs:text-sm sm:text-base leading-relaxed text-[#010E37CC] dark:text-[#F5F5F5] lg:text-lg">
+          <p className=" text-xs xs:text-sm sm:text-base leading-relaxed text-spinet-text-muted lg:text-lg">
             <FormattedMessage id="empower-your-network-text" />
           </p>
         </div>
@@ -136,8 +136,8 @@ function EmpowerNetwork({ locale, isMenuOpen, setIsMenuOpen }: Props) {
             className="text-base xs:text-lg sm:text-xl"
           />
           <Button
-            className="h-12 rounded-2xl bg-white text-base xs:text-lg sm:text-xl leading-6 text-[#145FF2] transition-all cursor-pointer
-             hover:bg-blue-500 hover:text-white hover:brightness-125 dark:bg-navy dark:text-white lg:w-[195px]"
+            className="h-12 rounded-2xl bg-white text-base xs:text-lg sm:text-xl leading-6 text-spinet-primary transition-all cursor-pointer
+             hover:bg-spinet-primary hover:text-white hover:brightness-125 dark:bg-spinet-navy dark:text-white lg:w-[195px]"
             onClick={() => scrollToSection("pricing")}
           >
             <FormattedMessage id="see-offers" />

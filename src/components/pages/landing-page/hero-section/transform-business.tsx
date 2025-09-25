@@ -25,15 +25,15 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
   return (
     <div className="relative flex size-full flex-col pt-16">
       <div className="flex size-full flex-col lg:flex-row">
-        <div className="z-10 px-4 flex h-3/5 lg:h-full w-full flex-col items-center justify-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2">
+        <div className="z-10 px-4 flex h-3/5 lg:h-full w-full flex-col items-center lg:items-start justify-center gap-4 lg:me-0 lg:ms-10 lg:w-1/2">
           {/* Section Text */}
-          <div className="flex flex-col gap-3">
-            <span className="text-lg sm:text-xl text-[#145FF2] text-center lg:text-start">
+          <div className="flex flex-col gap-6 items-start justify-start">
+            <span className="text-lg sm:text-xl text-spinet-primary text-center lg:text-start">
               <FormattedMessage id="one-solution-for-all" />
             </span>
 
             {/* Title */}
-            <h1 className="text-4xl sm:text-5xl md:text-7xl text-[#1A3B8E] dark:text-[#EEF6FF] text-center lg:text-start">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl text-spinet-deep dark:text-spinet-light text-center lg:text-start">
               <FormattedMessage id="transform-your" />{' '}
               <span className="font-extrabold">
                 <FormattedMessage id="business" />
@@ -42,12 +42,12 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
             </h1>
 
             {/* Paragraph */}
-            <p className="w-full text-center lg:text-start text-lg sm:text-xl font-normal text-[#1A3B8E] dark:text-[#EEF6FF]">
+            <p className="w-full text-center lg:text-start text-lg sm:text-xl font-normal text-spinet-text-muted">
               <FormattedMessage id="transform-your-with-spinet-text" />
             </p>
           </div>
 
-          <div className="mt-4 sm:mt-10 flex flex-col items-center justify-center gap-4 lg:flex-row">
+          <div className="pt-3 flex flex-col items-center justify-center gap-4 lg:flex-row">
             <CtaButton
               text={intl.formatMessage({ id: 'free-trial' })}
               icon={<ChevronRight className="ms-2.5 size-6" />}
@@ -56,8 +56,8 @@ function TransformBusiness({ locale, isMenuOpen, setIsMenuOpen, isActive }: Prop
             />
 
             <Button
-              className="cursor-pointer h-12 rounded-2xl bg-white text-base xs:text-lg sm:text-xl leading-6 text-[#145FF2] 
-             transition-all hover:bg-blue-500 hover:text-white hover:brightness-125 dark:bg-navy dark:text-white"
+              className="cursor-pointer h-12 rounded-2xl bg-white text-base xs:text-lg sm:text-xl leading-6 text-spinet-primary 
+             transition-all hover:bg-spinet-primary hover:text-white hover:brightness-125 dark:bg-spinet-navy dark:text-white"
               onClick={() => scrollToSection("features")}
             >
               <FormattedMessage id="see-features" />

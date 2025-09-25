@@ -3,7 +3,7 @@
 import { ChevronDown } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
-import { cn } from "@/lib/utils"
+import { cn } from '@/utils/cn'
 import { FormattedMessage } from "react-intl"
 
 const CATEGORIES = ["New arrivals", "Promotion", "Top selling", "Pack"]
@@ -158,7 +158,7 @@ export function ProductsFilters({ locale }: { locale: string }) {
 
             <button
                 onClick={applyFilters}
-                className="w-full py-3 bg-[#001838] text-white rounded-md hover:bg-[#002857] transition-colors cursor-pointer"
+                className="w-full py-3 bg-spinet-button text-white rounded-md hover:bg-spinet-hover transition-colors cursor-pointer"
             >
                 <FormattedMessage id="apply-filter" />
             </button>

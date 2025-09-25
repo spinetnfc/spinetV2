@@ -1,15 +1,8 @@
 import React from 'react';
+import RegisterForm from '@/components/pages/auth/register-form';
 
-import Register from '@/components/pages/auth/register';
-
-// async function getMessages(locale: string) {
-//   return await import(`../../../../lang/${locale}.json`);
-// }
 async function RegisterPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  // const messages = (await getMessages(locale)).default;
-
-  return <Register locale={locale} />;
+  return <RegisterForm />;
 }
 
 export default RegisterPage;
