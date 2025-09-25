@@ -56,14 +56,6 @@ export default function Step3ProfilePicture() {
 
    return (
       <div className="space-y-6">
-         <div className="text-center">
-            <Label className="text-base font-medium">
-               {t('onboarding.profile-picture-label')}
-            </Label>
-            <p className="text-sm text-muted-foreground mt-1">
-               {t('onboarding.profile-picture-description')}
-            </p>
-         </div>
 
          {data.profilePicture ? (
             /* Current Profile Picture */
@@ -85,7 +77,7 @@ export default function Step3ProfilePicture() {
                      <X className="w-4 h-4" />
                   </Button>
                </div>
-               <Button variant="outline" onClick={openFileDialog}>
+               <Button variant="ghost" onClick={openFileDialog}>
                   <Camera className="w-4 h-4 mr-2" />
                   {t('onboarding.change-picture')}
                </Button>
@@ -121,26 +113,6 @@ export default function Step3ProfilePicture() {
                         <Upload className="w-4 h-4 mr-2" />
                         {t('onboarding.select-file')}
                      </Button>
-                     <Button
-                        variant="outline"
-                        disabled={isLoading}
-                        onClick={() => {
-                           // Create a mock file for placeholder
-                           fetch('https://via.placeholder.com/150')
-                              .then(res => res.blob())
-                              .then(blob => {
-                                 const file = new File([blob], 'placeholder.jpg', { type: 'image/jpeg' });
-                                 uploadProfilePicture(file);
-                              })
-                              .catch(() => {
-                                 // Fallback: direct URL assignment (for demo purposes)
-                                 console.log('Using placeholder image');
-                              });
-                        }}
-                     >
-                        <Camera className="w-4 h-4 mr-2" />
-                        {t('onboarding.use-placeholder')}
-                     </Button>
                   </div>
                </div>
 
@@ -162,18 +134,6 @@ export default function Step3ProfilePicture() {
                </p>
             </div>
          )}
-
-         {/* File Requirements */}
-         <div className="p-3 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground">
-               <strong>{t('onboarding.requirements')}:</strong>
-            </p>
-            <ul className="text-sm text-muted-foreground mt-1 space-y-1">
-               <li>• {t('onboarding.max-file-size')}</li>
-               <li>• {t('onboarding.supported-formats')}</li>
-               <li>• {t('onboarding.recommended-size')}</li>
-            </ul>
-         </div>
       </div>
    );
 }
