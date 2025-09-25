@@ -1,14 +1,29 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import SpinetLogo from '@/components/icons/spinet-logo';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { useClientTranslate } from '@/hooks/use-client-translate';
 
 
 export default function OnBoardLanding() {
    const [isVerified] = useState(false);
    const email = 'spinet.user@gmail.com';
+   const { t } = useClientTranslate();
+
+   const renderInterpolated = (template: string, values: Record<string, React.ReactNode>) => {
+      if (!template) return null;
+      const parts = template.split(/({[^}]+})/g).filter(Boolean);
+      return parts.map((part, idx) => {
+         const match = part.match(/^{(.+)}$/);
+         if (match) {
+            const key = match[1];
+            return <React.Fragment key={idx}>{values[key] ?? ''}</React.Fragment>;
+         }
+         return <React.Fragment key={idx}>{part}</React.Fragment>;
+      });
+   };
 
    return (
       <div className="min-h-screen flex flex-col items-center bg-white">
@@ -22,8 +37,8 @@ export default function OnBoardLanding() {
                <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-gray-100 text-sm font-medium">
                   {isVerified ? (
                      <>
-                        <span className="font-semibold text-gray-900">{email}</span>
-                        <span className="text-green-500 font-semibold ml-8">Verified</span>
+                        <span className="font-semibold text-gray-900">{t('onboard.verified.email', { email })}</span>
+                        <span className="text-green-500 font-semibold ml-8">{t('onboard.verified.status')}</span>
                         <svg
                            className="w-5 h-5 text-green-500"
                            fill="none"
@@ -41,11 +56,10 @@ export default function OnBoardLanding() {
                   ) : (
                      <>
                         <span className="text-gray-700">
-                           Verify your email address{' '}
-                           <span className="font-semibold text-gray-900">{email}</span>
+                           {t('onboard.verify.message', { email })}
                         </span>
                         <button className="ml-8 cursor-pointer text-blue-600 font-semibold hover:text-blue-700 transition-colors">
-                           Verify
+                           {t('onboard.verify.verifyButton')}
                         </button>
                      </>
                   )}
@@ -58,28 +72,22 @@ export default function OnBoardLanding() {
             {/* Left Side */}
             <div className="text-center lg:text-start flex flex-col justify-center items-start max-w-2xl w-full lg:order-1 order-2">
                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                  Hey, ready to connect smarter?
+                  {t('onboard.heading')}
                </h1>
                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  Scan cards, save connections, and manage your own digital card.
-                  <br />
-                  Need a team? Create an organization and grow together.
+                  {t('onboard.subtitle')}
                </p>
                <Button
                   variant="default"
                   className="w-full px-8 py-5 font-medium mb-6 transition-all duration-200"
                >
-                  Let's get started
+                  {t('onboard.cta')}
                </Button>
                <p className="text-sm text-gray-500">
-                  By continuing, you confirm that you have read and agree to the{' '}
-                  <a href="#" className="underline hover:text-blue-600 transition-colors">
-                     Terms and Conditions
-                  </a>{' '}
-                  and{' '}
-                  <a href="#" className="underline hover:text-blue-600 transition-colors">
-                     Privacy Policy
-                  </a>.
+                  {renderInterpolated(t('onboard.terms'), {
+                     terms: <a href="#" className="underline hover:text-spinet-primary transition-colors">{t('terms-and-conditions')}</a>,
+                     privacy: <a href="#" className="underline hover:text-spinet-primary transition-colors">{t('privacy-policy')}</a>,
+                  })}
                </p>
             </div>
 
@@ -89,7 +97,7 @@ export default function OnBoardLanding() {
                <div className="w-full max-w-md">
                   <Image
                      src={require('@/assets/images/on-board/landing1.png')}
-                     alt="People connecting digitally with floating profile icons"
+                     alt={t('onboard.heading')}
                      className="w-full h-auto"
                      priority
                   />
@@ -100,14 +108,14 @@ export default function OnBoardLanding() {
                   <div className="w-48">
                      <Image
                         src={require('@/assets/images/on-board/landing2.png')}
-                        alt="Person managing digital contacts"
+                        alt={t('onboard.subtitle')}
                         className="w-full h-auto"
                      />
                   </div>
                   <div className="w-48">
                      <Image
                         src={require('@/assets/images/on-board/landing3.png')}
-                        alt="Digital networking interface"
+                        alt={t('onboard.subtitle')}
                         className="w-full h-auto"
                      />
                   </div>
