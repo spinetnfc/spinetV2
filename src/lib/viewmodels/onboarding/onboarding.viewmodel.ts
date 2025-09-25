@@ -429,8 +429,10 @@ export const useOnboardingViewModel = () => {
 
       console.log('Onboarding data saved successfully (mock)');
 
+      // Reset onboarding state after completion
+      store.reset();
       // Navigate to dashboard or home
-      // router.push(`/${locale}`);
+      router.push(`/${locale}`);
     } catch (error) {
       console.error('Failed to complete onboarding:', error);
       store.addError('general', t('validation.submission-failed'));
