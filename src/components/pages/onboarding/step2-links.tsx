@@ -161,7 +161,15 @@ export default function Step2Links() {
    // On every input change, persist directly to store
    const handleLinkChange = (platform: string, value: string) => {
       const platformName = platformConfig[platform as keyof typeof platformConfig].name;
-      validateAndAddLink(platformName, value);
+      if (!value || value.trim() === '') {
+         // Remove the link from the store if value is empty
+         const idx = data.links.findIndex((link: any) => link.platform === platformName);
+         if (idx !== -1) {
+            removeLink(idx);
+         }
+      } else {
+         validateAndAddLink(platformName, value);
+      }
    };
 
    const handleAddSelectedLinks = () => {
@@ -264,7 +272,7 @@ export default function Step2Links() {
             </DialogContent>
          </Dialog>
 
-         
+
       </div>
    );
 }

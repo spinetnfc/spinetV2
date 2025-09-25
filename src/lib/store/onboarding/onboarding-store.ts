@@ -87,15 +87,22 @@ export const useOnboardingStore = create<OnboardingStore>()(
       // Add a link for a platform
       addLink: (platform: string, url: string) => {
         set((state) => {
-          const updatedLinks = [...state.data.links];
+          let updatedLinks = [...state.data.links];
           const existingIndex = updatedLinks.findIndex(
             (link) => link.platform === platform,
           );
 
-          if (existingIndex !== -1) {
-            updatedLinks[existingIndex] = { platform, url };
+          if (!url || url.trim() === '') {
+            // Remove the link if url is empty
+            if (existingIndex !== -1) {
+              updatedLinks.splice(existingIndex, 1);
+            }
           } else {
-            updatedLinks.push({ platform, url });
+            if (existingIndex !== -1) {
+              updatedLinks[existingIndex] = { platform, url };
+            } else {
+              updatedLinks.push({ platform, url });
+            }
           }
 
           return {
