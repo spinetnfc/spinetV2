@@ -725,7 +725,6 @@
   "onboarding.admin": "Administrateur",
   "onboarding.invite": "Inviter",
   "onboarding.team-members": "Membres de l'Équipe",
-  "onboarding.org-ready-to-start": "Votre organisation est prête à commencer !",
   "onboarding.org-with-members": "Votre organisation est prête avec {count} membre(s) !",
   "onboarding.individual-setup": "Configuration Individuelle",
   "onboarding.individual-description": "Vous pouvez toujours configurer une organisation plus tard depuis vos paramètres.",

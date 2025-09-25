@@ -99,14 +99,14 @@ export const DEFAULT_PROFILE_THEMES: ProfileTheme[] = [
     name: 'Professional Blue',
     textColor: '#1a1a1a',
     backgroundColor: '#E2E8F0',
-    primaryColor: '#2563eb',
+    primaryColor: '#145FF2',
   },
   {
     id: 'green-theme',
     name: 'Nature Green',
     textColor: '#1a1a1a',
     backgroundColor: '#f0fdf4',
-    primaryColor: '#16a34a',
+    primaryColor: '#22C55E',
   },
   {
     id: 'purple-theme',
@@ -123,10 +123,17 @@ export const DEFAULT_PROFILE_THEMES: ProfileTheme[] = [
     primaryColor: '#ea580c',
   },
   {
+    id: 'violet-theme',
+    name: 'Violet Clair',
+    textColor: '#1a1a1a',
+    backgroundColor: '#F5F3FF',
+    primaryColor: '#DDD6FE',
+  },
+  {
     id: 'dark-theme',
     name: 'Dark Mode',
-    textColor: '#ffffff',
-    backgroundColor: '#1a1a1a',
-    primaryColor: '#60a5fa',
+    textColor: '#1a1a1a',
+    backgroundColor: '#F5F5F5',
+    primaryColor: '#4B5563',
   },
 ];

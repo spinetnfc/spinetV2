@@ -82,6 +82,7 @@ export default function Step5Organization() {
             <Button
                variant={skipOrganization ? "outline" : "default"}
                size="sm"
+               className='hover:text-spinet-light'
                onClick={handleToggleSkip}
             >
                {skipOrganization ? t('onboarding.setup-org') : t('onboarding.skip-for-now')}
@@ -141,6 +142,7 @@ export default function Step5Organization() {
                               <Button
                                  variant={newMemberRole === 'member' ? 'default' : 'outline'}
                                  size="sm"
+                                 className='hover:text-spinet-light'
                                  onClick={() => setNewMemberRole('member')}
                               >
                                  <User className="w-3 h-3 mr-1" />
@@ -149,6 +151,7 @@ export default function Step5Organization() {
                               <Button
                                  variant={newMemberRole === 'admin' ? 'default' : 'outline'}
                                  size="sm"
+                                 className='hover:text-spinet-light'
                                  onClick={() => setNewMemberRole('admin')}
                               >
                                  <Shield className="w-3 h-3 mr-1" />
@@ -214,23 +217,6 @@ export default function Step5Organization() {
                         </div>
                      )}
 
-                     {/* Organization Summary */}
-                     <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                        <div className="flex items-start gap-3">
-                           <Building className="w-5 h-5 text-primary mt-0.5" />
-                           <div className="flex-1">
-                              <h4 className="font-medium text-primary mb-1">
-                                 {data.organization.name}
-                              </h4>
-                              <p className="text-sm text-muted-foreground">
-                                 {data.organization.members.length === 0
-                                    ? t('onboarding.org-ready-to-start')
-                                    : t('onboarding.org-with-members', { count: data.organization.members.length })
-                                 }
-                              </p>
-                           </div>
-                        </div>
-                     </div>
                   </>
                )}
             </>

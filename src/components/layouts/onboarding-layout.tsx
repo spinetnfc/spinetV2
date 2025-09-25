@@ -130,14 +130,15 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
             style={{ backgroundColor: data.theme.backgroundColor }}
          >
             <div className="w-full flex justify-end">
-               <ProfilePreview />
+               <ProfilePreview currentStep={currentStep} />
             </div>
          </div>
       </div>
    );
 }
 
-function ProfilePreview() {
+type ProfilePreviewProps = { currentStep: number };
+function ProfilePreview({ currentStep }: ProfilePreviewProps) {
    const { data } = useOnboardingViewModel();
 
    return (
@@ -210,7 +211,15 @@ function ProfilePreview() {
                      className="text-xl font-bold mb-1 transition-colors duration-300 ease-out"
                      style={{ color: data.theme.textColor }}
                   >
-                     {data.fullName || 'Your Name'}
+                     {(() => {
+                        if (currentStep === 1) {
+                           return data.fullName || 'Your Name';
+                        } else if (currentStep === 5) {
+                           return (data.organization && data.organization.name) || 'Organization';
+                        } else {
+                           return data.fullName || 'Your Name';
+                        }
+                     })()}
                   </h2>
                </div>
 
