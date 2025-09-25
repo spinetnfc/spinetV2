@@ -143,39 +143,69 @@ export const useOnboardingViewModel = () => {
     [store, validateCurrentStep],
   );
 
-  // === STEP 2: LINKS ===
+  // === STEP 2: LINKS (ViewModel logic) ===
 
-  // No validation, just add the link
-  const validateAndAddLink = useCallback(
-    async (platform: string, url: string): Promise<boolean> => {
-      store.clearError('links');
-      store.addLink(platform, url);
-      return true;
-    },
-    [store],
-  );
+  // Map platformKey to value for UI
+  const platformKeyToName: Record<string, string> = {
+    facebook: 'Facebook',
+    phone: 'Phone',
+    gmail: 'Gmail',
+    instagram: 'Instagram',
+    whatsapp: 'WhatsApp',
+    youtube: 'YouTube',
+    linkedin: 'LinkedIn',
+    pinterest: 'Pinterest',
+    spotify: 'Spotify',
+    tiktok: 'TikTok',
+    snapchat: 'Snapchat',
+    website: 'Website',
+  };
 
-  const removeLink = useCallback(
-    (index: number) => {
-      // Remove link using updateField
-      const newLinks = store.data.links.filter((_, i) => i !== index);
-      store.updateField('links', newLinks);
-    },
-    [store],
-  );
+  // Expose link values as { platformKey: value }
+  const linkValues: Record<string, string> = {};
+  (store.data.links || []).forEach((link) => {
+    const platformKey = Object.keys(platformKeyToName).find(
+      (key) => platformKeyToName[key] === link.platform,
+    );
+    if (platformKey) {
+      linkValues[platformKey] = link.url;
+    }
+  });
 
-  // Save multiple links at once (for step 2 pending inputs)
-  const savePendingLinks = useCallback(
-    async (
-      pendingLinks: { platform: string; url: string }[],
-    ): Promise<void> => {
-      for (const { platform, url } of pendingLinks) {
-        if (url.trim() && isValidUrl(url)) {
-          await validateAndAddLink(platform, url);
+  // Update or remove a link by platformKey
+  const updateLink = useCallback(
+    (platformKey: string, value: string) => {
+      const platform = platformKeyToName[platformKey] || platformKey;
+      if (!value || value.trim() === '') {
+        // Remove link if value is empty
+        const idx = store.data.links.findIndex(
+          (link) => link.platform === platform,
+        );
+        if (idx !== -1) {
+          const newLinks = store.data.links.filter((_, i) => i !== idx);
+          store.updateField('links', newLinks);
         }
+      } else {
+        store.clearError('links');
+        store.addLink(platform, value);
       }
     },
-    [validateAndAddLink, isValidUrl],
+    [store],
+  );
+
+  // Remove a link by platformKey (for X button)
+  const removeLinkByPlatform = useCallback(
+    (platformKey: string) => {
+      const platform = platformKeyToName[platformKey] || platformKey;
+      const idx = store.data.links.findIndex(
+        (link) => link.platform === platform,
+      );
+      if (idx !== -1) {
+        const newLinks = store.data.links.filter((_, i) => i !== idx);
+        store.updateField('links', newLinks);
+      }
+    },
+    [store],
   );
 
   // === STEP 3: PROFILE PICTURE ===
@@ -338,7 +368,7 @@ export const useOnboardingViewModel = () => {
       // Complete onboarding on final step
       await completeOnboarding();
     }
-  }, [store, validateCurrentStep, validateAndAddLink, isValidUrl]);
+  }, [store, validateCurrentStep, isValidUrl]);
 
   const previousStep = useCallback(() => {
     if (store.currentStep > 1) {
@@ -453,9 +483,9 @@ export const useOnboardingViewModel = () => {
     updateFullName,
 
     // === STEP 2: LINKS ===
-    validateAndAddLink,
-    removeLink,
-    savePendingLinks,
+    linkValues,
+    updateLink,
+    removeLinkByPlatform,
     // Utility functions for components
     isValidUrl,
     getHostname,

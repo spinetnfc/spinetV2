@@ -127,26 +127,16 @@ const platformConfig = {
 
 
 
+
 export default function Step2Links() {
    const { t } = useClientTranslate();
-   const { data, errors, validateAndAddLink, removeLink } = useOnboardingViewModel();
+   const { linkValues, updateLink, removeLinkByPlatform, errors } = useOnboardingViewModel();
    const [isModalOpen, setIsModalOpen] = useState(false);
 
    // All platforms
    const allPlatforms = [
       'facebook', 'phone', 'gmail', 'instagram', 'whatsapp', 'youtube', 'linkedin', 'pinterest', 'spotify', 'tiktok', 'snapchat', 'website'
    ];
-
-   // Always derive link values from store (data.links)
-   const linkValues: Record<string, string> = {};
-   (data.links || []).forEach((link: any) => {
-      const platformKey = Object.keys(platformConfig).find(
-         key => platformConfig[key as keyof typeof platformConfig].name.toLowerCase() === link.platform.toLowerCase()
-      );
-      if (platformKey) {
-         linkValues[platformKey] = link.url;
-      }
-   });
 
    // Main area platforms: always show facebook, phone, gmail, plus any others with values
    const defaultMain = ['facebook', 'phone', 'gmail'];
@@ -158,18 +148,9 @@ export default function Step2Links() {
    ];
    const modalPlatforms = allPlatforms.filter(p => !mainAreaPlatforms.includes(p));
 
-   // On every input change, persist directly to store
+   // On every input change, call updateLink from viewmodel
    const handleLinkChange = (platform: string, value: string) => {
-      const platformName = platformConfig[platform as keyof typeof platformConfig].name;
-      if (!value || value.trim() === '') {
-         // Remove the link from the store if value is empty
-         const idx = data.links.findIndex((link: any) => link.platform === platformName);
-         if (idx !== -1) {
-            removeLink(idx);
-         }
-      } else {
-         validateAndAddLink(platformName, value);
-      }
+      updateLink(platform, value);
    };
 
    const handleAddSelectedLinks = () => {
@@ -178,9 +159,7 @@ export default function Step2Links() {
 
    // Move a platform from main area back to modal
    const handleMoveToModal = (platform: string) => {
-      // Remove any existing link for this platform from global data
-      const platformName = platformConfig[platform as keyof typeof platformConfig].name;
-      validateAndAddLink(platformName, ''); // Clear link in store
+      removeLinkByPlatform(platform);
    };
 
    const renderLinkRow = (platformKey: string, value: string = '', showRemove: boolean = false, onRemove?: () => void, index?: number) => {
