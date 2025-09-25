@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
    title: 'Onboarding - Spinet',
    description: 'Complete your profile setup to get started with Spinet',
-   robots: 'noindex, nofollow', // Don't index onboarding pages
+   robots: 'noindex, nofollow',
 };
 
 export default function OnboardingLayoutWrapper({
